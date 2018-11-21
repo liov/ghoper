@@ -1,0 +1,25 @@
+a:link {
+    color: #000;
+    text-decoration: none;
+}
+/*未访问：蓝色、无下划线*/
+  a:active {
+      color: #000;
+      text-decoration: none;
+  }
+/*激活：红色*/
+    a:visited {
+        color: #000;
+        text-decoration: none
+    }
+/*已访问：紫色、无下划线*/
+  a:hover {
+      color: #000;
+      text-decoration: none;
+  }
+/*鼠标移近：红色、下划线*/
+
+body{
+  font-size:.3rem;
+}
+
