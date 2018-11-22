@@ -1,20 +1,39 @@
 package controller
 
 import (
-	"encoding/json"
 	"github.com/valyala/fasthttp"
 	"service/controller/common"
 )
 
 func Index(c *fasthttp.RequestCtx) {
 	//fmt.Fprintf(c, "Hi there! RequestURI is %q", c.RequestURI())
-	req := string(c.QueryArgs().Peek("s"))
-	ress, _ := json.Marshal(common.H{
+	req := c.QueryArgs().Peek("s")
+	reqs := "不是0"
+	if len(req) != 0 {
+		req := c.QueryArgs().Peek("s")[0] - 48
+		if req == 0 {
+			reqs = "是0"
+		}
+	}
+		ress, _ := jsons.MarshalToString(common.H{
+			"code": User{},
+			"msg":  reqs,
+			"data": "中文",
+		})
+
+		c.SetBodyString(ress)
+		c.SetStatusCode(fasthttp.StatusOK)
+
+}
+
+func Index2(c *fasthttp.RequestCtx)  {
+	user := c.UserValue("user")
+	ress, _ := jsons.MarshalToString(common.H{
 		"code": User{},
-		"msg":  req,
-		"data": "中文",
+		"msg":  "中文",
+		"data": user,
 	})
 
-	c.SetBody(ress)
+	c.SetBodyString(ress)
 	c.SetStatusCode(fasthttp.StatusOK)
 }

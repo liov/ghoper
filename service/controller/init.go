@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/sirupsen/logrus"
 	"os"
+	"service/controller/common"
 )
 func init(){
 	//github.com/gin-contrib/sessions 获取User必须gob注册
@@ -18,3 +19,5 @@ func init(){
 	// Only log the warning severity or above.
 	logrus.SetLevel(logrus.WarnLevel)
 }
+
+var jsons =common.Json

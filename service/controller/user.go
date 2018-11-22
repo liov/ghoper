@@ -3,7 +3,6 @@ package controller
 import (
 	"crypto/md5"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -14,6 +13,7 @@ import (
 	"service/controller/common"
 	"service/controller/common/e"
 	"service/controller/mail"
+	"service/controller/upload"
 	"service/initialize"
 	"service/model"
 	"service/utils"
@@ -49,13 +49,12 @@ type User struct {
 func sendMail(action string, title string, curTime int64, user User) {
 	siteName := initialize.ServerSettings.SiteName
 	siteURL := "http://" + initialize.ServerSettings.Host
-	secretStr := fmt.Sprintf("%d%s%s", curTime, user.Email, user.PassWord)
-	secretStr = fmt.Sprintf("%x", md5.Sum([]byte(secretStr)))
+	secretStr := strconv.Itoa((int)(curTime))+ user.Email+ user.PassWord
+	secretStr =fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/%d/%s"
 
-	actionURL = fmt.Sprintf(actionURL, user.ID, secretStr)
+	actionURL = actionURL+strconv.FormatUint((uint64)(user.ID),10)+ secretStr
 
-	fmt.Println(actionURL)
 
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
@@ -78,19 +77,18 @@ func sendMail(action string, title string, curTime int64, user User) {
 func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 	var user User
 	args:=c.QueryArgs()
-	id:=args.Peek("id")
-	userID,err:= strconv.Atoi(*(*string)(unsafe.Pointer(&id)))
+	userID,err:= strconv.ParseUint(utils.ToSting(args.Peek("id")),10,0)
 	if err != nil || userID <= 0 {
 		return user, errors.New("无效的链接")
 	}
 	secret :=args.Peek("secret")
-	if len(secret) == 0 {
+	if secret!=nil {
 		return user, errors.New("无效的链接")
 	}
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+fmt.Sprintf("%d", userID)))
+	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+utils.ToSting(args.Peek("id"))))
 	if redisErr != nil {
 		return user, errors.New("无效的链接")
 	}
@@ -99,11 +97,12 @@ func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 		return user, errors.New("无效的链接")
 	}
 
-	secretStr := fmt.Sprintf("%d%s%s", emailTime, user.Email, user.PassWord)
-	secretStr = fmt.Sprintf("%x", md5.Sum([]byte(secretStr)))
+	secretStr := strconv.Itoa((int)(emailTime))+user.Email+user.PassWord
+
+	secretStr =fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
+
 
 	if *(*string)(unsafe.Pointer(&secret)) != secretStr {
-		fmt.Println(secret, secretStr)
 		return user, errors.New("无效的链接")
 	}
 	return user, nil
@@ -133,7 +132,7 @@ func ActiveSendMail(c *fasthttp.RequestCtx) {
 		common.Response(c, "参数无效", e.InvalidParams)
 		return
 	}
-	user.Email = string(decodeBytes)
+	user.Email = *(*string)(unsafe.Pointer(&decodeBytes))
 
 	if err := initialize.DB.Where("email = ?", user.Email).First(&user).Error; err != nil {
 		common.Response(c, "无效的邮箱")
@@ -141,7 +140,7 @@ func ActiveSendMail(c *fasthttp.RequestCtx) {
 	}
 
 	curTime := time.Now().Unix()
-	activeUser := fmt.Sprintf("%s%d", model.ActiveTime, user.ID)
+	activeUser :=  model.ActiveTime+strconv.FormatUint((uint64)(user.ID),10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -184,7 +183,7 @@ func ActiveAccount(c *fasthttp.RequestCtx) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL", fmt.Sprintf("%s%d", model.ActiveTime, user.ID)); err != nil {
+	if _, err := RedisConn.Do("DEL",  model.ActiveTime+strconv.FormatUint((uint64)(user.ID),10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
 	common.Res(c,common.H{"email": user.Email, "data": "激活成功"})
@@ -217,7 +216,7 @@ func ResetPasswordMail(c *fasthttp.RequestCtx) {
 	}
 
 	curTime := time.Now().Unix()
-	resetUser := fmt.Sprintf("%s%d", model.ResetTime, user.ID)
+	resetUser :=  model.ResetTime+strconv.FormatUint((uint64)(user.ID),10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -277,7 +276,7 @@ func ResetPassword(c *fasthttp.RequestCtx) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL", fmt.Sprintf("%s%d", model.ResetTime, user.ID)); err != nil {
+	if _, err := RedisConn.Do("DEL",  model.ResetTime+strconv.FormatUint((uint64)(user.ID),10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
 }
@@ -334,7 +333,7 @@ func Signin(c *fasthttp.RequestCtx) {
 
 	if checkPassword(password, user) {
 		if user.Status == model.UserStatusInActive {
-			encodedEmail := base64.StdEncoding.EncodeToString([]byte(user.Email))
+			encodedEmail := base64.StdEncoding.EncodeToString(utils.ToBytes(user.Email))
 			common.Res(c,common.H{"email": encodedEmail, "msg": "账号未激活,请进去邮箱点击激活"})
 			return
 		}
@@ -342,9 +341,8 @@ func Signin(c *fasthttp.RequestCtx) {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"id": user.ID,
 		})
-		tokenString, err := token.SignedString([]byte(initialize.ServerSettings.TokenSecret))
+		tokenString, err := token.SignedString(utils.ToBytes(initialize.ServerSettings.TokenSecret))
 		if err != nil {
-			fmt.Println(err.Error())
 			common.Response(c, "内部错误")
 			return
 		}
@@ -354,14 +352,14 @@ func Signin(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		c.Response.Header.SetCookie(common.SetCookie("token", tokenString, initialize.ServerSettings.TokenMaxAge, "/", "hoper.xyz", false, true))
+		c.Response.Header.SetCookie(common.SetCookie("token", tokenString, time.Duration(initialize.ServerSettings.TokenMaxAge)*time.Second, "/", "hoper.xyz", false, true))
 
 
 		/*		session := sessions.Default(c)
 				session.Set("user", user)
 				session.Save()*/
 		//userBytes, err := json.Marshal(user)
-		//c.SetCookie("user", string(userBytes[:]), initialize.ServerSettings.TokenMaxAge, "/", "hoper.xyz", false, true)
+		//c.SetCookie("user", string(userBytes), initialize.ServerSettings.TokenMaxAge, "/", "hoper.xyz", false, true)
 		common.Res(c,common.H{
 			"token": tokenString,
 			"user":  user,
@@ -444,13 +442,12 @@ func Signup(c *fasthttp.RequestCtx) {
 	}
 
 	curTime := nowTime.Unix()
-	activeUser := fmt.Sprintf("%s%d", model.ActiveTime, newUser.ID)
+	activeUser := model.ActiveTime+strconv.FormatUint((uint64)(newUser.ID),10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("SET", activeUser, curTime, "EX", activeDuration); err != nil {
-		fmt.Println("redis set failed:", err)
 	}
 
 	go func() {
@@ -470,8 +467,7 @@ func Signout(c *fasthttp.RequestCtx) {
 		RedisConn := initialize.RedisPool.Get()
 		defer RedisConn.Close()
 
-		if _, err := RedisConn.Do("DEL", fmt.Sprintf("%s%d", model.LoginUser, user.ID)); err != nil {
-			fmt.Println("redis delelte failed:", err)
+		if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID),10)); err != nil {
 		}
 	}
 	c.Response.Header.SetCookie(common.SetCookie("token", "del", -1, "/", "hoper.xyz", false, true))
@@ -489,7 +485,7 @@ func UpdateInfo(c *fasthttp.RequestCtx) {
 	userInter:= c.UserValue("user")
 	user := userInter.(model.User)
 
-	field := string(c.QueryArgs().Peek("field"))
+	field := utils.ToSting(c.QueryArgs().Peek("field"))
 	resData := make(map[string]interface{})
 	resData["id"] = user.ID
 
@@ -510,7 +506,7 @@ func UpdateInfo(c *fasthttp.RequestCtx) {
 		userReqData.Signature = strings.TrimSpace(userReqData.Signature)
 		// 个性签名可以为空
 		if utf8.RuneCountInString(userReqData.Signature) > model.MaxSignatureLen {
-			common.Response(c, "个性签名不能超过"+fmt.Sprintf("%d", model.MaxSignatureLen)+"个字符")
+			common.Response(c, "个性签名不能超过"+strconv.Itoa( model.MaxSignatureLen)+"个字符")
 			return
 		}
 		if err := initialize.DB.Model(&user).Update("signature", userReqData.Signature).Error; err != nil {
@@ -524,7 +520,7 @@ func UpdateInfo(c *fasthttp.RequestCtx) {
 		userReqData.Location = strings.TrimSpace(userReqData.Location)
 		// 居住地可以为空
 		if utf8.RuneCountInString(userReqData.Location) > model.MaxLocationLen {
-			common.Response(c, "居住地不能超过"+fmt.Sprintf("%d", model.MaxLocationLen)+"个字符")
+			common.Response(c, "居住地不能超过"+strconv.Itoa(model.MaxLocationLen)+"个字符")
 			return
 		}
 		if err := initialize.DB.Model(&user).Update("location", userReqData.Location).Error; err != nil {
@@ -537,7 +533,7 @@ func UpdateInfo(c *fasthttp.RequestCtx) {
 		userReqData.Introduce = strings.TrimSpace(userReqData.Introduce)
 		// 个人简介可以为空
 		if utf8.RuneCountInString(userReqData.Introduce) > model.MaxIntroduceLen {
-			common.Response(c, "个人简介不能超过"+fmt.Sprintf("%d", model.MaxIntroduceLen)+"个字符")
+			common.Response(c, "个人简介不能超过"+strconv.Itoa(model.MaxIntroduceLen)+"个字符")
 			return
 		}
 		if err := initialize.DB.Model(&user).Update("introduce", userReqData.Introduce).Error; err != nil {
@@ -589,17 +585,14 @@ func UpdatePassword(c *fasthttp.RequestCtx) {
 // PublicInfo 用户公开的信息
 func PublicInfo(c *fasthttp.RequestCtx) {
 
-	var userID int
-	var idErr error
+	var userID string
 
-	if userID, idErr = strconv.Atoi(string(c.QueryArgs().Peek("id"))); idErr != nil {
-		fmt.Println(idErr.Error())
+	if userID = utils.ToSting(c.QueryArgs().Peek("id")); userID != "" {
 		common.Response(c, "无效的ID")
 		return
 	}
 	var user model.User
 	if err := initialize.DB.First(&user, userID).Error; err != nil {
-		fmt.Println(err.Error())
 		common.Response(c, "无效的ID")
 		return
 	}
@@ -660,8 +653,11 @@ func InfoDetail(c *fasthttp.RequestCtx) {
 // AllList 查询用户列表，只有管理员才能调此接口
 func AllList(c *fasthttp.RequestCtx) {
 
-	role, _ := strconv.Atoi(string(c.QueryArgs().Peek("role")))
-	allUserRole := []int{
+	//char转uint8
+	role:= c.QueryArgs().Peek("role")
+	var roleI uint8
+	if role !=nil {roleI = role[0] - 48}
+	allUserRole := []uint8{
 		model.UserRoleNormal,
 		model.UserRoleEditor,
 		model.UserRoleAdmin,
@@ -670,7 +666,7 @@ func AllList(c *fasthttp.RequestCtx) {
 	}
 	foundRole := false
 	for _, r := range allUserRole {
-		if r == role {
+		if r == roleI {
 			foundRole = true
 			break
 		}
@@ -679,19 +675,19 @@ func AllList(c *fasthttp.RequestCtx) {
 	var startTime string
 	var endTime string
 
-	if startAt, err := strconv.Atoi(string(c.QueryArgs().Peek("startAt"))); err != nil {
+	if startAt, err := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("startAt"))); err != nil {
 		startTime = time.Unix(0, 0).Format("2006-01-02 15:04:05")
 	} else {
 		startTime = time.Unix(int64(startAt/1000), 0).Format("2006-01-02 15:04:05")
 	}
 
-	if endAt, err := strconv.Atoi(string(c.QueryArgs().Peek("endAt"))); err != nil {
+	if endAt, err := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("endAt"))); err != nil {
 		endTime = time.Now().Format("2006-01-02 15:04:05")
 	} else {
 		endTime = time.Unix(int64(endAt/1000), 0).Format("2006-01-02 15:04:05")
 	}
 
-	pageNo, pageNoErr := strconv.Atoi(string(c.QueryArgs().Peek("pageNo")))
+	pageNo, pageNoErr := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("pageNo")))
 	if pageNoErr != nil {
 		pageNo = 1
 	}
@@ -779,12 +775,11 @@ func Top100(c *fasthttp.RequestCtx) {
 	topN(c, 100)
 }
 
-/*// UploadAvatar 上传用户头像
+// UploadAvatar 上传用户头像
 func UploadAvatar(c *fasthttp.RequestCtx) {
 
 	data, err := upload.Upload(c)
 	if err != nil {
-		common.Response(c, e.ERROR, nil)
 		return
 	}
 
@@ -793,18 +788,16 @@ func UploadAvatar(c *fasthttp.RequestCtx) {
 	user := userInter.(User)
 
 	if err := initialize.DB.Model(&user).Update("avatar_url", avatarURL).Error; err != nil {
-		common.Response(c, e.ERROR, nil)
 		return
 	}
 	user.AvatarURL = avatarURL
 
 	if UserToRedis(user) != nil {
-		common.Response(c, "error")
 		return
 	}
 
-	common.Response(c, e.SUCCESS, data)
-}*/
+	common.Response(c, data)
+}
 
 // AddCareer 添加职业经历
 func AddCareer(c *fasthttp.RequestCtx) {
@@ -826,7 +819,7 @@ func AddCareer(c *fasthttp.RequestCtx) {
 	}
 
 	if utf8.RuneCountInString(career.Company) > model.MaxCareerCompanyLen {
-		common.Response(c, "公司或组织名称不能超过"+fmt.Sprintf("%d", model.MaxCareerCompanyLen)+"个字符")
+		common.Response(c, "公司或组织名称不能超过"+strconv.Itoa(model.MaxCareerCompanyLen)+"个字符")
 		return
 	}
 
@@ -836,7 +829,7 @@ func AddCareer(c *fasthttp.RequestCtx) {
 	}
 
 	if utf8.RuneCountInString(career.Title) > model.MaxCareerTitleLen {
-		common.Response(c, "职位不能超过"+fmt.Sprintf("%d", model.MaxCareerTitleLen)+"个字符")
+		common.Response(c, "职位不能超过"+strconv.Itoa( model.MaxCareerTitleLen)+"个字符")
 		return
 	}
 
@@ -872,7 +865,7 @@ func AddSchool(c *fasthttp.RequestCtx) {
 	}
 
 	if utf8.RuneCountInString(school.Name) > model.MaxSchoolNameLen {
-		common.Response(c, "学校或教育机构名不能超过"+fmt.Sprintf("%d", model.MaxSchoolNameLen)+"个字符")
+		common.Response(c, "学校或教育机构名不能超过"+strconv.Itoa(model.MaxSchoolNameLen)+"个字符")
 		return
 	}
 
@@ -882,7 +875,7 @@ func AddSchool(c *fasthttp.RequestCtx) {
 	}
 
 	if utf8.RuneCountInString(school.Speciality) > model.MaxSchoolSpecialityLen {
-		common.Response(c, "专业方向不能超过"+fmt.Sprintf("%d", model.MaxSchoolSpecialityLen)+"个字符")
+		common.Response(c, "专业方向不能超过"+strconv.Itoa(model.MaxSchoolSpecialityLen)+"个字符")
 		return
 	}
 
@@ -959,18 +952,18 @@ func CheckAuth(username, password string) (bool, error) {
 
 // UserFromRedis 从redis中取出用户信息
 func UserFromRedis(userID int) (User, error) {
-	loginUser := fmt.Sprintf("%s%d", model.LoginUser, userID)
+	loginUser := model.LoginUser+strconv.Itoa(userID)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	userBytes, err := redis.Bytes(RedisConn.Do("GET", loginUser))
+	userBytes, err := redis.String(RedisConn.Do("GET", loginUser))
 	if err != nil {
 		fmt.Println(err)
 		return User{}, errors.New("未登录")
 	}
 	var user User
-	bytesErr := json.Unmarshal(userBytes, &user)
+	bytesErr := jsons.UnmarshalFromString(userBytes, &user)
 	if bytesErr != nil {
 		fmt.Println(bytesErr)
 		return user, errors.New("未登录")
@@ -980,18 +973,16 @@ func UserFromRedis(userID int) (User, error) {
 
 // UserToRedis 将用户信息存到redis
 func UserToRedis(user User) error {
-	userBytes, err := json.Marshal(user)
+	UserString, err := jsons.MarshalToString(user)
 	if err != nil {
-		fmt.Println(err)
 		return errors.New("error")
 	}
-	loginUserKey := fmt.Sprintf("%s%d", model.LoginUser, user.ID)
+	loginUserKey :=  model.LoginUser+strconv.FormatUint((uint64)(user.ID),10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, redisErr := RedisConn.Do("SET", loginUserKey, userBytes, "EX", initialize.ServerSettings.TokenMaxAge); redisErr != nil {
-		fmt.Println("redis set failed: ", redisErr.Error())
+	if _, redisErr := RedisConn.Do("SET", loginUserKey, UserString, "EX", initialize.ServerSettings.TokenMaxAge); redisErr != nil {
 		return errors.New("error")
 	}
 	return nil
@@ -1019,8 +1010,8 @@ func salt(password string) string {
 
 // EncryptPassword 给密码加密
 func encryptPassword(password, salt string) (hash string) {
-	password = fmt.Sprintf("%x", md5.Sum([]byte(password)))
+	password = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(password)))
 	hash = salt + password + initialize.ServerSettings.PassSalt
-	hash = fmt.Sprintf("%x", md5.Sum([]byte(hash)))
+	hash = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(hash)))
 	return
 }

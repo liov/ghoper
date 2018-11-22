@@ -24,11 +24,15 @@ require (
 	github.com/gorilla/websocket v1.4.0
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
+	github.com/json-iterator/go v1.1.5
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.1
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
+	github.com/pquerna/ffjson v0.0.0-20181028064349-e517b90714f7
 	github.com/quasoft/memstore v0.0.0-20180925164028-84a050167438 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967
@@ -36,6 +40,8 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/sirupsen/logrus v1.2.0
+	github.com/tidwall/gjson v1.1.3 // indirect
+	github.com/tidwall/match v1.0.0 // indirect
 	github.com/ugorji/go/codec v0.0.0-20180927125128-99ea80c8b19a
 	github.com/valyala/fasthttp v1.0.0
 	golang.org/x/image v0.0.0-20180926015637-991ec62608f3 // indirect

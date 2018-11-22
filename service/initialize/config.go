@@ -16,7 +16,7 @@ type ServerConfig struct {
 	WriteTimeout time.Duration
 
 	PassSalt string
-	TokenMaxAge time.Duration
+	TokenMaxAge int
 	TokenSecret string
 	JwtSecret string
 	PageSize int
@@ -102,7 +102,6 @@ func Setup() {
 	ServerSettings.ImageMaxSize = ServerSettings.ImageMaxSize * 1024 * 1024
 	ServerSettings.ReadTimeout = ServerSettings.ReadTimeout * time.Second
 	ServerSettings.WriteTimeout = ServerSettings.ReadTimeout * time.Second
-	ServerSettings.TokenMaxAge = ServerSettings.TokenMaxAge *time.Second
 
 	err = Cfg.Section("database").MapTo(DatabaseSettings)
 	if err != nil {

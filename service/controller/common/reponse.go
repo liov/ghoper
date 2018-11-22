@@ -1,13 +1,15 @@
 package common
 
 import (
-	"encoding/json"
+	"github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
 	"service/controller/common/e"
 	"time"
 )
 
 type H map[string]interface{}
+
+var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func Response(c *fasthttp.RequestCtx, res ...interface{}) {
 
@@ -40,19 +42,19 @@ func Response(c *fasthttp.RequestCtx, res ...interface{}) {
 		data = res[0]
 	}
 
-	ress, _ := json.Marshal(H{
+	ress, _ := Json.MarshalToString(H{
 		"code": code,
 		"msg":  msg,
 		"data": data,
 	})
 
-	c.SetBody(ress)
+	c.SetBodyString(ress)
 	c.SetStatusCode(fasthttp.StatusOK)
 }
 
 func Res(c *fasthttp.RequestCtx, h H) {
-	res, _ := json.Marshal(h)
-	c.SetBody(res)
+	res, _ := Json.MarshalToString(h)
+	c.SetBodyString(res)
 	c.SetStatusCode(fasthttp.StatusOK)
 }
 

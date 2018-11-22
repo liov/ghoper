@@ -3,13 +3,14 @@ package router
 import (
 	"github.com/buaazp/fasthttprouter"
 	"service/controller"
+	"service/middleware"
 )
 
 func InitializeRouter() *fasthttprouter.Router {
 
 
 
-	//jwt := middleware.JWT
+	jwt := middleware.JWT
 	//getUser := middleware.GetUser
 
 
@@ -26,6 +27,7 @@ func InitializeRouter() *fasthttprouter.Router {
 	//r.Use(middleware.Cors())
 
 	r.GET("/",controller.Index)
+	r.GET("/a",jwt(controller.Index2))
 
 /*		//获取文章列表
 		r.GET("/api/article", controller.GetArticle)
