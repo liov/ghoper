@@ -15,21 +15,20 @@ func Index(c *fasthttp.RequestCtx) {
 			reqs = "是0"
 		}
 	}
-		ress, _ := jsons.MarshalToString(common.H{
-			"code": User{},
-			"msg":  reqs,
-			"data": "中文",
-		})
+	ress, _ := jsons.MarshalToString(common.H{
+		"code": User{},
+		"msg":  reqs,
+		"data": "中文",
+	})
 
-		c.SetBodyString(ress)
-		c.SetStatusCode(fasthttp.StatusOK)
+	c.SetBodyString(ress)
+	c.SetStatusCode(fasthttp.StatusOK)
 
 }
 
-func Index2(c *fasthttp.RequestCtx)  {
+func Index2(c *fasthttp.RequestCtx) {
 	user := c.UserValue("user")
 	ress, _ := jsons.MarshalToString(common.H{
-		"code": User{},
 		"msg":  "中文",
 		"data": user,
 	})

@@ -1,16 +1,14 @@
 <template>
 <div>
-{{Msg}}
+    {{msg.data.name}}
 </div>
 </template>
 <script>
   import axios from "axios"
     export default {
         async asyncData() {
-
-                let res = await axios.get(`/a`);
-
-                return {Msg: res.data.data}
+            let { data } = await axios.get(`/api/a`);
+            return {msg:data }
             }
         }
 </script>

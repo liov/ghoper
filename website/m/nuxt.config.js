@@ -1,6 +1,6 @@
-let bodyParser = require('body-parser')
-let session = require('express-session')
-module.exports={
+import bodyParser from 'body-parser'
+import session from 'express-session'
+export default {
     router: {
         base: '/'
     },

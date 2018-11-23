@@ -49,12 +49,11 @@ type User struct {
 func sendMail(action string, title string, curTime int64, user User) {
 	siteName := initialize.ServerSettings.SiteName
 	siteURL := "http://" + initialize.ServerSettings.Host
-	secretStr := strconv.Itoa((int)(curTime))+ user.Email+ user.PassWord
-	secretStr =fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
+	secretStr := strconv.Itoa((int)(curTime)) + user.Email + user.PassWord
+	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/%d/%s"
 
-	actionURL = actionURL+strconv.FormatUint((uint64)(user.ID),10)+ secretStr
-
+	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + secretStr
 
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
@@ -76,13 +75,13 @@ func sendMail(action string, title string, curTime int64, user User) {
 }
 func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 	var user User
-	args:=c.QueryArgs()
-	userID,err:= strconv.ParseUint(utils.ToSting(args.Peek("id")),10,0)
+	args := c.QueryArgs()
+	userID, err := strconv.ParseUint(utils.ToSting(args.Peek("id")), 10, 0)
 	if err != nil || userID <= 0 {
 		return user, errors.New("无效的链接")
 	}
-	secret :=args.Peek("secret")
-	if secret!=nil {
+	secret := args.Peek("secret")
+	if secret != nil {
 		return user, errors.New("无效的链接")
 	}
 	RedisConn := initialize.RedisPool.Get()
@@ -97,10 +96,9 @@ func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 		return user, errors.New("无效的链接")
 	}
 
-	secretStr := strconv.Itoa((int)(emailTime))+user.Email+user.PassWord
+	secretStr := strconv.Itoa((int)(emailTime)) + user.Email + user.PassWord
 
-	secretStr =fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
-
+	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 
 	if *(*string)(unsafe.Pointer(&secret)) != secretStr {
 		return user, errors.New("无效的链接")
@@ -118,8 +116,8 @@ func ActiveSendMail(c *fasthttp.RequestCtx) {
 
 	var reqData ReqData
 	// 只接收一个email参数
-	if err := common.BindWithJson(c,&reqData); err != nil {
-		common.Response(c,"参数无效",e.InvalidParams)
+	if err := common.BindWithJson(c, &reqData); err != nil {
+		common.Response(c, "参数无效", e.InvalidParams)
 		return
 	}
 
@@ -140,7 +138,7 @@ func ActiveSendMail(c *fasthttp.RequestCtx) {
 	}
 
 	curTime := time.Now().Unix()
-	activeUser :=  model.ActiveTime+strconv.FormatUint((uint64)(user.ID),10)
+	activeUser := model.ActiveTime + strconv.FormatUint((uint64)(user.ID), 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -152,7 +150,7 @@ func ActiveSendMail(c *fasthttp.RequestCtx) {
 		sendMail("/active", "账号激活", curTime, user)
 	}()
 
-	common.Res(c,common.H{"email": user.Email})
+	common.Res(c, common.H{"email": user.Email})
 
 }
 
@@ -183,10 +181,10 @@ func ActiveAccount(c *fasthttp.RequestCtx) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL",  model.ActiveTime+strconv.FormatUint((uint64)(user.ID),10)); err != nil {
+	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
-	common.Res(c,common.H{"email": user.Email, "data": "激活成功"})
+	common.Res(c, common.H{"email": user.Email, "data": "激活成功"})
 }
 
 // ResetPasswordMail 发送重置密码的邮件
@@ -197,7 +195,7 @@ func ResetPasswordMail(c *fasthttp.RequestCtx) {
 		LuosimaoRes string `json:"luosimaoRes"`
 	}
 	var userData UserReqData
-	if err := common.BindWithJson(c,&userData); err != nil {
+	if err := common.BindWithJson(c, &userData); err != nil {
 		common.Response(c, "无效的邮箱")
 		return
 	}
@@ -216,7 +214,7 @@ func ResetPasswordMail(c *fasthttp.RequestCtx) {
 	}
 
 	curTime := time.Now().Unix()
-	resetUser :=  model.ResetTime+strconv.FormatUint((uint64)(user.ID),10)
+	resetUser := model.ResetTime + strconv.FormatUint((uint64)(user.ID), 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -228,7 +226,7 @@ func ResetPasswordMail(c *fasthttp.RequestCtx) {
 		sendMail("/ac", "修改密码", curTime, user)
 	}()
 
-	common.Res(c,common.H{"data": "修改成功"})
+	common.Res(c, common.H{"data": "修改成功"})
 }
 
 // VerifyResetPasswordLink 验证重置密码的链接是否失效
@@ -239,7 +237,7 @@ func VerifyResetPasswordLink(c *fasthttp.RequestCtx) {
 		common.Response(c, "重置链接已失效")
 		return
 	}
-	common.Response(c,  "链接已发送")
+	common.Response(c, "链接已发送")
 }
 
 // ResetPassword 重置密码
@@ -250,7 +248,7 @@ func ResetPassword(c *fasthttp.RequestCtx) {
 	}
 	var userData UserReqData
 
-	if err := common.BindWithJson(c,&userData); err != nil {
+	if err := common.BindWithJson(c, &userData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -276,7 +274,7 @@ func ResetPassword(c *fasthttp.RequestCtx) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL",  model.ResetTime+strconv.FormatUint((uint64)(user.ID),10)); err != nil {
+	if _, err := RedisConn.Do("DEL", model.ResetTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
 }
@@ -296,7 +294,7 @@ func Signin(c *fasthttp.RequestCtx) {
 
 	var signinInput, password, luosimaoRes, sql string
 
-	if err := common.BindWithJson(c,&login); err != nil {
+	if err := common.BindWithJson(c, &login); err != nil {
 		common.Response(c, "账号或密码错误")
 		return
 	}
@@ -334,7 +332,7 @@ func Signin(c *fasthttp.RequestCtx) {
 	if checkPassword(password, user) {
 		if user.Status == model.UserStatusInActive {
 			encodedEmail := base64.StdEncoding.EncodeToString(utils.ToBytes(user.Email))
-			common.Res(c,common.H{"email": encodedEmail, "msg": "账号未激活,请进去邮箱点击激活"})
+			common.Res(c, common.H{"email": encodedEmail, "msg": "账号未激活,请进去邮箱点击激活"})
 			return
 		}
 
@@ -354,17 +352,15 @@ func Signin(c *fasthttp.RequestCtx) {
 
 		c.Response.Header.SetCookie(common.SetCookie("token", tokenString, time.Duration(initialize.ServerSettings.TokenMaxAge)*time.Second, "/", "hoper.xyz", false, true))
 
-
 		/*		session := sessions.Default(c)
 				session.Set("user", user)
 				session.Save()*/
 		//userBytes, err := json.Marshal(user)
 		//c.SetCookie("user", string(userBytes), initialize.ServerSettings.TokenMaxAge, "/", "hoper.xyz", false, true)
-		common.Res(c,common.H{
+		common.Res(c, common.H{
 			"token": tokenString,
-			"user":  user,
-			"data":  "登录成功",
-			"msg":   "ok",
+			"data":  user,
+			"msg":   "登录成功",
 		})
 
 		return
@@ -373,7 +369,7 @@ func Signin(c *fasthttp.RequestCtx) {
 }
 
 func SigninFlag(c *fasthttp.RequestCtx) {
-	user:= c.UserValue("user")
+	user := c.UserValue("user")
 
 	/*session := sessions.Default(c)
 	user:= session.Get("user")
@@ -397,12 +393,12 @@ func Signup(c *fasthttp.RequestCtx) {
 
 	var userData UserReqData
 	/*	if err := c.ShouldBindWith(&userData, binding.JSON); err != nil {
-			fmt.Println(err)
-			common.Response(c,"参数无效")
-			return
-		}*/
+		fmt.Println(err)
+		common.Response(c,"参数无效")
+		return
+	}*/
 
-	if err := common.BindWithJson(c,&userData); err != nil {
+	if err := common.BindWithJson(c, &userData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -442,7 +438,7 @@ func Signup(c *fasthttp.RequestCtx) {
 	}
 
 	curTime := nowTime.Unix()
-	activeUser := model.ActiveTime+strconv.FormatUint((uint64)(newUser.ID),10)
+	activeUser := model.ActiveTime + strconv.FormatUint((uint64)(newUser.ID), 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -454,20 +450,20 @@ func Signup(c *fasthttp.RequestCtx) {
 		sendMail("/active", "账号激活", curTime, newUser)
 	}()
 
-	common.Response(c, newUser,"注册成功")
+	common.Response(c, newUser, "注册成功")
 }
 
 // Signout 退出登录
 func Signout(c *fasthttp.RequestCtx) {
 	userInter := c.UserValue("user")
 	var user User
-	if userInter !=nil {
+	if userInter != nil {
 		user = userInter.(User)
 
 		RedisConn := initialize.RedisPool.Get()
 		defer RedisConn.Close()
 
-		if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID),10)); err != nil {
+		if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 		}
 	}
 	c.Response.Header.SetCookie(common.SetCookie("token", "del", -1, "/", "hoper.xyz", false, true))
@@ -478,11 +474,11 @@ func Signout(c *fasthttp.RequestCtx) {
 func UpdateInfo(c *fasthttp.RequestCtx) {
 
 	var userReqData model.User
-	if err := common.BindWithJson(c,&userReqData); err != nil {
+	if err := common.BindWithJson(c, &userReqData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
-	userInter:= c.UserValue("user")
+	userInter := c.UserValue("user")
 	user := userInter.(model.User)
 
 	field := utils.ToSting(c.QueryArgs().Peek("field"))
@@ -506,7 +502,7 @@ func UpdateInfo(c *fasthttp.RequestCtx) {
 		userReqData.Signature = strings.TrimSpace(userReqData.Signature)
 		// 个性签名可以为空
 		if utf8.RuneCountInString(userReqData.Signature) > model.MaxSignatureLen {
-			common.Response(c, "个性签名不能超过"+strconv.Itoa( model.MaxSignatureLen)+"个字符")
+			common.Response(c, "个性签名不能超过"+strconv.Itoa(model.MaxSignatureLen)+"个字符")
 			return
 		}
 		if err := initialize.DB.Model(&user).Update("signature", userReqData.Signature).Error; err != nil {
@@ -545,7 +541,7 @@ func UpdateInfo(c *fasthttp.RequestCtx) {
 		common.Response(c, "参数无效")
 		return
 	}
-	common.Response(c, common.H{"data": resData,})
+	common.Response(c, common.H{"data": resData})
 }
 
 // UpdatePassword 更新用户密码
@@ -556,7 +552,7 @@ func UpdatePassword(c *fasthttp.RequestCtx) {
 		NewPwd   string `json:"newPwd" binding:"required,min=6,max=20"`
 	}
 	var userData userReqData
-	if err := common.BindWithJson(c,&userData); err != nil {
+	if err := common.BindWithJson(c, &userData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -601,13 +597,13 @@ func PublicInfo(c *fasthttp.RequestCtx) {
 	} else {
 		user.CoverURL = "https://www.golang123.com/upload/img/2017/09/13/e672995e-7a39-4a05-9673-8802b1865c46.jpg"
 	}
-	common.Response(c, common.H{"user": user,})
+	common.Response(c, common.H{"user": user})
 }
 
 // SecretInfo 返回用户信息，包含一些私密字段
 func SecretInfo(c *fasthttp.RequestCtx) {
 	if user := c.UserValue("user"); user != nil {
-		common.Res(c,common.H{
+		common.Res(c, common.H{
 			"errNo": e.SUCCESS,
 			"msg":   "success",
 			"data": common.H{
@@ -620,7 +616,7 @@ func SecretInfo(c *fasthttp.RequestCtx) {
 // InfoDetail 返回用户详情信息(教育经历、职业经历等)，包含一些私密字段
 func InfoDetail(c *fasthttp.RequestCtx) {
 
-	userInter:= c.UserValue("user")
+	userInter := c.UserValue("user")
 	user := userInter.(model.User)
 
 	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
@@ -654,9 +650,11 @@ func InfoDetail(c *fasthttp.RequestCtx) {
 func AllList(c *fasthttp.RequestCtx) {
 
 	//char转uint8
-	role:= c.QueryArgs().Peek("role")
+	role := c.QueryArgs().Peek("role")
 	var roleI uint8
-	if role !=nil {roleI = role[0] - 48}
+	if role != nil {
+		roleI = role[0] - 48
+	}
 	allUserRole := []uint8{
 		model.UserRoleNormal,
 		model.UserRoleEditor,
@@ -784,7 +782,7 @@ func UploadAvatar(c *fasthttp.RequestCtx) {
 	}
 
 	avatarURL := data["url"].(string)
-	userInter:= c.UserValue("user")
+	userInter := c.UserValue("user")
 	user := userInter.(User)
 
 	if err := initialize.DB.Model(&user).Update("avatar_url", avatarURL).Error; err != nil {
@@ -803,7 +801,7 @@ func UploadAvatar(c *fasthttp.RequestCtx) {
 func AddCareer(c *fasthttp.RequestCtx) {
 
 	var career model.Career
-	if err := common.BindWithJson(c,&career); err != nil {
+	if err := common.BindWithJson(c, &career); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -829,11 +827,11 @@ func AddCareer(c *fasthttp.RequestCtx) {
 	}
 
 	if utf8.RuneCountInString(career.Title) > model.MaxCareerTitleLen {
-		common.Response(c, "职位不能超过"+strconv.Itoa( model.MaxCareerTitleLen)+"个字符")
+		common.Response(c, "职位不能超过"+strconv.Itoa(model.MaxCareerTitleLen)+"个字符")
 		return
 	}
 
-	userInter:= c.UserValue("user")
+	userInter := c.UserValue("user")
 	user := userInter.(model.User)
 	career.UserID = user.ID
 
@@ -842,14 +840,14 @@ func AddCareer(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	common.Response(c,career)
+	common.Response(c, career)
 }
 
 // AddSchool 添加教育经历
 func AddSchool(c *fasthttp.RequestCtx) {
 
 	var school model.School
-	if err := common.BindWithJson(c,&school); err != nil {
+	if err := common.BindWithJson(c, &school); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -888,7 +886,7 @@ func AddSchool(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	common.Response(c,school)
+	common.Response(c, school)
 }
 
 // DeleteCareer 删除职业经历
@@ -896,7 +894,7 @@ func DeleteCareer(c *fasthttp.RequestCtx) {
 
 	var id int
 	var idErr error
-	if id, idErr = strconv.Atoi(c.UserValue("id").(string)); idErr != nil {
+	if id, idErr = strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("id"))); idErr != nil {
 		common.Response(c, "无效的id")
 		return
 	}
@@ -911,7 +909,7 @@ func DeleteCareer(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	common.Response(c, common.H{"id": career.ID,})
+	common.Response(c, common.H{"id": career.ID})
 
 }
 
@@ -920,7 +918,7 @@ func DeleteSchool(c *fasthttp.RequestCtx) {
 
 	var id int
 	var idErr error
-	if id, idErr = strconv.Atoi(c.UserValue("id").(string)); idErr != nil {
+	if id, idErr = strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("id"))); idErr != nil {
 		common.Response(c, "无效的id")
 		return
 	}
@@ -934,7 +932,7 @@ func DeleteSchool(c *fasthttp.RequestCtx) {
 		common.Response(c, "error")
 		return
 	}
-	common.Response(c, common.H{"id": school.ID,})
+	common.Response(c, common.H{"id": school.ID})
 }
 func CheckAuth(username, password string) (bool, error) {
 	var auth model.Auth
@@ -952,7 +950,7 @@ func CheckAuth(username, password string) (bool, error) {
 
 // UserFromRedis 从redis中取出用户信息
 func UserFromRedis(userID int) (User, error) {
-	loginUser := model.LoginUser+strconv.Itoa(userID)
+	loginUser := model.LoginUser + strconv.Itoa(userID)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -977,7 +975,7 @@ func UserToRedis(user User) error {
 	if err != nil {
 		return errors.New("error")
 	}
-	loginUserKey :=  model.LoginUser+strconv.FormatUint((uint64)(user.ID),10)
+	loginUserKey := model.LoginUser + strconv.FormatUint((uint64)(user.ID), 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -989,11 +987,11 @@ func UserToRedis(user User) error {
 }
 
 /*	type RegisterUser struct {
-		Name        string     `gorm:"type:varchar(10);not null" json:"name"`
-		PassWord    string     `json:"password"`
-		Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
-		Phone       string     `gorm:"type:varchar(20)" json:"phone"`                    //手机号
-	} */
+	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
+	PassWord    string     `json:"password"`
+	Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
+	Phone       string     `gorm:"type:varchar(20)" json:"phone"`                    //手机号
+} */
 // CheckPassword 验证密码是否正确
 func checkPassword(password string, user User) bool {
 	if password == "" || user.PassWord == "" {

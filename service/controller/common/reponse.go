@@ -60,7 +60,10 @@ func Res(c *fasthttp.RequestCtx, h H) {
 
 func SetCookie(key, value string, maxAge time.Duration, path, domain string, secure, httpOnly bool) *fasthttp.Cookie {
 	cookie := fasthttp.AcquireCookie()
+	cookie.SetValue(value)
 	cookie.SetKey(key)
+	cookie.SetPath(path)
+	cookie.SetSecure(secure)
 	cookie.SetHTTPOnly(httpOnly)
 	cookie.SetDomain(domain)
 	cookie.SetExpire(time.Now().Add(maxAge))

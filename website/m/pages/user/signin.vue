@@ -35,12 +35,12 @@
                 axios.post(`/api/user/signin`,vm.user)
                     .then((res)=> { //
                         // success
-                        if (res.data.msg === 'ok'){
+                        if (res.data.msg === '登录成功'){
                             localStorage.setItem("token",res.data.token);
-                            vm.$store.commit("SET_USER", res.data.user);
+                            vm.$store.commit("SET_USER", res.data.data);
                             vm.$store.commit("SET_TOKEN", res.data.token);
-                            localStorage.setItem("user",res.data.user.id);
-                            //alert("登录成功");
+                            localStorage.setItem("user",res.data.data.id);
+                            alert("登录成功");
                             vm.$router.replace("/chat")
                         }else {
                             alert(res.data.msg)

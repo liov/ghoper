@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin/json"
 	"github.com/valyala/fasthttp"
 	"service/controller"
 	"service/controller/common"
@@ -17,7 +16,7 @@ func JWT(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(c *fasthttp.RequestCtx) {
 		code := e.SUCCESS
 		user, err := getUser(c)
-		if err != nil && err.Error() == "没有token"{
+		if err != nil && err.Error() == "没有token" {
 			code = e.InvalidParams
 		} else if err != nil && err.Error() == "未登录" {
 			code = e.ErrorAuthCheckTokenFail
@@ -27,10 +26,10 @@ func JWT(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 
 		if code != e.SUCCESS {
 			c.Error(fasthttp.StatusMessage(fasthttp.StatusUnauthorized), fasthttp.StatusUnauthorized)
-			res,_:= json.Marshal(map[string]interface{}{
+			res, _ := common.Json.MarshalToString(map[string]interface{}{
 				"code": code,
-				"data": e.GetMsg(code),})
-			c.SetBody(res)
+				"data": e.GetMsg(code)})
+			c.SetBodyString(res)
 			return
 		}
 		c.SetUserValue("user", user)
@@ -40,7 +39,7 @@ func JWT(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 
 func GetUser(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(c *fasthttp.RequestCtx) {
-		user,_ := getUser(c)
+		user, _ := getUser(c)
 		c.SetUserValue("user", user)
 		h(c)
 	}
@@ -49,10 +48,10 @@ func GetUser(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 func getUser(c *fasthttp.RequestCtx) (controller.User, error) {
 	var user controller.User
 	tokenString := c.Request.Header.Cookie("token")
-	if len(tokenString)==0 {
+	if len(tokenString) == 0 {
 		tokenString = c.Request.Header.Peek("Authorization")
 	}
-	if len(tokenString)==0 {
+	if len(tokenString) == 0 {
 		return user, errors.New("没有token")
 	}
 
@@ -96,7 +95,7 @@ func SigninRequired(c *fasthttp.RequestCtx) {
 	var user controller.User
 	var err error
 	if user, err = getUser(c); err != nil {
-		common.Response(c, "未登录", e.LoginTimeout,)
+		common.Response(c, "未登录", e.LoginTimeout)
 		return
 	}
 	c.SetUserValue("user", user)
@@ -108,13 +107,13 @@ func EditorRequired(c *fasthttp.RequestCtx) {
 	var user controller.User
 	var err error
 	if user, err = getUser(c); err != nil {
-		common.Response(c,  "未登录",e.LoginTimeout)
+		common.Response(c, "未登录", e.LoginTimeout)
 		return
 	}
 	if user.Role == model.UserRoleEditor || user.Role == model.UserRoleAdmin || user.Role == model.UserRoleCrawler || user.Role == model.UserRoleSuperAdmin {
 		c.SetUserValue("user", user)
 	} else {
-		common.Response(c,  "没有权限",1003)
+		common.Response(c, "没有权限", 1003)
 	}
 }
 
@@ -130,6 +129,6 @@ func AdminRequired(c *fasthttp.RequestCtx) {
 	if user.Role == model.UserRoleAdmin || user.Role == model.UserRoleCrawler || user.Role == model.UserRoleSuperAdmin {
 		c.SetUserValue("user", user)
 	} else {
-		common.Response(c,  "没有权限",1003)
+		common.Response(c, "没有权限", 1003)
 	}
 }

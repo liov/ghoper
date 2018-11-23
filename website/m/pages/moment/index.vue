@@ -67,7 +67,6 @@
                 pageSize:5,
             };
             let res = await axios.get(`/api/moment`,{params});
-            //console.log(res.data.data);
             return {oldMomentList: res.data.data}
         },
         created: function () {
