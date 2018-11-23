@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser'
-import session from 'express-session'
+
 export default {
     router: {
         base: '/'
@@ -27,18 +27,5 @@ export default {
         {src:'~plugins/filter/hoper_axios.js'},
         { src: '~plugins/iview.js', ssr: false }
     ],
-    serverMiddleware: [
-        // body-parser middleware
-        bodyParser.json(),
-        // session middleware
-        session({
-            secret: 'oihopBHIDUHFifGFEwehoa',
-            resave: false,
-            saveUninitialized: false,
-            cookie: { maxAge: 60000 }
-        }),
-        // Api middleware
-        // We add /api/login & /api/logout routes
-        '~/api'
-    ]
+
 };
