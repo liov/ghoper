@@ -51,10 +51,10 @@ func sendMail(action string, title string, curTime int64, user User) {
 	siteURL := "http://" + initialize.ServerSettings.Host
 	secretStr := strconv.Itoa((int)(curTime)) + user.Email + user.PassWord
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
-	actionURL := siteURL + "/user" + action + "/%d/%s"
+	actionURL := siteURL + "/user" + action + "/"
 
-	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + secretStr
-
+	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + "/" + secretStr
+	fmt.Println(actionURL)
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
 		"<a href=\"" + actionURL + "\">" + actionURL + "</a>" +
@@ -75,19 +75,19 @@ func sendMail(action string, title string, curTime int64, user User) {
 }
 func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 	var user User
-	args := c.QueryArgs()
-	userID, err := strconv.ParseUint(utils.ToSting(args.Peek("id")), 10, 0)
-	if err != nil || userID <= 0 {
+
+	userID, _ := strconv.Atoi(c.UserValue("id").(string))
+	if userID <= 0 {
 		return user, errors.New("无效的链接")
 	}
-	secret := args.Peek("secret")
-	if secret != nil {
+	secret := c.UserValue("secret")
+	if secret == nil {
 		return user, errors.New("无效的链接")
 	}
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+utils.ToSting(args.Peek("id"))))
+	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+c.UserValue("id").(string)))
 	if redisErr != nil {
 		return user, errors.New("无效的链接")
 	}
@@ -100,7 +100,7 @@ func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 
-	if *(*string)(unsafe.Pointer(&secret)) != secretStr {
+	if secret.(string) != secretStr {
 		return user, errors.New("无效的链接")
 	}
 	return user, nil
@@ -184,7 +184,7 @@ func ActiveAccount(c *fasthttp.RequestCtx) {
 	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
-	common.Res(c, common.H{"email": user.Email, "data": "激活成功"})
+	common.Res(c, common.H{"email": user.Email, "msg": "激活成功"})
 }
 
 // ResetPasswordMail 发送重置密码的邮件

@@ -1,5 +1,5 @@
 <template>
-    <div>哈哈哈</div>
+    <div></div>
 
 </template>
 
@@ -8,11 +8,12 @@
     export default {
 
         mounted(){
+            let vm =this;
             axios.get(`/api/user/active/${this.$route.params.id}/${this.$route.params.secret}`)
                 .then((res)=>{
-                    console.log(res.data.data);
                     //vm.$router.push({path: '/'});
-                    alert(res.data.data)
+                    alert(res.data.msg)
+                    vm.$router.push({path: '/user/sign'})
                 });
 
         }
