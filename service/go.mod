@@ -10,6 +10,8 @@ require (
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
+	github.com/fasthttp/router v0.2.0
+	github.com/fasthttp/websocket v1.4.0
 	github.com/gin-contrib/sessions v0.0.0-20180827025425-58cbcf30135c
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0

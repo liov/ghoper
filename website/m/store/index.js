@@ -63,7 +63,8 @@ export const actions = {
                     //axios.defaults.headers.common['Authorization'] = token;
                     axios.defaults.headers.common['Cookie'] = req.headers.cookie;
                     await axios.get(`/api/user/get`).then((res)=>{
-                        if (res.data.msg === 'ok'){
+                        //跟后端的初始化配合
+                        if (res.data.msg === '登录成功'){
                             user = res.data.data;
                             commit('SET_USER', user)
                         }

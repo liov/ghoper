@@ -378,7 +378,8 @@ func SigninFlag(c *fasthttp.RequestCtx) {
 	} else {
 		user = *user.(*User)
 	}*/
-	common.Response(c, user)
+	//跟前端的store初始化配合
+	common.Response(c, user, "登录成功")
 }
 
 // Signup 用户注册

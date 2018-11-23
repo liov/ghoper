@@ -24,7 +24,7 @@ export default {
     ],
     plugins: [
         {src:'~plugins/filter/vue.js',ssr: true},
-        {src:'~plugins/filter/axios.js'},
+        {src:'~plugins/filter/hoper_axios.js'},
         { src: '~plugins/iview.js', ssr: false }
     ],
     serverMiddleware: [

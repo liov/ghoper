@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/nsqio/go-nsq"
 	"github.com/valyala/fasthttp"
-	"service/utils/reflectinvoke"
 )
 
 var producer *nsq.Producer
@@ -18,7 +17,7 @@ func NsqpSend() {
 }
 */
 // 初始化生产者
-func init() {
+/*func init() {
 	var err error
 	producer, err = nsq.NewProducer(Addr4150, nsq.NewConfig())
 	if err != nil {
@@ -32,13 +31,13 @@ func init() {
 	reflectinvoker.RegisterMethod(bar)
 	NewConsumer("topic_json","jchan", handleJsonMessage)
 	NewConsumer("topic_string","schan", handleStringMessage)
-}
+}*/
 
 //发布消息
 func publish(topic string, message []byte) error {
 	var err error
 	if producer != nil {
-		if len(message)==0 { //不能发布空串，否则会导致error
+		if len(message) == 0 { //不能发布空串，否则会导致error
 			return nil
 		}
 		err = producer.Publish(topic, []byte(message)) // 发布消息
@@ -47,13 +46,13 @@ func publish(topic string, message []byte) error {
 	return fmt.Errorf("producer is nil", err)
 }
 
-func Start(c *fasthttp.RequestCtx)  {
+func Start(c *fasthttp.RequestCtx) {
 	stringType := c.QueryArgs().Peek("st")
 	if stringType[0] == byte('0') {
 		message := c.PostArgs().Peek("message")
-		publish("topic_string",message)
+		publish("topic_string", message)
 	} else {
 		message := c.Request.Body()
-		publish("topic_json",message)
+		publish("topic_json", message)
 	}
 }

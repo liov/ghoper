@@ -125,7 +125,7 @@ func GetMoments(c *fasthttp.RequestCtx) {
 	setRedisMoments(topKey, normalKey, moments)
 
 	if moments := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
-		common.Response(c, e.SUCCESS, *moments)
+		common.Response(c, *moments)
 		return
 	}
 }
