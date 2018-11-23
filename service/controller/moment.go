@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
@@ -61,7 +60,7 @@ func GetMoments(c *fasthttp.RequestCtx) {
 				logging.Info(err)
 			} else {
 				json.Unmarshal(data, &moments)
-				common.Response(c,e.SUCCESS, moments)
+				common.Response(c, moments)
 				return
 			}
 		}*/
@@ -142,14 +141,14 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) *M
 	}
 
 	if pageNo == 0 {
-		topData, _ := redis.Values(conn.Do("LRANGE", topKey, 0, -1))
+		topData, _ := redis.Strings(conn.Do("LRANGE", topKey, 0, -1))
 		for mi, mv := range topData {
 			if mv != "" {
 				var moment Moment
-				json.Unmarshal(mv.([]byte), &moment)
+				jsons.UnmarshalFromString(mv, &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				moments.TopMoments = append(moments.TopMoments, moment)
-				data, _ := json.Marshal(&moment)
+				data, _ := jsons.MarshalToString(&moment)
 				conn.Do("LSET", topKey, mi, data)
 			} else {
 				moments.TopMoments = append(moments.TopMoments, Moment{})
@@ -167,14 +166,14 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) *M
 		topNum = 0
 	}
 
-	data, _ := redis.Values(conn.Do("LRANGE", normalKey, start, start+model.PageSize-topNum-1))
+	data, _ := redis.Strings(conn.Do("LRANGE", normalKey, start, start+model.PageSize-topNum-1))
 	for mi, mv := range data {
 		if mv != "" {
 			var moment Moment
-			json.Unmarshal(mv.([]byte), &moment)
+			jsons.UnmarshalFromString(mv, &moment)
 			moment.BrowseCount = moment.BrowseCount + 1
 			moments.NormalMoments = append(moments.NormalMoments, moment)
-			data, _ := json.Marshal(&moment)
+			data, _ := jsons.MarshalToString(&moment)
 			conn.Do("LSET", normalKey, mi+start, data)
 		} else {
 			moments.NormalMoments = append(moments.NormalMoments, Moment{})
@@ -196,7 +195,7 @@ func setRedisMoments(topKey string, normalKey string, moments Moments) error {
 		for _, mv := range moments.TopMoments {
 			mv.BrowseCount = mv.BrowseCount + 1
 			//mv.Index = mi
-			value, _ := json.Marshal(mv)
+			value, _ := jsons.MarshalToString(mv)
 			_, err := conn.Do("RPUSH", topKey, value)
 			if err != nil {
 				return err
@@ -207,7 +206,7 @@ func setRedisMoments(topKey string, normalKey string, moments Moments) error {
 	for _, mv := range moments.NormalMoments {
 		mv.BrowseCount = mv.BrowseCount + 1
 		//mv.Index = mi
-		value, _ := json.Marshal(mv)
+		value, _ := jsons.MarshalToString(mv)
 		_, err := conn.Do("RPUSH", normalKey, value)
 		if err != nil {
 			return err
@@ -229,9 +228,9 @@ func GetMoment(c *fasthttp.RequestCtx) {
 
 	if moment := getRedisMoment(top, index); moment != nil {
 		if moment.UserID == user.ID {
-			common.Response(c, e.SUCCESS, *moment, "belong")
+			common.Response(c, *moment, "belong")
 		} else {
-			common.Response(c, e.SUCCESS, *moment)
+			common.Response(c, *moment)
 		}
 
 		return
@@ -246,7 +245,7 @@ func GetMoment(c *fasthttp.RequestCtx) {
 				json.Unmarshal(data, &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				gredis.Set(key, moment, 60)
-				common.Response(c,e.SUCCESS, moment)
+				common.Response(c moment)
 				return
 			}
 		}*/
@@ -263,7 +262,7 @@ func GetMoment(c *fasthttp.RequestCtx) {
 	}
 	moment.BrowseCount = moment.BrowseCount + 1
 
-	common.Response(c, e.SUCCESS, moment)
+	common.Response(c, moment)
 
 	saveErr := initialize.DB.Save(&moment).Error
 
@@ -288,9 +287,9 @@ func getRedisMoment(top string, index string) *Moment {
 			}
 			if data != "" {
 				var moment Moment
-				json.Unmarshal(data.([]byte), &moment)
+				jsons.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
-				data, err = json.Marshal(moment)
+				data, err = jsons.MarshalToString(moment)
 				_, err = conn.Do("LSET", gredis.TopMoments, index, data)
 				if err != nil {
 					logging.Error(err)
@@ -308,9 +307,9 @@ func getRedisMoment(top string, index string) *Moment {
 			}
 			if data != "" {
 				var moment Moment
-				json.Unmarshal(data.([]byte), &moment)
+				jsons.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
-				data, err = json.Marshal(moment)
+				data, err = jsons.MarshalToString(moment)
 				_, err = conn.Do("LSET", gredis.Moments, index, data)
 				if err != nil {
 					logging.Error(err)
@@ -428,7 +427,7 @@ func AddMoment(c *fasthttp.RequestCtx) {
 			}
 		}*/
 
-	value, _ := json.Marshal(moment)
+	value, _ := jsons.MarshalToString(moment)
 	_, err := conn.Do("LPUSH", gredis.Moments, value)
 	if err != nil {
 		return
@@ -601,7 +600,7 @@ func EditMoment(c *fasthttp.RequestCtx) {
 
 	if top != nil && top[0] == byte('0') {
 		if gredis.Exists(gredis.TopMoments) {
-			data, err := json.Marshal(redisMoment)
+			data, err := jsons.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.TopMoments, index, data)
 			if err != nil {
 				logging.Error(err)
@@ -609,7 +608,7 @@ func EditMoment(c *fasthttp.RequestCtx) {
 		}
 	} else {
 		if gredis.Exists(gredis.Moments) {
-			data, err := json.Marshal(redisMoment)
+			data, err := jsons.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.Moments, index, data)
 			if err != nil {
 				logging.Error(err)
@@ -617,7 +616,7 @@ func EditMoment(c *fasthttp.RequestCtx) {
 		}
 	}
 
-	common.Response(c, e.SUCCESS, "修改成功")
+	common.Response(c, "修改成功")
 }
 
 func DeleteMoment(c *fasthttp.RequestCtx) {
@@ -651,6 +650,6 @@ func DeleteMoment(c *fasthttp.RequestCtx) {
 			}
 		}
 	}
-	common.Response(c, e.SUCCESS, "删除成功")
+	common.Response(c, "删除成功")
 
 }
