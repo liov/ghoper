@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/fasthttp/websocket"
 	"github.com/gomodule/redigo/redis"
-	"github.com/satori/go.uuid"
 	"github.com/valyala/fasthttp"
 	"io/ioutil"
 	"log"
