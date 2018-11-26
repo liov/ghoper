@@ -7,12 +7,11 @@ import (
 	"github.com/satori/go.uuid"
 	"github.com/valyala/fasthttp"
 	"io/ioutil"
-	"log"
+	"net/http"
 	"os"
 	"service/controller"
 	"service/controller/common"
 	"service/initialize"
-	"service/utils"
 	"strings"
 	"time"
 )
@@ -118,9 +117,6 @@ func (c *Client) read() {
 		manager.unregister <- c
 		c.conn.Close()
 	}()
-	c.conn.SetReadLimit(512)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
 	for {
 		_, msg, err := c.conn.ReadMessage()
@@ -130,7 +126,7 @@ func (c *Client) read() {
 			break
 		}
 		var receiveMessage ReceiveMessage
-		json.Unmarshal([]byte(msg), &receiveMessage)
+		common.Json.Unmarshal(msg, &receiveMessage)
 		receiveMessage.CreatedAt = time.Now()
 		sendUser, _ := controller.UserFromRedis(int(receiveMessage.SenderUserID))
 		sendMessage := SendMessage{
@@ -149,65 +145,44 @@ func (c *Client) read() {
 }
 
 func (c *Client) write() {
-	ticker := time.NewTicker(pingPeriod)
 	defer func() {
-		ticker.Stop()
 		c.conn.Close()
 	}()
 	for {
 		select {
 		case message, ok := <-c.send:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
-				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
 
-			w, err := c.conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				return
-			}
-			w.Write(message)
-
-			// Add queued chat messages to the current websocket message.
-			n := len(c.send)
-			for i := 0; i < n; i++ {
-				w.Write([]byte{'\n'})
-				w.Write(<-c.send)
-			}
-
-			if err := w.Close(); err != nil {
-				return
-			}
-		case <-ticker.C:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				return
-			}
+			c.conn.WriteMessage(websocket.TextMessage, message)
 		}
 	}
 }
 
-func Chat(c *fasthttp.RequestCtx) {
-	err := upgrader.Upgrade(c, func(conn *websocket.Conn) {
-		var dviceName string
-		if strings.Contains(utils.ToSting(c.Request.Header.UserAgent()), "iPhone") {
-			dviceName = "iPhone"
-		} else if strings.Contains(utils.ToSting(c.Request.Header.UserAgent()), "Android") {
-			dviceName = "Android"
-		} else {
-			dviceName = "PC"
-		}
-		client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), device: dviceName}
-		manager.register <- client
-
-		go client.write()
-		client.read()
-	})
-	if err != nil {
-		log.Println(err)
+func Chat(w http.ResponseWriter, r *http.Request) {
+	conn, error := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(w, r, nil)
+	if error != nil {
+		http.NotFound(w, r)
+		return
 	}
+
+	var dviceName string
+	if strings.Contains(r.Header.Get("User-Agent"), "iPhone") {
+		dviceName = "iPhone"
+	} else if strings.Contains(r.Header.Get("User-Agent"), "Android") {
+		dviceName = "Android"
+	} else {
+		dviceName = "PC"
+	}
+
+	client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), device: dviceName}
+
+	manager.register <- client
+
+	go client.read()
+	go client.write()
 }
 
 const (

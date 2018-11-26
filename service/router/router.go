@@ -58,8 +58,6 @@ func InitializeRouter() *router.Router {
 
 	//r.GET("/api/push",controller.Push)
 
-	r.GET("/api/chat/ws", hwebsocket.Chat)
-	r.GET("/api/chat/ws/:id", hwebsocket.Chat)
 	r.GET("/api/chat/getChat", hwebsocket.GetChat)
 
 	r.POST("/api/nsq", hnsq.Start)
