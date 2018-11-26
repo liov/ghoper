@@ -28,7 +28,7 @@
 <script>
     import axios from 'axios'
     export default {
-        name:"momentAdd",
+        middleware: 'auth',
         data() {
             return {
                 moment:{

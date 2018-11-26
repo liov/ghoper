@@ -14,7 +14,8 @@ var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 func TestUpload(t *testing.T) {
 	a := "你好达芬奇无群dqdwqdqwالسلام عليكمこんにちはनमस्तेשָׁלוֹםЗдравствуйтеOláola"
 	b := ToBytes(a)
-	c := ToSting(b)
+	c := []byte(a)
+	fmt.Println(b)
 	fmt.Println(c)
 }
 
