@@ -4,6 +4,7 @@
         <a class="index" href="javascript:;" @click="signout">
             注销
         </a>
+        <a href="/tpl/index">模板首页</a>
         <nuxt-link class="chat" to="/chat">点这个来聊天啊</nuxt-link>
     </div>
 </template>

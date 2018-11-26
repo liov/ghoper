@@ -1,0 +1,29 @@
+{% import "github.com/valyala/fasthttp" %}
+
+{% code
+type IndexPage struct {
+	CTX *fasthttp.RequestCtx
+}
+%}
+
+
+{% func (p *IndexPage) Title() %}
+	This is the index page
+{% endfunc %}
+
+
+{% func (p *IndexPage) Body() %}
+	<h1>Index page</h1>
+	<div>
+		Click links below:
+		<ul>
+			<li><a href="/moment">瞬间</a></li>
+			<li><a href="/chat">聊天</a></li>
+		</ul>
+	</div>
+	<div>
+		Some info about you:<br/>
+		IP: <b>{%s p.CTX.RemoteIP().String() %}</b><br/>
+		User-Agent: <b>{%z p.CTX.UserAgent() %}</b><br/>
+	</div>
+{% endfunc %}

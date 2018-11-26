@@ -1,11 +1,14 @@
 package router
 
+//go:generate qtc -dir=../template
 import (
 	"github.com/fasthttp/router"
+	"github.com/valyala/fasthttp"
 	"service/controller"
 	"service/controller/hnsq"
 	"service/controller/hwebsocket"
 	"service/middleware"
+	"service/template"
 )
 
 func InitializeRouter() *router.Router {
@@ -62,5 +65,12 @@ func InitializeRouter() *router.Router {
 
 	r.POST("/api/nsq", hnsq.Start)
 
+	r.GET("/tpl/index", func(ctx *fasthttp.RequestCtx) {
+		ctx.SetContentType("text/html; charset=utf-8")
+		p := &template.IndexPage{
+			CTX: ctx,
+		}
+		template.WritePageTemplate(ctx, p)
+	})
 	return r
 }

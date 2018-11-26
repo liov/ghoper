@@ -46,6 +46,7 @@ require (
 	github.com/tidwall/match v1.0.0 // indirect
 	github.com/ugorji/go/codec v0.0.0-20180927125128-99ea80c8b19a
 	github.com/valyala/fasthttp v1.0.0
+	github.com/valyala/quicktemplate v1.0.0
 	golang.org/x/image v0.0.0-20180926015637-991ec62608f3 // indirect
 	golang.org/x/net v0.0.0-20180926154720-4dfa2610cdf3 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
