@@ -10,6 +10,7 @@ import (
 	"service/controller/common/e"
 	"service/initialize"
 	"service/model"
+	"service/utils"
 )
 
 func JWT(h fasthttp.RequestHandler) fasthttp.RequestHandler {
@@ -55,7 +56,7 @@ func getUser(c *fasthttp.RequestCtx) (controller.User, error) {
 		return user, errors.New("没有token")
 	}
 
-	token, tokenErr := jwt.Parse(string(tokenString), func(token *jwt.Token) (interface{}, error) {
+	token, tokenErr := jwt.Parse(utils.ToSting(tokenString), func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}

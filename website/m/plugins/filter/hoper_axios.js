@@ -6,10 +6,10 @@ axios.interceptors.request.use(
             let token;
         if (typeof window !== 'undefined'){
              token = localStorage.getItem("token");
-
             config.baseURL = "http://"+window.location.host
         }else {
             token = context.store.state.token;
+            config.headers.XRealIP = context.req.host;
             if(!token){
                 token = cookie.getCookie("token",context.req);
             }

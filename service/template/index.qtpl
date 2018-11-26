@@ -1,4 +1,5 @@
 {% import "github.com/valyala/fasthttp" %}
+{% import "service/utils" %}
 
 {% code
 type IndexPage struct {
@@ -23,7 +24,7 @@ type IndexPage struct {
 	</div>
 	<div>
 		Some info about you:<br/>
-		IP: <b>{%s p.CTX.RemoteIP().String() %}</b><br/>
+		IP: <b>{%s utils.ToSting(p.CTX.Request.Header.Peek("X-Real-IP")) %}</b><br/>
 		User-Agent: <b>{%z p.CTX.UserAgent() %}</b><br/>
 	</div>
 {% endfunc %}
