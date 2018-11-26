@@ -59,9 +59,9 @@
             let div = document.querySelector('.chat');
             div.scrollIntoView(false);
         },
-        beforeDestroy(){
+ /*       beforeDestroy(){
             vm.ws.close()
-        },
+        },*/
         methods: {
             newWs:function(){
                 //不能放在created里
