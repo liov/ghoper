@@ -3,15 +3,19 @@ package router
 //go:generate qtc -dir=../template
 import (
 	"github.com/fasthttp/router"
+	"github.com/gin-gonic/gin"
 	"github.com/valyala/fasthttp"
+	"io"
 	"service/controller"
+	"service/controller/common/logging"
 	"service/controller/hnsq"
 	"service/controller/hwebsocket"
+	"service/initialize"
 	"service/middleware"
 	"service/template"
 )
 
-func InitializeRouter() *router.Router {
+func FastRouter() *router.Router {
 
 	jwt := middleware.JWT
 	getUser := middleware.GetUser
@@ -72,5 +76,25 @@ func InitializeRouter() *router.Router {
 		}
 		template.WritePageTemplate(ctx, p)
 	})
+	return r
+}
+
+func HttpRouter() *gin.Engine {
+	logFile := logging.GetIOWrite()
+
+	gin.DefaultWriter = io.MultiWriter(logFile)
+
+	r := gin.New()
+
+	r.Use(gin.Logger())
+
+	r.Use(gin.Recovery())
+
+	r.LoadHTMLGlob("../website/m/dist/*")
+
+	gin.SetMode(initialize.ServerSettings.RunMode)
+
+	r.GET("/api/chat/ws", hwebsocket.Chat)
+
 	return r
 }

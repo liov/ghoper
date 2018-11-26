@@ -3,6 +3,7 @@ package hwebsocket
 import (
 	"encoding/json"
 	"github.com/fasthttp/websocket"
+	"github.com/gin-gonic/gin"
 	"github.com/gomodule/redigo/redis"
 	"github.com/satori/go.uuid"
 	"github.com/valyala/fasthttp"
@@ -161,17 +162,17 @@ func (c *Client) write() {
 	}
 }
 
-func Chat(w http.ResponseWriter, r *http.Request) {
-	conn, error := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(w, r, nil)
+func Chat(c *gin.Context) {
+	conn, error := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(c.Writer, c.Request, nil)
 	if error != nil {
-		http.NotFound(w, r)
+		http.NotFound(c.Writer, c.Request)
 		return
 	}
 
 	var dviceName string
-	if strings.Contains(r.Header.Get("User-Agent"), "iPhone") {
+	if strings.Contains(c.Request.Header.Get("User-Agent"), "iPhone") {
 		dviceName = "iPhone"
-	} else if strings.Contains(r.Header.Get("User-Agent"), "Android") {
+	} else if strings.Contains(c.Request.Header.Get("User-Agent"), "Android") {
 		dviceName = "Android"
 	} else {
 		dviceName = "PC"

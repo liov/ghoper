@@ -20,7 +20,7 @@ func main() {
 
 	go hwebsocket.Start()
 
-	router := router.InitializeRouter()
+	fastRouter := router.FastRouter()
 
 	/*	s := &http.Server{
 			Addr:           fmt.Sprintf(":%d", initialize.ServerSettings.HttpPort),
@@ -39,7 +39,7 @@ func main() {
 
 	s := &fasthttp.Server{
 		Concurrency:  100,
-		Handler:      router.Handler,
+		Handler:      fastRouter.Handler,
 		ReadTimeout:  initialize.ServerSettings.ReadTimeout,
 		WriteTimeout: initialize.ServerSettings.WriteTimeout,
 		LogAllErrors: true,
@@ -50,13 +50,19 @@ func main() {
 			log.Printf("Listen: %s\n", err)
 		}
 	}()
-	//log.Fatal(fasthttp.ListenAndServe(":8080", router.Handler))
-	mux := http.NewServeMux()
-	mux.Handle("/api/chat/ws", http.HandlerFunc(hwebsocket.Chat))
-	ws := &http.Server{Addr: ":8080", Handler: mux}
+
+	httpRouter := router.HttpRouter()
+
+	ws := &http.Server{
+		Addr:           ":8080",
+		Handler:        httpRouter,
+		ReadTimeout:    initialize.ServerSettings.ReadTimeout,
+		WriteTimeout:   initialize.ServerSettings.WriteTimeout,
+		MaxHeaderBytes: 1 << 20,
+	}
 
 	go func() {
-		if err := ws.ListenAndServe(); err != nil {
+		if err := ws.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Printf("Listen: %s\n", err)
 		}
 	}()
