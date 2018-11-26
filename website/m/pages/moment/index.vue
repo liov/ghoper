@@ -137,6 +137,7 @@
             previous:function () {
                 if(this.firstFlag){
                     alert("已经是首页")
+                    return
                 }
                 this.lastFlag = false
                 if (this.pageNo>0){
