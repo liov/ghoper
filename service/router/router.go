@@ -82,6 +82,8 @@ func FastRouter() *router.Router {
 func HttpRouter() *gin.Engine {
 	logFile := logging.GetIOWrite()
 
+	gin.SetMode(initialize.ServerSettings.RunMode)
+
 	gin.DefaultWriter = io.MultiWriter(logFile)
 
 	r := gin.New()
@@ -91,8 +93,6 @@ func HttpRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 
 	r.LoadHTMLGlob("../website/m/dist/*")
-
-	gin.SetMode(initialize.ServerSettings.RunMode)
 
 	r.GET("/api/chat/ws", hwebsocket.Chat)
 
