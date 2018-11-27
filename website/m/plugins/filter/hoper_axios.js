@@ -9,18 +9,18 @@ axios.interceptors.request.use(
             config.baseURL = "http://"+window.location.host
         }else {
             token = context.store.state.token;
-            config.headers.XRealIP = context.req.host;
             if(!token){
                 token = cookie.getCookie("token",context.req);
             }
             //config.baseURL = "http://"+context.req.host
             //坑，用nginx转发，目前只能写死，或者在ng上改？
-            config.baseURL = "http://hoper.xyz"
+            config.baseURL = "http://hoper.xyz";
         }
 
         if (token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             config.headers.Authorization = token;
         }
+
         return config;
     },
     err => {
