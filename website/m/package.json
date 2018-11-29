@@ -8,6 +8,7 @@
   "dependencies": {
     "@nuxtjs/auth": "latest",
     "@nuxtjs/axios": "latest",
+    "amfe-flexible": "^2.2.1",
     "axios": "latest",
     "body-parser": "^1.18.3",
     "cookieparser": "^0.1.0",
@@ -16,12 +17,15 @@
     "nuxt": "latest",
     "sass-loader": "^7.1.0",
     "save": "^2.3.2",
+    "vant": "^1.4.7",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "babel-plugin-import": "^1.11.0",
     "babel-preset-env": "^1.7.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
+    "postcss-pxtorem": "^4.0.1",
     "style-loader": "^0.23.0",
     "stylus-loader": "^3.0.2"
   }

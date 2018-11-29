@@ -5,20 +5,44 @@ import (
 	"fmt"
 	"github.com/json-iterator/go"
 	"reflect"
+	"strconv"
+	"strings"
 	"testing"
+	"time"
 	"unsafe"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func TestUpload(t *testing.T) {
-	a := "你好达芬奇无群dqdwqdqwالسلام عليكمこんにちはनमस्तेשָׁלוֹםЗдравствуйтеOláola"
-	b := ToBytes(a)
-	c := []byte(a)
-	fmt.Println(b)
-	fmt.Println(c)
+	t1 := time.Now()
+	for i := 0; i <= 10000; i++ {
+		aaa(float64(i))
+	}
+	t2 := time.Now()
+	fmt.Println("go time" + t2.Sub(t1).String())
 }
 
+func aaa(i float64) {
+	a := i + 1
+	b := 2.3
+	s := "abcdefkkbghisdfdfdsfds"
+	if a > b {
+		a++
+	} else {
+		b += 1
+	}
+
+	if a == b {
+		b += 1
+	}
+
+	c := a*b + a/b - a*a
+
+	var d = s[0:strings.Index(s, "kkb")] + strconv.FormatFloat(c, 'E', -1, 64)
+	fmt.Println(d)
+
+}
 func StringBytes(s string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&s))
 }

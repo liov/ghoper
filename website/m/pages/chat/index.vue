@@ -108,12 +108,12 @@
         position: fixed;
         top: .2rem;
         left: .2rem;
-        width: 8rem;
-        height: 11rem;
+        width: 10rem;
+        height: 13rem;
         overflow: auto;
     }
     .row{
-        width: 7rem;
+        width: 9rem;
         height: 1rem;
         font-size: .3rem;
         background-color: aliceblue;

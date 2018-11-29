@@ -6,13 +6,26 @@
         </a>
         <a href="/tpl/index">模板首页</a>
         <nuxt-link class="chat" to="/chat">点这个来聊天啊</nuxt-link>
+        <lio-hint ref="lioHint"></lio-hint>
+        <div class="van-hairline--top"></div>
+        <van-cell
+                is-link
+                title="Fade"
+                @click="hint('登录成功')"
+        />
     </div>
 </template>
 
 <script>
     import { delCookie } from "../plugins/utils/cookie"
     import axios from 'axios'
+    import hint from "./common/hint";
     export default {
+        data(){
+            return {
+
+            }
+        },
         methods:{
             signout:function () {
                 let vm =this;
@@ -24,7 +37,9 @@
                         vm.$store.commit("SET_USER", null);
                         alert("注销成功")
                     });
-
+            },
+            hint:function (msg) {
+                this.$refs.lioHint.animate(msg)
             }
         }
     }
@@ -46,4 +61,5 @@
         font-size: .6rem;
         color: cadetblue;
     }
+
 </style>

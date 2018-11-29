@@ -5,7 +5,14 @@ export default {
         base: '/'
     },
     build: {
-        vendor: ['axios'],
+        vendor: ['axios','~plugins/filter/hoper_axios.js','vant'],
+        'autoprefixer': {
+            browsers: ['Android >= 4.0', 'iOS >= 7']
+        },
+        'postcss-pxtorem': {
+            rootValue: 37.5,
+            propList: ['*']
+        }
 /*        babel: {
             presets: ['es2015', 'stage-0']
         }*/
@@ -23,9 +30,9 @@ export default {
         { src: '~assets/common.scss', lang: 'scss' },
     ],
     plugins: [
-        {src:'~plugins/filter/vue.js',ssr: true},
+        {src:'~plugins/filter/hoper_vue.js'},
         {src:'~plugins/filter/hoper_axios.js'},
-        { src: '~plugins/iview.js', ssr: false }
+        {src: '~plugins/iview.js', ssr: false },
     ],
 
 };

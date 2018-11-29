@@ -29,7 +29,6 @@ func FastRouter() *router.Router {
 	//r.Use(middleware.Cors())
 
 	r.GET("/", controller.Index)
-	r.GET("/api/a", jwt(controller.Index2))
 
 	//获取文章列表
 	r.GET("/api/article", controller.GetArticle)

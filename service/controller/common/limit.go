@@ -6,14 +6,13 @@ import (
 	"service/initialize"
 )
 
-func Limit(minuteLimit string,minuteLimitCount int64,dayLimit string,dayLimitCount int64,userID uint)  string{
+func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimitCount int64, userID uint) string {
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	minuteKey := minuteLimit + fmt.Sprintf("%d",userID)
+	minuteKey := minuteLimit + fmt.Sprintf("%d", userID)
 	minuteCount, minuteErr := redis.Int64(RedisConn.Do("GET", minuteKey))
-
 
 	if minuteErr == nil && minuteCount >= minuteLimitCount {
 		return "您的操作过于频繁，请先休息一会儿。"
