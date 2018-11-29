@@ -5,7 +5,7 @@ export default {
         base: '/'
     },
     build: {
-        vendor: ['axios','~plugins/filter/hoper_axios.js','vant','mint-ui'],
+        vendor: ['axios','~plugins/filter/hoper_axios.js','vant','mint-ui','iview'],
         'autoprefixer': {
             browsers: ['Android >= 4.0', 'iOS >= 7']
         },
@@ -32,7 +32,6 @@ export default {
     plugins: [
         {src:'~plugins/filter/hoper_vue.js'},
         {src:'~plugins/filter/hoper_axios.js'},
-        {src: '~plugins/iview.js', ssr: false },
     ],
 
 };

@@ -114,14 +114,15 @@
     }
     .row{
         width: 9rem;
-        height: 1rem;
+        height: 1.2rem;
         font-size: .3rem;
         background-color: aliceblue;
         color: #000;
         line-height: .8rem;
         padding-left: .5rem;
+        margin-top: .2rem;
         p{
-            height: .1rem;
+            height: .6rem;
             width: 6.6rem;
         }
         .name{

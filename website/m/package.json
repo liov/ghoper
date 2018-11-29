@@ -26,8 +26,6 @@
     "babel-preset-env": "^1.7.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
-    "postcss-pxtorem": "^4.0.1",
-    "style-loader": "^0.23.1",
-    "stylus-loader": "^3.0.2"
+    "postcss-pxtorem": "^4.0.1"
   }
 }
