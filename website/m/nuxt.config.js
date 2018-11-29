@@ -5,7 +5,7 @@ export default {
         base: '/'
     },
     build: {
-        vendor: ['axios','~plugins/filter/hoper_axios.js','vant'],
+        vendor: ['axios','~plugins/filter/hoper_axios.js','vant','mint-ui'],
         'autoprefixer': {
             browsers: ['Android >= 4.0', 'iOS >= 7']
         },

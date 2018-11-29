@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vant from 'vant'
 import 'vant/lib/index.css';
-
+import Mint from 'mint-ui';
+import 'mint-ui/lib/style.css';
 
 Vue.filter('dateFormat', function (value) {
     let date = new Date(value);
@@ -9,4 +10,7 @@ Vue.filter('dateFormat', function (value) {
 });
 import lioHint from '../../pages/common/hint'
 Vue.component('lio-hint',lioHint);
+
+
+Vue.use(Mint);
 Vue.use(Vant);
