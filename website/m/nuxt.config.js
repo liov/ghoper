@@ -5,23 +5,30 @@ export default {
         base: '/'
     },
     build: {
-        vendor: ['axios','~plugins/filter/hoper_axios.js','vant','mint-ui','iview'],
-        'autoprefixer': {
-            browsers: ['Android >= 4.0', 'iOS >= 7']
-        },
-        'postcss-pxtorem': {
-            rootValue: 37.5,
-            propList: ['*']
+        presets: ["env"],
+        postcss:{
+            'autoprefixer': {
+                browsers: ['Android >= 4.0', 'iOS >= 7']
+            },
+            'postcss-pxtorem': {
+                rootValue: 37.5,
+                propList: ['*']
+            }
         },
         babel:{        //配置按需引入规则
             plugins:[
-                [
-                    "component",
+                ["component",
                     {
-                        "libraryName": "mint-ui",
-                        "style": true
+                        libraryName: "mint-ui",
+                        style: true
                     }
-                ]
+                ],
+/*                ['import',
+                    {
+                    libraryName: 'vant',
+                    libraryDirectory: 'es',
+                    style: true
+                }, 'vant']*/
             ]
         },
         /*
@@ -47,12 +54,13 @@ export default {
         ['/api', {target: 'https://hoper.xyz/', pathRewrite: { '^/api': '/api/breeds/image/random' }}]
     ],*/
     css: [
-        { src: '~assets/common.scss', lang: 'scss' },
+        '@/assets/common.scss',
+        '@/assets/agentClean.css',
         'vant/lib/index.css',
         'mint-ui/lib/style.css'
     ],
     plugins: [
-        {src:'~plugins/filter/hoper_vue.js'},
+        {src:'~plugins/filter/hoper_vue.js',ssr: true},
         {src:'~plugins/filter/hoper_axios.js'},
     ],
 

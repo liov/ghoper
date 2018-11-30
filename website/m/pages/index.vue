@@ -1,19 +1,17 @@
 <template>
     <div>
-        <nuxt-link to="/moment">瞬间</nuxt-link>
+        <div>
+        <nuxt-link to="/moment"><van-button type="primary">瞬间</van-button></nuxt-link>
         <a class="index" href="javascript:;" @click="signout">
-            注销
+            <van-button type="warning">注销</van-button>
         </a>
-        <a href="/tpl/index">模板首页</a>
-        <nuxt-link class="chat" to="/chat">点这个来聊天啊</nuxt-link>
+        <a href="/tpl/index"><van-button type="default">模板首页</van-button></a>
+        </div>
+        <nuxt-link class="chat" to="/chat"><van-button type="primary">点这个来聊天啊</van-button></nuxt-link>
         <lio-hint ref="lioHint"></lio-hint>
         <div class="van-hairline--top"></div>
-        <van-cell
-                is-link
-                title="Fade"
-                @click="hint('登录成功')"
-        />
-        <div @click="hint('登录成功')">Fade</div>
+
+        <van-button type="primary" @click="hint('登录成功')">默认按钮</van-button>
     </div>
 </template>
 

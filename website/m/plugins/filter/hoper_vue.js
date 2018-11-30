@@ -1,10 +1,9 @@
 import Vue from 'vue'
-import {Toast} from 'vant'
+import {Button,Toast} from "vant";
+//import Vant from 'vant'
 //import 'vant/lib/index.css';
 //import Mint from 'mint-ui';
 //import 'mint-ui/lib/style.css';
-//import iView from 'iview';
-//import 'iview/dist/styles/iview.css';
 
 Vue.filter('dateFormat', function (value) {
     let date = new Date(value);
@@ -13,6 +12,7 @@ Vue.filter('dateFormat', function (value) {
 import lioHint from '../../pages/common/hint'
 Vue.component('lio-hint',lioHint);
 
-//Vue.use(iView);
+//Vue.use(Vant);
 //Vue.use(Mint);
-Vue.use(Toast);
+
+Vue.use(Button).use(Toast);
