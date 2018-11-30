@@ -23,11 +23,11 @@ export default {
                         libraryDirectory: "es",
                         style: "index.css"
                     }, "vant"],*/
-                ["component", {
+ /*               ["component", {
                     "libraryName": "vant",
                     "libraryDirectory": "es",
                     "style": "index.css"
-                }],
+                }],*/
                 ["component",
                     {
                         libraryName: "mint-ui",
@@ -78,7 +78,7 @@ export default {
     css: [
         '@/assets/common.scss',
         '@/assets/agentClean.css',
-        //'vant/lib/index.css',
+        'vant/lib/index.css',
         //'mint-ui/lib/style.css'
     ],
     plugins: [

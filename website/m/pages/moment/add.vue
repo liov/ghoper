@@ -1,18 +1,41 @@
 <template>
     <div class="hoper">
-        <ul>
-            <li>瞬间</li>
-            <li><textarea rows="10" cols="30" v-model="moment.content"></textarea></li>
+        <van-cell-group>
 
-            <li>心情：<input type="text" v-model="moment.mood_name"/></li>
+            <van-field
+                    v-model="moment.content"
+                    label="瞬间"
+                    type="textarea"
+                    placeholder="请输入内容"
+                    rows="1"
+                    autosize
+            />
 
-            <li>标签：
-                <span v-for="item of existTags">
-                    <input  type="checkbox" v-model="Tags" :value="item" />{{item}}
-                </span>
+            <van-field
+                    v-model="moment.mood_name"
+                    label="心情"
+                    type="textarea"
+                    placeholder="请输入心情"
+                    rows="1"
+                    autosize
+            />
 
-                <div class="addTag">添加标签</div> <input type="text" v-model="tag"/><div  @click="addTag">添加</div>
-            </li>
+            <van-checkbox-group v-model="Tags">
+                <van-cell-group>
+                    <van-cell
+                            v-for="(item,index) of existTags"
+                            clickable
+                            :key="item"
+                            :title="item"
+                            @click="toggle(index)"
+                    >
+                        <van-checkbox :name="item" ref="checkboxes" />
+                    </van-cell>
+                </van-cell-group>
+            </van-checkbox-group>
+
+            <van-field v-model="tag" placeholder="请输入新标签"><van-button slot="button" size="small" type="primary" @click="addTag">添加</van-button></van-field>
+
             <li>
                 谁可以查看：
                 <input type="radio" v-model="moment.permission" value="0" />全部可见
@@ -20,7 +43,8 @@
                 <input type="radio" v-model="moment.permission" value="2" />好友可见
                 <input type="radio" v-model="moment.permission" value="3" />陌生人可见
             </li>
-        </ul>
+        </van-cell-group>
+
         <van-button type="primary" @click="commit">提交</van-button>
     </div>
 </template>
@@ -83,11 +107,19 @@
                     else
                         this.$toast("标签重复");
                 }
+            },
+            toggle(index) {
+                this.$refs.checkboxes[index].toggle();
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
+    .hoper{
+        li{
+            background-color: #95a5a6;
+        }
 
+    }
 </style>

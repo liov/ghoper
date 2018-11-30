@@ -3,27 +3,28 @@
 
     <div class="hoper">
         <div class="head">
-        <nuxt-link to="/moment/add"><van-button type="primary">添加</van-button></nuxt-link>
+            <nuxt-link to="/moment/add"><van-button type="primary">添加</van-button></nuxt-link>
 
-        <a class="first" href="javascript:;" @click="index">
-            <van-button type="primary">瞬间首页</van-button>
-        </a>
-        <a class="previous" href="javascript:;" @click="previous">
-            <van-button type="primary">上一页</van-button>
-        </a>
-        <a class="next" href="javascript:;" @click="next">
-            <van-button type="primary">下一页</van-button>
-        </a>
-        <nuxt-link class="index" to="/"><van-button type="primary">首页</van-button></nuxt-link>
+            <a class="first" href="javascript:;" @click="index">
+                <van-button type="primary">瞬间首页</van-button>
+            </a>
+            <a class="previous" href="javascript:;" @click="previous">
+                <van-button type="primary">上一页</van-button>
+            </a>
+            <a class="next" href="javascript:;" @click="next">
+                <van-button type="primary">下一页</van-button>
+            </a>
+            <nuxt-link class="index" to="/"><van-button type="primary">首页</van-button></nuxt-link>
         </div>
+
         <div v-for="(item, index) in momentList.top_moments">
             <div  class="moment" v-if="item.content !==''">
             <nuxt-link :to="{ path: '/moment/'+item.id,query: { t:topNum ,index:pageNo*pageSize+index}}">
                 <div>
-                    <p><span>[置顶]</span>{{item.content}}</p>
-                    <p>{{item.created_at|dateFormat}}</p>
-                    <p>{{item.mood_name}}</p>
-                    <p><span v-for="tag in item.tags">{{tag.name}}&nbsp;</span></p>
+                    <van-cell><span><van-button type="primary">[置顶]</van-button></span>{{item.content}}</van-cell>
+                    <van-cell><van-button type="primary">发表日期</van-button>{{item.created_at|dateFormat}}</van-cell>
+                    <van-cell><van-button type="primary">心情</van-button>{{item.mood_name}}</van-cell>
+                    <van-cell><van-button type="primary">标签</van-button><span v-for="tag in item.tags">{{tag.name}}&nbsp;</span></van-cell>
                 </div>
             </nuxt-link>
             </div>
@@ -33,10 +34,10 @@
             <div  class="moment" v-if="item.content !==''">
             <nuxt-link :to="{ path: '/moment/'+item.id,query: { t: '0',index:pageNo*pageSize+index}}">
                 <div>
-                    <p>{{item.content}}</p>
-                    <p>{{item.created_at|dateFormat}}</p>
-                    <p>{{item.mood_name}}</p>
-                    <p><span v-for="tag in item.tags">{{tag.name}}&nbsp;</span></p>
+                    <van-cell><van-button type="primary">内容</van-button>{{item.content}}</van-cell>
+                    <van-cell><van-button type="primary">发表日期</van-button>{{item.created_at|dateFormat}}</van-cell>
+                    <van-cell><van-button type="primary">心情</van-button>{{item.mood_name}}</van-cell>
+                    <van-cell><van-button type="primary">标签</van-button><span v-for="tag in item.tags">{{tag.name}}&nbsp;</span></van-cell>
                 </div>
             </nuxt-link>
             </div>
@@ -59,7 +60,9 @@
                 topNum:0,
                 momentList:{},
                 lastFlag :false,
-                firstFlag : true
+                firstFlag : true,
+                loading: false,
+                finished: false
             }
         },
         async asyncData() {
@@ -151,6 +154,21 @@
                 this.pageNo = 0;
                 this.firstFlag = true;
                 this.lastFlag = false;
+            },
+            onLoad() {
+                // 异步更新数据
+                setTimeout(() => {
+                    for (let i = 0; i < 10; i++) {
+                        this.list.push(this.list.length + 1);
+                    }
+                    // 加载状态结束
+                    this.loading = false;
+
+                    // 数据全部加载完成
+                    if (this.list.length >= 40) {
+                        this.finished = true;
+                    }
+                }, 500);
             }
         },
         filters: {}
@@ -167,9 +185,14 @@
     }
     .moment {
         position: relative;
-        background-color: aqua;
+        background-color: #2aa198;
         margin-top: .5rem;
-        height: 3rem;
+        height: 5rem;
         padding: 10px;
+    }
+    .van-button{
+        height: 30px;
+        line-height: 30px;
+        padding: 0 10px;
     }
 </style>
