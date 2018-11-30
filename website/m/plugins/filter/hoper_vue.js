@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {Button,Toast} from "vant";
+import {Button,Toast} from 'vant';
 //import Vant from 'vant'
 //import 'vant/lib/index.css';
 //import Mint from 'mint-ui';

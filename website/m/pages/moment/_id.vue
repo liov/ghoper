@@ -47,7 +47,7 @@
                         if (res.data.msg === 'ok')
                             vm.$router.push({path: '/moment'});
                         else
-                            alert(res.data.msg)
+                            vm.$toast(res.data.msg)
                     })
                     .catch(function (err) {
                         // error

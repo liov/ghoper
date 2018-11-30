@@ -25,10 +25,8 @@
                 let emailReg = new RegExp("^([a-zA-Z0-9]+[_\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$");
                 let phonelReg =  /^1[0-9]{10}$/;
                 if (emailReg.test(vm.user.input)){
-                    console.log("email");
                     vm.user.email = vm.input
                 } else if(phonelReg.test(vm.user.input)) {
-                    console.log("phone");
                       vm.user.phone = vm.user.input
                 }
 
@@ -40,10 +38,10 @@
                             vm.$store.commit("SET_USER", res.data.data);
                             vm.$store.commit("SET_TOKEN", res.data.token);
                             localStorage.setItem("user",res.data.data.id);
-                            alert("登录成功");
+                            vm.$toast("登录成功");
                             vm.$router.replace("/chat")
                         }else {
-                            alert(res.data.msg)
+                            vm.$toast(res.data.msg)
                         }
                     })
                     .catch(function(err) {

@@ -21,7 +21,7 @@
                 <input type="radio" v-model="moment.permission" value="3" />陌生人可见
             </li>
         </ul>
-        <div class="commit" @click="commit">提交</div>
+        <van-button type="primary" @click="commit">提交</van-button>
     </div>
 </template>
 
@@ -64,7 +64,7 @@
                        if (res.data.msg === '新建成功')
                            vm.$router.push({path:'/moment'});
                        else
-                           alert(res.data.msg)
+                           vm.$toast(res.data.msg)
                })
                    .catch(function(err) {
                        // error
@@ -79,9 +79,9 @@
                     this.tag = '';
                 } else {
                     if (this.tag === '')
-                        alert("标签为空");
+                        this.$toast("标签为空");
                     else
-                        alert("标签重复");
+                        this.$toast("标签重复");
                 }
             }
         }
@@ -89,14 +89,5 @@
 </script>
 
 <style lang="scss" scoped>
-    .commit{
-        width: 100px;
-        height: 50px;
-        background-color: #47494e;
-        border-radius: 50%;
-        margin-left: 50px;
-        color: #f7f8fb;
-        text-align: center;
-        line-height: 50px;
-    }
+
 </style>

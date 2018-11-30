@@ -11,7 +11,7 @@
         <lio-hint ref="lioHint"></lio-hint>
         <div class="van-hairline--top"></div>
 
-        <van-button type="primary" @click="hint('登录成功')">默认按钮</van-button>
+        <van-button type="primary" @click="hint('啥都没有发生')">默认按钮</van-button>
     </div>
 </template>
 
@@ -38,7 +38,7 @@
             },
             hint:function (msg) {
                 //this.$refs.lioHint.animate(msg)
-                this.$toast(msg)
+                this.$refs.lioHint.animate(msg)
             }
         }
     }

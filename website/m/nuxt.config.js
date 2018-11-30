@@ -5,7 +5,6 @@ export default {
         base: '/'
     },
     build: {
-        presets: ["env"],
         postcss:{
             'autoprefixer': {
                 browsers: ['Android >= 4.0', 'iOS >= 7']
@@ -17,33 +16,56 @@ export default {
         },
         babel:{        //配置按需引入规则
             plugins:[
+
+/*                    ["import",
+                    {
+                        libraryName: "vant",
+                        libraryDirectory: "es",
+                        style: "index.css"
+                    }, "vant"],*/
+                ["component", {
+                    "libraryName": "vant",
+                    "libraryDirectory": "es",
+                    "style": "index.css"
+                }],
                 ["component",
                     {
                         libraryName: "mint-ui",
                         style: true
-                    }
-                ],
+                    }, "mint-ui"]
+
 /*                ['import',
                     {
                     libraryName: 'vant',
                     libraryDirectory: 'es',
                     style: true
-                }, 'vant']*/
+                }]*/
             ]
         },
         /*
          ** Run ESLINT on save
          */
-/*        extend (config, { isClient }) {
-            if (isClient) {
-                config.module.rules.push({
-                    enforce: 'pre',
-                    test: /\.(js|vue)$/,
-                    loader: 'eslint-loader',
-                    exclude: /(node_modules)/
-                })
-            }
-        }*/
+        /*        extend (config, { isClient,isServer }) {
+                    if(isServer){
+                        config.module.rules.push({
+                            loader: 'babel',
+                            query: {
+                                plugins: [["import", { libraryName: 'vant',
+                                    libraryDirectory: 'es',
+                                    style: true
+                              }]]
+                            }
+                        })
+                    }
+        /*            if (isClient) {
+                        config.module.rules.push({
+                            enforce: 'pre',
+                            test: /\.(js|vue)$/,
+                            loader: 'eslint-loader',
+                            exclude: /(node_modules)/
+                        })
+                    }
+                }*/
     },
 
 /*    modules: [
@@ -56,12 +78,12 @@ export default {
     css: [
         '@/assets/common.scss',
         '@/assets/agentClean.css',
-        'vant/lib/index.css',
-        'mint-ui/lib/style.css'
+        //'vant/lib/index.css',
+        //'mint-ui/lib/style.css'
     ],
     plugins: [
-        {src:'~plugins/filter/hoper_vue.js',ssr: true},
         {src:'~plugins/filter/hoper_axios.js'},
+        {src:'~plugins/filter/hoper_vue.js',ssr: true}
     ],
 
 };

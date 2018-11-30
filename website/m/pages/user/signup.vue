@@ -34,10 +34,10 @@
                     .then((res)=> { //
                         // success
                         if (res.data.msg === 'ok'){
-                            alert("注册成功")
+                            vm.$toast("注册成功")
                             vm.$router.replace("/user/signin")
                         }else {
-                            alert(res.data.msg)
+                            vm.$toast(res.data.msg)
                         }
                     })
                     .catch(function(err) {

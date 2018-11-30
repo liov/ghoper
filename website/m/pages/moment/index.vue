@@ -2,19 +2,20 @@
 <template>
 
     <div class="hoper">
-        <div class="add">
-            <nuxt-link to="/moment/add">添加</nuxt-link>
-        </div>
+        <div class="head">
+        <nuxt-link to="/moment/add"><van-button type="primary">添加</van-button></nuxt-link>
+
         <a class="first" href="javascript:;" @click="index">
-            首页
+            <van-button type="primary">瞬间首页</van-button>
         </a>
         <a class="previous" href="javascript:;" @click="previous">
-            上一页
+            <van-button type="primary">上一页</van-button>
         </a>
         <a class="next" href="javascript:;" @click="next">
-            下一页
+            <van-button type="primary">下一页</van-button>
         </a>
-        <nuxt-link class="index" to="/">首页</nuxt-link>
+        <nuxt-link class="index" to="/"><van-button type="primary">首页</van-button></nuxt-link>
+        </div>
         <div v-for="(item, index) in momentList.top_moments">
             <div  class="moment" v-if="item.content !==''">
             <nuxt-link :to="{ path: '/moment/'+item.id,query: { t:topNum ,index:pageNo*pageSize+index}}">
@@ -107,7 +108,7 @@
             },
             next:function(){
                 if (this.lastFlag){
-                    alert("最后一页")
+                    this.$toast("最后一页")
                     return
                 }
                 let vm = this
@@ -122,7 +123,7 @@
                    let momentList = res1.data.data;
                     if (momentList===undefined) {
                         vm.lastFlag = true
-                        alert("最后一页")
+                        vm.$toast("最后一页")
                     } else {
                         vm.oldMomentList.normal_moments=vm.oldMomentList.normal_moments.concat(momentList.normal_moments);
                         //之所以放这里，用了vue的属性侦听watch
@@ -136,14 +137,14 @@
             },
             previous:function () {
                 if(this.firstFlag){
-                    alert("已经是首页")
+                    this.$toast("已经是首页")
                     return
                 }
                 this.lastFlag = false
                 if (this.pageNo>0){
                     this.pageNo = this.pageNo -1;
                 } else {
-                    alert("已经是首页")
+                    this.$toast("已经是首页")
                 }
             },
             index:function () {
@@ -158,44 +159,11 @@
 
 <style lang="scss" scoped>
 
-    .add {
-        position: fixed;
-        top: 0;
-        height: 20px;
-        background-color: aquamarine;
-        z-index: 1;
-    }
-    .index{
-        position: fixed;
-        top: 0;
-        left: 1rem;
-        height: 20px;
-        background-color: aquamarine;
-        z-index: 1;
-    }
-    .next{
-        position: fixed;
-        top: 0;
-        left: 2rem;
-        height: 20px;
-        background-color: aquamarine;
-        z-index: 1;
-    }
-    .previous{
-        position: fixed;
-        top: 0;
-        left: 3rem;
-        height: 20px;
-        background-color: aquamarine;
-        z-index: 1;
-    }
-    .first{
-        position: fixed;
-        top: 0;
-        left: 4rem;
-        height: 20px;
-        background-color: aquamarine;
-        z-index: 1;
+    .head{
+        margin-left: .2rem;
+        button {
+            padding: 0 .35rem;
+        }
     }
     .moment {
         position: relative;

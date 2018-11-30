@@ -108,7 +108,7 @@
                         if (res.data.msg === '修改成功')
                             vm.$router.push({path: '/moment'});
                         else{
-                            alert(res.data.msg)
+                            vm.$toast(res.data.msg)
                         }
                     })
                     .catch(function (err) {
@@ -124,9 +124,9 @@
                     this.tag = '';
                 } else {
                     if (this.tag === '')
-                        alert("标签为空");
+                        this.$toast("标签为空");
                     else
-                        alert("标签重复");
+                        this.$toast("标签重复");
                 }
             },
             copy: function (obj) {
