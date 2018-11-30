@@ -13,13 +13,13 @@
                 title="Fade"
                 @click="hint('登录成功')"
         />
+        <div @click="hint('登录成功')">Fade</div>
     </div>
 </template>
 
 <script>
     import { delCookie } from "../plugins/utils/cookie"
     import axios from 'axios'
-    import hint from "./common/hint";
     export default {
         data(){
             return {
@@ -39,7 +39,8 @@
                     });
             },
             hint:function (msg) {
-                this.$refs.lioHint.animate(msg)
+                //this.$refs.lioHint.animate(msg)
+                this.$toast(msg)
             }
         }
     }
