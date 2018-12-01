@@ -2,29 +2,49 @@
 <template>
 
     <div class="hoper">
+        <van-nav-bar
+                left-text="返回"
+                right-text="登录"
+                left-arrow
+                fixed
+                @click-left="onClickLeft"
+                @click-right="onClickRight"
+        > <span slot="title" @click="index">瞬间</span></van-nav-bar>
         <div class="head">
             <nuxt-link to="/moment/add"><van-button type="primary">添加</van-button></nuxt-link>
 
-            <a class="first" href="javascript:;" @click="index">
-                <van-button type="primary">瞬间首页</van-button>
-            </a>
-            <a class="previous" href="javascript:;" @click="previous">
-                <van-button type="primary">上一页</van-button>
-            </a>
-            <a class="next" href="javascript:;" @click="next">
-                <van-button type="primary">下一页</van-button>
-            </a>
+
+                <van-button type="primary" @click="index">瞬间首页</van-button>
+
+
+                <van-button type="primary" @click="previous">上一页</van-button>
+
+
+                <van-button type="primary" @click="next">下一页</van-button>
+
             <nuxt-link class="index" to="/"><van-button type="primary">首页</van-button></nuxt-link>
         </div>
-
+    <div class="all-moment">
         <div v-for="(item, index) in momentList.top_moments">
             <div  class="moment" v-if="item.content !==''">
-            <nuxt-link :to="{ path: '/moment/'+item.id,query: { t:topNum ,index:pageNo*pageSize+index}}">
+            <nuxt-link :to="{ path: '/moment/'+item.id,query: { t:topNum ,index:(pageNo-1)*pageSize+index}}">
                 <div>
-                    <van-cell><span><van-button type="primary">[置顶]</van-button></span>{{item.content}}</van-cell>
-                    <van-cell><van-button type="primary">发表日期</van-button>{{item.created_at|dateFormat}}</van-cell>
-                    <van-cell><van-button type="primary">心情</van-button>{{item.mood_name}}</van-cell>
-                    <van-cell><van-button type="primary">标签</van-button><span v-for="tag in item.tags">{{tag.name}}&nbsp;</span></van-cell>
+                    <van-cell><span><van-button type="primary">[置顶]</van-button></span>
+                        <van-field
+                            :value="item.content"
+                            type="textarea"
+                            rows="3"
+                            disabled
+                    />
+                    </van-cell>
+                    <van-row>
+                        <van-col span="8"><van-cell><van-button plain type="primary">作者</van-button>{{item.user.name}}</van-cell></van-col>
+                        <van-col span="16"><van-cell class="date"><van-button plain type="primary">日期</van-button>{{item.created_at|dateFormat}}</van-cell></van-col>
+                    </van-row>
+                    <van-cell-group>
+                        <van-cell><van-button plain type="primary">心情</van-button>{{item.mood_name}}</van-cell>
+                        <van-cell><van-button plain type="primary">标签</van-button><van-tag plain v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
+                    </van-cell-group>
                 </div>
             </nuxt-link>
             </div>
@@ -32,18 +52,37 @@
 
         <div v-for="(item, index) in momentList.normal_moments">
             <div  class="moment" v-if="item.content !==''">
-            <nuxt-link :to="{ path: '/moment/'+item.id,query: { t: '0',index:pageNo*pageSize+index}}">
+            <nuxt-link :to="{ path: '/moment/'+item.id,query: { t: '0',index:(pageNo-1)*pageSize+index}}">
                 <div>
-                    <van-cell><van-button type="primary">内容</van-button>{{item.content}}</van-cell>
-                    <van-cell><van-button type="primary">发表日期</van-button>{{item.created_at|dateFormat}}</van-cell>
-                    <van-cell><van-button type="primary">心情</van-button>{{item.mood_name}}</van-cell>
-                    <van-cell><van-button type="primary">标签</van-button><span v-for="tag in item.tags">{{tag.name}}&nbsp;</span></van-cell>
+                    <van-cell>
+                        <van-field
+                                :value="item.content"
+                                type="textarea"
+                                rows="3"
+                                disabled
+                        />
+                    </van-cell>
+                    <van-row>
+                        <van-col span="8"><van-cell><van-button plain type="primary">作者</van-button>{{item.user.name}}</van-cell></van-col>
+                        <van-col span="16"><van-cell class="date"><van-button plain type="primary">日期</van-button>{{item.created_at|dateFormat}}</van-cell></van-col>
+                    </van-row>
+                    <van-cell-group>
+                        <van-cell><van-button plain type="primary">心情</van-button>{{item.mood_name}}</van-cell>
+                        <van-cell><van-button plain type="primary">标签</van-button><van-tag plain v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
+                    </van-cell-group>
                 </div>
             </nuxt-link>
             </div>
         </div>
-
-
+</div>
+        <div class="pagination">
+        <van-pagination
+                v-model="pageNo"
+                :total-items="125"
+                :show-page-size="pageSize"
+                force-ellipses
+        />
+        </div>
     </div>
 
 </template>
@@ -55,7 +94,8 @@
         //middleware: 'auth',
         data() {
             return {
-                pageNo:0,
+                pageNo:1,
+                pageNum:1,
                 pageSize:5,
                 topNum:0,
                 momentList:{},
@@ -86,57 +126,57 @@
         },
         computed:{
             normalMomentsStart:function () {
-                if (this.pageNo>0){
-                    return this.pageNo*this.pageSize-this.topNum
+                if (this.pageNo>1){
+                    return (this.pageNo-1)*this.pageSize-this.topNum
                 } else {
                     return 0
                 }
-
             }
         },
         watch:{
-            pageNo:function () {
-                let vm =this
-                if (this.pageNo>0) {
-                    vm.momentList.top_moments = null;
-                } else {
-                    vm.momentList.top_moments = vm.oldMomentList.top_moments;
+            pageNo:async function () {
+                if(this.pageNo>this.pageNum){
+                    if (this.lastFlag){
+                        this.$toast("最后一页")
+                        this.pageNo = this.pageNo -1
+                        this.pageNum = this.pageNo
+                        return
+                    }
+                    await this.next()
                 }
-                vm.momentList.normal_moments = vm.oldMomentList.normal_moments.slice(vm.normalMomentsStart,vm.normalMomentsStart+vm.pageSize);
+                if (this.pageNo>1) {
+                    this.momentList.top_moments = null;
+                } else {
+                    this.momentList.top_moments = this.oldMomentList.top_moments;
+                }
+                this.momentList.normal_moments = this.oldMomentList.normal_moments.slice(this.normalMomentsStart,this.normalMomentsStart+this.pageSize);
             }
         },
         methods: {
             setMoment: function (moment) {
                 localStorage.setItem("moment_" + moment.id, moment);
             },
-            next:function(){
-                if (this.lastFlag){
-                    this.$toast("最后一页")
-                    return
-                }
+            next:async function(){
                 let vm = this
-                let params = {
-                    t:vm.topNum,
-                    pageNo : vm.pageNo+1,
-                    pageSize:vm.pageSize
-                };
+                    let params = {
+                        t: vm.topNum,
+                        pageNo: vm.pageNo - 1,
+                        pageSize: vm.pageSize
+                    };
 
-                axios.get(`/api/moment`,{params}).then((res1) => { //
-                    // success
-                   let momentList = res1.data.data;
-                    if (momentList===undefined) {
-                        vm.lastFlag = true
-                        vm.$toast("最后一页")
-                    } else {
-                        vm.oldMomentList.normal_moments=vm.oldMomentList.normal_moments.concat(momentList.normal_moments);
-                        //之所以放这里，用了vue的属性侦听watch
-                        vm.pageNo = vm.pageNo +1;
-                        vm.firstFlag = false
-                    }
+                    let res = await axios.get(`/api/moment`, {params})
 
-                }).catch(function (err) {
-                        // error
-                    });
+                        let momentList = res.data.data;
+                        if (momentList === undefined) {
+                            vm.lastFlag = true
+                            vm.$toast("最后一页")
+                            vm.pageNo = vm.pageNo - 1
+                        } else {
+                            vm.oldMomentList.normal_moments = vm.oldMomentList.normal_moments.concat(momentList.normal_moments);
+                            //之所以放这里，用了vue的属性侦听watch
+                            vm.pageNum = vm.pageNo;
+                            vm.firstFlag = false;
+                        }
             },
             previous:function () {
                 if(this.firstFlag){
@@ -144,14 +184,14 @@
                     return
                 }
                 this.lastFlag = false
-                if (this.pageNo>0){
+                if (this.pageNo>1){
                     this.pageNo = this.pageNo -1;
                 } else {
                     this.$toast("已经是首页")
                 }
             },
             index:function () {
-                this.pageNo = 0;
+                this.pageNo = 1;
                 this.firstFlag = true;
                 this.lastFlag = false;
             },
@@ -169,6 +209,12 @@
                         this.finished = true;
                     }
                 }, 500);
+            },
+            onClickLeft() {
+                this.$toast('返回');
+            },
+            onClickRight() {
+               this.$router.push('/user/signin')
             }
         },
         filters: {}
@@ -178,21 +224,30 @@
 <style lang="scss" scoped>
 
     .head{
+        margin-top: 1.5rem;
         margin-left: .2rem;
         button {
             padding: 0 .35rem;
         }
     }
-    .moment {
-        position: relative;
-        background-color: #2aa198;
-        margin-top: .5rem;
-        height: 5rem;
-        padding: 10px;
+    .date{
+        font-size: .2rem;
     }
-    .van-button{
-        height: 30px;
-        line-height: 30px;
-        padding: 0 10px;
+    .all-moment{
+        margin-bottom: 1.5rem;
+        .moment {
+            margin-top: .5rem;
+            .van-button{
+                height: 20px;
+                line-height: 20px;
+                padding: 0 3px;
+                margin-right: 3px;
+            }
+        }
+    }
+    .pagination{
+        position: fixed;
+        bottom: 0;
+        width: 100%;
     }
 </style>

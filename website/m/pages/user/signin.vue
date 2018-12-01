@@ -1,13 +1,23 @@
 <template>
 <div class="hoper">
-    <ul>
-        <li class="acct"><span>账号：</span><input type="email" placeholder="邮箱或手机号" v-model="user.input"/></li>
-        <li class="pass"><span>密码：</span><input type="password" v-model="user.password"/></li>
-        <a class="commit" href="javascript:;" @click="commit">
-            登录
-        </a>
-        <nuxt-link class="reg" to="/user/signup">注册</nuxt-link>
-    </ul>
+    <div class="black"></div>
+    <div class="inp">
+        <van-cell-group>
+            <van-field v-model="user.input"
+                       label="用户名"
+                       required
+                       placeholder="请输入邮箱或手机号" />
+            <van-field v-model="user.password"
+                       label="密码"
+                       type="password"
+                       required
+                       placeholder="请输入密码" />
+        </van-cell-group>
+    </div>
+    <div class="button">
+        <van-button type="primary"  @click="commit">登录</van-button>
+        <nuxt-link class="reg" to="/user/signup"> <van-button type="primary">注册</van-button></nuxt-link>
+    </div>
 </div>
 </template>
 
@@ -73,49 +83,14 @@
 </script>
 
 <style lang="scss" scoped>
-.hoper{
-    position: absolute;
-    top: 20%;
-    left: 10%;
-    width: 100%;
-    font-size: .8rem;
-    .acct{
-        position: absolute;
-        top: 1rem;
-        left: 10%;
-        input{
-            position: absolute;
-            top: 1rem;
-            left: 10%;
-            height: 0.8rem;
-            width: 5rem;
-            font-size: .5rem;
-            border: solid 1px;
-        }
+    .black{
+        height: 3rem;
     }
-    .pass{
+    .button{
         position: absolute;
-        top:  3rem;
-        left: 10%;
-        input{
-            position: absolute;
-            top: 1rem;
-            left: 10%;
-            height: 0.8rem;
-            width: 5rem;
-            font-size: .5rem;
-            border: solid 1px;
-        }
+        width: 100%;
+        top: 6rem;
+        text-align: center;
     }
-    .commit{
-        position: absolute;
-        top: 5rem;
-        left: 1rem;
-    }
-    .reg{
-        position: absolute;
-        top: 5rem;
-        left: 3rem;
-    }
-}
+
 </style>

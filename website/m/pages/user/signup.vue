@@ -1,16 +1,44 @@
 <template>
     <div class="hoper">
-        <ul>
-        <li><span>昵称：</span><input type="text" placeholder="必填" v-model="user.name"/></li>
-            <li><span>密码：</span><input type="password" placeholder="必填（最小6位）" v-model="user.password"/></li>
-            <li><span>邮箱：</span><input type="email" placeholder="必填" v-model="user.email"/></li>
-            <li><span>性别：</span> <input class="sex" type="radio" v-model="user.sex" value="0" />男
-                <input class="sex" type="radio" v-model="user.sex" value="1" />女</li>
-            <li><span>手机号：</span><input type="tel" placeholder="选填" v-model="user.phone"/></li>
-            <a class="commit" href="javascript:;" @click="commit">
-                注册
-            </a>
-        </ul>
+        <van-cell-group>
+            <van-field v-model="user.name"
+                       label="用户名"
+                       required
+                       placeholder="请输入用户名(必填)" />
+            <van-field v-model="user.password"
+                       label="密码"
+                       type="password"
+                       required
+                       placeholder="请输入密码(必填（最小6位）)" />
+            <van-field v-model="user.email"
+                       label="邮箱"
+                       type="email"
+                       required
+                       placeholder="请输入邮箱(必填)" />
+            <van-row>
+                <van-radio-group v-model="user.sex">
+                    <van-col span="12">
+                        <van-cell title="男" clickable @click="user.sex = '0'">
+                            <van-radio name="0" />
+                        </van-cell>
+
+                    </van-col>
+                    <van-col span="12">
+                        <van-cell title="女" clickable @click="user.sex = '1'">
+                            <van-radio name="1" />
+                        </van-cell>
+
+                    </van-col>
+                </van-radio-group>
+            </van-row>
+            <van-field v-model="user.phone"
+                       label="用户名"
+                       type="tel"
+                       placeholder="请输入手机号(选填)" />
+        </van-cell-group>
+        <div class="button">
+            <van-button type="primary" @click="commit">注册</van-button>
+        </div>
     </div>
 </template>
 
@@ -20,7 +48,9 @@
     export default {
         data(){
             return {
-                user:{}
+                user:{
+                    sex:'0'
+                }
             }
         },
         methods:{
@@ -34,10 +64,11 @@
                     .then((res)=> { //
                         // success
                         if (res.data.msg === 'ok'){
-                            vm.$toast("注册成功")
+                            vm.$toast("注册成功");
                             vm.$router.replace("/user/signin")
                         }else {
                             vm.$toast(res.data.msg)
+                            vm.user.sex = vm.user.sex.toString()
                         }
                     })
                     .catch(function(err) {
@@ -49,32 +80,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .hoper{
-        font-size: .5rem;
-        ul {
-            li{
-                margin-top: .5rem;
-                margin-left: .2rem;
-                span{
-                    width: 2rem;
-                    height: 1rem;
-                    background-color: aquamarine;
-                    text-align: center;
-                    color: cadetblue;
-                }
-                input{
-                    width: 5rem;
-                    height: 1rem;
-                    border: solid 1px;
-                    font-size: .5rem;
-                    margin-left: .2rem;
-                }
-                .sex{
-                    width: .5rem;
-                    height: .5rem;
-                    top:.2rem;
-                }
-            }
-        }
-    }
+  .button{
+      text-align: center;
+  }
 </style>

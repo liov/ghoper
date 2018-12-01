@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <p>{{moment.content}}</p>
         <p>{{moment.created_at|dateFormat}}</p>
         <p><span v-for="tag in moment.tags">{{tag.name}}&nbsp;</span></p>

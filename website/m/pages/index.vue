@@ -6,12 +6,13 @@
             <van-button type="warning">注销</van-button>
         </a>
         <a href="/tpl/index"><van-button type="default">模板首页</van-button></a>
+        <van-button type="primary" @click="hint('啥都没有发生')">默认按钮</van-button>
         </div>
         <nuxt-link class="chat" to="/chat"><van-button type="primary">点这个来聊天啊</van-button></nuxt-link>
         <lio-hint ref="lioHint"></lio-hint>
         <div class="van-hairline--top"></div>
 
-        <van-button type="primary" @click="hint('啥都没有发生')">默认按钮</van-button>
+
     </div>
 </template>
 
@@ -33,7 +34,7 @@
                             localStorage.removeItem("token");
                         //delCookie("token");
                         vm.$store.commit("SET_USER", null);
-                        alert("注销成功")
+                        vm.$toast("注销成功")
                     });
             },
             hint:function (msg) {
