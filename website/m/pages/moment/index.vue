@@ -163,7 +163,7 @@
                         pageNo: vm.pageNo - 1,
                         pageSize: vm.pageSize
                     };
-                    //这里可以这么写，async，await函数，或者 return ().then返回Promise
+                    //这里可以这么写，async，await函数，或者 return axios().then((res)=>{})返回Promise
                     let res = await axios.get(`/api/moment`, {params})
 
                         let momentList = res.data.data;
