@@ -39,18 +39,39 @@
 
             <div class="center"><van-button type="primary">添加标签</van-button></div>
             <van-field v-model="tag" placeholder="请输入新标签"><van-button slot="button" size="small" type="primary" @click="addTag">添加</van-button></van-field>
-
+            <van-radio-group v-model="moment.permission">
+                <div class="center"><van-button type="primary">权限</van-button></div>
+                <van-row>
+                    <van-cell-group>
+                        <van-col span="12">
+                            <van-cell title="全部可见" clickable @click="moment.permission = '0'">
+                                <van-radio name="0" />
+                            </van-cell>
+                        </van-col>
+                        <van-col span="12">
+                            <van-cell title="自己可见" clickable @click="moment.permission = '1'">
+                                <van-radio name="1" />
+                            </van-cell></van-col>
+                    </van-cell-group>
+                </van-row>
+                <van-row>
+                    <van-cell-group>
+                        <van-col span="12">
+                            <van-cell title="好友可见" clickable @click="moment.permission = '2'">
+                                <van-radio name="2" />
+                            </van-cell>
+                        </van-col>
+                        <van-col span="12">
+                            <van-cell title="陌生人可见" clickable @click="moment.permission = '3'">
+                                <van-radio name="3" />
+                            </van-cell></van-col>
+                    </van-cell-group>
+                </van-row>
+            </van-radio-group>
         </van-cell-group>
 
-            <li>
-                谁可以查看：
-                <input type="radio" v-model="moment.permission" value="0"/>全部可见
-                <input type="radio" v-model="moment.permission" value="1"/>自己可见
-                <input type="radio" v-model="moment.permission" value="2"/>好友可见
-                <input type="radio" v-model="moment.permission" value="3"/>陌生人可见
-            </li>
+        <div class="center"><van-button type="primary" @click="commit">提交</van-button></div>
 
-        <div class="commit" @click="commit">提交</div>
     </div>
 </template>
 
@@ -101,6 +122,7 @@
         mounted:function(){
             this.oldMoment  = this.copy(this.moment);
             this.oldTags    = this.tags.concat();
+            this.moment.permission =this.moment.permission.toString()
         },
         methods: {
             getMoment: function () {
