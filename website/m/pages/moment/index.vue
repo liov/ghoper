@@ -4,26 +4,15 @@
     <div class="hoper">
         <van-nav-bar
                 left-text="返回"
-                right-text="登录"
                 left-arrow
                 fixed
                 @click-left="onClickLeft"
                 @click-right="onClickRight"
-        > <span slot="title" @click="index">瞬间</span></van-nav-bar>
-        <div class="head">
-            <nuxt-link to="/moment/add"><van-button type="primary">添加</van-button></nuxt-link>
+        >
+            <span slot="title" @click="index">瞬间</span>
+            <van-icon name="edit" size=".6rem" slot="right" />
+        </van-nav-bar>
 
-
-                <van-button type="primary" @click="index">瞬间首页</van-button>
-
-
-                <van-button type="primary" @click="previous">上一页</van-button>
-
-
-                <van-button type="primary" @click="next">下一页</van-button>
-
-            <nuxt-link class="index" to="/"><van-button type="primary">首页</van-button></nuxt-link>
-        </div>
     <div class="all-moment">
         <div v-for="(item, index) in momentList.top_moments">
             <div  class="moment" v-if="item.content !==''">
@@ -33,7 +22,7 @@
                         <van-field
                             :value="item.content"
                             type="textarea"
-                            rows="3"
+                            :rows="item.content.length/20"
                             disabled
                     />
                     </van-cell>
@@ -58,7 +47,7 @@
                         <van-field
                                 :value="item.content"
                                 type="textarea"
-                                rows="3"
+                                :rows="Math.ceil(item.content.length/30)"
                                 disabled
                         />
                     </van-cell>
@@ -211,10 +200,10 @@
                 }, 500);
             },
             onClickLeft() {
-                this.$toast('返回');
+                this.$router.push('/')
             },
             onClickRight() {
-               this.$router.push('/user/signin')
+               this.$router.push('/moment/add')
             }
         },
         filters: {}
@@ -223,17 +212,12 @@
 
 <style lang="scss" scoped>
 
-    .head{
-        margin-top: 1.5rem;
-        margin-left: .2rem;
-        button {
-            padding: 0 .35rem;
-        }
-    }
+
     .date{
         font-size: .2rem;
     }
     .all-moment{
+        margin-top: 1.5rem;
         margin-bottom: 1.5rem;
         .moment {
             margin-top: .5rem;

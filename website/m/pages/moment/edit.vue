@@ -1,20 +1,47 @@
 <template>
     <div class="hoper">
-        <ul>
-            <li>瞬间</li>
-            <li><textarea rows="10" cols="30" v-model="moment.content"></textarea></li>
+        <van-cell-group>
 
-            <li>心情：<input type="text" v-model="moment.mood_name"/></li>
+            <van-field
+                    v-model="moment.content"
+                    label="瞬间"
+                    type="textarea"
+                    placeholder="请输入内容"
+                    rows="1"
+                    autosize
+            />
 
-            <li>标签：
-                <span v-for="item of existTags">
-                    <input type="checkbox"  v-model="tags" :value="item"/>{{item}}
-                </span>
+            <van-field
+                    v-model="moment.mood_name"
+                    label="心情"
+                    type="textarea"
+                    placeholder="请输入心情"
+                    rows="1"
+                    autosize
+            />
 
-                <div class="addTag">添加标签</div>
-                <input type="text" v-model="tag"/>
-                <div @click="addTag">添加</div>
-            </li>
+            <div class="center"><van-button type="primary">标签</van-button></div>
+            <van-checkbox-group v-model="oldTags">
+                <van-row v-for="(item,index) in tagsGroup" :key="index">
+                    <van-cell-group>
+                        <van-col span="8" v-for="(item1,index1) in item" :key="index1">
+                            <van-cell
+                                    clickable
+                                    :title="item1"
+                                    @click="toggle(index*3+index1)"
+                            >
+                                <van-checkbox :name="item1" ref="checkboxes" />
+                            </van-cell>
+                        </van-col>
+                    </van-cell-group>
+                </van-row>
+            </van-checkbox-group>
+
+            <div class="center"><van-button type="primary">添加标签</van-button></div>
+            <van-field v-model="tag" placeholder="请输入新标签"><van-button slot="button" size="small" type="primary" @click="addTag">添加</van-button></van-field>
+
+        </van-cell-group>
+
             <li>
                 谁可以查看：
                 <input type="radio" v-model="moment.permission" value="0"/>全部可见
@@ -22,7 +49,7 @@
                 <input type="radio" v-model="moment.permission" value="2"/>好友可见
                 <input type="radio" v-model="moment.permission" value="3"/>陌生人可见
             </li>
-        </ul>
+
         <div class="commit" @click="commit">提交</div>
     </div>
 </template>
@@ -40,6 +67,7 @@
         data() {
             return {
                 existTags: ["韩雪", "徐峥", "胡歌", "张卫健"],
+                tagsGroup:[],
                 tag: '',
                 oldMoment:{},
                 oldTags:[],
@@ -55,7 +83,6 @@
         },*/
         asyncData({query}) {
         return axios.get(`/api/moment/${query.id}?t=${query.t}&index=${query.index}`).then((res) => {
-            console.log(res.data.data);
             let tags = [];
             for (let v of res.data.data.tags) {
                 tags.push(v.name)
@@ -71,7 +98,6 @@
                })*/
         },
         mounted:function(){
-
             this.oldMoment  = this.copy(this.moment);
             this.oldTags    = this.tags.concat();
         },
@@ -120,7 +146,12 @@
             addTag: function () {
                 if ((this.tag !== '') && (this.existTags.indexOf(this.tag) === -1)) {
                     this.existTags.push(this.tag);
-                    this.Tags.push(this.tag);
+                    if (this.tagsGroup[this.tagsGroup.length-1].length === 3){
+                        this.tagsGroup.push([this.tag])
+                    }else {
+                        this.tagsGroup[this.tagsGroup.length-1].push(this.tag)
+                    }
+                    this.oldTags.push(this.tag);
                     this.tag = '';
                 } else {
                     if (this.tag === '')
@@ -130,11 +161,21 @@
                 }
             },
             copy: function (obj) {
-                var newobj = {};
-                for (var attr in obj) {
+                let newobj = {};
+                for (let attr in obj) {
                     newobj[attr] = obj[attr];
                 }
                 return newobj;
+            },
+            toggle(index) {
+                this.$refs.checkboxes[index].toggle()
+            },
+            tagGroup:function (arr, size) {
+                let arr2=[];
+                for(let i=0;i<arr.length;i=i+size){
+                    arr2.push(arr.slice(i,i+size));
+                }
+                return arr2;
             }
         },
         filters: {}

@@ -1,13 +1,35 @@
 <template>
     <div>
+        <van-nav-bar
+                left-text="返回"
+                left-arrow
+                fixed
+                @click-left="onClickLeft"
+                @click-right="onClickRight"
+        >
+            <span slot="title" >瞬间</span>
+            <van-icon name="home" size=".6rem" slot="right" />
+        </van-nav-bar>
 
-        <p>{{moment.content}}</p>
-        <p>{{moment.created_at|dateFormat}}</p>
-        <p><span v-for="tag in moment.tags">{{tag.name}}&nbsp;</span></p>
-        <p>{{moment.mood_name}}</p>
-        <p>浏览量：{{moment.browse_count}},评论数：{{moment.comment_count}},喜欢：{{moment.love_count}},收藏：{{moment.collect_count}}</p>
-        <nuxt-link v-if="belongFlag" :to="{ path: '/moment/edit',query: queryPamram}">修改</nuxt-link>
-        <a v-if="belongFlag" href="javascript:;" @click="deleteMoment">删除</a>
+        <van-cell-group>
+        <van-cell>
+            <van-field
+                    :value="moment.content"
+                    type="textarea"
+                    rows="1"
+                    autosize
+                    disabled
+            />
+        </van-cell>
+            <van-cell>{{moment.created_at|dateFormat}}</van-cell>
+            <van-cell><van-tag plain v-for="(tag,index) in moment.tags" :key="index">{{tag.name}}</van-tag></van-cell>
+            <van-cell>{{moment.mood_name}}</van-cell>
+            <van-cell>浏览量：{{moment.browse_count}},评论数：{{moment.comment_count}},喜欢：{{moment.love_count}},收藏：{{moment.collect_count}}</van-cell>
+        </van-cell-group>
+        <div class="button">
+        <nuxt-link v-if="belongFlag" :to="{ path: '/moment/edit',query: queryPamram}"><van-button type="primary">修改</van-button></nuxt-link>
+       <van-button v-if="belongFlag" type="danger"  @click="deleteMoment">删除</van-button>
+        </div>
     </div>
 </template>
 
@@ -45,7 +67,7 @@
                 axios.delete('/api/moment/' + vm.$route.params.id+'?t='+vm.$route.query.t+'&index='+vm.$route.query.index)
                     .then(function (res) { //
                         // success
-                        if (res.data.msg === 'ok')
+                        if (res.data.msg === '删除成功')
                             vm.$router.push({path: '/moment'});
                         else
                             vm.$toast(res.data.msg)
@@ -53,11 +75,26 @@
                     .catch(function (err) {
                         // error
                     });
+            },
+            onClickLeft() {
+                this.$router.go(-1)
+            },
+            onClickRight() {
+                this.$router.push('/')
+            },
+            tagGroup:function (arr, size) {
+                let arr2=[];
+                for(let i=0;i<arr.length;i=i+size){
+                    arr2.push(arr.slice(i,i+size));
+                }
+                return arr2;
             }
         }
     }
 </script>
 
 <style scoped>
-
+.button{
+    text-align: center;
+}
 </style>
