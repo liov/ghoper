@@ -96,6 +96,7 @@
                request.getMonment().then(res =>{
                    vm.momentList = res
                })*/
+            this.tagsGroup =  this.tagGroup(this.existTags,3)
         },
         mounted:function(){
             this.oldMoment  = this.copy(this.moment);
