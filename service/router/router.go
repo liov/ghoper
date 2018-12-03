@@ -91,9 +91,10 @@ func HttpRouter() *gin.Engine {
 
 	r.Use(gin.Recovery())
 
-	r.LoadHTMLGlob("../website/m/dist/*")
+	//r.LoadHTMLGlob("template/*")
 
 	r.GET("/api/chat/ws", hwebsocket.Chat)
 
+	r.GET("/api/push", controller.Push)
 	return r
 }
