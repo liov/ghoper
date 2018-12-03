@@ -7,22 +7,39 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
-	"time"
 	"unsafe"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func TestUpload(t *testing.T) {
-	t1 := time.Now()
-	for i := 0; i <= 10000; i++ {
-		aaa(float64(i))
-	}
-	t2 := time.Now()
-	fmt.Println("go time" + t2.Sub(t1).String())
+	arra := []int64{1, 2, 3, 4}
+	arrb := []string{"a", "b", "c", "d"}
+	intChan := make(chan int64)
+	strChan := make(chan string)
+	var sg sync.WaitGroup
+	sg.Add(1)
+	go getInt(arra, intChan, strChan, &sg)
+	go getStr(arrb, intChan, strChan)
+	sg.Wait()
 }
 
+func getInt(intArr []int64, intChan chan int64, strChan chan string, sg *sync.WaitGroup) {
+	for i := 0; i < len(intArr); i++ {
+		fmt.Println(<-strChan)
+		intChan <- intArr[i]
+	}
+	sg.Done()
+}
+
+func getStr(strArr []string, intChan chan int64, strChan chan string) {
+	for i := 0; i < len(strArr); i++ {
+		strChan <- strArr[i]
+		fmt.Println(<-intChan)
+	}
+}
 func aaa(i float64) {
 	a := i + 1
 	b := 2.3
