@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/valyala/fasthttp"
 	"io"
+	"net/http"
 	"service/controller"
 	"service/controller/common/logging"
 	"service/controller/hnsq"
@@ -91,7 +92,13 @@ func HttpRouter() *gin.Engine {
 
 	r.Use(gin.Recovery())
 
-	//r.LoadHTMLGlob("template/*")
+	r.LoadHTMLGlob("template/*")
+
+	r.GET("/tpl/index", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"title": "Main website",
+		})
+	})
 
 	r.GET("/api/chat/ws", hwebsocket.Chat)
 
