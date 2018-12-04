@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/json-iterator/go"
 	"reflect"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,6 +15,20 @@ import (
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+func TestTheard(t *testing.T)  {
+	runtime.GOMAXPROCS(1) //First
+	exit := make(chan int)
+	go func() {
+		close(exit)
+		for {
+			if true {
+				println("Looping!")  //Second
+			}
+		}
+	}()
+	<-exit
+	println("Am I printed?")
+}
 func TestUpload(t *testing.T) {
 	arra := []int64{1, 2, 3, 4}
 	arrb := []string{"a", "b", "c", "d"}
