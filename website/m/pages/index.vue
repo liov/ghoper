@@ -7,6 +7,7 @@
         </a>
         <a href="/tpl/index"><van-button type="default">模板首页</van-button></a>
         <van-button type="primary" @click="hint('啥都没有发生')">默认按钮</van-button>
+            <nuxt-link to="/user/signup"><van-button type="primary">注册</van-button></nuxt-link>
         </div>
         <nuxt-link class="chat" to="/chat"><van-button type="primary">点这个来聊天啊</van-button></nuxt-link>
         <lio-hint ref="lioHint"></lio-hint>

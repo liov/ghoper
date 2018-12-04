@@ -131,7 +131,7 @@
         overflow: auto;
         .chat{
             margin-top: 1rem;
-            background-color: #c27c88;
+            background-color: #e9d7df;
             .row{
                 margin-top: .2rem;
                 background-color: #fff;
