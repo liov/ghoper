@@ -1,16 +1,32 @@
 <template>
     <div class="hoper">
+        <van-nav-bar
+                left-text="返回"
+                left-arrow
+                fixed
+                @click-left="onClickLeft"
+                @click-right="onClickRight"
+        >
+            <span slot="title">会话</span>
+            <van-icon name="home" size=".5rem" slot="right" />
+        </van-nav-bar>
         <div class="display">
             <div class="chat">
                 <div class="row" v-for="item of Msg">
-                    <p>
-                        <span class="name">{{item.send_user.name}}</span>:
-                        <span class="content">{{item.content}}</span>
-                    </p>
-                     <p>
-                            <span class="time">{{item.created_at|dateFormat}}</span>
-                       <span class="device"> 来自：{{item.device}}</span>
-                    </p>
+                    <van-row>
+                        <van-col span="4"><van-cell class="name van-hairline--bottom">{{item.send_user.name}}</van-cell></van-col>
+                        <van-col span="20" class="van-hairline--bottom"><van-field
+                                v-model="item.content"
+                                type="textarea"
+                                rows="1"
+                                disabled
+                                autosize
+                        /></van-col>
+                    </van-row>
+                    <van-row>
+                        <van-col span="16"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
+                        <van-col span="8"><van-cell>来自：{{item.device}}</van-cell></van-col>
+                    </van-row>
                 </div>
             </div>
         </div>
@@ -100,63 +116,43 @@
             delChat:function(){
                 localStorage.removeItem("chatContent");
                 this.chatContent = []
+            },
+            onClickLeft() {
+                this.$router.push('/')
+            },
+            onClickRight() {
+                this.$router.push('/')
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
+
     .display{
         position: fixed;
         top: .2rem;
-        left: .2rem;
         width: 10rem;
         height: 13rem;
         overflow: auto;
-    }
-    .row{
-        width: 9rem;
-        height: 1.2rem;
-        font-size: .3rem;
-        background-color: aliceblue;
-        color: #000;
-        line-height: .8rem;
-        padding-left: .5rem;
-        margin-top: .2rem;
-        p{
-            height: .6rem;
-            width: 6.6rem;
-        }
-        .name{
-            color: cornflowerblue;
-        }
-        .content{
-            color: blueviolet;
-            margin-left: .1rem;
-        }
-        .time{
-            color: #000;
-            font-size: .2rem;
-        }
-        .device{
-            right: 1.5rem;
-            position: absolute;
+        .chat{
+            margin-top: 1rem;
+            background-color: #c27c88;
+            .row{
+                margin-top: .2rem;
+                background-color: #fff;
+                .name{
+                    padding: 10px 10px;
+                    color: #2aa198;
+                }
+            }
         }
     }
+
     .inp{
         position: fixed;
         bottom: 0;
         width: 100%;
     }
-    .del{
-        position: fixed;
-        bottom: 7%;
-        left: 36%;
-        width: 27%;
-        height: 50px;
-        font-size: .3rem;
-        background-color: #2baee9;
-        line-height: 50px;
-        text-align: center;
-    }
+
 </style>
