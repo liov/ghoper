@@ -9,11 +9,11 @@
         <van-button type="primary" @click="hint('啥都没有发生')">默认按钮</van-button>
             <nuxt-link to="/user/signup"><van-button type="primary">注册</van-button></nuxt-link>
         </div>
+        <div class="center">
         <nuxt-link class="chat" to="/chat"><van-button type="primary">点这个来聊天啊</van-button></nuxt-link>
+        </div>
         <lio-hint ref="lioHint"></lio-hint>
         <div class="van-hairline--top"></div>
-
-
     </div>
 </template>
 
@@ -55,12 +55,14 @@
         background-color: aquamarine;
         z-index: 1;
     }
-    .chat{
+    .center{
         position: fixed;
         top: 50%;
         text-align: center;
-        font-size: .6rem;
-        color: cadetblue;
+        .chat{
+            font-size: .6rem;
+            color: cadetblue;
+        }
     }
 
 </style>
