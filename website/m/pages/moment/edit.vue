@@ -20,7 +20,7 @@
                     autosize
             />
 
-            <div class="center"><van-button type="primary">标签</van-button></div>
+            <div class="center"><van-button type="default">标签</van-button></div>
             <van-checkbox-group v-model="oldTags">
                 <van-row v-for="(item,index) in tagsGroup" :key="index">
                     <van-cell-group>
@@ -37,10 +37,10 @@
                 </van-row>
             </van-checkbox-group>
 
-            <div class="center"><van-button type="primary">添加标签</van-button></div>
+            <div class="center"><van-button type="default">添加标签</van-button></div>
             <van-field v-model="tag" placeholder="请输入新标签"><van-button slot="button" size="small" type="primary" @click="addTag">添加</van-button></van-field>
             <van-radio-group v-model="moment.permission">
-                <div class="center"><van-button type="primary">权限</van-button></div>
+                <div class="center"><van-button type="default">权限</van-button></div>
                 <van-row>
                     <van-cell-group>
                         <van-col span="12">
@@ -206,14 +206,11 @@
 </script>
 
 <style scoped>
-    .commit {
-        width: 100px;
-        height: 50px;
-        background-color: #47494e;
-        border-radius: 50%;
-        margin-left: 50px;
-        color: #f7f8fb;
+    .center{
         text-align: center;
-        line-height: 50px;
+    .van-button--default {
+        padding: 0 0;
+        width: 100%;
+    }
     }
 </style>
