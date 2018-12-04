@@ -1,5 +1,17 @@
 <template>
     <div class="hoper">
+        <van-nav-bar
+                left-text="返回"
+                left-arrow
+                fixed
+                @click-left="$router.push('/')"
+                @click-right="$router.push('/')"
+        >
+            <span slot="title">添加瞬间</span>
+            <van-icon name="home" size=".5rem" slot="right" />
+        </van-nav-bar>
+
+        <div class="black"></div>
         <van-cell-group>
 
             <van-field
@@ -155,6 +167,9 @@
 
 <style lang="scss" scoped>
     .hoper{
+        .black{
+            margin-top: 1.5rem;
+        }
         li{
             background-color: #95a5a6;
         }

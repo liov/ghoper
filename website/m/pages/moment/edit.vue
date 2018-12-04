@@ -1,5 +1,18 @@
 <template>
     <div class="hoper">
+        <van-nav-bar
+                left-text="返回"
+                left-arrow
+                fixed
+                @click-left="$router.push('/')"
+                @click-right="$router.push('/')"
+        >
+            <span slot="title">修改瞬间</span>
+            <van-icon name="home" size=".5rem" slot="right" />
+        </van-nav-bar>
+
+        <div class="black"></div>
+
         <van-cell-group>
 
             <van-field
@@ -205,12 +218,15 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    .black{
+        margin-top: 1.5rem;
+    }
     .center{
         text-align: center;
-    .van-button--default {
-        padding: 0 0;
-        width: 100%;
-    }
+        .van-button--default {
+            padding: 0 0;
+            width: 100%;
+        }
     }
 </style>

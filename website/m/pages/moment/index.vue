@@ -199,10 +199,6 @@
 
 <style lang="scss" scoped>
 
-
-    .date{
-        font-size: .2rem;
-    }
     .all-moment{
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
