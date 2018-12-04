@@ -15,14 +15,21 @@ import (
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-func TestTheard(t *testing.T)  {
+func TestPrint(t *testing.T) {
+	fmt.Println("start")
+	println(3)
+	println(2)
+	println(1)
+	fmt.Println("end")
+}
+func TestThread(t *testing.T) {
 	runtime.GOMAXPROCS(1) //First
 	exit := make(chan int)
 	go func() {
 		close(exit)
 		for {
 			if true {
-				println("Looping!")  //Second
+				println("Looping!") //Second
 			}
 		}
 	}()

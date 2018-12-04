@@ -15,16 +15,18 @@
             </div>
         </div>
             <div class="inp">
-                <div class="input-field col s8">
-                    <input type="text" v-model="newMsg" @keyup.enter="send">
-                </div>
-                <div class="input-field col s4">
-                    <button class="waves-effect waves-light btn" @click="send">
-                        <i class="material-icons right">消息</i>
-                        发送
-                    </button>
-                </div>
-
+                <van-cell-group>
+                    <van-field
+                            v-model="newMsg"
+                            center
+                            clearable
+                            label="消息"
+                            placeholder="请输入消息"
+                            @keyup.enter="send"
+                    >
+                        <van-button slot="button" size="small" type="primary" @click="send">发送</van-button>
+                    </van-field>
+                </van-cell-group>
             </div>
 
 
@@ -144,27 +146,7 @@
     .inp{
         position: fixed;
         bottom: 0;
-        left: 0;
-        width: 8rem;
-        height: 1rem;
-        .input-field{
-            float: left;
-            margin-left: .2rem;
-        }
-        input{
-            width: 5rem;
-            height: .6rem;
-            font-size: .3rem;
-            line-height: .5rem;
-            padding-left: .2rem;
-            z-index: 1;
-            border: 1px solid #000;
-        }
-        button{
-            width: 2rem;
-            height: .6rem;
-            font-size: .3rem;
-        }
+        width: 100%;
     }
     .del{
         position: fixed;
