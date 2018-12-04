@@ -58,6 +58,7 @@
     .center{
         position: fixed;
         top: 50%;
+        width: 100%;
         text-align: center;
         .chat{
             font-size: .6rem;
