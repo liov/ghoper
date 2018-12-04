@@ -22,21 +22,6 @@ func main() {
 
 	fastRouter := router.FastRouter()
 
-	/*	s := &http.Server{
-			Addr:           fmt.Sprintf(":%d", initialize.ServerSettings.HttpPort),
-			Handler:        routersInit,
-			ReadTimeout:    initialize.ServerSettings.ReadTimeout,
-			WriteTimeout:   initialize.ServerSettings.WriteTimeout,
-			MaxHeaderBytes: 1 << 20,
-		}
-
-		go func() {
-			if err := s.ListenAndServe(); err != nil&& err != http.ErrServerClosed {
-				log.Printf("Listen: %s\n", err)
-			}
-		}()
-	*/
-
 	s := &fasthttp.Server{
 		Concurrency:  100,
 		Handler:      fastRouter.Handler,
