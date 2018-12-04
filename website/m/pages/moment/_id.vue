@@ -12,15 +12,7 @@
         </van-nav-bar>
 
         <van-cell-group>
-        <van-cell>
-            <van-field
-                    :value="moment.content"
-                    type="textarea"
-                    rows="1"
-                    autosize
-                    disabled
-            />
-        </van-cell>
+        <van-cell class="content">{{moment.content}}</van-cell>
             <van-cell>{{moment.created_at|dateFormat}}</van-cell>
             <van-cell><van-tag plain v-for="(tag,index) in moment.tags" :key="index">{{tag.name}}</van-tag></van-cell>
             <van-cell>{{moment.mood_name}}</van-cell>
@@ -94,7 +86,10 @@
 </script>
 
 <style scoped>
-.button{
-    text-align: center;
-}
+    .content{
+        margin-top: 1.5rem;
+    }
+    .button{
+        text-align: center;
+    }
 </style>

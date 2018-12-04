@@ -19,21 +19,15 @@
             <nuxt-link :to="{ path: '/moment/'+item.id,query: { t:topNum ,index:(pageNo-1)*pageSize+index}}">
                 <div>
                     <van-cell><span><van-button type="primary">[置顶]</van-button></span>
-                        <van-field
-                            :value="item.content"
-                            type="textarea"
-                            :rows="item.content.length/20"
-                            disabled
-                    />
-                    </van-cell>
-                    <van-row>
-                        <van-col span="8"><van-cell><van-button plain type="primary">作者</van-button>{{item.user.name}}</van-cell></van-col>
-                        <van-col span="16"><van-cell class="date"><van-button plain type="primary">日期</van-button>{{item.created_at|dateFormat}}</van-cell></van-col>
-                    </van-row>
-                    <van-cell-group>
-                        <van-cell><van-button plain type="primary">心情</van-button>{{item.mood_name}}</van-cell>
-                        <van-cell><van-button plain type="primary">标签</van-button><van-tag plain v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
-                    </van-cell-group>
+                        {{item.content}}</van-cell>
+                        <van-row>
+                            <van-col span="8"><van-cell><van-button plain type="primary">作者</van-button>{{item.user.name}}</van-cell></van-col>
+                            <van-col span="16"><van-cell class="date"><van-button plain type="primary">日期</van-button>{{item.created_at|dateFormat}}</van-cell></van-col>
+                        </van-row>
+                        <van-cell-group>
+                            <van-cell><van-button plain type="primary">心情</van-button>{{item.mood_name}}</van-cell>
+                            <van-cell><van-button plain type="primary">标签</van-button><van-tag plain v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
+                        </van-cell-group>
                 </div>
             </nuxt-link>
             </div>
@@ -43,14 +37,7 @@
             <div  class="moment" v-if="item.content !==''">
             <nuxt-link :to="{ path: '/moment/'+item.id,query: { t: '0',index:(pageNo-1)*pageSize+index}}">
                 <div>
-                    <van-cell>
-                        <van-field
-                                :value="item.content"
-                                type="textarea"
-                                :rows="Math.ceil(item.content.length/30)"
-                                disabled
-                        />
-                    </van-cell>
+                    <van-cell>{{item.content}}</van-cell>
                     <van-row>
                         <van-col span="8"><van-cell><van-button plain type="primary">作者</van-button>{{item.user.name}}</van-cell></van-col>
                         <van-col span="16"><van-cell class="date"><van-button plain type="primary">日期</van-button>{{item.created_at|dateFormat}}</van-cell></van-col>

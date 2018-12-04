@@ -15,13 +15,7 @@
                 <div class="row" v-for="item of Msg">
                     <van-row>
                         <van-col span="4"><van-cell class="name van-hairline--bottom">{{item.send_user.name}}</van-cell></van-col>
-                        <van-col span="20" class="van-hairline--bottom"><van-field
-                                v-model="item.content"
-                                type="textarea"
-                                rows="1"
-                                disabled
-                                autosize
-                        /></van-col>
+                        <van-col span="20" class="van-hairline--bottom">{{item.content}}</van-col>
                     </van-row>
                     <van-row>
                         <van-col span="16"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
@@ -148,7 +142,11 @@
             }
         }
     }
-
+    .van-field__control:disabled {
+        opacity: 1;
+        color: #000;
+        background-color: transparent;
+    }
     .inp{
         position: fixed;
         bottom: 0;
