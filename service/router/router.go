@@ -4,6 +4,7 @@ package router
 import (
 	"github.com/fasthttp/router"
 	"github.com/gin-gonic/gin"
+	"github.com/kataras/iris"
 	"github.com/valyala/fasthttp"
 	"io"
 	"net/http"
@@ -100,8 +101,29 @@ func HttpRouter() *gin.Engine {
 		})
 	})
 
+	v1 := r.Group("/gin")
+	v1.GET("/ping", func(context *gin.Context) {
+		context.JSON(http.StatusOK, gin.H{
+			"message": "gin",
+		})
+	})
 	r.GET("/api/chat/ws", hwebsocket.Chat)
 
 	r.GET("/api/push", controller.Push)
 	return r
+}
+
+func IrisRouter() *iris.Application {
+	app := iris.New()
+
+	v1 := app.Party("/iris")
+	{
+		v1.Get("/ping", func(ctx iris.Context) {
+			ctx.JSON(iris.Map{
+				"message": "iris",
+			})
+		})
+
+	}
+	return app
 }

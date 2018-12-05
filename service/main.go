@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/kataras/iris"
 	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
@@ -52,6 +53,14 @@ func main() {
 		}
 	}()
 
+	irisRouter := router.IrisRouter()
+	go func() {
+		// listen and serve on http://0.0.0.0:8080.
+		if err := irisRouter.Run(iris.Addr(":8888")); err != nil && err != http.ErrServerClosed {
+			log.Printf("Listen: %s\n", err)
+		}
+	}()
+
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
@@ -61,10 +70,13 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := ws.Shutdown(ctx); err != nil {
-		log.Fatal("ws Server Shutdown:", err)
+		log.Fatal("gin Server Shutdown:", err)
 	}
 	if err := s.Shutdown(); err != nil {
-		log.Fatal("Server Shutdown:", err)
+		log.Fatal("httprouter Server Shutdown:", err)
+	}
+	if err := irisRouter.Shutdown(ctx); err != nil {
+		log.Fatal("iris Server Shutdown:", err)
 	}
 
 	log.Println("Server exiting")
