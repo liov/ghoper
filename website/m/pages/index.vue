@@ -14,6 +14,10 @@
         </div>
         <lio-hint ref="lioHint"></lio-hint>
         <div class="van-hairline--top"></div>
+        <div >
+            <van-button type="primary" @click="test">test</van-button>
+        </div>
+        <van-cell>{{testdata}}</van-cell>
     </div>
 </template>
 
@@ -23,7 +27,7 @@
     export default {
         data(){
             return {
-
+                testdata:''
             }
         },
         methods:{
@@ -41,6 +45,19 @@
             hint:function (msg) {
                 //this.$refs.lioHint.animate(msg)
                 this.$refs.lioHint.animate(msg)
+            },
+            test:function () {
+                let vm =this;
+                let Init = { method: 'GET',
+                    headers: new Headers(),
+                    mode: 'cors',
+                    cache: 'default' };
+
+                fetch("http://hoper.xyz/tpl/index",Init).then((res)=>
+                    res.text()).then((text)=>{
+                        vm.testdata = text
+                    }
+                )
             }
         }
     }
