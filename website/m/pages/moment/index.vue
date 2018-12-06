@@ -20,9 +20,9 @@
                 <div>
                     <van-cell>
                         <van-row class="mhead">
-                            <van-col span="6"><van-cell>{{item.user.name}}</van-cell></van-col>
+                            <van-col span="6"><van-cell><van-icon name="contact" />{{item.user.name}}</van-cell></van-col>
                             <van-col span="10"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
-                            <van-col span="8"><van-cell>{{item.mood_name}}</van-cell></van-col>
+                            <van-col span="8"><van-cell><van-icon name="like-o" />{{item.mood_name}}</van-cell></van-col>
                         </van-row>
                     </van-cell>
                     <van-cell><van-tag plain type="danger">[置顶]</van-tag>{{item.content}}</van-cell>
@@ -38,9 +38,9 @@
                 <div>
                     <van-cell>
                         <van-row class="mhead">
-                            <van-col span="6"><van-cell>{{item.user.name}}</van-cell></van-col>
+                            <van-col span="6"><van-cell><van-icon name="contact" />{{item.user.name}}</van-cell></van-col>
                             <van-col span="10"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
-                            <van-col span="8"><van-cell>{{item.mood_name}}</van-cell></van-col>
+                            <van-col span="8"><van-cell><van-icon name="like-o" />{{item.mood_name}}</van-cell></van-col>
                         </van-row>
                     </van-cell>
                     <van-cell>{{item.content}}</van-cell>
@@ -208,10 +208,14 @@
                     font-size: .2rem;
                     padding: 0;
                     box-sizing: content-box;
+                    .van-icon{
+                        margin-right: .2rem;
+                    }
                 }
             }
             .van-tag{
-                padding: .1em .1em;
+                padding: .1em .5em;
+                margin-right: .2rem;
             }
         }
     }
