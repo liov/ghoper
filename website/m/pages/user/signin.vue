@@ -49,7 +49,7 @@
                             vm.$store.commit("SET_TOKEN", res.data.token);
                             localStorage.setItem("user",res.data.data.id);
                             vm.$toast("登录成功");
-                            vm.$router.replace("/chat")
+                            vm.$router.replace("/")
                         }else {
                             vm.$toast(res.data.msg)
                         }
