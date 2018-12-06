@@ -54,8 +54,8 @@
         <div class="pagination">
         <van-pagination
                 v-model="pageNo"
-                :total-items="125"
-                :show-page-size="pageSize"
+                :page-count="pageNo+1"
+                :show-page-size= "0"
                 force-ellipses
         />
         </div>
