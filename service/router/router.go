@@ -30,7 +30,7 @@ func FastRouter() *router.Router {
 
 	//r.Use(middleware.Cors())
 
-	r.GET("/", controller.Index)
+	r.GET("/api", controller.Index)
 
 	//获取文章列表
 	r.GET("/api/article", controller.GetArticle)
@@ -77,6 +77,7 @@ func FastRouter() *router.Router {
 		}
 		template.WritePageTemplate(ctx, p)
 	})
+
 	return r
 }
 
@@ -95,12 +96,13 @@ func HttpRouter() *gin.Engine {
 
 	r.LoadHTMLGlob("template/*")
 
-	r.GET("/tpl/index", func(c *gin.Context) {
+	r.GET("/gin/index", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"title": "Main website",
 		})
 	})
 
+	r.Static("/gin/static", "../static")
 	v1 := r.Group("/gin")
 	v1.GET("/ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
