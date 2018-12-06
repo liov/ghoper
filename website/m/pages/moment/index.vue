@@ -18,16 +18,15 @@
             <div  class="moment" v-if="item.content !==''">
             <nuxt-link :to="{ path: '/moment/'+item.id,query: { t:topNum ,index:(pageNo-1)*pageSize+index}}">
                 <div>
-                    <van-cell><span><van-button type="primary">[置顶]</van-button></span>
-                        {{item.content}}</van-cell>
-                        <van-row>
-                            <van-col span="8"><van-cell><van-button plain type="primary">作者</van-button>{{item.user.name}}</van-cell></van-col>
-                            <van-col span="16"><van-cell class="date"><van-button plain type="primary">日期</van-button>{{item.created_at|dateFormat}}</van-cell></van-col>
+                    <van-cell>
+                        <van-row class="mhead">
+                            <van-col span="6"><van-cell>{{item.user.name}}</van-cell></van-col>
+                            <van-col span="10"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
+                            <van-col span="8"><van-cell>{{item.mood_name}}</van-cell></van-col>
                         </van-row>
-                        <van-cell-group>
-                            <van-cell><van-button plain type="primary">心情</van-button>{{item.mood_name}}</van-cell>
-                            <van-cell><van-button plain type="primary">标签</van-button><van-tag plain v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
-                        </van-cell-group>
+                    </van-cell>
+                    <van-cell><van-tag plain type="danger">[置顶]</van-tag>{{item.content}}</van-cell>
+                    <van-cell><van-tag round type="primary" v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
                 </div>
             </nuxt-link>
             </div>
@@ -40,12 +39,12 @@
                     <van-cell>
                         <van-row class="mhead">
                             <van-col span="6"><van-cell>{{item.user.name}}</van-cell></van-col>
-                            <van-col span="9"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
-                            <van-col span="9"><van-cell>{{item.mood_name}}</van-cell></van-col>
+                            <van-col span="10"><van-cell>{{item.created_at|dateFormat}}</van-cell></van-col>
+                            <van-col span="8"><van-cell>{{item.mood_name}}</van-cell></van-col>
                         </van-row>
                     </van-cell>
                     <van-cell>{{item.content}}</van-cell>
-                        <van-cell><van-button plain type="primary">标签</van-button><van-tag plain v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
+                        <van-cell><van-tag round type="primary" v-for="(tag,index) in item.tags" :key="index">{{tag.name}}</van-tag></van-cell>
                 </div>
             </nuxt-link>
             </div>
@@ -211,11 +210,8 @@
                     box-sizing: content-box;
                 }
             }
-            .van-button{
-                height: 20px;
-                line-height: 20px;
-                padding: 0 3px;
-                margin-right: 3px;
+            .van-tag{
+                padding: .1em .1em;
             }
         }
     }
