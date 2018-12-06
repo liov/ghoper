@@ -262,7 +262,11 @@ func GetMoment(c *fasthttp.RequestCtx) {
 	}
 	moment.BrowseCount = moment.BrowseCount + 1
 
-	common.Response(c, moment)
+	if moment.UserID == user.ID {
+		common.Response(c, moment, "belong")
+	} else {
+		common.Response(c, moment)
+	}
 
 	saveErr := initialize.DB.Save(&moment).Error
 
@@ -433,7 +437,7 @@ func AddMoment(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	common.Response(c, e.SUCCESS, "新建成功")
+	common.Response(c, "新建成功")
 }
 
 func validationMoment(c *fasthttp.RequestCtx, moment *Moment) (err error) {

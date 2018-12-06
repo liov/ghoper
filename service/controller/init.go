@@ -5,7 +5,8 @@ import (
 	"os"
 	"service/controller/common"
 )
-func init(){
+
+func init() {
 	//github.com/gin-contrib/sessions 获取User必须gob注册
 	//必须encoding/gob编码解码进行注册
 	//gob.Register(&User{})
@@ -17,7 +18,7 @@ func init(){
 	logrus.SetOutput(os.Stdout)
 
 	// Only log the warning severity or above.
-	logrus.SetLevel(logrus.WarnLevel)
+	logrus.SetLevel(logrus.InfoLevel)
 }
 
-var jsons =common.Json
+var jsons = common.Json

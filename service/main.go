@@ -75,9 +75,10 @@ func main() {
 	if err := s.Shutdown(); err != nil {
 		log.Fatal("httprouter Server Shutdown:", err)
 	}
-	if err := irisRouter.Shutdown(ctx); err != nil {
+	//默认优雅关闭
+	/*	if err := irisRouter.Shutdown(ctx); err != nil {
 		log.Fatal("iris Server Shutdown:", err)
-	}
+	}*/
 
 	log.Println("Server exiting")
 }

@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 )
+
 //_ "github.com/jinzhu/gorm/dialects/mysql"
 // DB 数据库连接
 var DB *gorm.DB
@@ -25,15 +26,15 @@ var MongoDB *mgo.Database
 func initializeDB() {
 
 	var url string
-if DatabaseSettings.Type == "mysql" {
-	url = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
-		DatabaseSettings.User, DatabaseSettings.Password, DatabaseSettings.Host,
-		DatabaseSettings.Port, DatabaseSettings.Database, DatabaseSettings.Charset)
-}else if DatabaseSettings.Type == "postgres" {
-	url = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
-		DatabaseSettings.Host,DatabaseSettings.User, DatabaseSettings.Database, DatabaseSettings.Password)
-}
-	
+	if DatabaseSettings.Type == "mysql" {
+		url = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
+			DatabaseSettings.User, DatabaseSettings.Password, DatabaseSettings.Host,
+			DatabaseSettings.Port, DatabaseSettings.Database, DatabaseSettings.Charset)
+	} else if DatabaseSettings.Type == "postgres" {
+		url = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
+			DatabaseSettings.Host, DatabaseSettings.User, DatabaseSettings.Database, DatabaseSettings.Password)
+	}
+
 	db, err := gorm.Open(DatabaseSettings.Type, url)
 
 	if err != nil {
@@ -119,6 +120,7 @@ func init() {
 	initializeDB()
 	initializeMongo()
 	initializeRedis()
+	initializeXorm()
 }
 
 const (

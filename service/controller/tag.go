@@ -4,7 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/valyala/fasthttp"
 	"service/controller/common"
-	"service/controller/common/e"
 	"service/initialize"
 	"service/model"
 	"service/utils"
@@ -32,7 +31,7 @@ func GetTags(c *fasthttp.RequestCtx) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
-	common.Response(c, e.SUCCESS, tags)
+	common.Response(c, tags)
 }
 
 func GetTagTotal(maps interface{}) (count int) {

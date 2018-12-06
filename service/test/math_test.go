@@ -10,18 +10,40 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 	"unsafe"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func TestPrint(t *testing.T) {
-	fmt.Println("start")
-	println(3)
-	println(2)
-	println(1)
-	fmt.Println("end")
+	var a, c interface{}
+	var b ArticleComment
+	a = b
+	c = a.(ArticleComment).ArticleID
+	fmt.Println(c)
 }
+
+type ArticleComment struct {
+	ID          uint      `gorm:"primary_key"`
+	CreatedAt   time.Time `json:"created_at"`
+	User        User      `json:"user"`
+	UserID      uint      `json:"user_id"`
+	Content     string    `gorm:"type:varchar(500)" json:"content"`
+	HTMLContent string    `gorm:"type:varchar(500)" json:"html_content"`
+	ContentType int       `json:"content_type"`
+	ArticleID   uint      `json:"article_id"` //话题或投票的ID
+	ParentID    uint      `json:"parent_id"`  //直接父评论的ID
+}
+
+func (a *ArticleComment) GetCommentType() {
+
+}
+
+type Comment interface {
+	GetCommentType()
+}
+
 func TestThread(t *testing.T) {
 	runtime.GOMAXPROCS(1) //First
 	exit := make(chan int)

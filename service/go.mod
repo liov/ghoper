@@ -24,7 +24,7 @@ require (
 	github.com/gin-gonic/gin v1.3.0
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
 	github.com/go-ini/ini v1.38.3
-	github.com/go-sql-driver/mysql v1.4.0 // indirect
+	github.com/go-xorm/xorm v0.7.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
@@ -41,7 +41,6 @@ require (
 	github.com/kataras/golog v0.0.0-20180321173939-03be10146386 // indirect
 	github.com/kataras/iris v11.1.0+incompatible
 	github.com/kataras/pio v0.0.0-20180511174041-a9733b5b6b83 // indirect
-	github.com/lib/pq v1.0.0 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

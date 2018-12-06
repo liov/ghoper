@@ -64,6 +64,8 @@ func FastRouter() *router.Router {
 	r.POST("/api/user/active", controller.ActiveSendMail)
 	r.GET("/api/user/get", jwt(controller.SigninFlag))
 
+	r.POST("/api/comment/:classify", jwt(controller.AddComment))
+
 	//r.GET("/api/push",controller.Push)
 
 	r.GET("/api/chat/getChat", hwebsocket.GetChat)

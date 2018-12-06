@@ -22,6 +22,8 @@
         <nuxt-link v-if="belongFlag" :to="{ path: '/moment/edit',query: queryPamram}"><van-button type="primary">修改</van-button></nuxt-link>
        <van-button v-if="belongFlag" type="danger"  @click="deleteMoment">删除</van-button>
         </div>
+
+        <van-field v-model="comment" placeholder="评论"><van-button slot="button" size="small" type="primary" @click="commit">发送</van-button></van-field>
     </div>
 </template>
 
@@ -29,14 +31,14 @@
     import {copy} from "../../plugins/utils/utils.js"
     import axios from 'axios'
     export default {
-        middleware: 'auth',
         data(){
             return {
                 queryPamram:{
                     id: this.$route.params.id,
                     t :  this.$route.query.t,
-                    index :  this.$route.query.index
-                }
+                    index :  this.$route.query.index,
+                },
+                comment:''
             }
         },
         async asyncData ({ params,query}) {
@@ -80,6 +82,21 @@
                     arr2.push(arr.slice(i,i+size));
                 }
                 return arr2;
+            },
+            commit:function () {
+                let vm =this;
+                let comment ={
+                        moment_comment:vm.comment,
+                        moment_id:vm.$route.params.id,
+                        parent_id:0
+                };
+                axios.post('/api/comment/momentComment',comment).then((res)=>{
+
+                    if (res.data.msg === '评论成功')
+                        vm.$toast(res.data.msg);
+                    else
+                        vm.$toast(res.data.msg)
+                    })
             }
         }
     }
