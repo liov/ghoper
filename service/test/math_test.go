@@ -17,11 +17,10 @@ import (
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func TestPrint(t *testing.T) {
-	var a, c interface{}
-	var b ArticleComment
-	a = b
-	c = a.(ArticleComment).ArticleID
-	fmt.Println(c)
+	var d interface{}
+	d = new(ArticleComment)
+
+	fmt.Println(d)
 }
 
 type ArticleComment struct {
@@ -34,14 +33,6 @@ type ArticleComment struct {
 	ContentType int       `json:"content_type"`
 	ArticleID   uint      `json:"article_id"` //话题或投票的ID
 	ParentID    uint      `json:"parent_id"`  //直接父评论的ID
-}
-
-func (a *ArticleComment) GetCommentType() {
-
-}
-
-type Comment interface {
-	GetCommentType()
 }
 
 func TestThread(t *testing.T) {

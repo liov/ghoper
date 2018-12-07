@@ -86,8 +86,8 @@
             commit:function () {
                 let vm =this;
                 let comment ={
-                        moment_comment:vm.comment,
-                        moment_id:vm.$route.params.id,
+                        content:vm.comment,
+                        moment_id:parseInt(vm.$route.params.id),
                         parent_id:0
                 };
                 axios.post('/api/comment/momentComment',comment).then((res)=>{

@@ -120,7 +120,6 @@ func init() {
 	initializeDB()
 	initializeMongo()
 	initializeRedis()
-	initializeXorm()
 }
 
 const (
