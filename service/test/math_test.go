@@ -17,10 +17,55 @@ import (
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func TestPrint(t *testing.T) {
-	var d interface{}
-	d = new(ArticleComment)
+	s := decimalToAny(702, 26)
+	flag := false
+	for i := len(s); i > 0; i-- {
 
-	fmt.Println(d)
+	}
+	for _, s := range s {
+
+		if s == '0' {
+			fmt.Print("Z")
+			flag = true
+		} else {
+			if flag {
+				if twentySix[byte(s)]-1 != 48 {
+					fmt.Print("Z")
+					flag = false
+				}
+			} else {
+				fmt.Print(twentySix[byte(s)])
+			}
+		}
+	}
+	fmt.Println(s)
+}
+
+var tenToAny = map[int]byte{0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'a', 11: 'b', 12: 'c', 13: 'd', 14: 'e', 15: 'f', 16: 'g', 17: 'h', 18: 'i', 19: 'j', 20: 'k', 21: 'l', 22: 'm', 23: 'n', 24: 'o', 25: 'p', 26: 'q', 27: 'r', 28: 's', 29: 't', 30: 'u', 31: 'v', 32: 'w', 33: 'x', 34: 'y', 35: 'z', 36: ':', 37: ';', 38: '<', 39: '=', 40: '>', 41: '?', 42: '@', 43: '[', 44: ']', 45: '^', 46: '_', 47: '{', 48: '|', 49: '}', 50: 'A', 51: 'B', 52: 'C', 53: 'D', 54: 'E', 55: 'F', 56: 'G', 57: 'H', 58: 'I', 59: 'J', 60: 'K', 61: 'L', 62: 'M', 63: 'N', 64: 'O', 65: 'P', 66: 'Q', 67: 'R', 68: 'S', 69: 'T', 70: 'U', 71: 'V', 72: 'W', 73: 'X', 74: 'Y', 75: 'Z'}
+var twentySix = map[byte]byte{'1': 'A', '2': 'B', '3': 'C', '4': 'D', '5': 'E', '6': 'F', '7': 'G', '8': 'H', '9': 'I', 'a': 'J', 'b': 'K', 'c': 'L', 'd': 'M', 'e': 'N', 'f': 'O', 'g': 'P', 'h': 'Q', 'i': 'R', 'j': 'S', 'k': 'T', 'l': 'U', 'm': 'V', 'n': 'W', 'o': 'X', 'p': 'Y', 'q': 'Z'}
+var twentySeven = map[string]string{"1": "Z", "2": "A", "3": "B", "4": "C", "5": "D", "6": "E", "7": "F", "8": "G", "9": "H", "a": "I", "b": "J", "c": "K", "d": "L", "e": "M", "f": "N", "g": "O", "h": "P", "i": "Q", "j": "R", "k": "S", "l": "T", "m": "U", "n": "V", "o": "W", "p": "X", "q": "Y"}
+
+func decimalToAny(num, n int) []byte {
+	var newNumStr []byte
+	var remainder int
+	var remainderString byte
+	for num != 0 {
+		remainder = num % n
+		remainderString = tenToAny[remainder]
+		newNumStr = append(newNumStr, remainderString)
+
+		num = num / n
+	}
+	return newNumStr
+}
+func reverseString(s string) string {
+	runes := []rune(s)
+
+	for from, to := 0, len(runes)-1; from < to; from, to = from+1, to-1 {
+		runes[from], runes[to] = runes[to], runes[from]
+	}
+
+	return string(runes)
 }
 
 type ArticleComment struct {
