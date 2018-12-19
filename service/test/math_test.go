@@ -16,6 +16,21 @@ import (
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+func TestBiBao(t *testing.T) {
+	var f = Adder()
+	fmt.Print(f(1), " - ")
+	fmt.Print(f(20), " - ")
+	fmt.Print(f(300))
+}
+
+func Adder() func(int) int {
+	var x int
+	return func(delta int) int {
+		x += delta
+		return x
+	}
+}
+
 func TestPrint(t *testing.T) {
 	x := decimalToAny(703, 26)
 	flag := false
