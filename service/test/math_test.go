@@ -16,6 +16,80 @@ import (
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+type Any interface{}
+type EvalFunc func(Any) (Any, Any)
+
+func TestDuoXingShengChengQi(t *testing.T) {
+	evenFunc := func(state Any) (Any, Any) {
+		os := state.(int)
+		ns := os + 2
+		return os, ns
+	}
+
+	even := BuildLazyIntEvaluator(evenFunc, 0)
+
+	for i := 0; i < 10; i++ {
+		fmt.Printf("%vth even: %v\n", i, even())
+	}
+}
+
+func BuildLazyEvaluator(evalFunc EvalFunc, initState Any) func() Any {
+	retValChan := make(chan Any)
+	loopFunc := func() {
+		actState := initState
+		var retVal Any
+		for {
+			retVal, actState = evalFunc(actState)
+			retValChan <- retVal
+		}
+	}
+	retFunc := func() Any {
+		return <-retValChan
+	}
+	go loopFunc()
+	return retFunc
+}
+
+func BuildLazyIntEvaluator(evalFunc EvalFunc, initState Any) func() int {
+	ef := BuildLazyEvaluator(evalFunc, initState)
+	return func() int {
+		return ef().(int)
+	}
+}
+
+func s() chan string {
+	return make(chan string)
+}
+
+func ss() <-chan string {
+	return make(chan string)
+}
+
+func TestChan(t *testing.T) {
+	ch := make(chan string)
+	go sendData(ch)
+	getData(ch)
+}
+
+func sendData(ch chan string) {
+	ch <- "Washington"
+	ch <- "Tripoli"
+	ch <- "London"
+	ch <- "Beijing"
+	ch <- "Tokio"
+	close(ch)
+}
+
+func getData(ch chan string) {
+	for {
+		input, open := <-ch
+		if !open {
+			break
+		}
+		fmt.Printf("%s ", input)
+	}
+}
+
 func TestBiBao(t *testing.T) {
 	var f = Adder()
 	fmt.Print(f(1), " - ")
