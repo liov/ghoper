@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -20,22 +23,15 @@ var Dog = /** @class */ (function (_super) {
     }
     return Dog;
 }(Animal));
-// 错误：使用数值型的字符串索引，有时会得到完全不同的Animal!
-/*
-interface NotOkay {
-    [x: number]: Animal;
-    [x: string]: Dog;
-}
-
-let animal1:Animal = {name:"dog1"};
-let dog1:Dog ={breed:"labuladuo1"};
-let animal2:Animal = {name:"dog2"};
-let dog2:Dog ={breed:"labuladuo2"};
-let a:NotOkay={};
-a[1]=animal1;
-a[2]=animal2;
-a["1"]=dog1;
-a["2"]=dog2
-console.log(a[1])
-懂了！
-*/
+var animal1 = { name: "dog1" };
+// @ts-ignore
+var dog1 = { breed: "labuladuo1" };
+var animal2 = { name: "dog2" };
+// @ts-ignore
+var dog2 = { breed: "labuladuo2" };
+var a = {};
+a[1] = animal1;
+a[2] = animal2;
+a["1"] = dog1;
+a["2"] = dog2;
+console.log(a[1]);

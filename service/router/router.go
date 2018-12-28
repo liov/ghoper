@@ -129,5 +129,18 @@ func IrisRouter() *iris.Application {
 		})
 
 	}
+
+	app.Macros().Get("string").RegisterFunc("range", func(minLength, maxLength int) func(string) bool {
+		return func(paramValue string) bool {
+			return len(paramValue) >= minLength && len(paramValue) <= maxLength
+		}
+	})
+
+	app.Get("/static_validation/{name:string has([kataras,gerasimos,maropoulos]}", func(ctx iris.Context) {
+		name := ctx.Params().Get("name")
+		ctx.Writef(`Hello %s | the name should be "kataras" or "gerasimos" or "maropoulos"
+    otherwise this handler will not be executed`, name)
+	})
+
 	return app
 }
