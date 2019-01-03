@@ -223,8 +223,7 @@ func GetMoment(c *fasthttp.RequestCtx) {
 	top := utils.ToSting(args.Peek("t"))
 	index := utils.ToSting(args.Peek("index"))
 
-	iUser := c.UserValue("user")
-	user := iUser.(User)
+	user := c.UserValue("user").(User)
 
 	if moment := getRedisMoment(top, index); moment != nil {
 		if moment.UserID == user.ID {

@@ -1,13 +1,8 @@
 package test
 
 import (
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"sync"
-	"testing"
-	"time"
 )
 
 func httpGetBody(url string) (interface{}, error) {
@@ -47,7 +42,7 @@ func (memo *Memo) Get(key string) (interface{}, error) {
 	return res.value, res.err
 }
 
-func TestMemo(t *testing.T) {
+/*func TestMemo(t *testing.T) {
 	m := New(httpGetBody)
 	var n sync.WaitGroup
 	for url := range incomingURLs() {
@@ -65,3 +60,4 @@ func TestMemo(t *testing.T) {
 	}
 	n.Wait()
 }
+*/

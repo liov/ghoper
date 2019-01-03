@@ -16,6 +16,7 @@ type Tag struct {
 	Name        string    `gorm:"type:varchar(10);primary_key" json:"name"`
 	Count       uint      `gorm:"default:0" json:"count"`
 	CreatedAt   time.Time `json:"created_at"`
+	CreatedBy   uint      `json:"created_by"`
 }
 
 func GetTags(c *fasthttp.RequestCtx) {
@@ -50,11 +51,13 @@ func ExistTagByName(name string) *Tag {
 	return nil
 }
 
-func AddTag(name string, status uint8, createdBy model.User) bool {
-	initialize.DB.Create(&model.Tag{
+func AddTag(c *fasthttp.RequestCtx) bool {
+	args := c.QueryArgs()
+	name := utils.ToSting(args.Peek("name"))
+	user := c.UserValue("user").(User)
+	initialize.DB.Create(&Tag{
 		Name:      name,
-		Status:    status,
-		CreatedBy: createdBy,
+		CreatedBy: user.ID,
 	})
 
 	return true

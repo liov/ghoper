@@ -16,6 +16,45 @@ import (
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+func TestGo(t *testing.T) {
+	for i := 0; i < 10000; i++ {
+		var a string
+		var done bool
+		go func() {
+
+			a = fmt.Sprintf("%d_%s", i, "hello")
+
+			done = true
+		}()
+
+		for !done {
+
+		}
+
+		fmt.Println("第", i, "次,a:", a)
+	}
+}
+
+func TestRandom(t *testing.T) {
+	for i := range random(100) {
+		fmt.Println(i)
+	}
+}
+
+func random(n int) <-chan int {
+	c := make(chan int)
+	go func() {
+		defer close(c)
+		for i := 0; i < n; i++ {
+			select {
+			case c <- 0:
+			case c <- 1:
+			}
+		}
+	}()
+	return c
+}
+
 type Any interface{}
 type EvalFunc func(Any) (Any, Any)
 
