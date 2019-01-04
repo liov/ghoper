@@ -39,7 +39,7 @@ func main() {
 
 	httpRouter := router.HttpRouter()
 
-	ws := &http.Server{
+	gin := &http.Server{
 		Addr:           ":8080",
 		Handler:        httpRouter,
 		ReadTimeout:    initialize.ServerSettings.ReadTimeout,
@@ -48,7 +48,7 @@ func main() {
 	}
 
 	go func() {
-		if err := ws.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := gin.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Printf("Listen: %s\n", err)
 		}
 	}()
@@ -69,7 +69,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := ws.Shutdown(ctx); err != nil {
+	if err := gin.Shutdown(ctx); err != nil {
 		log.Fatal("gin Server Shutdown:", err)
 	}
 	if err := s.Shutdown(); err != nil {

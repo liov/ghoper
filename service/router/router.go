@@ -111,7 +111,7 @@ func HttpRouter() *gin.Engine {
 			"message": "gin",
 		})
 	})
-	r.GET("/api/chat/ws", hwebsocket.Chat)
+	//r.GET("/api/chat/ws", hwebsocket.Chat)
 
 	r.GET("/api/push", controller.Push)
 	return r
@@ -136,11 +136,30 @@ func IrisRouter() *iris.Application {
 		}
 	})
 
-	app.Get("/static_validation/{name:string has([kataras,gerasimos,maropoulos]}", func(ctx iris.Context) {
+	app.Get("/limitchar/{name:string range(1,200) else 400}", func(ctx iris.Context) {
+		name := ctx.Params().Get("name")
+		ctx.Writef(`Hello %s | the name should be between 1 and 200 characters length
+    otherwise this handler will not be executed`, name)
+	})
+
+	app.Macros().Get("string").RegisterFunc("has", func(validNames []string) func(string) bool {
+		return func(paramValue string) bool {
+			for _, validName := range validNames {
+				if validName == paramValue {
+					return true
+				}
+			}
+
+			return false
+		}
+	})
+
+	app.Get("/static_validation/{name:string has([kataras,gerasimos,maropoulos])}", func(ctx iris.Context) {
 		name := ctx.Params().Get("name")
 		ctx.Writef(`Hello %s | the name should be "kataras" or "gerasimos" or "maropoulos"
     otherwise this handler will not be executed`, name)
 	})
 
+	app.Get("/api/chat/ws", hwebsocket.Chat)
 	return app
 }
