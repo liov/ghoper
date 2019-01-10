@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package protobuf;
+
+// The greeting service definition.
+service Greeter {
+    // Sends a greeting
+    rpc Hello (Request) returns (Reply) {}
+    // Sends another greeting
+    rpc HelloAgain (Request) returns (Reply) {}
+}
+
+// The request message containing the user's name.
+message Request {
+    string name = 1;
+}
+
+// The response message containing the greetings
+message Reply {
+    string message = 1;
+}
