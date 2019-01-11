@@ -20,11 +20,11 @@ func (g *Say) SayHelloAgain(ctx context.Context, req *protobuf.HelloRequest) (*p
 type ReSay struct{}
 
 func (r *ReSay) SayHello(ctx context.Context, in *protobuf.HelloRequest, out *protobuf.HelloReply) error {
-	out = &protobuf.HelloReply{Message: "Hello " + in.Name}
+	out.Message = "Hello " + in.Name
 	return nil
 }
 
 func (r *ReSay) SayHelloAgain(ctx context.Context, in *protobuf.HelloRequest, out *protobuf.HelloReply) error {
-	out = &protobuf.HelloReply{Message: "Hello " + in.Name}
+	out.Message = "Hello " + in.Name
 	return nil
 }
