@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/micro/go-micro"
 	"micro/protobuf"
 	"micro/service/say"
@@ -16,5 +17,8 @@ func main() {
 
 	protobuf.RegisterGreeterHandler(service.Server(), new(say.ReSay))
 
-	service.Run()
+	// Run the server
+	if err := service.Run(); err != nil {
+		fmt.Println(err)
+	}
 }

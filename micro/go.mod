@@ -5,7 +5,7 @@ require (
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/golang/mock v1.2.0 // indirect
-	github.com/golang/protobuf v1.2.0
+	github.com/golang/protobuf v1.2.1-0.20190109072247-347cf4a86c1c
 	github.com/google/uuid v1.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.6.4 // indirect
 	github.com/hashicorp/consul v1.4.0 // indirect
@@ -19,7 +19,7 @@ require (
 	github.com/hashicorp/serf v0.8.1 // indirect
 	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect
 	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6 // indirect
-	github.com/micro/go-micro v0.17.1-0.20190110094202-c086c33bb3cd
+	github.com/micro/go-micro v0.17.1-0.20190110221432-3043841cf529
 	github.com/micro/go-plugins v0.18.0 // indirect
 	github.com/micro/go-rcache v0.0.0-20180418165751-a581a57b5133 // indirect
 	github.com/micro/h2c v1.0.0 // indirect
