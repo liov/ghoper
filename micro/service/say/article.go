@@ -8,14 +8,24 @@ import (
 
 type Say struct{}
 
-func (g *Say) SayHello(ctx context.Context, req *protobuf.HelloRequest) (*protobuf.HelloReply, error) {
+func (g *Say) Hello(stream protobuf.HelloService_HelloServer) error {
 
-	return &protobuf.HelloReply{Message: "Hello " + req.Name}, nil
-}
+	for {
+		args, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
 
-func (g *Say) SayHelloAgain(ctx context.Context, req *protobuf.HelloRequest) (*protobuf.HelloReply, error) {
+		reply := &protobuf.String{Value: "hello:" + args.GetValue()}
 
-	return &protobuf.HelloReply{Message: "Hello " + req.Name}, nil
+		err = stream.Send(reply)
+		if err != nil {
+			return err
+		}
+	}
 }
 
 type ReSay struct{}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package protobuf;
+
+service HelloService {
+    rpc Hello (stream String) returns (stream String);
+}
+
+message String {
+    string value = 1;
+}
