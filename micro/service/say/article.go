@@ -2,6 +2,7 @@ package say
 
 import (
 	"context"
+	"io"
 	"micro/protobuf"
 )
 
@@ -24,7 +25,22 @@ func (r *ReSay) SayHello(ctx context.Context, in *protobuf.HelloRequest, out *pr
 	return nil
 }
 
-func (r *ReSay) SayHelloAgain(ctx context.Context, in *protobuf.HelloRequest, out *protobuf.HelloReply) error {
-	out.Message = "Hello " + in.Name
+func (r *ReSay) SayHelloAgain(ctx context.Context, gstream protobuf.Greeter_SayHelloAgainStream) error {
+	for {
+		req, err := gstream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
+
+		reply := &protobuf.HelloReply{Message: "hello" + req.Name}
+
+		err = gstream.Send(reply)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
