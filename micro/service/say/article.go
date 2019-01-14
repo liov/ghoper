@@ -35,7 +35,7 @@ func (r *ReSay) SayHelloAgain(ctx context.Context, gstream protobuf.Greeter_SayH
 			return err
 		}
 
-		reply := &protobuf.HelloReply{Message: "hello" + req.Name}
+		reply := &protobuf.HelloReply{Message: "hello" + req.GetName()}
 
 		err = gstream.Send(reply)
 		if err != nil {
