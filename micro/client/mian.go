@@ -34,20 +34,28 @@ func main() {
 			if err := rsp1.Send(&protobuf.HelloRequest{Name: "John"}); err != nil {
 				log.Fatal(err)
 			}
+			reply, err := rsp1.Recv()
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				log.Fatal(err)
+			}
+			fmt.Println(reply.GetMessage())
 			time.Sleep(time.Second)
 		}
 	}()
 	//两边同时recv会阻塞啊，啊啊啊啊
-	for {
-		reply, err := rsp1.Recv()
-		if err != nil {
-			if err == io.EOF {
-				break
+	/*	for {
+			reply, err := rsp1.Recv()
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				log.Fatal(err)
 			}
-			log.Fatal(err)
+			fmt.Println(reply.GetMessage())
 		}
-		fmt.Println(reply.GetMessage())
-	}
-
+	*/
 	fmt.Println(rsp.GetMessage())
 }
