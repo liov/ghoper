@@ -120,6 +120,8 @@ func HttpRouter() *gin.Engine {
 func IrisRouter() *iris.Application {
 	app := iris.New()
 
+	app.StaticWeb("/iris/static", "../static")
+
 	v1 := app.Party("/iris")
 	{
 		v1.Get("/ping", func(ctx iris.Context) {
