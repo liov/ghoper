@@ -1,0 +1,6 @@
+{
+  getUser(id: 1) {
+    Name
+    ID
+  }
+}

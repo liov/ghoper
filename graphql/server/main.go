@@ -1,23 +1,65 @@
 package main
 
 import (
-	"github.com/kataras/iris"
+	"context"
+	"github.com/graph-gophers/graphql-go"
+	"github.com/graph-gophers/graphql-go/relay"
 	"log"
 	"net/http"
+	"strconv"
 )
 
-func main() {
-	app := iris.Default()
+type UserResolver struct {
+	user User
+}
 
-	app.Get("/graphql", func(ctx iris.Context) {
-		ctx.JSON(iris.Map{
-			"message": "iris",
-		})
-	})
+func (u *UserResolver) ID() graphql.ID { return graphql.ID(strconv.Itoa(u.user.ID)) }
+func (u *UserResolver) Name() string   { return u.user.Name }
+func (u *UserResolver) Sex() string    { return u.user.Sex }
+func (u *UserResolver) Phone() string  { return u.user.Phone }
 
-	// listen and serve on http://0.0.0.0:8080.
-	if err := app.Run(iris.Addr(":8888")); err != nil && err != http.ErrServerClosed {
-		log.Printf("Listen: %s\n", err)
+type User struct {
+	ID    int
+	Name  string
+	Sex   string
+	Phone string
+}
+
+type Resolver struct {
+}
+
+func (r *Resolver) GetUser(ctx context.Context, args struct{ ID graphql.ID }) (*UserResolver, error) {
+	id, _ := strconv.Atoi(string(args.ID))
+
+	user := User{ID: id, Name: "一二三", Sex: "男", Phone: "666"}
+
+	s := UserResolver{
+		user: user,
 	}
+
+	return &s, nil
+}
+func main() {
+
+	s := `
+                schema {
+                      query: Query
+                }
+				type Query {
+  					getUser(id: ID!): User
+				}
+                type User {
+                        ID:ID!
+						Name:String!
+						Sex:String!
+						Phone:String!
+                }
+        `
+
+	schema := graphql.MustParseSchema(s, &Resolver{}, graphql.UseStringDescriptions())
+
+	http.Handle("/iris/graphql", &relay.Handler{Schema: schema})
+
+	log.Fatal(http.ListenAndServe(":8888", nil))
 
 }
