@@ -2,5 +2,6 @@ query {
   getUser(id: 1) {
     Name
     ID
+    Sex
   }
 }

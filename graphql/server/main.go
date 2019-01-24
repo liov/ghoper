@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"log"
@@ -55,7 +56,7 @@ func main() {
 						Phone:String!
                 }
         `
-
+	fmt.Println("\ufffd")
 	schema := graphql.MustParseSchema(s, &Resolver{}, graphql.UseStringDescriptions())
 
 	http.Handle("/iris/graphql", &relay.Handler{Schema: schema})
