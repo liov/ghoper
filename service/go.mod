@@ -20,8 +20,7 @@ require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/flosch/pongo2 v0.0.0-20180809100617-24195e6d38b0 // indirect
 	github.com/gin-contrib/sessions v0.0.0-20180827025425-58cbcf30135c
-	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
-	github.com/gin-gonic/gin v1.3.0
+	github.com/gin-gonic/gin v1.3.1-0.20190120102704-f38a3fe65f10
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
 	github.com/go-ini/ini v1.38.3
 	github.com/go-xorm/xorm v0.7.1
@@ -41,10 +40,7 @@ require (
 	github.com/kataras/golog v0.0.0-20180321173939-03be10146386 // indirect
 	github.com/kataras/iris v11.1.0+incompatible
 	github.com/kataras/pio v0.0.0-20180511174041-a9733b5b6b83 // indirect
-	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.1
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pquerna/ffjson v0.0.0-20181028064349-e517b90714f7
@@ -63,5 +59,4 @@ require (
 	github.com/valyala/quicktemplate v1.0.0
 	golang.org/x/image v0.0.0-20180926015637-991ec62608f3 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
-	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
