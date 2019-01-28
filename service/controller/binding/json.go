@@ -6,7 +6,7 @@ package binding
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin/json"
+	"encoding/json"
 	"github.com/valyala/fasthttp"
 	"io"
 )

@@ -23,6 +23,7 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gorilla/sessions v1.1.3 // indirect
 	github.com/gorilla/websocket v1.4.0
+	github.com/jinzhu/configor v0.0.0-20180614024415-4edaf76fe188
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/json-iterator/go v1.1.5
@@ -30,6 +31,7 @@ require (
 	github.com/kataras/iris v0.0.0-20190116204635-f4f66079a723
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/nsqio/go-nsq v1.0.7
+	github.com/pelletier/go-toml v1.2.0 // indirect
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pquerna/ffjson v0.0.0-20181028064349-e517b90714f7
 	github.com/quasoft/memstore v0.0.0-20180925164028-84a050167438 // indirect
@@ -40,7 +42,7 @@ require (
 	github.com/sirupsen/logrus v1.2.0
 	github.com/tidwall/gjson v1.1.3 // indirect
 	github.com/tidwall/match v1.0.0 // indirect
-	github.com/ugorji/go/codec v0.0.0-20180927125128-99ea80c8b19a
+	github.com/ugorji/go/codec v0.0.0-20190126102652-8fd0f8d918c8
 	github.com/valyala/fasthttp v1.1.0
 	github.com/valyala/quicktemplate v1.0.0
 	golang.org/x/image v0.0.0-20180926015637-991ec62608f3 // indirect

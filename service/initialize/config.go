@@ -1,92 +1,93 @@
 package initialize
 
 import (
+	"fmt"
+	"github.com/jinzhu/configor"
 	"log"
 	"time"
 
 	"github.com/go-ini/ini"
 )
 
-
 type ServerConfig struct {
-	RunMode string
-	Env string
-	HttpPort string
-	ReadTimeout time.Duration
+	RunMode      string
+	Env          string
+	HttpPort     string
+	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 
-	PassSalt string
-	TokenMaxAge int
-	TokenSecret string
-	JwtSecret string
-	PageSize int
+	PassSalt        string
+	TokenMaxAge     int
+	TokenSecret     string
+	JwtSecret       string
+	PageSize        int
 	RuntimeRootPath string
 
 	ImagePrefixUrl string
-	UploadImgDir string
-	ImagePath string
-	ImgHost string
-	ImageMaxSize int
+	UploadImgDir   string
+	ImagePath      string
+	ImgHost        string
+	ImageMaxSize   int
 	ImageAllowExts []string
 
 	LogSavePath string
 	LogSaveName string
-	LogFileExt string
-	TimeFormat string
+	LogFileExt  string
+	TimeFormat  string
 
 	SiteName string
-	Host string
+	Host     string
 
-	MailHost string
-	MailPort int
-	MailUser string
+	MailHost     string
+	MailPort     int
+	MailUser     string
 	MailPassWord string
-	MailFrom string
+	MailFrom     string
 
 	LuosimaoVerifyURL string
-	LuosimaoAPIKey string
+	LuosimaoAPIKey    string
 
-	QrCodeSavePath string	//二维码保存路径
-	PrefixUrl	string
-	FontSavePath string //字体保存路径
+	QrCodeSavePath string //二维码保存路径
+	PrefixUrl      string
+	FontSavePath   string //字体保存路径
 
-	CrawlerName string  //爬虫
+	CrawlerName string //爬虫
 }
 
 var ServerSettings = &ServerConfig{}
 
 type DatabaseConfig struct {
-	Type string
-	User string
-	Password string
-	Host string
-	Charset string
-	Database string
-	TablePrefix string
+	Type         string
+	User         string
+	Password     string
+	Host         string
+	Charset      string
+	Database     string
+	TablePrefix  string
 	MaxIdleConns int
 	MaxOpenConns int
-	Port int
+	Port         int
 }
 
 var DatabaseSettings = &DatabaseConfig{}
 
-type  RedisConfig struct {
-	Host string
-	Port int
-	Password string
-	MaxIdle int
-	MaxActive int
+type RedisConfig struct {
+	Host        string
+	Port        int
+	Password    string
+	MaxIdle     int
+	MaxActive   int
 	IdleTimeout time.Duration
 }
 
-var RedisSettings =&RedisConfig{}
+var RedisSettings = &RedisConfig{}
 
 type MongoConfig struct {
-	URL string
+	URL      string
 	Database string
 }
 
-var MongoSettings =&MongoConfig{}
+var MongoSettings = &MongoConfig{}
 
 func Setup() {
 	Cfg, err := ini.Load("../config/config.ini")
@@ -111,6 +112,16 @@ func Setup() {
 	err = Cfg.Section("redis").MapTo(RedisSettings)
 	RedisSettings.IdleTimeout = RedisSettings.IdleTimeout * time.Second
 
-	err =Cfg.Section("mongodb").MapTo(MongoSettings)
-}
+	err = Cfg.Section("mongodb").MapTo(MongoSettings)
 
+	var Config = struct {
+		Server   ServerConfig
+		Database DatabaseConfig
+		Redis    RedisConfig
+		Mongo    MongoConfig
+	}{}
+
+	configor.New(&configor.Config{Debug: true}).Load(&Config, "../config/config.toml")
+
+	fmt.Printf("d")
+}
