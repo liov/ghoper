@@ -8,6 +8,8 @@ import (
 	"log"
 	"micro/protobuf"
 	"net/http"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -18,12 +20,6 @@ func main() {
 
 	// Create new greeter client
 	greeter := protobuf.NewGreeterService("greeter", service.Client())
-
-	// Call the greeter
-	rsp, err := greeter.SayHello(context.TODO(), &protobuf.HelloRequest{Name: "John"})
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	rsp1, err := greeter.SayHelloAgain(context.TODO())
 	if err != nil {
@@ -38,23 +34,40 @@ func main() {
 
 			msg := ctx.Params().GetString("msg")
 
-			if err := rsp1.Send(&protobuf.HelloRequest{Name: msg}); err != nil {
-				log.Fatal(err)
+			// Call the greeter
+			rsp, err := greeter.SayHello(context.TODO(), &protobuf.HelloRequest{Name: msg})
+			if err != nil {
+				fmt.Println(err)
 			}
 
-			reply, _ := rsp1.Recv()
-
 			ctx.JSON(iris.Map{
-				"message": reply.GetMessage(),
+				"message": rsp.GetMessage(),
 			})
 
 		})
 	}
 
 	// listen and serve on http://0.0.0.0:8080.
-	if err := app.Run(iris.Addr(":8888")); err != nil && err != http.ErrServerClosed {
-		log.Printf("Listen: %s\n", err)
-	}
+	go func() {
+		// listen and serve on http://0.0.0.0:8080.
+		if err := app.Run(iris.Addr(":8888")); err != nil && err != http.ErrServerClosed {
+			log.Printf("Listen: %s\n", err)
+		}
+	}()
+
+	go func() {
+		for {
+			if err := rsp1.Send(&protobuf.HelloRequest{Name: "grpc流"}); err != nil {
+				log.Fatal(err)
+			}
+
+			reply, _ := rsp1.Recv()
+
+			fmt.Println(reply.GetMessage())
+
+			time.Sleep(time.Second)
+		}
+	}()
 	//两边同时recv会阻塞啊，啊啊啊啊
 	/*	for {
 			reply, err := rsp1.Recv()
@@ -67,5 +80,7 @@ func main() {
 			fmt.Println(reply.GetMessage())
 		}
 	*/
-	fmt.Println(rsp.GetMessage())
+	var wg sync.WaitGroup
+	wg.Add(1)
+	wg.Wait()
 }
