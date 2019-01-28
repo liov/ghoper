@@ -2,7 +2,14 @@ module micro
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
+	github.com/BurntSushi/toml v0.3.1 // indirect
+	github.com/Joker/jade v1.0.0 // indirect
+	github.com/Shopify/goreferrer v0.0.0-20181106222321-ec9c9a553398 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
+	github.com/aymerick/raymond v2.0.2+incompatible // indirect
+	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
+	github.com/fatih/structs v1.1.0 // indirect
+	github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769 // indirect
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/golang/mock v1.2.0 // indirect
 	github.com/golang/protobuf v1.2.1-0.20190109072247-347cf4a86c1c
@@ -17,6 +24,15 @@ require (
 	github.com/hashicorp/go-sockaddr v0.0.0-20190103214136-e92cdb5343bb // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
 	github.com/hashicorp/serf v0.8.1 // indirect
+	github.com/iris-contrib/blackfriday v2.0.0+incompatible // indirect
+	github.com/iris-contrib/formBinder v0.0.0-20190104093907-fbd5963f41e1 // indirect
+	github.com/iris-contrib/go.uuid v2.0.0+incompatible // indirect
+	github.com/json-iterator/go v1.1.5 // indirect
+	github.com/kataras/golog v0.0.0-20180321173939-03be10146386 // indirect
+	github.com/kataras/iris v11.1.1+incompatible // indirect
+	github.com/kataras/pio v0.0.0-20190103105442-ea782b38602d // indirect
+	github.com/klauspost/compress v1.4.1 // indirect
+	github.com/klauspost/cpuid v1.2.0 // indirect
 	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect
 	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6 // indirect
 	github.com/micro/go-micro v0.17.1-0.20190110221432-3043841cf529
@@ -27,11 +43,16 @@ require (
 	github.com/micro/protobuf v0.0.0-20180321161605-ebd3be6d4fdb // indirect
 	github.com/micro/protoc-gen-micro v0.5.0 // indirect
 	github.com/micro/util v0.0.0-20181115195001-2d4f591dc538 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/miekg/dns v1.1.2 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
+	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
+	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc // indirect
 	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
 	golang.org/x/net v0.0.0-20190110044637-be1c187aa6c6
