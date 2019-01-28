@@ -6,23 +6,22 @@ import (
 	"github.com/satori/go.uuid"
 	"github.com/valyala/fasthttp"
 	"io"
+	"mime"
 	"mime/multipart"
+	"os"
 	"service/controller/common"
 	"service/initialize"
 	"service/model"
 	"service/utils"
-	"mime"
-	"os"
 	"strings"
 	"unicode/utf8"
-
 )
 
 // GenerateImgUploadedInfo 创建一个ImageUploadedInfo
 func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 
 	sep := string(os.PathSeparator)
-	uploadImgDir := initialize.ServerSettings.UploadImgDir
+	uploadImgDir := initialize.Config.Server.UploadImgDir
 	length := utf8.RuneCountInString(uploadImgDir)
 	lastChar := uploadImgDir[length-1:]
 	ymStr := utils.GetTodayYM(sep)
@@ -38,19 +37,19 @@ func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 	filename := uuidName + ext
 	uploadFilePath := uploadDir + sep + filename
 	fileURL := strings.Join([]string{
-		"https://" + initialize.ServerSettings.ImgHost + initialize.ServerSettings.ImagePath,
+		"https://" + initialize.Config.Server.ImgHost + initialize.Config.Server.ImagePath,
 		ymStr,
 		filename,
 	}, "/")
 	var fileUpload model.FileUploadInfo
 
-	fileUpload.FileName =filename
-	fileUpload.FileURL =fileURL
-	fileUpload.UUIDName =uuidName
-	fileUpload.UploadDir =uploadDir
-	fileUpload.UploadFilePath =uploadFilePath
+	fileUpload.FileName = filename
+	fileUpload.FileURL = fileURL
+	fileUpload.UUIDName = uuidName
+	fileUpload.UploadDir = uploadDir
+	fileUpload.UploadFilePath = uploadFilePath
 
-/*	fileUpload = model.FileUploadInfo{
+	/*	fileUpload = model.FileUploadInfo{
 		File:       model.File{FileName:filename,},
 		FileURL:        fileURL,
 		UUIDName:       uuidName,
@@ -127,10 +126,10 @@ func Upload(c *fasthttp.RequestCtx) (map[string]interface{}, error) {
 func UploadHandler(c *fasthttp.RequestCtx) {
 	data, err := Upload(c)
 	if err != nil {
-		common.Response(c,500, nil)
+		common.Response(c, 500, nil)
 		return
 	}
-	common.Response(c,200, data)
+	common.Response(c, 200, data)
 }
 
 func SaveUploadedFile(file *multipart.FileHeader, dst string) error {

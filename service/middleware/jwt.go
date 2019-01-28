@@ -60,7 +60,7 @@ func getUser(c *fasthttp.RequestCtx) (controller.User, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(initialize.ServerSettings.TokenSecret), nil
+		return []byte(initialize.Config.Server.TokenSecret), nil
 	})
 
 	if tokenErr != nil {

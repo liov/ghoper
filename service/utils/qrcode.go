@@ -1,13 +1,11 @@
 package utils
 
 import (
-	"service/initialize"
 	"image/jpeg"
+	"service/initialize"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
-
-
 )
 
 type QrCode struct {
@@ -35,15 +33,15 @@ func NewQrCode(url string, width, height int, level qr.ErrorCorrectionLevel, mod
 }
 
 func GetQrCodePath() string {
-	return initialize.ServerSettings.QrCodeSavePath
+	return initialize.Config.Server.QrCodeSavePath
 }
 
 func GetQrCodeFullPath() string {
-	return initialize.ServerSettings.RuntimeRootPath + initialize.ServerSettings.QrCodeSavePath
+	return initialize.Config.Server.RuntimeRootPath + initialize.Config.Server.QrCodeSavePath
 }
 
 func GetQrCodeFullUrl(name string) string {
-	return initialize.ServerSettings.PrefixUrl + "/" + GetQrCodePath() + name
+	return initialize.Config.Server.PrefixUrl + "/" + GetQrCodePath() + name
 }
 
 func GetQrCodeFileName(value string) string {

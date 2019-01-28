@@ -2,8 +2,8 @@ package upload
 
 import (
 	"fmt"
-	"service/initialize"
 	"service/controller/common/logging"
+	"service/initialize"
 	"service/utils"
 
 	"log"
@@ -14,7 +14,7 @@ import (
 )
 
 func GetImageFullUrl(name string) string {
-	return initialize.ServerSettings.ImagePrefixUrl + "/" + GetImagePath() + name
+	return initialize.Config.Server.ImagePrefixUrl + "/" + GetImagePath() + name
 }
 
 func GetImageName(name string) string {
@@ -26,16 +26,16 @@ func GetImageName(name string) string {
 }
 
 func GetImagePath() string {
-	return initialize.ServerSettings.ImagePath
+	return initialize.Config.Server.ImagePath
 }
 
 func GetImageFullPath() string {
-	return initialize.ServerSettings.RuntimeRootPath + GetImagePath()
+	return initialize.Config.Server.RuntimeRootPath + GetImagePath()
 }
 
 func CheckImageExt(fileName string) bool {
 	ext := utils.GetExt(fileName)
-	for _, allowExt := range initialize.ServerSettings.ImageAllowExts {
+	for _, allowExt := range initialize.Config.Server.ImageAllowExts {
 		if strings.ToUpper(allowExt) == strings.ToUpper(ext) {
 			return true
 		}
@@ -52,7 +52,7 @@ func CheckImageSize(f multipart.File) bool {
 		return false
 	}
 
-	return size <= initialize.ServerSettings.ImageMaxSize
+	return size <= initialize.Config.Server.ImageMaxSize
 }
 
 func CheckImage(src string) error {

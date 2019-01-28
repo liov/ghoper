@@ -3,24 +3,24 @@ package mail
 import (
 	"crypto/tls"
 	"fmt"
-	"service/initialize"
 	"log"
 	"net"
 	"net/smtp"
+	"service/initialize"
 )
 
 // SendMail 发送邮件
 func SendMail(toEmail, subject, content string) error {
-	host      := initialize.ServerSettings.MailHost
-	port      := initialize.ServerSettings.MailPort
-	email     := initialize.ServerSettings.MailUser
-	password  := initialize.ServerSettings.MailPassWord
-	emailFrom := initialize.ServerSettings.MailFrom
+	host := initialize.Config.Server.MailHost
+	port := initialize.Config.Server.MailPort
+	email := initialize.Config.Server.MailUser
+	password := initialize.Config.Server.MailPassWord
+	emailFrom := initialize.Config.Server.MailFrom
 
-	headers                := make(map[string]string)
-	headers["From"]         = emailFrom + "<" + email + ">"
-	headers["To"]           = toEmail
-	headers["Subject"]      = subject
+	headers := make(map[string]string)
+	headers["From"] = emailFrom + "<" + email + ">"
+	headers["To"] = toEmail
+	headers["Subject"] = subject
 	headers["Content-Type"] = "text/html; charset=UTF-8"
 
 	message := ""
@@ -35,7 +35,7 @@ func SendMail(toEmail, subject, content string) error {
 		fmt.Sprintf("%s:%d", host, port),
 		auth,
 		email,
-		[]string{ toEmail },
+		[]string{toEmail},
 		message,
 	)
 	return err

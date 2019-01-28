@@ -86,7 +86,7 @@ func FastRouter() *router.Router {
 func HttpRouter() *gin.Engine {
 	logFile := logging.GetIOWrite()
 
-	gin.SetMode(initialize.ServerSettings.RunMode)
+	gin.SetMode(initialize.Config.Server.Env)
 
 	gin.DefaultWriter = io.MultiWriter(logFile)
 

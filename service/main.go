@@ -26,13 +26,13 @@ func main() {
 	s := &fasthttp.Server{
 		Concurrency:  100,
 		Handler:      fastRouter.Handler,
-		ReadTimeout:  initialize.ServerSettings.ReadTimeout,
-		WriteTimeout: initialize.ServerSettings.WriteTimeout,
+		ReadTimeout:  initialize.Config.Server.ReadTimeout,
+		WriteTimeout: initialize.Config.Server.WriteTimeout,
 		LogAllErrors: true,
 	}
 
 	go func() {
-		if err := s.ListenAndServe(initialize.ServerSettings.HttpPort); err != nil {
+		if err := s.ListenAndServe(initialize.Config.Server.HttpPort); err != nil {
 			log.Printf("Listen: %s\n", err)
 		}
 	}()
@@ -42,8 +42,8 @@ func main() {
 	gin := &http.Server{
 		Addr:           ":8080",
 		Handler:        httpRouter,
-		ReadTimeout:    initialize.ServerSettings.ReadTimeout,
-		WriteTimeout:   initialize.ServerSettings.WriteTimeout,
+		ReadTimeout:    initialize.Config.Server.ReadTimeout,
+		WriteTimeout:   initialize.Config.Server.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
 

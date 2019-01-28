@@ -1,16 +1,12 @@
 package initialize
 
 import (
-	"fmt"
 	"github.com/jinzhu/configor"
 	"log"
 	"time"
-
-	"github.com/go-ini/ini"
 )
 
 type ServerConfig struct {
-	RunMode      string
 	Env          string
 	HttpPort     string
 	ReadTimeout  time.Duration
@@ -54,8 +50,6 @@ type ServerConfig struct {
 	CrawlerName string //爬虫
 }
 
-var ServerSettings = &ServerConfig{}
-
 type DatabaseConfig struct {
 	Type         string
 	User         string
@@ -69,8 +63,6 @@ type DatabaseConfig struct {
 	Port         int
 }
 
-var DatabaseSettings = &DatabaseConfig{}
-
 type RedisConfig struct {
 	Host        string
 	Port        int
@@ -80,17 +72,25 @@ type RedisConfig struct {
 	IdleTimeout time.Duration
 }
 
-var RedisSettings = &RedisConfig{}
-
 type MongoConfig struct {
 	URL      string
 	Database string
 }
 
-var MongoSettings = &MongoConfig{}
+/*var ServerSettings = &ServerConfig{}
+var DatabaseSettings = &DatabaseConfig{}
+var RedisSettings = &RedisConfig{}
+var MongoSettings = &MongoConfig{}*/
+
+var Config = struct {
+	Server   ServerConfig
+	Database DatabaseConfig
+	Redis    RedisConfig
+	Mongo    MongoConfig
+}{}
 
 func Setup() {
-	Cfg, err := ini.Load("../config/config.ini")
+	/*Cfg, err := ini.Load("../config/config.ini")
 	if err != nil {
 		log.Fatalf("找不到文件 'website/config/config.ini': %v", err)
 	}
@@ -100,9 +100,7 @@ func Setup() {
 		log.Fatalf("Cfg.MapTo 服务器设置错误: %v", err)
 	}
 
-	ServerSettings.ImageMaxSize = ServerSettings.ImageMaxSize * 1024 * 1024
-	ServerSettings.ReadTimeout = ServerSettings.ReadTimeout * time.Second
-	ServerSettings.WriteTimeout = ServerSettings.ReadTimeout * time.Second
+
 
 	err = Cfg.Section("database").MapTo(DatabaseSettings)
 	if err != nil {
@@ -110,18 +108,18 @@ func Setup() {
 	}
 
 	err = Cfg.Section("redis").MapTo(RedisSettings)
-	RedisSettings.IdleTimeout = RedisSettings.IdleTimeout * time.Second
 
-	err = Cfg.Section("mongodb").MapTo(MongoSettings)
 
-	var Config = struct {
-		Server   ServerConfig
-		Database DatabaseConfig
-		Redis    RedisConfig
-		Mongo    MongoConfig
-	}{}
+	err = Cfg.Section("mongodb").MapTo(MongoSettings)*/
 
-	configor.New(&configor.Config{Debug: true}).Load(&Config, "../config/config.toml")
+	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../config/config.toml")
 
-	fmt.Printf("d")
+	if err != nil {
+		log.Fatalf("配置错误: %v", err)
+	}
+
+	Config.Server.ImageMaxSize = Config.Server.ImageMaxSize * 1024 * 1024
+	Config.Server.ReadTimeout = Config.Server.ReadTimeout * time.Second
+	Config.Server.WriteTimeout = Config.Server.ReadTimeout * time.Second
+	Config.Redis.IdleTimeout = Config.Redis.IdleTimeout * time.Second
 }

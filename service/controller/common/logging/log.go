@@ -2,13 +2,13 @@ package logging
 
 import (
 	"fmt"
-	"service/initialize"
-	"service/utils"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime"
+	"service/initialize"
+	"service/utils"
 	"time"
 )
 
@@ -17,11 +17,11 @@ type Level int
 var (
 	F *os.File
 
-	DefaultPrefix = ""
+	DefaultPrefix      = ""
 	DefaultCallerDepth = 2
 
-	logger *log.Logger
-	logPrefix = ""
+	logger     *log.Logger
+	logPrefix  = ""
 	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
 )
 
@@ -82,14 +82,14 @@ func setPrefix(level Level) {
 }
 
 func getLogFilePath() string {
-	RuntimeRootPath := initialize.ServerSettings.RuntimeRootPath
-	LogSavePath := initialize.ServerSettings.LogSavePath
-	if runtime.GOOS == "windows"{
+	RuntimeRootPath := initialize.Config.Server.RuntimeRootPath
+	LogSavePath := initialize.Config.Server.LogSavePath
+	if runtime.GOOS == "windows" {
 		RuntimeRootPath = RuntimeRootPath + "\\"
 		LogSavePath = LogSavePath + "\\"
-	}else if runtime.GOOS == "linux"{
+	} else if runtime.GOOS == "linux" {
 		RuntimeRootPath = RuntimeRootPath + "/"
-		LogSavePath = LogSavePath +"/"
+		LogSavePath = LogSavePath + "/"
 	}
 
 	return fmt.Sprintf("%s%s", RuntimeRootPath, LogSavePath)
@@ -97,9 +97,9 @@ func getLogFilePath() string {
 
 func getLogFileName() string {
 	return fmt.Sprintf("%s%s.%s",
-		initialize.ServerSettings.LogSaveName,
-		time.Now().Format(initialize.ServerSettings.TimeFormat),
-		initialize.ServerSettings.LogFileExt,
+		initialize.Config.Server.LogSaveName,
+		time.Now().Format(initialize.Config.Server.TimeFormat),
+		initialize.Config.Server.LogFileExt,
 	)
 }
 
@@ -120,7 +120,7 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 		return nil, fmt.Errorf("file.IsNotExistMkDir src: %s, err: %v", src, err)
 	}
 
-	f, err := utils.Open(src + fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := utils.Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to OpenFile :%v", err)
 	}
@@ -128,7 +128,7 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 	return f, nil
 }
 
-func GetIOWrite()  io.Writer{
+func GetIOWrite() io.Writer {
 	var err error
 	filePath := getLogFilePath()
 	fileName := getLogFileName()

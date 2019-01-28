@@ -47,8 +47,8 @@ type User struct {
 }
 
 func sendMail(action string, title string, curTime int64, user User) {
-	siteName := initialize.ServerSettings.SiteName
-	siteURL := "http://" + initialize.ServerSettings.Host
+	siteName := initialize.Config.Server.SiteName
+	siteURL := "http://" + initialize.Config.Server.Host
 	secretStr := strconv.Itoa((int)(curTime)) + user.Email + user.PassWord
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/"
@@ -200,7 +200,7 @@ func ResetPasswordMail(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	verifyErr := utils.LuosimaoVerify(initialize.ServerSettings.LuosimaoVerifyURL, initialize.ServerSettings.LuosimaoAPIKey, userData.LuosimaoRes)
+	verifyErr := utils.LuosimaoVerify(initialize.Config.Server.LuosimaoVerifyURL, initialize.Config.Server.LuosimaoAPIKey, userData.LuosimaoRes)
 
 	if verifyErr != nil {
 		common.Response(c, verifyErr.Error())
@@ -316,7 +316,7 @@ func Signin(c *fasthttp.RequestCtx) {
 	password = login.Password
 	luosimaoRes = login.LuosimaoRes
 
-	verifyErr := utils.LuosimaoVerify(initialize.ServerSettings.LuosimaoVerifyURL, initialize.ServerSettings.LuosimaoAPIKey, luosimaoRes)
+	verifyErr := utils.LuosimaoVerify(initialize.Config.Server.LuosimaoVerifyURL, initialize.Config.Server.LuosimaoAPIKey, luosimaoRes)
 
 	if verifyErr != nil {
 		common.Response(c, verifyErr.Error())
@@ -339,7 +339,7 @@ func Signin(c *fasthttp.RequestCtx) {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"id": user.ID,
 		})
-		tokenString, err := token.SignedString(utils.ToBytes(initialize.ServerSettings.TokenSecret))
+		tokenString, err := token.SignedString(utils.ToBytes(initialize.Config.Server.TokenSecret))
 		if err != nil {
 			common.Response(c, "内部错误")
 			return
@@ -350,7 +350,7 @@ func Signin(c *fasthttp.RequestCtx) {
 			return
 		}
 
-		c.Response.Header.SetCookie(common.SetCookie("token", tokenString, time.Duration(initialize.ServerSettings.TokenMaxAge)*time.Second, "/", "hoper.xyz", false, true))
+		c.Response.Header.SetCookie(common.SetCookie("token", tokenString, time.Duration(initialize.Config.Server.TokenMaxAge)*time.Second, "/", "hoper.xyz", false, true))
 
 		/*		session := sessions.Default(c)
 				session.Set("user", user)
@@ -981,7 +981,7 @@ func UserToRedis(user User) error {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, redisErr := RedisConn.Do("SET", loginUserKey, UserString, "EX", initialize.ServerSettings.TokenMaxAge); redisErr != nil {
+	if _, redisErr := RedisConn.Do("SET", loginUserKey, UserString, "EX", initialize.Config.Server.TokenMaxAge); redisErr != nil {
 		return errors.New("error")
 	}
 	return nil
@@ -1010,7 +1010,7 @@ func salt(password string) string {
 // EncryptPassword 给密码加密
 func encryptPassword(password, salt string) (hash string) {
 	password = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(password)))
-	hash = salt + password + initialize.ServerSettings.PassSalt
+	hash = salt + password + initialize.Config.Server.PassSalt
 	hash = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(hash)))
 	return
 }

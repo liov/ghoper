@@ -26,16 +26,16 @@ var MongoDB *mgo.Database
 func initializeDB() {
 
 	var url string
-	if DatabaseSettings.Type == "mysql" {
+	if Config.Database.Type == "mysql" {
 		url = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
-			DatabaseSettings.User, DatabaseSettings.Password, DatabaseSettings.Host,
-			DatabaseSettings.Port, DatabaseSettings.Database, DatabaseSettings.Charset)
-	} else if DatabaseSettings.Type == "postgres" {
+			Config.Database.User, Config.Database.Password, Config.Database.Host,
+			Config.Database.Port, Config.Database.Database, Config.Database.Charset)
+	} else if Config.Database.Type == "postgres" {
 		url = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
-			DatabaseSettings.Host, DatabaseSettings.User, DatabaseSettings.Database, DatabaseSettings.Password)
+			Config.Database.Host, Config.Database.User, Config.Database.Database, Config.Database.Password)
 	}
 
-	db, err := gorm.Open(DatabaseSettings.Type, url)
+	db, err := gorm.Open(Config.Database.Type, url)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -46,16 +46,16 @@ func initializeDB() {
 	}
 
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return DatabaseSettings.TablePrefix + defaultTableName
+		return Config.Database.TablePrefix + defaultTableName
 	}
 
-	if ServerSettings.Env == DevelopmentMode {
+	if Config.Server.Env == Debug {
 		db.LogMode(true)
 	}
 
 	db.SingularTable(true)
-	db.DB().SetMaxIdleConns(DatabaseSettings.MaxIdleConns)
-	db.DB().SetMaxOpenConns(DatabaseSettings.MaxOpenConns)
+	db.DB().SetMaxIdleConns(Config.Database.MaxIdleConns)
+	db.DB().SetMaxOpenConns(Config.Database.MaxOpenConns)
 	db.Callback().Create().Remove("gorm:update_time_stamp")
 	db.Callback().Update().Remove("gorm:update_time_stamp")
 	db.Callback().Create().Remove("gorm:save_before_associations")
@@ -69,19 +69,19 @@ func initializeDB() {
 }
 
 func initializeRedis() {
-	url := fmt.Sprintf("%s:%d", RedisSettings.Host, RedisSettings.Port)
+	url := fmt.Sprintf("%s:%d", Config.Redis.Host, Config.Redis.Port)
 	RedisPool = &redis.Pool{
-		MaxIdle:     RedisSettings.MaxIdle,
-		MaxActive:   RedisSettings.MaxActive,
-		IdleTimeout: RedisSettings.IdleTimeout,
+		MaxIdle:     Config.Redis.MaxIdle,
+		MaxActive:   Config.Redis.MaxActive,
+		IdleTimeout: Config.Redis.IdleTimeout,
 		Wait:        true,
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", url)
 			if err != nil {
 				return nil, err
 			}
-			if RedisSettings.Password != "" {
-				if _, err := c.Do("AUTH", RedisSettings.Password); err != nil {
+			if Config.Redis.Password != "" {
+				if _, err := c.Do("AUTH", Config.Redis.Password); err != nil {
 					c.Close()
 					return nil, err
 				}
@@ -102,17 +102,17 @@ func initializeRedis() {
  * https://godoc.org/gopkg.in/mgo.v2/txn
  */
 func initializeMongo() {
-	if MongoSettings.URL == "" {
+	if Config.Mongo.URL == "" {
 		return
 	}
-	session, err := mgo.Dial(MongoSettings.URL)
+	session, err := mgo.Dial(Config.Mongo.URL)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(-1)
 	}
 	// Optional. Switch the session to a monotonic behavior.
 	session.SetMode(mgo.Monotonic, true)
-	MongoDB = session.DB(MongoSettings.Database)
+	MongoDB = session.DB(Config.Mongo.Database)
 }
 
 func init() {
@@ -131,6 +131,10 @@ const (
 
 	// ProductionMode 产品模式
 	ProductionMode = "production"
+
+	Release = "release"
+
+	Debug = "debug"
 )
 
 // updateTimeStampForCreateCallback will set `CreatedAt`, `ModifiedAt` when creating

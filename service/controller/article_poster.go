@@ -93,7 +93,7 @@ type DrawText struct {
 }
 
 func (a *ArticlePosterBg) DrawPoster(d *DrawText, fontName string) error {
-	fontSource := initialize.ServerSettings.RuntimeRootPath + initialize.ServerSettings.FontSavePath + fontName
+	fontSource := initialize.Config.Server.RuntimeRootPath + initialize.Config.Server.FontSavePath + fontName
 	fontSourceBytes, err := ioutil.ReadFile(fontSource)
 	if err != nil {
 		return err
