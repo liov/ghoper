@@ -15,7 +15,6 @@ require (
 	github.com/gin-contrib/sessions v0.0.0-20180827025425-58cbcf30135c
 	github.com/gin-gonic/gin v1.3.1-0.20190120102704-f38a3fe65f10
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
-	github.com/go-ini/ini v1.38.3
 	github.com/go-xorm/xorm v0.7.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/protobuf v1.2.0
