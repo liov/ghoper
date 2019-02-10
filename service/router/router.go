@@ -59,10 +59,10 @@ func FastRouter() *router.Router {
 
 	r.GET("/api/user/active/:id/:secret", controller.ActiveAccount)
 	r.POST("/api/user/signup", controller.Signup)
-	r.POST("/api/user/signin", controller.Signin)
-	r.GET("/api/user/signout", jwt(controller.Signout))
+	r.POST("/api/user/signin", controller.Login)
+	r.GET("/api/user/signout", jwt(controller.Logout))
 	r.POST("/api/user/active", controller.ActiveSendMail)
-	r.GET("/api/user/get", jwt(controller.SigninFlag))
+	r.GET("/api/user/get", jwt(controller.SignInFlag))
 
 	r.POST("/api/comment/:classify", jwt(controller.AddComment))
 

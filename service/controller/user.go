@@ -33,7 +33,7 @@ type User struct {
 	ID          uint       `gorm:"primary_key" json:"id"`
 	ActivatedAt *time.Time `json:"-"` //活跃时间
 	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
-	PassWord    string     `gorm:"type:varchar(100)" json:"-"`
+	Password    string     `gorm:"type:varchar(100)" json:"-"`
 	//Sex         uint8      `gorm:"type:tinyint(1) unsigned;not null" json:"sex"`
 	Email     string    `gorm:"type:varchar(20);unique_index;not null" json:"-"`
 	Phone     *string   `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
@@ -49,7 +49,7 @@ type User struct {
 func sendMail(action string, title string, curTime int64, user User) {
 	siteName := initialize.Config.Server.SiteName
 	siteURL := "http://" + initialize.Config.Server.Host
-	secretStr := strconv.Itoa((int)(curTime)) + user.Email + user.PassWord
+	secretStr := strconv.Itoa((int)(curTime)) + user.Email + user.Password
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/"
 
@@ -96,7 +96,7 @@ func verifyLink(cacheKey string, c *fasthttp.RequestCtx) (User, error) {
 		return user, errors.New("无效的链接")
 	}
 
-	secretStr := strconv.Itoa((int)(emailTime)) + user.Email + user.PassWord
+	secretStr := strconv.Itoa((int)(emailTime)) + user.Email + user.Password
 
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 
@@ -260,13 +260,13 @@ func ResetPassword(c *fasthttp.RequestCtx) {
 		return
 	}
 
-	user.PassWord = encryptPassword(userData.Password, userData.Password[0:5])
+	user.Password = encryptPassword(userData.Password, userData.Password[0:5])
 
 	if user.ID <= 0 {
 		common.Response(c, "重置链接已失效")
 		return
 	}
-	if err := initialize.DB.Model(&user).Update("pass", user.PassWord).Error; err != nil {
+	if err := initialize.DB.Model(&user).Update("pass", user.Password).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
@@ -279,8 +279,8 @@ func ResetPassword(c *fasthttp.RequestCtx) {
 	}
 }
 
-// Signin 用户登录
-func Signin(c *fasthttp.RequestCtx) {
+// Login 用户登录
+func Login(c *fasthttp.RequestCtx) {
 
 	type Login struct {
 		//Email string `json:"email" binding:"email"`
@@ -368,7 +368,7 @@ func Signin(c *fasthttp.RequestCtx) {
 	common.Response(c, "账号或密码错误")
 }
 
-func SigninFlag(c *fasthttp.RequestCtx) {
+func SignInFlag(c *fasthttp.RequestCtx) {
 	user := c.UserValue("user")
 
 	/*session := sessions.Default(c)
@@ -429,7 +429,7 @@ func Signup(c *fasthttp.RequestCtx) {
 	newUser.Name = userData.Name
 	newUser.Email = userData.Email
 	newUser.Phone = userData.Phone
-	newUser.PassWord = encryptPassword(userData.Password, userData.Password)
+	newUser.Password = encryptPassword(userData.Password, userData.Password)
 	//newUser.Role = model.UserRoleNormal
 	newUser.Status = model.UserStatusInActive
 
@@ -454,8 +454,8 @@ func Signup(c *fasthttp.RequestCtx) {
 	common.Response(c, newUser, "注册成功")
 }
 
-// Signout 退出登录
-func Signout(c *fasthttp.RequestCtx) {
+// Logout 退出登录
+func Logout(c *fasthttp.RequestCtx) {
 	userInter := c.UserValue("user")
 	var user User
 	if userInter != nil {
@@ -567,7 +567,7 @@ func UpdatePassword(c *fasthttp.RequestCtx) {
 	}
 
 	if checkPassword(userData.Password, user) {
-		user.PassWord = encryptPassword(userData.NewPwd, userData.NewPwd)
+		user.Password = encryptPassword(userData.NewPwd, userData.NewPwd)
 		if err := initialize.DB.Save(&user).Error; err != nil {
 			common.Response(c, "原密码不正确")
 			return
@@ -989,16 +989,16 @@ func UserToRedis(user User) error {
 
 /*	type RegisterUser struct {
 	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
-	PassWord    string     `json:"password"`
+	Password    string     `json:"password"`
 	Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
 	Phone       string     `gorm:"type:varchar(20)" json:"phone"`                    //手机号
 } */
 // CheckPassword 验证密码是否正确
 func checkPassword(password string, user User) bool {
-	if password == "" || user.PassWord == "" {
+	if password == "" || user.Password == "" {
 		return false
 	}
-	return encryptPassword(password, password) == user.PassWord
+	return encryptPassword(password, password) == user.Password
 }
 
 // Salt 每个用户都有一个不同的盐

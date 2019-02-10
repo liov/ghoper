@@ -2,22 +2,19 @@ package crawler
 
 import (
 	"fmt"
-	"github.com/valyala/fasthttp"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/kataras/iris"
 	"io"
+	"micro/common/controller/common"
+	"micro/common/controller/upload"
+	"micro/common/initialize"
+	"micro/common/model"
+	"micro/common/utils"
 	"net/http"
 	"net/url"
 	"os"
-	"service/controller/common"
-	"service/controller/common/e"
-	"service/controller/common/upload"
-	"service/initialize"
-	"service/model"
-	"service/utils"
 	"strings"
 	"sync"
-
-	"github.com/PuerkitoBio/goquery"
-	"github.com/gin-gonic/gin"
 )
 
 type crawlSelector struct {
@@ -310,7 +307,7 @@ func crawlList(listURL string, user model.User, category model.Category, crawlSe
 }
 
 // Crawl 抓取文章
-func Crawl(c *fasthttp.RequestCtx) {
+func Crawl(ctx iris.Context) {
 
 	type JSONData struct {
 		URLS       []string `json:"urls"`
@@ -320,33 +317,33 @@ func Crawl(c *fasthttp.RequestCtx) {
 		CrawlExist bool     `json:"crawlExist"`
 	}
 	var jsonData JSONData
-	if err := c.ShouldBindJSON(&jsonData); err != nil {
-		common.Response(c, "参数无效")
+	if err := ctx.ReadJSON(&jsonData); err != nil {
+		common.Response(ctx, "参数无效")
 		return
 	}
 
 	if jsonData.From != model.ArticleFromJianShu && jsonData.From != model.ArticleFromZhihu &&
 		jsonData.From != model.ArticleFromHuxiu {
-		common.Response(c, "无效的from")
+		common.Response(ctx, "无效的from")
 		return
 	}
 	if jsonData.Scope != model.CrawlerScopePage && jsonData.Scope != model.CrawlerScopeList {
-		common.Response(c, "无效的scope")
+		common.Response(ctx, "无效的scope")
 		return
 	}
 
-	iuser, _ := c.Get("user")
+	iuser, _ := ctx.GetViewData()["user"]
 	user := iuser.(model.User)
 
 	if user.Name != initialize.Config.Server.CrawlerName {
-		common.Response(c, "您没有权限执行此操作, 请使用爬虫账号")
+		common.Response(ctx, "您没有权限执行此操作, 请使用爬虫账号")
 		return
 	}
 
 	var category model.Category
 	if err := initialize.DB.First(&category, jsonData.CategoryID).Error; err != nil {
 		fmt.Printf(err.Error())
-		common.Response(c, "错误的categoryID")
+		common.Response(ctx, "错误的categoryID")
 		return
 	}
 
@@ -368,15 +365,11 @@ func Crawl(c *fasthttp.RequestCtx) {
 		}
 	}
 
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "抓取完成",
-		"data":  gin.H{},
-	})
+	common.Response(ctx, "抓取完成")
 }
 
 // CustomCrawl 自定义抓取
-func CustomCrawl(c *fasthttp.RequestCtx) {
+func CustomCrawl(ctx iris.Context) {
 
 	type JSONData struct {
 		URLS                  []string `json:"urls"`
@@ -392,32 +385,32 @@ func CustomCrawl(c *fasthttp.RequestCtx) {
 		SiteName              string   `json:"siteName" binding:"required"`
 	}
 	var jsonData JSONData
-	if err := c.ShouldBindJSON(&jsonData); err != nil {
-		common.Response(c, "参数无效")
+	if err := ctx.ReadJSON(&jsonData); err != nil {
+		common.Response(ctx, "参数无效")
 		return
 	}
 
 	if jsonData.From != model.ArticleFromCustom {
-		common.Response(c, "无效的from")
+		common.Response(ctx, "无效的from")
 		return
 	}
 	if jsonData.Scope != model.CrawlerScopePage && jsonData.Scope != model.CrawlerScopeList {
-		common.Response(c, "无效的scope")
+		common.Response(ctx, "无效的scope")
 		return
 	}
 
-	iuser, _ := c.Get("user")
+	iuser, _ := ctx.GetViewData()["user"]
 	user := iuser.(model.User)
 
 	if user.Name != initialize.Config.Server.CrawlerName {
-		common.Response(c, "您没有权限执行此操作, 请使用爬虫账号")
+		common.Response(ctx, "您没有权限执行此操作, 请使用爬虫账号")
 		return
 	}
 
 	var category model.Category
 	if err := initialize.DB.First(&category, jsonData.CategoryID).Error; err != nil {
 		fmt.Printf(err.Error())
-		common.Response(c, "错误的categoryID")
+		common.Response(ctx, "错误的categoryID")
 		return
 	}
 
@@ -447,24 +440,19 @@ func CustomCrawl(c *fasthttp.RequestCtx) {
 		}
 	}
 
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "抓取完成",
-		"data":  gin.H{},
-	})
+	common.Response(ctx, "抓取完成")
 }
 
 // CrawlNotSaveContent 抓取的内容直接返回，而不保存到数据库
-func CrawlNotSaveContent(c *fasthttp.RequestCtx) {
-	SendErrJSON := common.SendErr
+func CrawlNotSaveContent(ctx iris.Context) {
 	type JSONData struct {
 		URL             string `json:"url"`
 		TitleSelector   string `json:"titleSelector"`
 		ContentSelector string `json:"contentSelector"`
 	}
 	var jsonData JSONData
-	if err := c.ShouldBindJSON(&jsonData); err != nil {
-		SendErrJSON(c, "参数无效")
+	if err := ctx.ReadJSON(&jsonData); err != nil {
+		common.Response(ctx, "参数无效")
 		return
 	}
 
@@ -474,38 +462,28 @@ func CrawlNotSaveContent(c *fasthttp.RequestCtx) {
 
 	data := crawlContent(jsonData.URL, crawlSelector, nil, true)
 
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "success",
-		"data": gin.H{
-			"content": data["Content"],
-		},
+	common.Response(ctx, "success", iris.Map{
+		"content": data["Content"],
 	})
 }
 
 // CrawlAccount 获取爬虫账号
-func CrawlAccount(c *fasthttp.RequestCtx) {
+func CrawlAccount(ctx iris.Context) {
 
 	var users []model.User
 	if err := initialize.DB.Where("name = ?", initialize.Config.Server.CrawlerName).Find(&users).Error; err != nil {
-		fmt.Println(err.Error())
-		common.Response(c, "error")
+		common.Response(ctx, err.Error())
 		return
 	}
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "success",
-		"data":  users,
-	})
+	common.Response(ctx, "success", users)
 }
 
 // CreateAccount 创建爬虫账号
-func CreateAccount(c *fasthttp.RequestCtx) {
+func CreateAccount(ctx iris.Context) {
 
 	var users []model.User
 	if err := initialize.DB.Where("name = ?", initialize.Config.Server.CrawlerName).Find(&users).Error; err != nil {
-		fmt.Println(err.Error())
-		common.Response(c, "error")
+		common.Response(ctx, err.Error())
 		return
 	}
 	if len(users) <= 0 {
@@ -515,16 +493,11 @@ func CreateAccount(c *fasthttp.RequestCtx) {
 		user.AvatarURL = "/images/avatar/spider.png"
 		user.Status = model.UserStatusActived
 		if err := initialize.DB.Save(&user).Error; err != nil {
-			fmt.Print(err.Error())
-			common.Response(c, "error")
+			common.Response(ctx, err.Error())
 			return
 		}
-		common.Response(c, common.H{
-			"errNo": e.SUCCESS,
-			"msg":   "success",
-			"data":  []model.User{user},
-		})
+		common.Response(ctx, "success", []model.User{user})
 		return
 	}
-	common.Response(c, "爬虫账号已存在")
+	common.Response(ctx, "爬虫账号已存在")
 }

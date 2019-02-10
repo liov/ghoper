@@ -1,11 +1,18 @@
 package upload
 
 import (
+	"errors"
+	"fmt"
+	"github.com/kataras/iris"
 	"github.com/satori/go.uuid"
+	"io"
+	"micro/common/controller/common"
+	"micro/common/initialize"
+	"micro/common/model"
+	"micro/common/utils"
+	"mime"
+	"mime/multipart"
 	"os"
-	"service/initialize"
-	"service/model"
-	"service/utils"
 	"strings"
 	"unicode/utf8"
 )
@@ -53,14 +60,14 @@ func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 }
 
 // Upload 文件上传
-/*func Upload(c *fasthttp.RequestCtx) (map[string]interface{}, error) {
-	file, err := c.FormFile("upFile")
+func Upload(ctx iris.Context) (map[string]interface{}, error) {
+	_, info, err := ctx.FormFile("upFile")
 
 	if err != nil {
 		return nil, errors.New("参数无效")
 	}
 
-	var filename = file.Filename
+	var filename = info.Filename
 	var index = strings.LastIndex(filename, ".")
 
 	if index < 0 {
@@ -90,8 +97,7 @@ func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 		return nil, errors.New("error")
 	}
 
-	if err := c.SaveUploadedFile(file, imgUploadedInfo.UploadFilePath); err != nil {
-		fmt.Println(err.Error())
+	if err := SaveUploadedFile(info, imgUploadedInfo.UploadFilePath); err != nil {
 		return nil, errors.New("error1")
 	}
 
@@ -114,15 +120,31 @@ func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 		"original": filename,                 //原始文件名
 		"type":     mimeType,                 //文件类型
 	}, nil
-}*/
+}
 
-/*// UploadHandler 文件上传
-func UploadHandler(c *fasthttp.RequestCtx) {
-	data, err := Upload(c)
+// UploadHandler 文件上传
+func UploadHandler(ctx iris.Context) {
+	data, err := Upload(ctx)
 	if err != nil {
-		common.Response(c,500, nil)
+		common.Response(ctx, err, 500)
 		return
 	}
-	common.Response(c,200, data)
+	common.Response(ctx, data, 200)
 }
-*/
+
+func SaveUploadedFile(file *multipart.FileHeader, dst string) error {
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	io.Copy(out, src)
+	return nil
+}

@@ -2,11 +2,10 @@ package upload
 
 import (
 	"fmt"
-	"service/controller/common/logging"
-	"service/initialize"
-	"service/utils"
-
 	"log"
+	"micro/common/controller/common/logging"
+	"micro/common/initialize"
+	"micro/common/utils"
 	"mime/multipart"
 	"os"
 	"path"
