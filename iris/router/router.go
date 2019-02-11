@@ -58,7 +58,7 @@ func IrisRouter() *iris.Application {
 
 	//app.Get("/api/push",controller.Push)
 
-	app.Get("/api/chat/GetChat", hwebsocket.GetChat)
+	app.Get("/api/chat/getChat", hwebsocket.GetChat)
 
 	app.Post("/api/nsq", hnsq.Start)
 
