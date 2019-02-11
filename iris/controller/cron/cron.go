@@ -13,10 +13,11 @@ import (
 func StartCron() {
 
 	c := cron.New()
-	c.AddFunc("0 0 2 * * *", RedisToDB)
+	c.AddFunc("20 02 18 * * *", RedisToDB)
 	c.AddJob("0 0 2 * * *", RedisTo{})
 	c.Start()
 	defer c.Stop()
+	select {}
 }
 
 func RedisToDB() {
@@ -29,7 +30,7 @@ func RedisToDB() {
 			if mv != "" {
 				var moment controller.Moment
 				common.Json.UnmarshalFromString(mv, &moment)
-				initialize.DB.Update(&moment)
+				initialize.DB.Updates(moment)
 			}
 		}
 	}
@@ -38,7 +39,7 @@ func RedisToDB() {
 		if mv != "" {
 			var moment controller.Moment
 			common.Json.UnmarshalFromString(mv, &moment)
-			initialize.DB.Update(&moment)
+			initialize.DB.Updates(moment)
 		}
 	}
 }
