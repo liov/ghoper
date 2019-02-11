@@ -3,15 +3,14 @@ package controller
 import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
+	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
-	"github.com/valyala/fasthttp"
 	"service/controller/common"
 	"service/controller/common/e"
 	"service/controller/common/gredis"
 	"service/controller/common/logging"
 	"service/initialize"
 	"service/model"
-	"service/utils"
 	"strconv"
 	"strings"
 	"time"
@@ -44,10 +43,9 @@ type Moments struct {
 
 //其实这里就是可插拔的，把redis操作单独放进一个函数
 func GetMoments(c iris.Context) {
-	args := c.QueryArgs()
-	pageNo, _ := strconv.Atoi(utils.ToSting(args.Peek("pageNo")))
-	pageSize, _ := strconv.Atoi(utils.ToSting(args.Peek("pageSize")))
-	topNum, _ := strconv.Atoi(utils.ToSting(args.Peek("t")))
+	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
+	topNum, _ := strconv.Atoi(c.URLParam("t"))
 	//l := list.New()
 	topKey := gredis.TopMoments
 	normalKey := gredis.Moments
@@ -219,11 +217,11 @@ func setRedisMoments(topKey string, normalKey string, moments Moments) error {
 	return nil
 }
 func GetMoment(c iris.Context) {
-	args := c.QueryArgs()
-	top := utils.ToSting(args.Peek("t"))
-	index := utils.ToSting(args.Peek("index"))
 
-	user := c.UserValue("user").(User)
+	top := c.URLParam("t")
+	index := c.URLParam("index")
+
+	user := c.GetViewData()["user"].(User)
 
 	if moment := getRedisMoment(top, index); moment != nil {
 		if moment.UserID == user.ID {
@@ -250,7 +248,7 @@ func GetMoment(c iris.Context) {
 		}*/
 	var moment Moment
 
-	id, _ := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("id")))
+	id, _ := strconv.Atoi(c.URLParam("id"))
 
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
@@ -328,7 +326,7 @@ func getRedisMoment(top string, index string) *Moment {
 
 func AddMoment(c iris.Context) {
 
-	user := c.UserValue("user").(User)
+	user := c.GetViewData()["user"].(User)
 
 	//Limit这个函数的封装呢，费了点功夫，之前的返回值想到用err，不过在sendErr这出了点问题，决定返回值改用string，这样是不规范的
 	if limitErr := common.Limit(model.MomentMinuteLimit,
@@ -466,7 +464,7 @@ func validationMoment(c iris.Context, moment *Moment) (err error) {
 func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 
 	//获取文章ID
-	id, _ := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("id")))
+	id := c.Params().GetUint64Default("id", 0)
 
 	var moment model.Moment
 
@@ -578,8 +576,8 @@ func EditMoment(c iris.Context) {
 		}
 	*/
 
-	top := c.QueryArgs().Peek("t")
-	index := utils.ToSting(c.QueryArgs().Peek("index"))
+	top := c.URLParam("t")
+	index := c.URLParam("index")
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
@@ -601,7 +599,7 @@ func EditMoment(c iris.Context) {
 		Permission:   moment.Permission,
 	}
 
-	if top != nil && top[0] == byte('0') {
+	if top != "0" {
 		if gredis.Exists(gredis.TopMoments) {
 			data, err := jsons.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.TopMoments, index, data)
@@ -626,20 +624,19 @@ func DeleteMoment(c iris.Context) {
 
 	historyMoment(c, 1)
 
-	id, _ := strconv.ParseUint(utils.ToSting(c.QueryArgs().Peek("id")), 10, 0)
+	id := c.Params().GetUint64Default("id", 0)
 
 	nowTime := time.Now()
 	initialize.DB.Model(&model.Moment{ID: uint(id)}).Updates(&model.Moment{DeletedAt: &nowTime})
 
-	top := c.QueryArgs().Peek("t")
-	index := utils.ToSting(c.QueryArgs().Peek("index"))
+	top := c.URLParam("t")
+	index := c.URLParam("index")
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	if top != nil && top[0] == byte('1') {
+	if top != "0" {
 		if gredis.Exists(gredis.TopMoments) {
-
 			_, err := conn.Do("LSET", gredis.TopMoments, index, "")
 			if err != nil {
 				logging.Error(err)

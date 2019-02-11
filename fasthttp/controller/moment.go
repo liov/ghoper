@@ -601,7 +601,7 @@ func EditMoment(c *fasthttp.RequestCtx) {
 		Permission:   moment.Permission,
 	}
 
-	if top != nil && top[0] == byte('0') {
+	if top != nil && top[0] != byte('0') {
 		if gredis.Exists(gredis.TopMoments) {
 			data, err := jsons.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.TopMoments, index, data)
@@ -637,7 +637,7 @@ func DeleteMoment(c *fasthttp.RequestCtx) {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	if top != nil && top[0] == byte('1') {
+	if top != nil && top[0] != byte('0') {
 		if gredis.Exists(gredis.TopMoments) {
 
 			_, err := conn.Do("LSET", gredis.TopMoments, index, "")

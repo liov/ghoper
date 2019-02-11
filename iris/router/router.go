@@ -42,21 +42,19 @@ func IrisRouter() *iris.Application {
 		momentRouter.Delete("/:id", middleware.JWT, controller.DeleteMoment)
 	}
 
-
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)
 
-
-	userRouter :=  app.Party("/api/user")
-{
-	userRouter.Get("/active/:id/:secret", controller.ActiveAccount)
-	userRouter.Post("/signup", controller.Signup)
-	userRouter.Post("/login", controller.Login)
-	userRouter.Get("/logout", middleware.JWT, controller.Logout)
-	userRouter.Post("/active", controller.ActiveSendMail)
-	userRouter.Get("/Get", middleware.JWT, controller.SignInFlag))
-}
-	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment))
+	userRouter := app.Party("/api/user")
+	{
+		userRouter.Get("/active/:id/:secret", controller.ActiveAccount)
+		userRouter.Post("/signup", controller.Signup)
+		userRouter.Post("/login", controller.Login)
+		userRouter.Get("/logout", middleware.JWT, controller.Logout)
+		userRouter.Post("/active", controller.ActiveSendMail)
+		userRouter.Get("/Get", middleware.JWT, controller.SignInFlag)
+	}
+	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment)
 
 	//app.Get("/api/push",controller.Push)
 

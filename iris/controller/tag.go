@@ -2,11 +2,10 @@ package controller
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/valyala/fasthttp"
+	"github.com/kataras/iris"
 	"service/controller/common"
 	"service/initialize"
 	"service/model"
-	"service/utils"
 	"strconv"
 	"time"
 )
@@ -20,9 +19,9 @@ type Tag struct {
 }
 
 func GetTags(c iris.Context) {
-	args := c.QueryArgs()
-	pageNo, _ := strconv.Atoi(utils.ToSting(args.Peek("pageNo")))
-	pageSize, _ := strconv.Atoi(utils.ToSting(args.Peek("pageSize")))
+
+	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 
 	var tags []Tag
 
@@ -52,9 +51,9 @@ func ExistTagByName(name string) *Tag {
 }
 
 func AddTag(c iris.Context) bool {
-	args := c.QueryArgs()
-	name := utils.ToSting(args.Peek("name"))
-	user := c.UserValue("user").(User)
+
+	name := c.URLParam("name")
+	user := c.GetViewData()["user"].(User)
 	initialize.DB.Create(&Tag{
 		Name:      name,
 		CreatedBy: user.ID,

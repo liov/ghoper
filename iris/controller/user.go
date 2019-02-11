@@ -8,6 +8,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
+	"github.com/kataras/iris"
+	"net/http"
 	"regexp"
 	"service/controller/common"
 	"service/controller/common/e"
@@ -75,18 +77,18 @@ func sendMail(action string, title string, curTime int64, user User) {
 func verifyLink(cacheKey string, c iris.Context) (User, error) {
 	var user User
 
-	userID, _ := strconv.Atoi(c.UserValue("id").(string))
+	userID, _ := strconv.Atoi(c.GetViewData()["id"].(string))
 	if userID <= 0 {
 		return user, errors.New("无效的链接")
 	}
-	secret := c.UserValue("secret")
+	secret := c.GetViewData()["secret"]
 	if secret == nil {
 		return user, errors.New("无效的链接")
 	}
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+c.UserValue("id").(string)))
+	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+c.GetViewData()["id"].(string)))
 	if redisErr != nil {
 		return user, errors.New("无效的链接")
 	}
@@ -149,7 +151,7 @@ func ActiveSendMail(c iris.Context) {
 		sendMail("/active", "账号激活", curTime, user)
 	}()
 
-	common.Res(c, common.H{"email": user.Email})
+	common.Res(c, iris.Map{"email": user.Email})
 
 }
 
@@ -183,7 +185,7 @@ func ActiveAccount(c iris.Context) {
 	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
-	common.Res(c, common.H{"email": user.Email, "msg": "激活成功"})
+	common.Res(c, iris.Map{"email": user.Email, "msg": "激活成功"})
 }
 
 // ResetPasswordMail 发送重置密码的邮件
@@ -225,7 +227,7 @@ func ResetPasswordMail(c iris.Context) {
 		sendMail("/ac", "修改密码", curTime, user)
 	}()
 
-	common.Res(c, common.H{"data": "修改成功"})
+	common.Res(c, iris.Map{"data": "修改成功"})
 }
 
 // VerifyResetPasswordLink 验证重置密码的链接是否失效
@@ -332,7 +334,7 @@ func Login(c iris.Context) {
 		if user.Status == model.UserStatusInActive {
 			//没看懂
 			encodedEmail := base64.StdEncoding.EncodeToString(utils.ToBytes(user.Email))
-			common.Res(c, common.H{"email": encodedEmail, "msg": "账号未激活,请进去邮箱点击激活"})
+			common.Res(c, iris.Map{"email": encodedEmail, "msg": "账号未激活,请进去邮箱点击激活"})
 			return
 		}
 
@@ -350,14 +352,23 @@ func Login(c iris.Context) {
 			return
 		}
 
-		c.Response.Header.SetCookie(common.SetCookie("token", tokenString, time.Duration(initialize.Config.Server.TokenMaxAge)*time.Second, "/", "hoper.xyz", false, true))
+		c.SetCookie(&http.Cookie{
+			Name:     "token",
+			Value:    tokenString,
+			Path:     "/",
+			Domain:   "hoper.xyz",
+			Expires:  time.Now().Add(time.Duration(initialize.Config.Server.TokenMaxAge) * time.Second),
+			MaxAge:   int(time.Duration(initialize.Config.Server.TokenMaxAge) * time.Second),
+			Secure:   false,
+			HttpOnly: true,
+		})
 
 		/*		session := sessions.Default(c)
 				session.Set("user", user)
 				session.Save()*/
 		//userBytes, err := json.Marshal(user)
 		//c.SetCookie("user", string(userBytes), initialize.ServerSettings.TokenMaxAge, "/", "hoper.xyz", false, true)
-		common.Res(c, common.H{
+		common.Res(c, iris.Map{
 			"token": tokenString,
 			"data":  user,
 			"msg":   "登录成功",
@@ -369,7 +380,7 @@ func Login(c iris.Context) {
 }
 
 func SignInFlag(c iris.Context) {
-	user := c.UserValue("user")
+	user := c.GetViewData()["user"]
 
 	/*session := sessions.Default(c)
 	user:= session.Get("user")
@@ -456,7 +467,7 @@ func Signup(c iris.Context) {
 
 // Logout 退出登录
 func Logout(c iris.Context) {
-	userInter := c.UserValue("user")
+	userInter := c.GetViewData()["user"]
 	var user User
 	if userInter != nil {
 		user = userInter.(User)
@@ -467,7 +478,16 @@ func Logout(c iris.Context) {
 		if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 		}
 	}
-	c.Response.Header.SetCookie(common.SetCookie("token", "del", -1, "/", "hoper.xyz", false, true))
+	c.SetCookie(&http.Cookie{
+		Name:     "token",
+		Value:    "del",
+		Path:     "/",
+		Domain:   "hoper.xyz",
+		Expires:  time.Now().Add(-1),
+		MaxAge:   -1,
+		Secure:   false,
+		HttpOnly: true,
+	})
 	common.Response(c, "已退出")
 }
 
@@ -479,10 +499,10 @@ func UpdateInfo(c iris.Context) {
 		common.Response(c, "参数无效")
 		return
 	}
-	userInter := c.UserValue("user")
-	user := userInter.(model.User)
+	userInter := c.GetViewData()["user"]
+	user := userInter.(User)
 
-	field := utils.ToSting(c.QueryArgs().Peek("field"))
+	field := c.FormValue("field")
 	resData := make(map[string]interface{})
 	resData["id"] = user.ID
 
@@ -542,7 +562,7 @@ func UpdateInfo(c iris.Context) {
 		common.Response(c, "参数无效")
 		return
 	}
-	common.Response(c, common.H{"data": resData})
+	common.Response(c, iris.Map{"data": resData})
 }
 
 // UpdatePassword 更新用户密码
@@ -558,7 +578,7 @@ func UpdatePassword(c iris.Context) {
 		return
 	}
 
-	userInter := c.UserValue("user")
+	userInter := c.GetViewData()["user"]
 	user := userInter.(User)
 
 	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
@@ -584,7 +604,7 @@ func PublicInfo(c iris.Context) {
 
 	var userID string
 
-	if userID = utils.ToSting(c.QueryArgs().Peek("id")); userID != "" {
+	if userID = c.URLParam("id"); userID != "" {
 		common.Response(c, "无效的ID")
 		return
 	}
@@ -598,27 +618,24 @@ func PublicInfo(c iris.Context) {
 	} else {
 		user.CoverURL = "https://www.golang123.com/upload/img/2017/09/13/e672995e-7a39-4a05-9673-8802b1865c46.jpg"
 	}
-	common.Response(c, common.H{"user": user})
+	common.Response(c, iris.Map{"user": user})
 }
 
 // SecretInfo 返回用户信息，包含一些私密字段
 func SecretInfo(c iris.Context) {
-	if user := c.UserValue("user"); user != nil {
-		common.Res(c, common.H{
-			"errNo": e.SUCCESS,
-			"msg":   "success",
-			"data": common.H{
+	if user := c.GetViewData()["user"]; user != nil {
+		common.Response(c,
+			iris.Map{
 				"user": user,
-			},
-		})
+			}, "success")
 	}
 }
 
 // InfoDetail 返回用户详情信息(教育经历、职业经历等)，包含一些私密字段
 func InfoDetail(c iris.Context) {
 
-	userInter := c.UserValue("user")
-	user := userInter.(model.User)
+	userInter := c.GetViewData()["user"]
+	user := userInter.(User)
 
 	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
 		common.Response(c, "error")
@@ -642,7 +659,7 @@ func InfoDetail(c iris.Context) {
 	}
 
 	common.Response(c,
-		common.H{
+		iris.Map{
 			"user": user,
 		})
 }
@@ -650,12 +667,9 @@ func InfoDetail(c iris.Context) {
 // AllList 查询用户列表，只有管理员才能调此接口
 func AllList(c iris.Context) {
 
-	//char转uint8
-	role := c.QueryArgs().Peek("role")
-	var roleI uint8
-	if role != nil {
-		roleI = role[0] - 48
-	}
+	userInter := c.GetViewData()["user"]
+	user := userInter.(User)
+
 	allUserRole := []uint8{
 		model.UserRoleNormal,
 		model.UserRoleEditor,
@@ -665,7 +679,7 @@ func AllList(c iris.Context) {
 	}
 	foundRole := false
 	for _, r := range allUserRole {
-		if r == roleI {
+		if r == user.Role {
 			foundRole = true
 			break
 		}
@@ -674,19 +688,19 @@ func AllList(c iris.Context) {
 	var startTime string
 	var endTime string
 
-	if startAt, err := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("startAt"))); err != nil {
+	if startAt, err := strconv.Atoi(c.FormValue("startAt")); err != nil {
 		startTime = time.Unix(0, 0).Format("2006-01-02 15:04:05")
 	} else {
 		startTime = time.Unix(int64(startAt/1000), 0).Format("2006-01-02 15:04:05")
 	}
 
-	if endAt, err := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("endAt"))); err != nil {
+	if endAt, err := strconv.Atoi(c.FormValue("endAt")); err != nil {
 		endTime = time.Now().Format("2006-01-02 15:04:05")
 	} else {
 		endTime = time.Unix(int64(endAt/1000), 0).Format("2006-01-02 15:04:05")
 	}
 
-	pageNo, pageNoErr := strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("pageNo")))
+	pageNo, pageNoErr := strconv.Atoi(c.FormValue("pageNo"))
 	if pageNoErr != nil {
 		pageNo = 1
 	}
@@ -700,13 +714,13 @@ func AllList(c iris.Context) {
 	var users []model.User
 	var totalCount int
 	if foundRole {
-		if err := initialize.DB.Model(&model.User{}).Where("created_at >= ? AND created_at < ? AND role = ?", startTime, endTime, role).
+		if err := initialize.DB.Model(&model.User{}).Where("created_at >= ? AND created_at < ? AND role = ?", startTime, endTime, user.Role).
 			Count(&totalCount).Error; err != nil {
 			fmt.Println(err.Error())
 			common.Response(c, "error")
 			return
 		}
-		if err := initialize.DB.Where("created_at >= ? AND created_at < ? AND role = ?", startTime, endTime, role).
+		if err := initialize.DB.Where("created_at >= ? AND created_at < ? AND role = ?", startTime, endTime, user.Role).
 			Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&users).Error; err != nil {
 			fmt.Println(err.Error())
 			common.Response(c, "error")
@@ -728,7 +742,7 @@ func AllList(c iris.Context) {
 	}
 	var results []interface{}
 	for i := 0; i < len(users); i++ {
-		results = append(results, common.H{
+		results = append(results, iris.Map{
 			"id":          users[i].ID,
 			"name":        users[i].Name,
 			"email":       users[i].Email,
@@ -738,10 +752,10 @@ func AllList(c iris.Context) {
 			"activatedAt": users[i].ActivatedAt,
 		})
 	}
-	common.Res(c, common.H{
+	common.Res(c, iris.Map{
 		"errNo": e.SUCCESS,
 		"msg":   "success",
-		"data": common.H{
+		"data": iris.Map{
 			"users":      results,
 			"pageNo":     pageNo,
 			"pageSize":   pageSize,
@@ -758,7 +772,7 @@ func topN(c iris.Context, n int) {
 		common.Response(c, "error")
 	} else {
 		common.Response(c,
-			common.H{
+			iris.Map{
 				"users": users,
 			})
 	}
@@ -783,7 +797,7 @@ func UploadAvatar(c iris.Context) {
 	}
 
 	avatarURL := data["url"].(string)
-	userInter := c.UserValue("user")
+	userInter := c.GetViewData()["user"]
 	user := userInter.(User)
 
 	if err := initialize.DB.Model(&user).Update("avatar_url", avatarURL).Error; err != nil {
@@ -832,8 +846,8 @@ func AddCareer(c iris.Context) {
 		return
 	}
 
-	userInter := c.UserValue("user")
-	user := userInter.(model.User)
+	userInter := c.GetViewData()["user"]
+	user := userInter.(User)
 	career.UserID = user.ID
 
 	if err := initialize.DB.Create(&career).Error; err != nil {
@@ -878,8 +892,8 @@ func AddSchool(c iris.Context) {
 		return
 	}
 
-	userInter := c.UserValue("user")
-	user := userInter.(model.User)
+	userInter := c.GetViewData()["user"]
+	user := userInter.(User)
 	school.UserID = user.ID
 
 	if err := initialize.DB.Create(&school).Error; err != nil {
@@ -893,12 +907,8 @@ func AddSchool(c iris.Context) {
 // DeleteCareer 删除职业经历
 func DeleteCareer(c iris.Context) {
 
-	var id int
-	var idErr error
-	if id, idErr = strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("id"))); idErr != nil {
-		common.Response(c, "无效的id")
-		return
-	}
+	id := c.Params().GetUint64Default("id", 0)
+
 	var career model.Career
 	if err := initialize.DB.First(&career, id).Error; err != nil {
 		common.Response(c, "无效的id.")
@@ -910,19 +920,15 @@ func DeleteCareer(c iris.Context) {
 		return
 	}
 
-	common.Response(c, common.H{"id": career.ID})
+	common.Response(c, iris.Map{"id": career.ID})
 
 }
 
 // DeleteSchool 删除教育经历
 func DeleteSchool(c iris.Context) {
 
-	var id int
-	var idErr error
-	if id, idErr = strconv.Atoi(utils.ToSting(c.QueryArgs().Peek("id"))); idErr != nil {
-		common.Response(c, "无效的id")
-		return
-	}
+	id := c.Params().GetUint64Default("id", 0)
+
 	var school model.School
 	if err := initialize.DB.First(&school, id).Error; err != nil {
 		common.Response(c, "无效的id.")
@@ -933,7 +939,7 @@ func DeleteSchool(c iris.Context) {
 		common.Response(c, "error")
 		return
 	}
-	common.Response(c, common.H{"id": school.ID})
+	common.Response(c, iris.Map{"id": school.ID})
 }
 func CheckAuth(username, password string) (bool, error) {
 	var auth model.Auth

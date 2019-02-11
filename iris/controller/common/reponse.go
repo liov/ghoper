@@ -52,3 +52,10 @@ func Response(ctx iris.Context, res ...interface{}) {
 		fmt.Println(num, err)
 	}
 }
+
+func Res(c iris.Context, h iris.Map) {
+	num, err := c.JSON(h)
+	if err != nil {
+		fmt.Println(num, err)
+	}
+}
