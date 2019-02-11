@@ -22,7 +22,7 @@ func GetArticle(c iris.Context) {
 
 	var article, articleCache model.Article
 
-	id := utils.ToSting(c.QueryArgs().Peek("id"))
+	id := c.URLParam("id")
 
 	key := "Article_" + id
 
@@ -48,23 +48,22 @@ func GetArticle(c iris.Context) {
 
 func GetArticles(c iris.Context) {
 
-	args := c.QueryArgs()
-	pageNo, _ := strconv.Atoi(utils.ToSting(args.Peek("pageNo")))
-	pageSize, _ := strconv.Atoi(utils.ToSting(args.Peek("pageSize")))
-	orderType := args.Peek("orderType")
+	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
+	orderType := c.URLParam("orderType")
 
-	tagID := utils.ToSting(args.Peek("tagID"))
-	keyword := utils.ToSting(args.Peek("keyword"))
-	categories := utils.ToSting(args.Peek("categories"))
+	tagID := c.URLParam("tagID")
+	keyword := c.URLParam("keyword")
+	categories := c.URLParam("categories")
 
 	orderStr := "created_at"
-	if orderType != nil {
-		switch orderType[0] {
-		case byte('1'):
+	if orderType != "" {
+		switch orderType {
+		case "1":
 			orderStr = "created_at"
-		case byte('2'):
+		case "2":
 			orderStr = "like_count"
-		case byte('3'):
+		case "3":
 			orderStr = "comment_count"
 		}
 	}
@@ -167,7 +166,7 @@ func articleValidation(c iris.Context, article *model.Article) (err error) {
 // Create 创建文章
 func AddArticle(c iris.Context) {
 
-	user := c.UserValue("user").(model.User)
+	user := c.GetViewData()["user"].(model.User)
 
 	if limitErr := common.Limit(model.ArticleMinuteLimit,
 		model.ArticleMinuteLimitCount,
@@ -179,7 +178,7 @@ func AddArticle(c iris.Context) {
 
 	var article model.Article
 
-	if err := common.BindWithJson(c, &article); err != nil {
+	if err := c.ReadJSON(&article); err != nil {
 		fmt.Println(err.Error())
 		common.Response(c, "参数无效")
 		return
@@ -235,7 +234,7 @@ func historyArticle(c iris.Context, isDel uint) (model.ArticleHistory, model.Art
 
 	var article model.Article
 	//获取文章ID
-	id := utils.ToSting(c.QueryArgs().Peek("id"))
+	id := c.Params().GetUint64Default("id", 0)
 
 	if err := initialize.DB.First(&article, id).Error; err != nil {
 		common.Response(c, "无效的版块id")
@@ -277,8 +276,7 @@ func EditArticle(c iris.Context) {
 		return
 	}
 
-	if err := common.BindWithJson(c, &article); err != nil {
-		fmt.Println(err.Error())
+	if err := c.ReadJSON(&article); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -300,7 +298,7 @@ func DeleteArticle(c iris.Context) {
 
 	historyArticle(c, 1)
 
-	id := utils.ToSting(c.QueryArgs().Peek("id"))
+	id := c.Params().GetUint64Default("id", 0)
 
 	tx := initialize.DB.Begin()
 

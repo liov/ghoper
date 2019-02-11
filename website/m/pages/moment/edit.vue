@@ -58,7 +58,7 @@
                     <van-cell-group>
                         <van-col span="12">
                             <van-cell title="全部可见" clickable @click="moment.permission = '0'">
-                                <van-radio name="0" />
+                                <van-radio name= 0 />
                             </van-cell>
                         </van-col>
                         <van-col span="12">
@@ -149,7 +149,7 @@
                     newMoment.content = vm.moment.content;
                 }
                 if (vm.moment.permission !== vm.oldMoment.permission) {
-                    newMoment.permission = vm.moment.permission;
+                    newMoment.permission = parseInt(vm.moment.permission);
                 }
                 if (vm.moment.mood_name !== vm.oldMoment.mood_name) {
                     newMoment.mood_name = vm.moment.mood_name;

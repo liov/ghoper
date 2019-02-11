@@ -3,8 +3,8 @@ package gredis
 import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
-	"micro/common/controller/common/logging"
-	"micro/common/initialize"
+	"service/controller/common/logging"
+	"service/initialize"
 )
 
 func Set(key string, data interface{}, time int) error {

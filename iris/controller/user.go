@@ -117,7 +117,7 @@ func ActiveSendMail(c iris.Context) {
 
 	var reqData ReqData
 	// 只接收一个email参数
-	if err := common.BindWithJson(c, &reqData); err != nil {
+	if err := c.ReadJSON(&reqData); err != nil {
 		common.Response(c, "参数无效", e.InvalidParams)
 		return
 	}
@@ -196,7 +196,7 @@ func ResetPasswordMail(c iris.Context) {
 		LuosimaoRes string `json:"luosimaoRes"`
 	}
 	var userData UserReqData
-	if err := common.BindWithJson(c, &userData); err != nil {
+	if err := c.ReadJSON(&userData); err != nil {
 		common.Response(c, "无效的邮箱")
 		return
 	}
@@ -249,7 +249,7 @@ func ResetPassword(c iris.Context) {
 	}
 	var userData UserReqData
 
-	if err := common.BindWithJson(c, &userData); err != nil {
+	if err := c.ReadJSON(&userData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -295,7 +295,7 @@ func Login(c iris.Context) {
 
 	var signinInput, password, luosimaoRes, sql string
 
-	if err := common.BindWithJson(c, &login); err != nil {
+	if err := c.ReadJSON(&login); err != nil {
 		common.Response(c, "账号或密码错误")
 		return
 	}
@@ -410,7 +410,7 @@ func Signup(c iris.Context) {
 		return
 	}*/
 
-	if err := common.BindWithJson(c, &userData); err != nil {
+	if err := c.ReadJSON(&userData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -495,7 +495,7 @@ func Logout(c iris.Context) {
 func UpdateInfo(c iris.Context) {
 
 	var userReqData model.User
-	if err := common.BindWithJson(c, &userReqData); err != nil {
+	if err := c.ReadJSON(&userReqData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -573,7 +573,7 @@ func UpdatePassword(c iris.Context) {
 		NewPwd   string `json:"newPwd" binding:"required,min=6,max=20"`
 	}
 	var userData userReqData
-	if err := common.BindWithJson(c, &userData); err != nil {
+	if err := c.ReadJSON(&userData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -635,7 +635,7 @@ func SecretInfo(c iris.Context) {
 func InfoDetail(c iris.Context) {
 
 	userInter := c.GetViewData()["user"]
-	user := userInter.(User)
+	user := userInter.(model.User)
 
 	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
 		common.Response(c, "error")
@@ -816,7 +816,7 @@ func UploadAvatar(c iris.Context) {
 func AddCareer(c iris.Context) {
 
 	var career model.Career
-	if err := common.BindWithJson(c, &career); err != nil {
+	if err := c.ReadJSON(&career); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -862,7 +862,7 @@ func AddCareer(c iris.Context) {
 func AddSchool(c iris.Context) {
 
 	var school model.School
-	if err := common.BindWithJson(c, &school); err != nil {
+	if err := c.ReadJSON(&school); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -968,7 +968,7 @@ func UserFromRedis(userID int) (User, error) {
 		return User{}, errors.New("未登录")
 	}
 	var user User
-	bytesErr := jsons.UnmarshalFromString(userBytes, &user)
+	bytesErr := common.Json.UnmarshalFromString(userBytes, &user)
 	if bytesErr != nil {
 		fmt.Println(bytesErr)
 		return user, errors.New("未登录")
@@ -978,7 +978,7 @@ func UserFromRedis(userID int) (User, error) {
 
 // UserToRedis 将用户信息存到redis
 func UserToRedis(user User) error {
-	UserString, err := jsons.MarshalToString(user)
+	UserString, err := common.Json.MarshalToString(user)
 	if err != nil {
 		return errors.New("error")
 	}

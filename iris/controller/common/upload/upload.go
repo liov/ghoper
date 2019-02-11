@@ -1,12 +1,11 @@
 package upload
 
 import (
-	"github.com/iris-contrib/go.uuid"
 	"github.com/satori/go.uuid"
-	"micro/common/initialize"
-	"micro/common/model"
-	"micro/common/utils"
 	"os"
+	"service/initialize"
+	"service/model"
+	"service/utils"
 	"strings"
 	"unicode/utf8"
 )

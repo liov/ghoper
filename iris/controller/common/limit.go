@@ -3,7 +3,7 @@ package common
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"micro/common/initialize"
+	"service/initialize"
 )
 
 func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimitCount int64, userID uint) string {

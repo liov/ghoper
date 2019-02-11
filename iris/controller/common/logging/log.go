@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"micro/common/initialize"
-	"micro/common/utils"
 	"os"
 	"path/filepath"
 	"runtime"
+	"service/initialize"
+	"service/utils"
 	"time"
 )
 

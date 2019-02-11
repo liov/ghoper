@@ -3,7 +3,6 @@ package controller
 import (
 	"github.com/sirupsen/logrus"
 	"os"
-	"service/controller/common"
 )
 
 func init() {
@@ -20,5 +19,3 @@ func init() {
 	// Only log the warning severity or above.
 	logrus.SetLevel(logrus.InfoLevel)
 }
-
-var jsons = common.Json

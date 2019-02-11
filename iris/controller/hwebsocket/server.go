@@ -6,7 +6,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/kataras/iris"
 	"github.com/satori/go.uuid"
-	"github.com/valyala/fasthttp"
 	"io/ioutil"
 	"net/http"
 	"os"

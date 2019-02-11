@@ -2,8 +2,8 @@ package hnsq
 
 import (
 	"fmt"
+	"github.com/kataras/iris"
 	"github.com/nsqio/go-nsq"
-	"github.com/valyala/fasthttp"
 )
 
 var producer *nsq.Producer
@@ -34,7 +34,7 @@ func NsqpSend() {
 }*/
 
 //发布消息
-func publish(topic string, message []byte) error {
+func publish(topic string, message string) error {
 	var err error
 	if producer != nil {
 		if len(message) == 0 { //不能发布空串，否则会导致error
@@ -47,12 +47,12 @@ func publish(topic string, message []byte) error {
 }
 
 func Start(c iris.Context) {
-	stringType := c.QueryArgs().Peek("st")
-	if stringType[0] == byte('0') {
-		message := c.PostArgs().Peek("message")
+	stringType := c.URLParam("st")
+	if stringType == "0" {
+		message := c.URLParam("message")
 		publish("topic_string", message)
 	} else {
-		message := c.Request.Body()
+		message := c.FormValue("message")
 		publish("topic_json", message)
 	}
 }

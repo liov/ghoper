@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
-	"github.com/valyala/fasthttp"
 	"service/controller/common"
 	"service/initialize"
 	"service/model"
@@ -56,7 +56,7 @@ type Comment interface {
 }
 
 func AddComment(c iris.Context) {
-	user := c.UserValue("user").(User)
+	user := c.GetViewData()["user"].(User)
 	if limitErr := common.Limit(model.CommentMinuteLimit,
 		model.CommentMinuteLimitCount,
 		model.CommentDayLimit,
@@ -64,7 +64,7 @@ func AddComment(c iris.Context) {
 		common.Response(c, limitErr)
 		return
 	}
-	classify := c.UserValue("classify").(string)
+	classify := c.GetViewData()["classify"].(string)
 	nowTime := time.Now()
 	switch classify {
 	case "articleComment":
@@ -105,7 +105,7 @@ func AddComment(c iris.Context) {
 }
 
 func commentBind(comment interface{}, c iris.Context) {
-	err := common.BindWithJson(c, comment)
+	err := c.ReadJSON(comment)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"controller": "moment",

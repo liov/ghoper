@@ -3,8 +3,8 @@ package upload
 import (
 	"errors"
 	"fmt"
+	"github.com/kataras/iris"
 	"github.com/satori/go.uuid"
-	"github.com/valyala/fasthttp"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -61,13 +61,13 @@ func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 
 // Upload 文件上传
 func Upload(c iris.Context) (map[string]interface{}, error) {
-	file, err := c.FormFile("upFile")
+	_, info, err := c.FormFile("upFile")
 
 	if err != nil {
 		return nil, errors.New("参数无效")
 	}
 
-	var filename = file.Filename
+	var filename = info.Filename
 	var index = strings.LastIndex(filename, ".")
 
 	if index < 0 {
@@ -97,7 +97,7 @@ func Upload(c iris.Context) (map[string]interface{}, error) {
 		return nil, errors.New("error")
 	}
 
-	if err := SaveUploadedFile(file, imgUploadedInfo.UploadFilePath); err != nil {
+	if err := SaveUploadedFile(info, imgUploadedInfo.UploadFilePath); err != nil {
 		return nil, errors.New("error1")
 	}
 

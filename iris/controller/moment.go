@@ -143,10 +143,10 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) *M
 		for mi, mv := range topData {
 			if mv != "" {
 				var moment Moment
-				jsons.UnmarshalFromString(mv, &moment)
+				common.Json.UnmarshalFromString(mv, &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				moments.TopMoments = append(moments.TopMoments, moment)
-				data, _ := jsons.MarshalToString(&moment)
+				data, _ := common.Json.MarshalToString(&moment)
 				conn.Do("LSET", topKey, mi, data)
 			} else {
 				moments.TopMoments = append(moments.TopMoments, Moment{})
@@ -168,10 +168,10 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) *M
 	for mi, mv := range data {
 		if mv != "" {
 			var moment Moment
-			jsons.UnmarshalFromString(mv, &moment)
+			common.Json.UnmarshalFromString(mv, &moment)
 			moment.BrowseCount = moment.BrowseCount + 1
 			moments.NormalMoments = append(moments.NormalMoments, moment)
-			data, _ := jsons.MarshalToString(&moment)
+			data, _ := common.Json.MarshalToString(&moment)
 			conn.Do("LSET", normalKey, mi+start, data)
 		} else {
 			moments.NormalMoments = append(moments.NormalMoments, Moment{})
@@ -193,7 +193,7 @@ func setRedisMoments(topKey string, normalKey string, moments Moments) error {
 		for _, mv := range moments.TopMoments {
 			mv.BrowseCount = mv.BrowseCount + 1
 			//mv.Index = mi
-			value, _ := jsons.MarshalToString(mv)
+			value, _ := common.Json.MarshalToString(mv)
 			_, err := conn.Do("RPUSH", topKey, value)
 			if err != nil {
 				return err
@@ -204,7 +204,7 @@ func setRedisMoments(topKey string, normalKey string, moments Moments) error {
 	for _, mv := range moments.NormalMoments {
 		mv.BrowseCount = mv.BrowseCount + 1
 		//mv.Index = mi
-		value, _ := jsons.MarshalToString(mv)
+		value, _ := common.Json.MarshalToString(mv)
 		_, err := conn.Do("RPUSH", normalKey, value)
 		if err != nil {
 			return err
@@ -288,9 +288,9 @@ func getRedisMoment(top string, index string) *Moment {
 			}
 			if data != "" {
 				var moment Moment
-				jsons.Unmarshal(data.([]byte), &moment)
+				common.Json.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
-				data, err = jsons.MarshalToString(moment)
+				data, err = common.Json.MarshalToString(moment)
 				_, err = conn.Do("LSET", gredis.TopMoments, index, data)
 				if err != nil {
 					logging.Error(err)
@@ -308,9 +308,9 @@ func getRedisMoment(top string, index string) *Moment {
 			}
 			if data != "" {
 				var moment Moment
-				jsons.Unmarshal(data.([]byte), &moment)
+				common.Json.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
-				data, err = jsons.MarshalToString(moment)
+				data, err = common.Json.MarshalToString(moment)
 				_, err = conn.Do("LSET", gredis.Moments, index, data)
 				if err != nil {
 					logging.Error(err)
@@ -339,7 +339,7 @@ func AddMoment(c iris.Context) {
 
 	var moment Moment
 
-	if err := common.BindWithJson(c, &moment); err != nil {
+	if err := c.ReadJSON(&moment); err != nil {
 		logrus.WithFields(logrus.Fields{
 			"model": "moment",
 		}).Info(err.Error())
@@ -428,7 +428,7 @@ func AddMoment(c iris.Context) {
 			}
 		}*/
 
-	value, _ := jsons.MarshalToString(moment)
+	value, _ := common.Json.MarshalToString(moment)
 	_, err := conn.Do("LPUSH", gredis.Moments, value)
 	if err != nil {
 		return
@@ -507,7 +507,7 @@ func EditMoment(c iris.Context) {
 	moment, _ := historyMoment(c, 0)
 
 	var newMoment model.Moment
-	if err := common.BindWithJson(c, &newMoment); err != nil {
+	if err := c.ReadJSON(&newMoment); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -601,7 +601,7 @@ func EditMoment(c iris.Context) {
 	//topNum
 	if topNum != "0" {
 		if gredis.Exists(gredis.TopMoments) {
-			data, err := jsons.MarshalToString(redisMoment)
+			data, err := common.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.TopMoments, index, data)
 			if err != nil {
 				logging.Error(err)
@@ -609,7 +609,7 @@ func EditMoment(c iris.Context) {
 		}
 	} else {
 		if gredis.Exists(gredis.Moments) {
-			data, err := jsons.MarshalToString(redisMoment)
+			data, err := common.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.Moments, index, data)
 			if err != nil {
 				logging.Error(err)

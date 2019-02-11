@@ -2,7 +2,7 @@ package crawler
 
 import (
 	"fmt"
-	"github.com/valyala/fasthttp"
+	"github.com/kataras/iris"
 	"io"
 	"net/http"
 	"net/url"
@@ -17,7 +17,6 @@ import (
 	"sync"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/gin-gonic/gin"
 )
 
 type crawlSelector struct {
@@ -320,7 +319,7 @@ func Crawl(c iris.Context) {
 		CrawlExist bool     `json:"crawlExist"`
 	}
 	var jsonData JSONData
-	if err := c.ShouldBindJSON(&jsonData); err != nil {
+	if err := c.ReadJSON(&jsonData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -335,8 +334,7 @@ func Crawl(c iris.Context) {
 		return
 	}
 
-	iuser, _ := c.Get("user")
-	user := iuser.(model.User)
+	user := c.GetViewData()["user"].(model.User)
 
 	if user.Name != initialize.Config.Server.CrawlerName {
 		common.Response(c, "您没有权限执行此操作, 请使用爬虫账号")
@@ -368,11 +366,7 @@ func Crawl(c iris.Context) {
 		}
 	}
 
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "抓取完成",
-		"data":  gin.H{},
-	})
+	common.Response(c, "抓取完成")
 }
 
 // CustomCrawl 自定义抓取
@@ -392,7 +386,7 @@ func CustomCrawl(c iris.Context) {
 		SiteName              string   `json:"siteName" binding:"required"`
 	}
 	var jsonData JSONData
-	if err := c.ShouldBindJSON(&jsonData); err != nil {
+	if err := c.ReadJSON(&jsonData); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
@@ -406,8 +400,7 @@ func CustomCrawl(c iris.Context) {
 		return
 	}
 
-	iuser, _ := c.Get("user")
-	user := iuser.(model.User)
+	user := c.GetViewData()["user"].(model.User)
 
 	if user.Name != initialize.Config.Server.CrawlerName {
 		common.Response(c, "您没有权限执行此操作, 请使用爬虫账号")
@@ -447,24 +440,20 @@ func CustomCrawl(c iris.Context) {
 		}
 	}
 
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "抓取完成",
-		"data":  gin.H{},
-	})
+	common.Response(c, "抓取完成")
 }
 
 // CrawlNotSaveContent 抓取的内容直接返回，而不保存到数据库
 func CrawlNotSaveContent(c iris.Context) {
-	SendErrJSON := common.SendErr
+
 	type JSONData struct {
 		URL             string `json:"url"`
 		TitleSelector   string `json:"titleSelector"`
 		ContentSelector string `json:"contentSelector"`
 	}
 	var jsonData JSONData
-	if err := c.ShouldBindJSON(&jsonData); err != nil {
-		SendErrJSON(c, "参数无效")
+	if err := c.ReadJSON(&jsonData); err != nil {
+		common.Response(c, "参数无效")
 		return
 	}
 
@@ -474,13 +463,9 @@ func CrawlNotSaveContent(c iris.Context) {
 
 	data := crawlContent(jsonData.URL, crawlSelector, nil, true)
 
-	common.Response(c, common.H{
-		"errNo": e.SUCCESS,
-		"msg":   "success",
-		"data": gin.H{
-			"content": data["Content"],
-		},
-	})
+	common.Response(c, iris.Map{
+		"content": data["Content"],
+	}, "success")
 }
 
 // CrawlAccount 获取爬虫账号

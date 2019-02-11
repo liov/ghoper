@@ -2,7 +2,7 @@ package validation
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/kataras/iris"
 	"reflect"
 	"regexp"
 	"service/controller/common"
@@ -64,7 +64,7 @@ func (r *Result) Message(message string, args ...interface{}) *Result {
 func (r *Result) Response(message string, c iris.Context) *Result {
 	if r.Error != nil {
 		r.Error.Message = message
-		common.SendErr(c, message)
+		common.Response(c, message)
 	}
 	return r
 }
