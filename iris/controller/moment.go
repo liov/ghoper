@@ -576,7 +576,7 @@ func EditMoment(c iris.Context) {
 		}
 	*/
 
-	top := c.URLParam("t")
+	topNum := c.URLParam("t")
 	index := c.URLParam("index")
 
 	conn := initialize.RedisPool.Get()
@@ -598,8 +598,8 @@ func EditMoment(c iris.Context) {
 		LoveCount:    moment.LoveCount,
 		Permission:   moment.Permission,
 	}
-
-	if top != "0" {
+	//topNum
+	if topNum != "0" {
 		if gredis.Exists(gredis.TopMoments) {
 			data, err := jsons.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", gredis.TopMoments, index, data)
@@ -629,13 +629,13 @@ func DeleteMoment(c iris.Context) {
 	nowTime := time.Now()
 	initialize.DB.Model(&model.Moment{ID: uint(id)}).Updates(&model.Moment{DeletedAt: &nowTime})
 
-	top := c.URLParam("t")
+	topNum := c.URLParam("t")
 	index := c.URLParam("index")
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	if top != "0" {
+	if topNum != "0" {
 		if gredis.Exists(gredis.TopMoments) {
 			_, err := conn.Do("LSET", gredis.TopMoments, index, "")
 			if err != nil {
