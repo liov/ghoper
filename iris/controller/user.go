@@ -8,7 +8,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
-	"github.com/valyala/fasthttp"
 	"regexp"
 	"service/controller/common"
 	"service/controller/common/e"

@@ -14,8 +14,6 @@ require (
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/fasthttp/websocket v1.4.0
-	github.com/gin-contrib/sessions v0.0.0-20180827025425-58cbcf30135c
-	github.com/gin-gonic/gin v1.3.1-0.20190120102704-f38a3fe65f10
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gobwas/glob v0.2.3 // indirect
