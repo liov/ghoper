@@ -33,7 +33,7 @@ func Signup(ctx iris.Context) {
 		common.Response(ctx, err.Error())
 		return
 	}
-	common.Response(ctx, rsp.GetMsg(), rsp.GetUser())
+	common.Response(ctx, rsp.GetUser(), rsp.GetMsg())
 }
 
 func Login(ctx iris.Context) {
@@ -48,10 +48,10 @@ func Login(ctx iris.Context) {
 	rsp, err := userService.Login(context.TODO(), &loginReq)
 
 	if err != nil {
-		common.Response(ctx, err.Error(), rsp.GetEmail())
+		common.Response(ctx, err.Error())
 		return
 	}
-	common.Response(ctx, rsp.GetMsg(), rsp.GetUser())
+	common.Response(ctx, rsp.GetUser(), rsp.GetMsg())
 }
 
 func Logout(ctx iris.Context) {

@@ -48,8 +48,7 @@ func (u *UserHandler) Signup(ctx context.Context, signupReq *protobuf.SignupReq,
 	}
 
 	var newUser protobuf.User
-	nowTime := time.Now().Unix()
-	newUser.CreatedAt = nowTime
+	nowTime := time.Now()
 	newUser.Name = signupReq.Name
 	newUser.Email = signupReq.Email
 	newUser.Phone = signupReq.Phone
@@ -66,11 +65,13 @@ func (u *UserHandler) Signup(ctx context.Context, signupReq *protobuf.SignupReq,
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("SET", activeUser, nowTime, "EX", activeDuration); err != nil {
+	currTime := nowTime.Unix()
+
+	if _, err := RedisConn.Do("SET", activeUser, currTime, "EX", activeDuration); err != nil {
 	}
 
 	go func() {
-		sendMail("/active", "账号激活", nowTime, newUser)
+		sendMail("/active", "账号激活", currTime, newUser)
 	}()
 
 	loginRep.Msg = "注册成功"
@@ -115,8 +116,9 @@ func (u *UserHandler) Login(ctx context.Context, loginReq *protobuf.LoginReq, lo
 	if checkPassword(password, user) {
 		if user.Status == model.UserStatusInActive {
 			encodedEmail := base64.StdEncoding.EncodeToString(utils.ToBytes(user.Email))
-			loginRep.Email = encodedEmail
-			return errors.New("账号未激活,请进去邮箱点击激活")
+			loginRep.Msg = "账号未激活"
+			loginRep.User.Email = encodedEmail
+			return nil
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

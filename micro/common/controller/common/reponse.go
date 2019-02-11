@@ -28,19 +28,18 @@ func Response(ctx iris.Context, res ...interface{}) {
 		}
 	} else if len(res) == 2 {
 		if msgTmp, ok := res[0].(string); ok {
+			data = nil
 			msg = msgTmp
 			code = res[1].(int)
-			data = nil
 		} else {
+			data = res[0]
 			msg = res[1].(string)
 			code = e.SUCCESS
-			data = res[0]
-
 		}
 	} else {
-		code = res[2].(int)
-		msg = res[1].(string)
 		data = res[0]
+		msg = res[1].(string)
+		code = res[2].(int)
 	}
 
 	num, err := ctx.JSON(iris.Map{

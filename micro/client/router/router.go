@@ -17,7 +17,7 @@ func Router() *iris.Application {
 	//userRouter.Use(middleware.JWT)
 
 	{
-		userRouter.Post("/signin", user.Signup)
+		userRouter.Post("/signup", user.Signup)
 		userRouter.Post("/login", user.Login)
 		userRouter.Get("/logout", user.Logout)
 

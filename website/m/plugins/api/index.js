@@ -24,7 +24,7 @@ router.post('/user/signin', (req, res) => {
 })
 
 // Add POST - /api/logout
-router.get('/user/signout', (req, res) => {
+router.get('/user/logout', (req, res) => {
     delete req.session.authUser
     res.json({ ok: true })
 })

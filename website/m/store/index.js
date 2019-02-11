@@ -88,7 +88,7 @@ export const actions = {
     },
 
     async logout({ commit }) {
-        await axios.get('/user/signout')
+        await axios.get('/user/logout')
         commit('SET_USER', null)
     }*/
 

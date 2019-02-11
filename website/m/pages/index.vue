@@ -2,7 +2,7 @@
     <div>
         <div>
         <nuxt-link to="/moment"><van-button type="primary">瞬间</van-button></nuxt-link>
-        <a class="index" href="javascript:;" @click="signout">
+        <a class="index" href="javascript:;" @click="logout">
             <van-button type="warning">注销</van-button>
         </a>
         <a href="/tpl/index"><van-button type="default">模板首页</van-button></a>
@@ -31,9 +31,9 @@
             }
         },
         methods:{
-            signout:function () {
+            logout:function () {
                 let vm =this;
-                axios.get(`/api/user/signout`).then(
+                axios.get(`/api/user/logout`).then(
                     (res)=>{
                         if(res.data.code===200)
                             localStorage.removeItem("token");
