@@ -77,7 +77,7 @@ export const actions = {
     },
 /*    async login({ commit }, { username, password }) {
         try {
-            const { data } = await axios.post('/user/signin', { username, password })
+            const { data } = await axios.post('/user/login', { username, password })
             commit('SET_USER', data)
         } catch (error) {
             if (error.response && error.response.status === 401) {

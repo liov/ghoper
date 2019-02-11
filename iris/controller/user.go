@@ -293,7 +293,7 @@ func Login(c iris.Context) {
 
 	var login Login
 
-	var signinInput, password, luosimaoRes, sql string
+	var loginInput, password, luosimaoRes, sql string
 
 	if err := c.ReadJSON(&login); err != nil {
 		common.Response(c, "账号或密码错误")
@@ -313,7 +313,7 @@ func Login(c iris.Context) {
 		}
 	}
 
-	signinInput = login.Input
+	loginInput = login.Input
 	password = login.Password
 	luosimaoRes = login.LuosimaoRes
 
@@ -325,7 +325,7 @@ func Login(c iris.Context) {
 	}
 
 	var user User
-	if err := initialize.DB.Where(sql, signinInput).Find(&user).Error; err != nil {
+	if err := initialize.DB.Where(sql, loginInput).Find(&user).Error; err != nil {
 		common.Response(c, "账号不存在")
 		return
 	}

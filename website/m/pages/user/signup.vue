@@ -65,7 +65,7 @@
                         // success
                         if (res.data.msg === 'ok'){
                             vm.$toast("注册成功");
-                            vm.$router.replace("/user/signin")
+                            vm.$router.replace("/user/login")
                         }else {
                             vm.$toast(res.data.msg)
                             vm.user.sex = vm.user.sex.toString()

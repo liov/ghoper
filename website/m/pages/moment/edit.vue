@@ -175,7 +175,7 @@
                     })
                     .catch(function (err) {
                         // error
-                        //vm.$router.push({path:'/user/signin'});
+                        //vm.$router.push({path:'/user/login'});
                     });
 
             },

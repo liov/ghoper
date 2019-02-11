@@ -13,8 +13,8 @@ import (
 func StartCron() {
 
 	c := cron.New()
-	c.AddFunc("", RedisToDB)
-	c.AddJob("", RedisTo{})
+	c.AddFunc("0 0 2 * * *", RedisToDB)
+	c.AddJob("0 0 2 * * *", RedisTo{})
 	c.Start()
 	defer c.Stop()
 }

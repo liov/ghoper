@@ -15,7 +15,7 @@ router.use((req, res, next) => {
 })
 
 // Add POST - /api/login
-router.post('/user/signin', (req, res) => {
+router.post('/user/login', (req, res) => {
     if (req.body.username === 'demo' && req.body.password === 'demo') {
         req.session.authUser = { username: 'demo' }
         return res.json({ username: 'demo' })

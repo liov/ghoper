@@ -38,7 +38,7 @@ axios.interceptors.response.use(
             if (error.response) {
                 switch (error.response.status) {
                     case 401://token过期，清除token并跳转到登录页面
-                        context.app.router.push({path:'/user/signin'})
+                        context.app.router.push({path:'/user/login'})
 
                         return;
                 }

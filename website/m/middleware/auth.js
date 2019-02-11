@@ -22,14 +22,14 @@ export default function ({app: {router}, store, error, req, redirect}) {
                                 message: 'You are not connected',
                                 statusCode: 403
                             });*/
-                redirect({path: '/user/signin'});
+                redirect({path: '/user/login'});
             }
         } else {
             /*            error({
                             message: 'You are not connected',
                             statusCode: 403
                         });*/
-            redirect({path: '/user/signin'});
+            redirect({path: '/user/login'});
         }
 
     }
