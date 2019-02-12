@@ -3,6 +3,8 @@ package router
 //go:generate qtc -dir=../template
 import (
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/cache"
+	"github.com/kataras/iris/middleware/basicauth"
 	"github.com/kataras/iris/middleware/i18n"
 	"github.com/kataras/iris/middleware/pprof"
 	"github.com/kataras/iris/middleware/recover"
@@ -45,13 +47,63 @@ func IrisRouter() *iris.Application {
 
 	app.Logger().Printer.SetOutput(logging.F)
 
-	app.Any("/api/pprof/{action:path}", middleware.JWT, pprof.New())
+	//auth
+	authConfig := basicauth.Config{
+		Users:   map[string]string{"admin": "lby604"},
+		Realm:   "Authorization Required", // defaults to "Authorization Required"
+		Expires: time.Duration(30) * time.Minute,
+	}
+
+	authentication := basicauth.New(authConfig)
+	app.Any("/tpl/pprof/{action:path}", authentication, pprof.New())
+
+	app.Get("/auth/{provider}/callback", func(ctx iris.Context) {
+
+		user, err := middleware.CompleteUserAuth(ctx)
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Writef("%v", err)
+			return
+		}
+		ctx.ViewData("", user)
+		if err := ctx.View("user.html"); err != nil {
+			ctx.Writef("%v", err)
+		}
+	})
+
 	//缓存10s
-	tplRouter := app.Party("/tpl", iris.Cache304(10*time.Second))
+	tplRouter := app.Party("/tpl")
 	{
-		tplRouter.Get("/hi", html.HtmlTest)
+		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
-		tplRouter.Get("/", markdown.MarkdownTest)
+		tplRouter.Get("/markdown", markdown.MarkdownTest)
+		tplRouter.Get("/time", iris.Cache304(10*time.Second), html.Time)
+		tplRouter.Get("/auth", authentication, html.Auth)
+		tplRouter.Get("/logout/{provider}", func(ctx iris.Context) {
+			middleware.Logout(ctx)
+			ctx.Redirect("/", iris.StatusTemporaryRedirect)
+		})
+
+		tplRouter.Get("/auth/{provider}", func(ctx iris.Context) {
+			// try to get the user without re-authenticating
+			if gothUser, err := middleware.CompleteUserAuth(ctx); err == nil {
+				ctx.ViewData("", gothUser)
+				if err := ctx.View("user.html"); err != nil {
+					ctx.Writef("%v", err)
+				}
+			} else {
+				middleware.BeginAuthHandler(ctx)
+			}
+		})
+
+		tplRouter.Get("/", func(ctx iris.Context) {
+
+			ctx.ViewData("", middleware.NewAuth())
+
+			if err := ctx.View("index.html"); err != nil {
+				ctx.Writef("%v", err)
+			}
+		})
 	}
 
 	articleRouter := app.Party("/api/article")

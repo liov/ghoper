@@ -22,6 +22,7 @@ require (
 	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.1.3 // indirect
 	github.com/gorilla/websocket v1.4.0
 	github.com/iris-contrib/go.uuid v2.0.0+incompatible
@@ -33,6 +34,7 @@ require (
 	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5 // indirect
 	github.com/kataras/iris v0.0.0-20190116204635-f4f66079a723
 	github.com/kennygrant/sanitize v1.2.4 // indirect
+	github.com/markbates/goth v1.49.0
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/pelletier/go-toml v1.2.0 // indirect
