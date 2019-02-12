@@ -3,6 +3,7 @@ package router
 //go:generate qtc -dir=../template
 import (
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/middleware/i18n"
 	"github.com/kataras/iris/middleware/pprof"
 	"github.com/kataras/iris/middleware/recover"
 	"service/controller"
@@ -32,6 +33,14 @@ func IrisRouter() *iris.Application {
 	app.RegisterView(tmplPug)
 
 	app.Use(recover.New())
+
+	globalLocale := i18n.New(i18n.Config{
+		Default:      "en-US",
+		URLParameter: "lang",
+		Languages: map[string]string{
+			"en-US": "./locales/locale_en-US.ini",
+			"zh-CN": "./locales/locale_zh-CN.ini"}})
+	app.Use(globalLocale)
 
 	app.Logger().Printer.SetOutput(logging.F)
 
