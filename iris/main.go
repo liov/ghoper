@@ -13,7 +13,8 @@ import (
 
 func main() {
 
-	go cron.StartCron()
+	cron.New().Start()
+	defer cron.New().Stop()
 
 	go hwebsocket.Start()
 

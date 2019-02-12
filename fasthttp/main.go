@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"service/controller/cron"
 	"service/controller/hwebsocket"
 	"service/initialize"
 	"service/router"
@@ -17,7 +18,8 @@ import (
 
 func main() {
 
-	//go cron.CronStart(cron.GetCron())
+	cron.New().Start()
+	defer cron.New().Stop()
 
 	go hwebsocket.Start()
 
