@@ -38,8 +38,8 @@ func IrisRouter() *iris.Application {
 		Default:      "en-US",
 		URLParameter: "lang",
 		Languages: map[string]string{
-			"en-US": "./locales/locale_en-US.ini",
-			"zh-CN": "./locales/locale_zh-CN.ini"}})
+			"en-US": "../locales/locale_en-US.ini",
+			"zh-CN": "../locales/locale_zh-CN.ini"}})
 	app.Use(globalLocale)
 
 	app.Logger().Printer.SetOutput(logging.F)
