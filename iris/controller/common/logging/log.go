@@ -34,7 +34,8 @@ const (
 )
 
 func init() {
-	F, err := openLogFile(getLogFileName(), getLogFilePath())
+	var err error
+	F, err = openLogFile(getLogFileName(), getLogFilePath())
 	if err != nil {
 		log.Fatalln(err)
 	}
