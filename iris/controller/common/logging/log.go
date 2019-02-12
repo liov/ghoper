@@ -34,14 +34,10 @@ const (
 )
 
 func init() {
-	var err error
-	filePath := getLogFilePath()
-	fileName := getLogFileName()
-	F, err = openLogFile(fileName, filePath)
+	F, err := openLogFile(getLogFileName(), getLogFilePath())
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	logger = log.New(F, DefaultPrefix, log.LstdFlags)
 }
 
@@ -129,10 +125,5 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 }
 
 func GetIOWrite() io.Writer {
-	var err error
-	F, err = openLogFile(getLogFileName(), getLogFilePath())
-	if err != nil {
-		log.Fatalln(err)
-	}
 	return F
 }
