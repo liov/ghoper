@@ -22,7 +22,9 @@ func IrisRouter() *iris.Application {
 
 	app.RegisterView(tmpl)
 
-	app.Get("/tpl/hi", func(ctx iris.Context) {
+	tplRouter := app.Party("/tpl")
+
+	tplRouter.Get("/hi", func(ctx iris.Context) {
 		ctx.ViewData("Title", "Hi Page")
 		ctx.ViewData("Name", "iris")
 		ctx.View("hi.html")
@@ -76,7 +78,7 @@ func IrisRouter() *iris.Application {
 
 	app.Post("/api/nsq", hnsq.Start)
 
-	app.Get("/tpl/index", func(ctx iris.Context) {
+	tplRouter.Get("/", func(ctx iris.Context) {
 		var markdownContents = []byte(`## Hello Markdown
 This is a sample of Markdown contents
  
