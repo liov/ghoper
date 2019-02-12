@@ -3,6 +3,7 @@ package router
 //go:generate qtc -dir=../template
 import (
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/middleware/pprof"
 	"github.com/kataras/iris/middleware/recover"
 	"service/controller"
 	"service/controller/common/logging"
@@ -33,6 +34,8 @@ func IrisRouter() *iris.Application {
 	app.Use(recover.New())
 
 	app.Logger().Printer.SetOutput(logging.F)
+
+	app.Any("/api/pprof/{action:path}", middleware.JWT, pprof.New())
 
 	tplRouter := app.Party("/tpl")
 	{
