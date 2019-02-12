@@ -9,7 +9,7 @@ var funcMap = map[string]func(){}
 var jobMap = map[string]cron.Job{}
 
 func init() {
-	funcMap["0 23 9 * * *"] = RedisToDB
+	funcMap["0 10 10 * * *"] = RedisToDB
 	jobMap["0 0 2 * * *"] = RedisTo{}
 }
 

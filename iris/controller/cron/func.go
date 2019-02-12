@@ -18,7 +18,10 @@ func RedisToDB() {
 			if mv != "" {
 				var moment controller.Moment
 				common.Json.UnmarshalFromString(mv, &moment)
-				initialize.DB.Updates(moment)
+				initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
+					BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
+					LoveCount: moment.LoveCount,
+				})
 			}
 		}
 	}
@@ -27,7 +30,10 @@ func RedisToDB() {
 		if mv != "" {
 			var moment controller.Moment
 			common.Json.UnmarshalFromString(mv, &moment)
-			initialize.DB.Updates(moment)
+			initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
+				BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
+				LoveCount: moment.LoveCount,
+			})
 		}
 	}
 }
