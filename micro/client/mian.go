@@ -4,10 +4,14 @@ import (
 	"github.com/kataras/iris"
 	"log"
 	"micro/client/router"
+	"micro/common/controller/cron"
 	"net/http"
 )
 
 func main() {
+
+	cron.New().Start()
+	defer cron.New().Stop()
 
 	app := router.Router()
 
