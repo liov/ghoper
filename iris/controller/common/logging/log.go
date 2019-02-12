@@ -2,7 +2,6 @@ package logging
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -123,8 +122,4 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 	}
 
 	return f, nil
-}
-
-func GetIOWrite() io.Writer {
-	return F
 }
