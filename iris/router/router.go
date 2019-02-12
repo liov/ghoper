@@ -32,7 +32,7 @@ func IrisRouter() *iris.Application {
 
 	app.Use(recover.New())
 
-	app.Logger().SetOutput(logging.F)
+	app.Logger().Printer.SetOutput(logging.F)
 
 	tplRouter := app.Party("/tpl")
 	{
