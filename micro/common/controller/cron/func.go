@@ -1,39 +1,7 @@
 package cron
 
-import (
-	"github.com/gomodule/redigo/redis"
-	"service/controller"
-	"service/controller/common"
-	"service/controller/common/gredis"
-	"service/initialize"
-)
+import "github.com/sirupsen/logrus"
 
 func RedisToDB() {
-	conn := initialize.RedisPool.Get()
-	defer conn.Close()
-
-	if gredis.Exists(gredis.TopMoments) {
-		topData, _ := redis.Strings(conn.Do("LRANGE", gredis.TopMoments, 0, -1))
-		for _, mv := range topData {
-			if mv != "" {
-				var moment controller.Moment
-				common.Json.UnmarshalFromString(mv, &moment)
-				initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
-					BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
-					LoveCount: moment.LoveCount,
-				})
-			}
-		}
-	}
-	data, _ := redis.Strings(conn.Do("LRANGE", gredis.Moments, 0, -1))
-	for _, mv := range data {
-		if mv != "" {
-			var moment controller.Moment
-			common.Json.UnmarshalFromString(mv, &moment)
-			initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
-				BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
-				LoveCount: moment.LoveCount,
-			})
-		}
-	}
+	logrus.Info("定时任务执行")
 }
