@@ -3,7 +3,9 @@ package router
 //go:generate qtc -dir=../template
 import (
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/middleware/recover"
 	"service/controller"
+	"service/controller/common/logging"
 	"service/controller/hnsq"
 	"service/controller/hwebsocket"
 	"service/controller/tmpl/html"
@@ -26,8 +28,11 @@ func IrisRouter() *iris.Application {
 	})
 
 	app.RegisterView(tmpl)
-
 	app.RegisterView(tmplPug)
+
+	app.Use(recover.New())
+
+	app.Logger().SetOutput(logging.GetIOWrite())
 
 	tplRouter := app.Party("/tpl")
 	{

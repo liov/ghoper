@@ -92,7 +92,7 @@ func getLogFilePath() string {
 		LogSavePath = LogSavePath + "/"
 	}
 
-	return fmt.Sprintf("%s%s", RuntimeRootPath, LogSavePath)
+	return RuntimeRootPath + LogSavePath
 }
 
 func getLogFileName() string {
@@ -112,17 +112,17 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 	src := dir + filePath
 	perm := utils.CheckPermission(src)
 	if perm == true {
-		return nil, fmt.Errorf("file.CheckPermission Permission denied src: %s", src)
+		return nil, fmt.Errorf("权限不足 src: %s", src)
 	}
 
 	err = utils.IsNotExistMkDir(src)
 	if err != nil {
-		return nil, fmt.Errorf("file.IsNotExistMkDir src: %s, err: %v", src, err)
+		return nil, fmt.Errorf("文件不存在 src: %s, err: %v", src, err)
 	}
 
 	f, err := utils.Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		return nil, fmt.Errorf("Fail to OpenFile :%v", err)
+		return nil, fmt.Errorf("打开失败 :%v", err)
 	}
 
 	return f, nil
