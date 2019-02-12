@@ -130,9 +130,7 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 
 func GetIOWrite() io.Writer {
 	var err error
-	filePath := getLogFilePath()
-	fileName := getLogFileName()
-	F, err = openLogFile(fileName, filePath)
+	F, err = openLogFile(getLogFileName(), getLogFilePath())
 	if err != nil {
 		log.Fatalln(err)
 	}
