@@ -12,7 +12,21 @@ import (
 func IrisRouter() *iris.Application {
 	app := iris.New()
 
-	app.StaticWeb("/iris/static", "../static")
+	app.StaticWeb("/api/static", "../static")
+
+	tmpl := iris.HTML("./template", ".html").Reload(true)
+
+	tmpl.AddFunc("greet", func(s string) string {
+		return "Greetings " + s + "!"
+	})
+
+	app.RegisterView(tmpl)
+
+	app.Get("/tpl/hi", func(ctx iris.Context) {
+		ctx.ViewData("Title", "Hi Page")
+		ctx.ViewData("Name", "iris")
+		ctx.View("hi.html")
+	})
 
 	articleRouter := app.Party("/api/article")
 	{
