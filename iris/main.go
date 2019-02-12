@@ -21,7 +21,8 @@ func main() {
 	irisRouter := router.IrisRouter()
 
 	// listen and serve on http://0.0.0.0:8080.
-	if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort)); err != nil && err != http.ErrServerClosed {
+	if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
+		iris.WithConfiguration(iris.YAML("../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
 		log.Printf("Listen: %s\n", err)
 	}
 

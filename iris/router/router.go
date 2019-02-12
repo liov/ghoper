@@ -14,6 +14,7 @@ import (
 	"service/controller/tmpl/markdown"
 	"service/controller/tmpl/pug"
 	"service/middleware"
+	"time"
 )
 
 func IrisRouter() *iris.Application {
@@ -45,8 +46,8 @@ func IrisRouter() *iris.Application {
 	app.Logger().Printer.SetOutput(logging.F)
 
 	app.Any("/api/pprof/{action:path}", middleware.JWT, pprof.New())
-
-	tplRouter := app.Party("/tpl")
+	//缓存10s
+	tplRouter := app.Party("/tpl", iris.Cache304(10*time.Second))
 	{
 		tplRouter.Get("/hi", html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
