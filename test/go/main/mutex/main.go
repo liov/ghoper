@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func main()  {
+func main() {
 	c := sync.NewCond(&sync.Mutex{})    //1
 	queue := make([]interface{}, 0, 10) //2
 
@@ -20,7 +20,7 @@ func main()  {
 	}
 
 	for i := 0; i < 10; i++ {
-		c.L.Lock() //3
+		c.L.Lock()            //3
 		for len(queue) == 2 { //4
 			c.Wait() //5
 		}
