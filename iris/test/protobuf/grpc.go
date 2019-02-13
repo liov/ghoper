@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/golang/protobuf/proto"
-	"service/test/grpc/example"
+	"service/test/protobuf/example"
 )
 
 func main() {
