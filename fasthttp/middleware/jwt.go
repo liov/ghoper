@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/valyala/fasthttp"
-	"service/controller"
-	"service/controller/common"
-	"service/controller/common/e"
-	"service/initialize"
-	"service/model"
-	"service/utils"
+	"fastService/controller"
+	"fastService/controller/common"
+	"fastService/controller/common/e"
+	"fastService/initialize"
+	"fastService/model"
+	"fastService/utils"
 )
 
 func JWT(h fasthttp.RequestHandler) fasthttp.RequestHandler {

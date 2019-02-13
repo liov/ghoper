@@ -1,4 +1,4 @@
-module fastService
+module test
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
@@ -9,15 +9,11 @@ require (
 	github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e // indirect
 	github.com/aws/aws-sdk-go v1.15.64
 	github.com/boombuler/barcode v1.0.0
-	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/fasthttp/router v0.2.0
 	github.com/fasthttp/websocket v1.4.0
-	github.com/gin-contrib/sessions v0.0.0-20180827025425-58cbcf30135c
-	github.com/gin-gonic/gin v1.3.1-0.20190120102704-f38a3fe65f10
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gobwas/glob v0.2.3 // indirect
@@ -26,8 +22,10 @@ require (
 	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.1.3 // indirect
 	github.com/gorilla/websocket v1.4.0
+	github.com/iris-contrib/go.uuid v2.0.0+incompatible
 	github.com/jawher/mow.cli v1.0.4 // indirect
 	github.com/jinzhu/configor v0.0.0-20180614024415-4edaf76fe188
 	github.com/jinzhu/gorm v1.9.1
@@ -36,6 +34,7 @@ require (
 	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5 // indirect
 	github.com/kataras/iris v0.0.0-20190116204635-f4f66079a723
 	github.com/kennygrant/sanitize v1.2.4 // indirect
+	github.com/markbates/goth v1.49.0
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/pelletier/go-toml v1.2.0 // indirect

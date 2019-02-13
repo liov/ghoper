@@ -1,8 +1,8 @@
 package main
 
 import (
-	"service/controller/common/e"
-	"service/controller/common/gredis"
+	"fastService/controller/common/e"
+	"fastService/controller/common/gredis"
 	"strings"
 )
 

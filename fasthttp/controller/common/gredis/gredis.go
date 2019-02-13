@@ -2,9 +2,9 @@ package gredis
 
 import (
 	"encoding/json"
+	"fastService/controller/common/logging"
+	"fastService/initialize"
 	"github.com/gomodule/redigo/redis"
-	"service/controller/common/logging"
-	"service/initialize"
 )
 
 func Set(key string, data interface{}, time int) error {

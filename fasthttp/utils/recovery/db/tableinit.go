@@ -1,8 +1,8 @@
 package main
 
 import (
-	"service/initialize"
-	"service/model"
+	"fastService/initialize"
+	"fastService/model"
 )
 
 func main() {

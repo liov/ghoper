@@ -2,11 +2,11 @@ package mail
 
 import (
 	"crypto/tls"
+	"fastService/initialize"
 	"fmt"
 	"log"
 	"net"
 	"net/smtp"
-	"service/initialize"
 )
 
 // SendMail 发送邮件

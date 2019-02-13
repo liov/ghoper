@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/nsqio/go-nsq"
 	"log"
-	"service/utils/reflectinvoke"
+	"fastService/utils/reflectinvoke"
 )
 
 // 消费者

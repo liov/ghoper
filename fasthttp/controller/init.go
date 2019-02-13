@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/sirupsen/logrus"
 	"os"
-	"service/controller/common"
+	"fastService/controller/common"
 )
 
 func init() {

@@ -6,9 +6,9 @@ import (
 	"image/jpeg"
 	"io/ioutil"
 	"os"
-	"service/initialize"
-	"service/model"
-	"service/utils"
+	"fastService/initialize"
+	"fastService/model"
+	"fastService/utils"
 
 	"github.com/golang/freetype"
 )

@@ -1,1 +1,1 @@
-module github.com/actliboy/ghoper
+module ghoper

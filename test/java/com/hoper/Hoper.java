@@ -17,5 +17,18 @@ public class Hoper {
         String test = StringUtils.join(stringList,",");
 
         System.out.println(test);
+
+        List<String> newImgUrl = new ArrayList<>();
+        for(String s : stringList){
+            if (s != null && s.trim().length() > 0) {
+                if (!s.startsWith("http") && !s.startsWith("https")) {
+                    s = "xiugai" + s;
+                    newImgUrl.add(s);
+                }
+            }
+        }
+
+        stringList = newImgUrl;
+        System.out.println(stringList);
     }
 }

@@ -10,9 +10,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"service/controller"
-	"service/controller/common"
-	"service/initialize"
+	"fastService/controller"
+	"fastService/controller/common"
+	"fastService/initialize"
 	"time"
 )
 

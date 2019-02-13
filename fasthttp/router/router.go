@@ -8,13 +8,13 @@ import (
 	"github.com/valyala/fasthttp"
 	"io"
 	"net/http"
-	"service/controller"
-	"service/controller/common/logging"
-	"service/controller/hnsq"
-	"service/controller/hwebsocket"
-	"service/initialize"
-	"service/middleware"
-	"service/template"
+	"fastService/controller"
+	"fastService/controller/common/logging"
+	"fastService/controller/hnsq"
+	"fastService/controller/hwebsocket"
+	"fastService/initialize"
+	"fastService/middleware"
+	"fastService/template"
 )
 
 func FastRouter() *router.Router {

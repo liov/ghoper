@@ -2,9 +2,9 @@ package upload
 
 import (
 	"fmt"
-	"service/controller/common/logging"
-	"service/initialize"
-	"service/utils"
+	"fastService/controller/common/logging"
+	"fastService/initialize"
+	"fastService/utils"
 
 	"log"
 	"mime/multipart"

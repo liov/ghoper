@@ -9,10 +9,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"service/controller/cron"
-	"service/controller/hwebsocket"
-	"service/initialize"
-	"service/router"
+	"fastService/controller/cron"
+	"fastService/controller/hwebsocket"
+	"fastService/initialize"
+	"fastService/router"
 	"time"
 )
 

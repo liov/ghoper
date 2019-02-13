@@ -1,14 +1,14 @@
 package logging
 
 import (
+	"fastService/initialize"
+	"fastService/utils"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime"
-	"service/initialize"
-	"service/utils"
 	"time"
 )
 

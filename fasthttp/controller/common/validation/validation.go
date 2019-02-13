@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"reflect"
 	"regexp"
-	"service/controller/common"
+	"fastService/controller/common"
 	"strings"
 )
 

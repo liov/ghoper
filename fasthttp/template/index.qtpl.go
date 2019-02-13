@@ -8,7 +8,7 @@ package template
 import "github.com/valyala/fasthttp"
 
 //line ..\template\index.qtpl:2
-import "service/utils"
+import "fastService/utils"
 
 //line ..\template\index.qtpl:4
 import (

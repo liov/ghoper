@@ -3,7 +3,7 @@ package common
 import (
 	"github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
-	"service/controller/common/e"
+	"fastService/controller/common/e"
 	"time"
 )
 

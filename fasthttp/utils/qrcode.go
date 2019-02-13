@@ -2,7 +2,7 @@ package utils
 
 import (
 	"image/jpeg"
-	"service/initialize"
+	"fastService/initialize"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"

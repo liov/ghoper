@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"service/initialize"
+	"fastService/initialize"
 	"time"
 )
 

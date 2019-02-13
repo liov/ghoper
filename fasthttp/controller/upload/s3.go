@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/fastService/s3"
 	"os"
 	"time"
 )
@@ -27,7 +27,7 @@ func News3() *s3.S3 {
 	return svc
 }
 
-func upload(service *s3.S3) {
+func upload(fastService *s3.S3) {
 	fp, _ := os.Open("s3_test.go")
 
 	defer fp.Close()
@@ -35,7 +35,7 @@ func upload(service *s3.S3) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(30)*time.Second)
 	defer cancel()
 
-	service.PutObjectWithContext(ctx, &s3.PutObjectInput{
+	fastService.PutObjectWithContext(ctx, &s3.PutObjectInput{
 		Bucket: aws.String("hatlonely"),
 		Key:    aws.String("test/s3_test.go"),
 		Body:   fp,
@@ -43,11 +43,11 @@ func upload(service *s3.S3) {
 
 }
 
-func download(service *s3.S3) {
+func download(fastService *s3.S3) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(30)*time.Second)
 	defer cancel()
 
-	out, _ := service.GetObjectWithContext(ctx, &s3.GetObjectInput{
+	out, _ := fastService.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket: aws.String("hatlonely"),
 		Key:    aws.String("test/s3_test.go"),
 	})
@@ -60,13 +60,13 @@ func download(service *s3.S3) {
 }
 
 //目录遍历
-func ListObjectsPages(service *s3.S3) {
+func ListObjectsPages(fastService *s3.S3) {
 	var objkeys []string
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(30)*time.Second)
 	defer cancel()
 
-	service.ListObjectsPagesWithContext(ctx, &s3.ListObjectsInput{
+	fastService.ListObjectsPagesWithContext(ctx, &s3.ListObjectsInput{
 		Bucket: aws.String("hatlonely"),
 		Prefix: aws.String("test/"),
 	}, func(output *s3.ListObjectsOutput, b bool) bool {

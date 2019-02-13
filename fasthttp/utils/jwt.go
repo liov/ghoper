@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"service/initialize"
+	"fastService/initialize"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"

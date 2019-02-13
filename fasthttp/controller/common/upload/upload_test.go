@@ -2,6 +2,6 @@ package upload
 
 import (
 	"fmt"
-	"service/model"
+	"fastService/model"
 	"testing"
 )

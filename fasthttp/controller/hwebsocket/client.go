@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var addr = flag.String("addr", "localhost:12345", "http service address")
+var addr = flag.String("addr", "localhost:12345", "http fastService address")
 
 func ClientStart() {
 	u := url.URL{Scheme: "ws", Host: *addr, Path: "/ws"}

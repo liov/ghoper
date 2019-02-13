@@ -3,7 +3,7 @@ package mysqlmodel
 import (
 	"crypto/md5"
 	"fmt"
-	"service/initialize"
+	"fastService/initialize"
 	"strconv"
 	"time"
 )
