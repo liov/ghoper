@@ -16,7 +16,7 @@ def pic2py(picture_names, py_name):
     """
     write_data = []
     for picture_name in picture_names:
-        filename = picture_name.replace('.', '_')
+        filename = "img"+picture_name.replace('.', '_')
         open_pic = open("%s" % picture_name, 'rb')
         b64str = base64.b64encode(open_pic.read())
         open_pic.close()
