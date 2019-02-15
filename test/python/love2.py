@@ -47,7 +47,7 @@ def get_random_pos():
 # 点击答应后显示的页面
 def show_like_interface(screen):
     screen.fill((255, 255, 255))
-    background1 = pygame.image.load('214_1.jpg').convert()
+    background1 = pygame.image.load('./pic214_1.jpg').convert()
     screen.blit(background1, (0, 0))
     pygame.display.update()
     while True:
@@ -59,7 +59,7 @@ def show_like_interface(screen):
 # 点击不答应按钮后显示的页面
 def show_unlike_interface(screen):
     screen.fill((255, 255, 255))
-    background_1 = pygame.image.load('214_3.jpg').convert()
+    background_1 = pygame.image.load('./pic214_3.jpg').convert()
     screen.blit(background_1, (0, 0))
     pygame.display.update()
     while True:
@@ -69,9 +69,9 @@ def show_unlike_interface(screen):
 
 
 def main():
-    get_pic(P143, '214_3.jpg')
-    get_pic(P142, '214_2.jpg')
-    get_pic(P141, '214_1.jpg')
+    get_pic(P143, './pic/214_3.jpg')
+    get_pic(P142, './pic214_2.jpg')
+    get_pic(P141, './pic214_1.jpg')
     num = 0
     pygame.init()
     clock = pygame.time.Clock()
@@ -97,7 +97,7 @@ def main():
         # 填充窗口
         screen.fill((255, 255, 255))
         # 添加背景图
-        background = pygame.image.load('214_2.jpg').convert()
+        background = pygame.image.load('./pic214_2.jpg').convert()
         screen.blit(background, (0, 0))
 
         # 获取鼠标坐标
