@@ -60,7 +60,7 @@ element1~element2	p~ul	选择前面有 <p> 元素的每个 <ul> 元素。	3
 
 func MM131() {
 
-	var path string
+	var dir string
 
 	c := colly.NewCollector(
 		colly.DetectCharset(),
@@ -83,7 +83,7 @@ func MM131() {
 	// On every a element which has href attribute call callback
 	c.OnHTML("h5", func(e *colly.HTMLElement) {
 
-		path = "E:\\pic\\" + e.Text
+		dir = "E:\\pic\\" + e.Text
 
 	})
 
@@ -93,9 +93,14 @@ func MM131() {
 				fmt.Println(pattern.FindAllString(e.Text, -1))*/
 		f, _ := regexp.MatchString("共.*页", e.Text)
 		if f {
-			path = path + e.Text[3:5] + "P"
+			dir = dir + e.Text[3:5] + "P"
 		}
-		_, err := os.Stat(path)
+
+		err :=os.Mkdir(dir,os.ModePerm)
+		if os.IsNotExist(err){
+			c.
+		}
+		_, err := os.Stat(dir)
 		if err == nil {
 
 		}
