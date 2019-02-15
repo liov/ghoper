@@ -8,7 +8,9 @@ require (
 	github.com/antchfx/xmlquery v1.0.0 // indirect
 	github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e // indirect
 	github.com/aws/aws-sdk-go v1.15.64
+	github.com/bluele/gcache v0.0.0-20190203144525-2016d595ccb0 // indirect
 	github.com/boombuler/barcode v1.0.0
+	github.com/casbin/casbin v1.8.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
@@ -19,6 +21,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.1.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
+	github.com/golang/groupcache v0.0.0-20190129154638-5b532d6fd5ef // indirect
 	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible
