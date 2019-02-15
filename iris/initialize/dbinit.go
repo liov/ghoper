@@ -6,6 +6,8 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	//_ "github.com/jinzhu/gorm/dialects/sqlite"
+	//_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 	"os"
 	"reflect"
@@ -13,7 +15,6 @@ import (
 	"time"
 )
 
-//_ "github.com/jinzhu/gorm/dialects/mysql"
 // DB 数据库连接
 var DB *gorm.DB
 
@@ -33,8 +34,9 @@ func initializeDB() {
 	} else if Config.Database.Type == "postgres" {
 		url = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
 			Config.Database.Host, Config.Database.User, Config.Database.Database, Config.Database.Password)
+	} else if Config.Database.Type == "sqlite3" {
+		url = "./hoper.db"
 	}
-
 	db, err := gorm.Open(Config.Database.Type, url)
 
 	if err != nil {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/kataras/iris"
 	"log"
 	"net/http"

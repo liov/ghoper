@@ -8,7 +8,7 @@ require (
 	github.com/antchfx/xmlquery v1.0.0 // indirect
 	github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e // indirect
 	github.com/aws/aws-sdk-go v1.15.64
-	github.com/bluele/gcache v0.0.0-20190203144525-2016d595ccb0 // indirect
+	github.com/bluele/gcache v0.0.0-20190203144525-2016d595ccb0
 	github.com/boombuler/barcode v1.0.0
 	github.com/casbin/casbin v1.8.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -38,6 +38,7 @@ require (
 	github.com/kataras/iris v0.0.0-20190116204635-f4f66079a723
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/markbates/goth v1.49.0
+	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/pelletier/go-toml v1.2.0 // indirect
