@@ -1,7 +1,7 @@
 module service
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.0 // indirect
+	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/Shopify/sarama v1.19.0 // indirect
 	github.com/Unknwon/com v0.0.0-20180617003950-da59b551951d
 	github.com/antchfx/htmlquery v1.0.0 // indirect
@@ -19,7 +19,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gobwas/glob v0.2.3 // indirect
-	github.com/gocolly/colly v1.1.0 // indirect
+	github.com/gocolly/colly v1.2.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/groupcache v0.0.0-20190129154638-5b532d6fd5ef // indirect
 	github.com/golang/protobuf v1.2.0

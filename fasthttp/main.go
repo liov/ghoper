@@ -1,23 +1,19 @@
 package main
 
 import (
-	"context"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"fastService/controller/cron"
+	"fastService/controller/hwebsocket"
+	"fastService/router"
 	"github.com/kataras/iris"
 	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"fastService/controller/cron"
-	"fastService/controller/hwebsocket"
-	"fastService/initialize"
-	"fastService/router"
 	"time"
 )
 
 func main() {
-
 	cron.New().Start()
 	defer cron.New().Stop()
 

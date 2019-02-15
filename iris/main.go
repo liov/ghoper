@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris"
 	"log"
 	"net/http"
+	"service/controller/crawler"
 	"service/controller/cron"
 	"service/controller/hwebsocket"
 	"service/initialize"
@@ -12,6 +13,7 @@ import (
 
 func main() {
 
+	crawler.MM131()
 	cron.New().Start()
 	defer cron.New().Stop()
 
