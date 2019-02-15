@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"log"
+	"os"
+	"regexp"
 )
 
 //Go中，双引号是用来表示字符串string，其实质是一个byte类型的数组，
 // 单引号表示rune类型。
 // 还有一个反引号，用来创建原生的字符串字面量，它可以由多行组成，但不支持任何转义序列
-
 
 /*选择器	例子	例子描述	CSS
 .class	.intro	选择 class="intro" 的所有元素。	1
@@ -57,16 +58,15 @@ element1~element2	p~ul	选择前面有 <p> 元素的每个 <ul> 元素。	3
 :not(selector)	:not(p)	选择非 <p> 元素的每个元素。	3
 ::selection	::selection	选择被用户选取的元素部分。	3*/
 
-func MM131()  {
+func MM131() {
 
-	var title string
+	var path string
 
 	c := colly.NewCollector(
 		colly.DetectCharset(),
 		colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"),
 		colly.AllowURLRevisit(),
-		)
-
+	)
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
@@ -83,15 +83,22 @@ func MM131()  {
 	// On every a element which has href attribute call callback
 	c.OnHTML("h5", func(e *colly.HTMLElement) {
 
-		title= e.Text
+		path = "E:\\pic\\" + e.Text
 
 	})
 
 	c.OnHTML("span.page-ch", func(e *colly.HTMLElement) {
 
-		fmt.Println( e.Text[3:5])
-		if(e.Text[3:5])
+		/*		pattern := regexp.MustCompile(`\d*`)
+				fmt.Println(pattern.FindAllString(e.Text, -1))*/
+		f, _ := regexp.MatchString("共.*页", e.Text)
+		if f {
+			path = path + e.Text[3:5] + "P"
+		}
+		_, err := os.Stat(path)
+		if err == nil {
 
+		}
 	})
 
 	c.OnScraped(func(r *colly.Response) {
