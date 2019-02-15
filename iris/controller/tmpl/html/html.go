@@ -3,6 +3,7 @@ package html
 import (
 	"github.com/kataras/iris"
 	"service/controller"
+	"service/initialize"
 	"time"
 )
 
@@ -27,6 +28,14 @@ func Auth(ctx iris.Context) {
 func Values(ctx iris.Context) {
 	user := controller.User{Name: ctx.URLParam("name")}
 	ctx.Values().Set("a", user)
-	ctx.JSON(ctx.Values().Get("a"))
+
+	initialize.Cache.Set(ctx.URLParam("key"), user)
+
+	user2, _ := initialize.Cache.Get("a")
+	ctx.JSON(iris.Map{
+		"user1": ctx.Values().Get("a"),
+
+		"user2": user2,
+	})
 
 }

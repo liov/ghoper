@@ -115,13 +115,6 @@ func initializeMongo() {
 	MongoDB = session.DB(Config.Mongo.Database)
 }
 
-func init() {
-	Setup()
-	initializeDB()
-	initializeMongo()
-	initializeRedis()
-}
-
 const (
 	// DevelopmentMode 开发模式
 	DevelopmentMode = "development"
