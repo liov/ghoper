@@ -2,6 +2,7 @@ package html
 
 import (
 	"github.com/kataras/iris"
+	"service/controller"
 	"time"
 )
 
@@ -21,4 +22,11 @@ func Auth(ctx iris.Context) {
 	username, password, _ := ctx.Request().BasicAuth()
 
 	ctx.Writef("%s:%s", username, password)
+}
+
+func Values(ctx iris.Context) {
+	user := controller.User{Name: ctx.URLParam("name")}
+	ctx.Values().Set("a", user)
+	ctx.JSON(ctx.Values().Get("a"))
+
 }

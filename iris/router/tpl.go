@@ -32,6 +32,7 @@ func TPLRouter(app *iris.Application) {
 		tplRouter.Get("/markdown", markdown.MarkdownTest)
 		tplRouter.Get("/time", iris.Cache304(10*time.Second), html.Time)
 		tplRouter.Get("/auth", authentication, html.Auth)
+		tplRouter.Get("/values", authentication, html.Values)
 		tplRouter.Get("/logout/{provider}", func(ctx iris.Context) {
 			middleware.Logout(ctx)
 			ctx.Redirect("/", iris.StatusTemporaryRedirect)
