@@ -3,9 +3,14 @@ package crawler
 import (
 	"fmt"
 	"github.com/gocolly/colly"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
+	"service/utils"
+	"strconv"
+	"time"
 )
 
 //Go中，双引号是用来表示字符串string，其实质是一个byte类型的数组，
@@ -60,55 +65,115 @@ element1~element2	p~ul	选择前面有 <p> 元素的每个 <ul> 元素。	3
 
 func MM131() {
 
-	var dir string
-
-	c := colly.NewCollector(
+	c1 := colly.NewCollector(
 		colly.DetectCharset(),
 		colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"),
 		colly.AllowURLRevisit(),
 	)
 
-	c.OnRequest(func(r *colly.Request) {
+	c2 := colly.NewCollector(
+		colly.DetectCharset(),
+		colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"),
+		colly.AllowURLRevisit(),
+	)
+
+	c2.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
 	})
 
-	c.OnError(func(_ *colly.Response, err error) {
+	c2.OnError(func(_ *colly.Response, err error) {
 		log.Println("Something went wrong:", err)
 	})
 
-	c.OnResponse(func(r *colly.Response) {
+	c2.OnResponse(func(r *colly.Response) {
 		fmt.Println("Visited", r.Request.URL)
 	})
 
+	aVisited := false
+	max := 0
+	c1.OnHTML("a[target=_blank]", func(e *colly.HTMLElement) {
+		if aVisited {
+			return
+		}
+
+		link := e.Attr("href")
+		aVisited = true
+		// Print link
+		pattern := regexp.MustCompile(`\d{4,}`).FindAllString(link, -1)
+		if len(pattern) > 0 {
+			max, _ = strconv.Atoi(pattern[0])
+		}
+
+		for max != 0 {
+			fmt.Println(max)
+			page := strconv.Itoa(max)
+			url := "http://www.mm131.com/xinggan/" + page + ".html"
+			c2.Visit(url)
+			time.Sleep(20 * time.Second)
+		}
+	})
+
+	var dir string
 	// On every a element which has href attribute call callback
-	c.OnHTML("h5", func(e *colly.HTMLElement) {
+	c2.OnHTML("h5", func(e *colly.HTMLElement) {
 
-		dir = "E:\\pic\\" + e.Text
+		dir = "F:/pic/" + e.Text
 
 	})
 
-	c.OnHTML("span.page-ch", func(e *colly.HTMLElement) {
+	c2.OnHTML("span.page-ch", func(e *colly.HTMLElement) {
 
-		/*		pattern := regexp.MustCompile(`\d*`)
-				fmt.Println(pattern.FindAllString(e.Text, -1))*/
-		f, _ := regexp.MatchString("共.*页", e.Text)
-		if f {
-			dir = dir + e.Text[3:5] + "P"
+		pattern := regexp.MustCompile(`\d+`).FindAllString(e.Text, -1)
+
+		if len(pattern) > 0 {
+			dir = dir + pattern[0] + "P"
+			fmt.Println(dir)
+			if utils.CheckNotExist(dir) == true {
+				if err := utils.Mkdir(dir); err != nil {
+					fmt.Println(err)
+				}
+			} else {
+				max = 0
+			}
+
+			num, _ := strconv.Atoi(pattern[0])
+			for i := 0; i <= num; i++ {
+				getImg(strconv.Itoa(max), strconv.Itoa(i), dir)
+			}
+			max--
 		}
 
-		err :=os.Mkdir(dir,os.ModePerm)
-		if os.IsNotExist(err){
-			c.
-		}
-		_, err := os.Stat(dir)
-		if err == nil {
-
-		}
 	})
 
-	c.OnScraped(func(r *colly.Response) {
+	c2.OnScraped(func(r *colly.Response) {
 		fmt.Println("Finished", r.Request.URL)
 	})
 
-	c.Visit("http://www.mm131.com/xinggan/4625.html")
+	c1.Visit("http://www.mm131.com/xinggan/")
+
+}
+func getImg(page string, num string, dir string) {
+	path := "/" + num + ".jpg"
+	client := http.Client{}
+	fmt.Println(page)
+	//提交请求
+	reqest, _ := http.NewRequest("GET", "http://img1.mm131.me/pic/"+page+path, nil)
+
+	//增加header选项
+	reqest.Header.Add("Cookie", "UM_distinctid=160c072721f36a-049309acceadc2-e323462-144000-160c0727220f67; CNZZDATA3866066=cnzz_eid%3D1829424698-1494676185-%26ntime%3D1494676185; bdshare_firstime=1515057214243; Hm_lvt_9a737a8572f89206db6e9c301695b55a=1515057214,1515074260,1515159455; Hm_lpvt_9a737a8572f89206db6e9c301695b55a=1515159455")
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36")
+	reqest.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+	reqest.Header.Add("Accept-Encoding", "gzip, deflate")
+	reqest.Header.Add("Connection", "keep-alive")
+	reqest.Header.Add("Host", "img1.mm131.me")
+	reqest.Header.Add("Referer", "http://www.mm131.com/")
+
+	res, _ := client.Do(reqest)
+	defer res.Body.Close()
+	img, _ := ioutil.ReadAll(res.Body)
+	if utils.CheckNotExist(dir+path) == true {
+		fh, _ := os.Create(dir + path)
+		defer fh.Close()
+		fh.Write(img)
+	}
 }

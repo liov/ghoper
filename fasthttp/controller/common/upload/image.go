@@ -1,10 +1,10 @@
 package upload
 
 import (
-	"fmt"
 	"fastService/controller/common/logging"
 	"fastService/initialize"
 	"fastService/utils"
+	"fmt"
 
 	"log"
 	"mime/multipart"
@@ -63,7 +63,7 @@ func CheckImage(src string) error {
 
 	err = utils.IsNotExistMkDir(dir + "/" + src)
 	if err != nil {
-		return fmt.Errorf("file.IsNotExistMkDir err: %v", err)
+		return fmt.Errorf("file.IsNotExistMkdir err: %v", err)
 	}
 
 	perm := utils.CheckPermission(src)

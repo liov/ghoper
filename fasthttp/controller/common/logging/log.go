@@ -117,7 +117,7 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 
 	err = utils.IsNotExistMkDir(src)
 	if err != nil {
-		return nil, fmt.Errorf("file.IsNotExistMkDir src: %s, err: %v", src, err)
+		return nil, fmt.Errorf("file.IsNotExistMkdir src: %s, err: %v", src, err)
 	}
 
 	f, err := utils.Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)

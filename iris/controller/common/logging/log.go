@@ -111,7 +111,7 @@ func openLogFile(fileName, filePath string) (*os.File, error) {
 		return nil, fmt.Errorf("权限不足 src: %s", src)
 	}
 
-	err = utils.IsNotExistMkDir(src)
+	err = utils.IsNotExistMkdir(src)
 	if err != nil {
 		return nil, fmt.Errorf("文件不存在 src: %s, err: %v", src, err)
 	}

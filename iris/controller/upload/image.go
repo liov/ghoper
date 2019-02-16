@@ -61,9 +61,9 @@ func CheckImage(src string) error {
 		return fmt.Errorf("os.Getwd err: %v", err)
 	}
 
-	err = utils.IsNotExistMkDir(dir + "/" + src)
+	err = utils.IsNotExistMkdir(dir + "/" + src)
 	if err != nil {
-		return fmt.Errorf("file.IsNotExistMkDir err: %v", err)
+		return fmt.Errorf("file.IsNotExistMkdir err: %v", err)
 	}
 
 	perm := utils.CheckPermission(src)

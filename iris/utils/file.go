@@ -21,7 +21,7 @@ func GetExt(fileName string) string {
 func CheckExist(src string) bool {
 	_, err := os.Stat(src)
 
-	return os.IsNotExist(err)
+	return os.IsExist(err)
 }
 
 func CheckNotExist(src string) bool {
@@ -36,9 +36,9 @@ func CheckPermission(src string) bool {
 	return os.IsPermission(err)
 }
 
-func IsNotExistMkDir(src string) error {
-	if exist := CheckExist(src); exist == false {
-		if err := MkDir(src); err != nil {
+func IsNotExistMkdir(src string) error {
+	if CheckExist(src) == false {
+		if err := Mkdir(src); err != nil {
 			return err
 		}
 	}
@@ -46,7 +46,7 @@ func IsNotExistMkDir(src string) error {
 	return nil
 }
 
-func MkDir(src string) error {
+func Mkdir(src string) error {
 	err := os.MkdirAll(src, os.ModePerm)
 	if err != nil {
 		return err
@@ -75,9 +75,9 @@ func MustOpen(fileName, filePath string) (*os.File, error) {
 		return nil, fmt.Errorf("file.CheckPermission Permission denied src: %s", src)
 	}
 
-	err = IsNotExistMkDir(src)
+	err = IsNotExistMkdir(src)
 	if err != nil {
-		return nil, fmt.Errorf("file.IsNotExistMkDir src: %s, err: %v", src, err)
+		return nil, fmt.Errorf("file.IsNotExistMkdir src: %s, err: %v", src, err)
 	}
 
 	f, err := Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
