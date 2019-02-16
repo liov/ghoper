@@ -10,7 +10,6 @@ import (
 	"regexp"
 	"service/utils"
 	"strconv"
-	"time"
 )
 
 //Go中，双引号是用来表示字符串string，其实质是一个byte类型的数组，
@@ -109,7 +108,6 @@ func MM131() {
 			page := strconv.Itoa(max)
 			url := "http://www.mm131.com/xinggan/" + page + ".html"
 			c2.Visit(url)
-			time.Sleep(20 * time.Second)
 		}
 	})
 
@@ -134,6 +132,7 @@ func MM131() {
 				}
 			} else {
 				max = 0
+				return
 			}
 
 			num, _ := strconv.Atoi(pattern[0])
@@ -155,7 +154,6 @@ func MM131() {
 func getImg(page string, num string, dir string) {
 	path := "/" + num + ".jpg"
 	client := http.Client{}
-	fmt.Println(page)
 	//提交请求
 	reqest, _ := http.NewRequest("GET", "http://img1.mm131.me/pic/"+page+path, nil)
 
