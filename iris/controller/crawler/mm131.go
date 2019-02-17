@@ -137,7 +137,7 @@ func MM131() {
 			}
 
 			num, _ := strconv.Atoi(pattern[0])
-			for i := 0; i <= num; i++ {
+			for i := 1; i <= num; i++ {
 				getImg(strconv.Itoa(max), strconv.Itoa(i), dir)
 			}
 			max--
