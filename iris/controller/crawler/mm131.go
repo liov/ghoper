@@ -61,9 +61,10 @@ element1~element2	p~ul	选择前面有 <p> 元素的每个 <ul> 元素。	3
 :checked	input:checked	选择每个被选中的 <input> 元素。	3
 :not(selector)	:not(p)	选择非 <p> 元素的每个元素。	3
 ::selection	::selection	选择被用户选取的元素部分。	3*/
-
+//写起来是真没python方便，用了框架都不如
 func MM131() {
 
+	fmt.Println("mm131")
 	c1 := colly.NewCollector(
 		colly.DetectCharset(),
 		colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"),
@@ -115,7 +116,7 @@ func MM131() {
 	// On every a element which has href attribute call callback
 	c2.OnHTML("h5", func(e *colly.HTMLElement) {
 
-		dir = "F:/pic/" + e.Text
+		dir = "E:/pic/" + e.Text
 
 	})
 

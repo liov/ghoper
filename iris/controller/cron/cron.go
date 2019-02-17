@@ -2,6 +2,7 @@ package cron
 
 import (
 	"github.com/robfig/cron"
+	"service/controller/crawler"
 )
 
 var funcMap = map[string]func(){}
@@ -11,6 +12,7 @@ var jobMap = map[string]cron.Job{}
 func init() {
 	funcMap["0 10 10 * * *"] = RedisToDB
 	jobMap["0 0 2 * * *"] = RedisTo{}
+	funcMap["0 0 0 * * *"] = crawler.MM131
 }
 
 // New 构造cron
