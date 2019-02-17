@@ -87,7 +87,7 @@ if __name__ == '__main__':
             downloadpic(url)
     '''
     '''4612 4364 4202 4032,3939,3831'''
-    for i in range(4686, 4623, -1):
+    for i in range(4773, 4623, -1):
         url = 'http://www.mm131.com/xinggan/' + str(i) + '.html'
         downloadpic(url)
         i = i-1
