@@ -48,7 +48,7 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967
 	github.com/russross/blackfriday v2.0.0+incompatible
-	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
+	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.2.0
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
@@ -57,5 +57,6 @@ require (
 	github.com/ugorji/go/codec v0.0.0-20190126102652-8fd0f8d918c8
 	github.com/valyala/fasthttp v1.1.0 // indirect
 	golang.org/x/image v0.0.0-20180926015637-991ec62608f3 // indirect
+	golang.org/x/net v0.0.0-20181114220301-adae6a3d119a
 	gopkg.in/go-playground/validator.v8 v8.18.2
 )
