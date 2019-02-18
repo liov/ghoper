@@ -112,6 +112,8 @@ func MM131() {
 		}
 	})
 
+	c1.Visit("http://www.mm131.com/xinggan/")
+
 	var dir string
 	// On every a element which has href attribute call callback
 	c2.OnHTML("h5", func(e *colly.HTMLElement) {
@@ -148,8 +150,6 @@ func MM131() {
 	c2.OnScraped(func(r *colly.Response) {
 		fmt.Println("Finished", r.Request.URL)
 	})
-
-	c1.Visit("http://www.mm131.com/xinggan/")
 
 }
 func getImg(page string, num string, dir string) {

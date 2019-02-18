@@ -13,7 +13,8 @@ import (
 
 func main() {
 
-	go crawler.MM131()
+	crawler.M131()
+	//go crawler.MM131()
 
 	cron.New().Start()
 	defer cron.New().Stop()

@@ -6,7 +6,6 @@ import (
 	"github.com/kataras/iris/middleware/i18n"
 	"github.com/kataras/iris/middleware/recover"
 	"service/controller"
-	"service/controller/common/logging"
 	"service/controller/hnsq"
 	"service/controller/hwebsocket"
 	"service/middleware"
@@ -38,7 +37,7 @@ func IrisRouter() *iris.Application {
 			"zh-CN": "../i18n/locale_zh-CN.ini"}})
 	app.Use(globalLocale)
 
-	app.Logger().Printer.SetOutput(logging.F)
+	//app.Logger().Printer.SetOutput(logging.F)
 
 	TPLRouter(app)
 
