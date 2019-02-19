@@ -81,5 +81,6 @@ func TPLRouter(app *iris.Application) {
 				ctx.Writef("%v", err)
 			}
 		})
+		tplRouter.Get("/g", iris.FromStd(nativeMid))
 	}
 }

@@ -60,7 +60,6 @@ func UserRouter(app *iris.Application) {
         `
 
 	schema := graphql.MustParseSchema(s, &Resolver{}, graphql.UseStringDescriptions())
-	app.Use(iris.FromStd(&relay.Handler{Schema: schema}))
 
 	userRouter := app.Party("/api/user")
 	{
@@ -73,5 +72,6 @@ func UserRouter(app *iris.Application) {
 		userRouter.Post("/rpc/login", user.Login)
 		userRouter.Get("/rpc/logout", user.Logout)
 		userRouter.Post("/rpc/signup", user.Signup)
+		userRouter.Post("/graphql", iris.FromStd(&relay.Handler{Schema: schema}))
 	}
 }

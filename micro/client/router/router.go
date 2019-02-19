@@ -40,7 +40,9 @@ func IrisRouter() *iris.Application {
 	})
 
 	app.Use(New())
-
+	/*middleware必须要写ctx.next(),且写在路由前，路由后的midddleware在请求之前的路由时不生效
+	  iris.FromStd()将其他Handler转为iris的Handler
+	*/
 	globalLocale := i18n.New(i18n.Config{
 		Default:      "en-US",
 		URLParameter: "lang",
