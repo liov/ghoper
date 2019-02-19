@@ -2,26 +2,74 @@ package router
 
 //go:generate qtc -dir=../template
 import (
+	"errors"
+	"fmt"
+	"github.com/getsentry/raven-go"
 	"github.com/kataras/iris"
-	"micro/client/router/user"
+	"github.com/kataras/iris/middleware/i18n"
+	. "github.com/kataras/iris/middleware/recover"
+	"hoper/client/controller"
+	"hoper/client/controller/hnsq"
+	"hoper/client/controller/hwebsocket"
+	"hoper/client/middleware"
+	"net/http"
+	"runtime/debug"
 )
 
-func Router() *iris.Application {
+func init() {
+	raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
+}
 
+func IrisRouter() *iris.Application {
 	app := iris.New()
 
-	app.StaticWeb("/iris/static", "../static")
+	app.StaticWeb("/api/static", "../static")
 
-	userRouter := app.Party("/api/user")
+	app.WrapRouter(func(w http.ResponseWriter, r *http.Request, router http.HandlerFunc) {
+		defer func() {
+			if rval := recover(); rval != nil {
+				debug.PrintStack()
+				rvalStr := fmt.Sprint(rval)
+				packet := raven.NewPacket(rvalStr, raven.NewException(errors.New(rvalStr), raven.NewStacktrace(2, 3, nil)), raven.NewHttp(r))
+				raven.Capture(packet, nil)
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}()
 
-	//userRouter.Use(middleware.JWT)
+		router(w, r)
+	})
 
-	{
-		userRouter.Post("/signup", user.Signup)
-		userRouter.Post("/login", user.Login)
-		userRouter.Get("/logout", user.Logout)
+	app.Use(New())
 
-	}
+	globalLocale := i18n.New(i18n.Config{
+		Default:      "en-US",
+		URLParameter: "lang",
+		Languages: map[string]string{
+			"en-US": "../i18n/locale_en-US.ini",
+			"zh-CN": "../i18n/locale_zh-CN.ini"}})
+	app.Use(globalLocale)
 
+	//app.Logger().Printer.SetOutput(logging.F)
+
+	TPLRouter(app)
+
+	ArticleRouter(app)
+
+	MomentRouter(app)
+
+	//获取标签
+	app.Get("/api/tag", controller.GetTags)
+
+	UserRouter(app)
+
+	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment)
+
+	//app.Get("/api/push",controller.Push)
+
+	app.Get("/api/chat/getChat", hwebsocket.GetChat)
+
+	app.Post("/api/nsq", hnsq.Start)
+
+	app.Get("/api/chat/ws", hwebsocket.Chat)
 	return app
 }

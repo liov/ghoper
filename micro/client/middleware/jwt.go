@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris"
-	"micro/common/controller"
-	"micro/common/controller/common"
-	"micro/common/controller/common/e"
-	"micro/common/initialize"
-	"micro/common/model"
-	"micro/protobuf"
+	"hoper/client/controller"
+	"hoper/client/controller/common"
+	"hoper/client/controller/common/e"
+	"hoper/initialize"
+	"hoper/model"
 )
 
 func JWT(ctx iris.Context) {
@@ -43,8 +42,8 @@ func GetUser() iris.Handler {
 	}
 }
 
-func getUser(ctx iris.Context) (protobuf.User, error) {
-	var user protobuf.User
+func getUser(ctx iris.Context) (controller.User, error) {
+	var user controller.User
 	tokenString := ctx.GetHeader("token")
 	if len(tokenString) == 0 {
 		tokenString = ctx.GetHeader("Authorization")
@@ -55,7 +54,7 @@ func getUser(ctx iris.Context) (protobuf.User, error) {
 
 	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("Unexpected login method: %v", token.Header["alg"])
 		}
 		return []byte(initialize.Config.Server.TokenSecret), nil
 	})
@@ -78,7 +77,7 @@ func getUser(ctx iris.Context) (protobuf.User, error) {
 
 // SetContextUser 给 context 设置 user
 func SetContextUser(ctx iris.Context) {
-	var user protobuf.User
+	var user controller.User
 	var err error
 	if user, err = getUser(ctx); err != nil {
 		ctx.ViewData("user", nil)
@@ -90,7 +89,7 @@ func SetContextUser(ctx iris.Context) {
 // SigninRequired 必须是登录用户
 func SigninRequired(ctx iris.Context) {
 
-	var user protobuf.User
+	var user controller.User
 	var err error
 	if user, err = getUser(ctx); err != nil {
 		common.Response(ctx, "未登录", e.LoginTimeout)
@@ -102,7 +101,7 @@ func SigninRequired(ctx iris.Context) {
 // EditorRequired 必须是网站编辑
 func EditorRequired(ctx iris.Context) {
 
-	var user protobuf.User
+	var user controller.User
 	var err error
 	if user, err = getUser(ctx); err != nil {
 		common.Response(ctx, "未登录", e.LoginTimeout)
@@ -118,7 +117,7 @@ func EditorRequired(ctx iris.Context) {
 // AdminRequired 必须是管理员
 func AdminRequired(ctx iris.Context) {
 
-	var user protobuf.User
+	var user controller.User
 	var err error
 	if user, err = getUser(ctx); err != nil {
 		common.Response(ctx, "未登录", e.LoginTimeout)

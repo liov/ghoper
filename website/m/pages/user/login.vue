@@ -57,7 +57,7 @@
                         }
                     })
                     .catch(function(err) {
-                        // error
+                        console.log(err)
                     });
             },
             async login() {
