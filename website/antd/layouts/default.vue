@@ -4,7 +4,7 @@
       header
     </a-layout-header>
     <a-layout-content>
-      <Content><nuxt /></Content>
+      <nuxt />
     </a-layout-content>
     <a-layout-footer style="text-align: center">
       hoper ©2019 Created by JYB

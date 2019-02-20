@@ -6,43 +6,146 @@
     <a-col :span="12">
       <a-form :form="user">
         <a-form-item
-          :label-col="formItemLayout.labelCol"
-          :wrapper-col="formItemLayout.wrapperCol"
-          label="邮箱或手机"
+          label=""
+          :label-col="{span: 3,offset:6}"
+          :wrapper-col="{span: 6,offset:6}"
         >
-          <a-input
-            v-decorator="[
-              'input',
-              {rules: [{ required: true, message: '请输入邮箱或手机!' }]}
-            ]"
-            placeholder="输入邮箱或手机号"
-          />
-        </a-form-item>
-        <a-form-item
-          :label-col="formItemLayout.labelCol"
-          :wrapper-col="formItemLayout.wrapperCol"
-          label="密码"
-        >
-          <a-input
-            v-decorator="[
-              'password',
-              {rules: [{ required: true, message: '请输入密码!' }]}
-            ]"
-
-            placeholder="输入密码"
-          />
-        </a-form-item>
-        <a-form-item
-          :label-col="formTailLayout.labelCol"
-          :wrapper-col="formTailLayout.wrapperCol"
-        >
-          <a-button
-            type="primary"
-            @click="check"
+          <a-radio-group
+            default-value="login"
+            @change="handleChange"
           >
-            登录
-          </a-button>
+            <a-radio-button value="login">
+              登录
+            </a-radio-button>
+            <a-radio-button value="signup">
+              注册
+            </a-radio-button>
+          </a-radio-group>
         </a-form-item>
+        <div v-show="formType==='login'">
+          <a-form-item
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+            label="邮箱或手机"
+          >
+            <a-input
+              v-decorator="[
+                'input',
+                {rules: [{ required: formType==='login', message: '请输入邮箱或手机!' }]}
+              ]"
+              type="email"
+              placeholder="输入邮箱或手机号！"
+            />
+          </a-form-item>
+          <a-form-item
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+            label="密码"
+          >
+            <a-input
+              v-decorator="[
+                'password',
+                {rules: [{ required: formType==='login', message: '请输入密码!' }]}
+              ]"
+              type="password"
+
+              placeholder="请输入密码！"
+            />
+          </a-form-item>
+          <a-form-item
+            :label-col="formTailLayout.labelCol"
+            :wrapper-col="formTailLayout.wrapperCol"
+          >
+            <a-button
+              type="primary"
+              @click="check"
+            >
+              登录
+            </a-button>
+          </a-form-item>
+        </div>
+        <div v-show="formType==='signup'">
+          <a-form-item
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+            label="用户名"
+          >
+            <a-input
+              v-decorator="[
+                'name',
+                {rules: [{ required: formType==='signup', message: '请输入用户名!' }]}
+              ]"
+              placeholder="请输入用户名！"
+            />
+          </a-form-item>
+          <a-form-item
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+            label="密码"
+          >
+            <a-input
+              v-decorator="[
+                'password',
+                {rules: [{ required: formType==='signup', message: '请输入密码!' }]}
+              ]"
+              type="password"
+              placeholder="请输入密码！"
+            />
+          </a-form-item>
+          <a-form-item
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+            label="邮箱"
+          >
+            <a-input
+              v-decorator="[
+                'email',
+                {rules: [{ required: formType==='signup', message: '请输入邮箱!' }]}
+              ]"
+              type="email"
+              placeholder="请输入邮箱！"
+            />
+          </a-form-item>
+          <a-form-item
+            label="性别"
+            required
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <a-radio-group
+              default-value="1"
+            >
+              <a-radio-button value="1">
+                男
+              </a-radio-button>
+              <a-radio-button value="0">
+                女
+              </a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item
+            :label-col="formItemLayout.labelCol"
+            :wrapper-col="formItemLayout.wrapperCol"
+            label="手机号"
+          >
+            <a-input
+              v-decorator="[
+                'phone',
+                {rules: [{ required: formType==='signup', message: '请输入手机号!' }]}
+              ]"
+              type="phone"
+              placeholder="请输入手机号!"
+            />
+          </a-form-item>
+          <a-form-item>
+            <a-button
+              type="primary"
+              @click="check"
+            >
+              注册
+            </a-button>
+          </a-form-item>
+        </div>
       </a-form>
     </a-col>
   </a-row>
@@ -61,6 +164,7 @@ const formTailLayout = {
 export default {
   data() {
     return {
+      formType: 'login',
       formItemLayout,
       formTailLayout,
       user: this.$form.createForm(this)
@@ -70,29 +174,29 @@ export default {
     check() {
       this.user.validateFields(err => {
         if (!err) {
-          console.info(this.user.getFieldsValue())
           this.commit()
         }
       })
     },
     handleChange(e) {
-      this.$nextTick(() => {
-        this.user.validateFields(['password'], { force: true })
-      })
-    },
-    commit: function() {
-      const vm = this
-      /*      const emailReg = new RegExp(
+      this.formType = e.target.value
+      const emailReg = new RegExp(
         '^([a-zA-Z0-9]+[_.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_.]?)*[a-zA-Z0-9]+.[a-zA-Z]{2,3}$'
       )
       const phoneReg = /^1[0-9]{10}$/
-      if (emailReg.test(vm.user.getFieldsValue().input)) {
-        vm.user.setFieldsValue({ email: vm.user.getFieldsValue().input })
-      } else if (phoneReg.test(vm.user.input)) {
-        vm.user.setFieldsValue({ phone: vm.user.getFieldsValue().input })
-      } */
+      if (emailReg.test(this.user.getFieldsValue().input)) {
+        this.user.setFieldsValue({ email: this.user.getFieldsValue().input })
+      } else if (phoneReg.test(this.user.input)) {
+        this.user.setFieldsValue({ phone: this.user.getFieldsValue().input })
+      }
+      /* this.$nextTick(() => {
+        this.user.validateFields(['password'], { force: true })
+      }) */
+    },
+    commit: function() {
+      const vm = this
       axios
-        .post(`/api/user/login`, vm.user.getFieldsValue())
+        .post(`/api/user/` + vm.formType, vm.user.getFieldsValue())
         .then(res => {
           //
           // success

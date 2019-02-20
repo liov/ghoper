@@ -1,5 +1,5 @@
 const pkg = require('./package')
-
+const {  join } = require('path')
 module.exports = {
   mode: 'spa',
 
@@ -9,17 +9,17 @@ module.exports = {
   head: {
     title: pkg.name,
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description }
+      {charset: 'utf-8'},
+      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
+      {hid: 'description', name: 'description', content: pkg.description}
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}]
   },
 
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: {color: '#fff'},
 
   /*
   ** Global CSS
@@ -54,7 +54,7 @@ module.exports = {
     includeNodeModules: true, // optional, default: false (this includes graphql-tag for node_modules folder)
     authenticationType: 'Basic', // optional, default: 'Bearer'
     // optional
-    errorHandler (error) {
+    errorHandler(error) {
       console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
     },
     // required
@@ -69,7 +69,7 @@ module.exports = {
         },
         // You can use `wss` for secure connection (recommended in production)
         // Use `null` to disable subscriptions
-       // wsEndpoint: 'ws://localhost/api/chat/ws', // optional
+        // wsEndpoint: 'ws://localhost/api/chat/ws', // optional
         // LocalStorage token
         tokenName: 'apollo-token', // optional
         // Enable Automatic Query persisting with Apollo Engine
@@ -102,10 +102,24 @@ module.exports = {
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /(node_modules)/,
-          options : {
-            fix : true
+          options: {
+            fix: true
           }
         })
+      }
+    },
+    postcss: {
+      plugins: {
+        // https://github.com/postcss/postcss-import
+        'postcss-import': false
+        /*{
+          resolve: function (id,basedir,importOptions) {
+            if(id.match(/~/) && id.match(/~/).index === 0){
+              console.log(join(__dirname,'node_modules',id.substr(1))+"实验")
+              return join(__dirname,'node_modules',id.substr(1))
+            }
+          }
+        }*/
       }
     }
   }
