@@ -111,7 +111,7 @@ module.exports = {
     postcss: {
       plugins: {
         // https://github.com/postcss/postcss-import
-        'postcss-import': false
+        //'postcss-import': false
         /*{
           resolve: function (id,basedir,importOptions) {
             if(id.match(/~/) && id.match(/~/).index === 0){
