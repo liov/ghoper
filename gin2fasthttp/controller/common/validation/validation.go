@@ -1,11 +1,11 @@
 package validation
 
 import (
+	"fastService/controller/common"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"reflect"
 	"regexp"
-	"fastService/controller/common"
 	"strings"
 )
 

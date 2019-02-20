@@ -2,15 +2,15 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/valyala/fasthttp"
 	"fastService/controller"
 	"fastService/controller/common"
 	"fastService/controller/common/e"
 	"fastService/initialize"
 	"fastService/model"
 	"fastService/utils"
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/valyala/fasthttp"
 )
 
 func JWT(h fasthttp.RequestHandler) fasthttp.RequestHandler {

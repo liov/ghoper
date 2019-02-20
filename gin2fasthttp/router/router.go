@@ -2,12 +2,6 @@ package router
 
 //go:generate qtc -dir=../template
 import (
-	"github.com/fasthttp/router"
-	"github.com/gin-gonic/gin"
-	"github.com/kataras/iris"
-	"github.com/valyala/fasthttp"
-	"io"
-	"net/http"
 	"fastService/controller"
 	"fastService/controller/common/logging"
 	"fastService/controller/hnsq"
@@ -15,6 +9,12 @@ import (
 	"fastService/initialize"
 	"fastService/middleware"
 	"fastService/template"
+	"github.com/fasthttp/router"
+	"github.com/gin-gonic/gin"
+	"github.com/kataras/iris"
+	"github.com/valyala/fasthttp"
+	"io"
+	"net/http"
 )
 
 func FastRouter() *router.Router {

@@ -1,9 +1,9 @@
 package controller
 
 import (
+	"fastService/controller/common"
 	"github.com/sirupsen/logrus"
 	"os"
-	"fastService/controller/common"
 )
 
 func init() {

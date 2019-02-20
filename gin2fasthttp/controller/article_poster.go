@@ -1,14 +1,14 @@
 package controller
 
 import (
+	"fastService/initialize"
+	"fastService/model"
+	"fastService/utils"
 	"image"
 	"image/draw"
 	"image/jpeg"
 	"io/ioutil"
 	"os"
-	"fastService/initialize"
-	"fastService/model"
-	"fastService/utils"
 
 	"github.com/golang/freetype"
 )

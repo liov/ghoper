@@ -1,9 +1,9 @@
 package common
 
 import (
+	"fastService/controller/common/e"
 	"github.com/json-iterator/go"
 	"github.com/valyala/fasthttp"
-	"fastService/controller/common/e"
 	"time"
 )
 

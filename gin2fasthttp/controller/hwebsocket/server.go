@@ -2,6 +2,9 @@ package hwebsocket
 
 import (
 	"encoding/json"
+	"fastService/controller"
+	"fastService/controller/common"
+	"fastService/initialize"
 	"github.com/fasthttp/websocket"
 	"github.com/gomodule/redigo/redis"
 	"github.com/kataras/iris"
@@ -10,9 +13,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"fastService/controller"
-	"fastService/controller/common"
-	"fastService/initialize"
 	"time"
 )
 

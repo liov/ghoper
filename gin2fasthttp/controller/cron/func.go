@@ -1,11 +1,11 @@
 package cron
 
 import (
-	"github.com/gomodule/redigo/redis"
 	"fastService/controller"
 	"fastService/controller/common"
 	"fastService/controller/common/gredis"
 	"fastService/initialize"
+	"github.com/gomodule/redigo/redis"
 )
 
 func RedisToDB() {

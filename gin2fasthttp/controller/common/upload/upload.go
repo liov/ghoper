@@ -1,11 +1,11 @@
 package upload
 
 import (
-	"github.com/satori/go.uuid"
-	"os"
 	"fastService/initialize"
 	"fastService/model"
 	"fastService/utils"
+	"github.com/satori/go.uuid"
+	"os"
 	"strings"
 	"unicode/utf8"
 )

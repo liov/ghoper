@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"github.com/jinzhu/gorm"
-	"github.com/valyala/fasthttp"
 	"fastService/controller/common"
 	"fastService/initialize"
 	"fastService/model"
 	"fastService/utils"
+	"github.com/jinzhu/gorm"
+	"github.com/valyala/fasthttp"
 	"strconv"
 	"time"
 )

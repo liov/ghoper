@@ -2,15 +2,15 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/valyala/fasthttp"
 	"fastService/controller/common"
 	"fastService/controller/common/e"
 	"fastService/controller/common/gredis"
 	"fastService/controller/common/logging"
 	"fastService/initialize"
 	"fastService/model"
+	"fmt"
+	"github.com/jinzhu/gorm"
+	"github.com/valyala/fasthttp"
 
 	"fastService/utils"
 	"strconv"

@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/valyala/fasthttp"
 	"fastService/controller/common"
+	"github.com/valyala/fasthttp"
 )
 
 func Index(c *fasthttp.RequestCtx) {

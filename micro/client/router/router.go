@@ -59,6 +59,8 @@ func IrisRouter() *iris.Application {
 
 	MomentRouter(app)
 
+	GraphqlRouter(app)
+
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)
 

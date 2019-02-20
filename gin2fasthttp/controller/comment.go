@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/valyala/fasthttp"
 	"fastService/controller/common"
 	"fastService/initialize"
 	"fastService/model"
+	"github.com/sirupsen/logrus"
+	"github.com/valyala/fasthttp"
 	"time"
 )
 

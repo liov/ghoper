@@ -1,8 +1,8 @@
 package common
 
 import (
-	"github.com/valyala/fasthttp"
 	"fastService/controller/binding"
+	"github.com/valyala/fasthttp"
 )
 
 type HopeCtx fasthttp.RequestCtx

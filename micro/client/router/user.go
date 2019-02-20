@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"github.com/graph-gophers/graphql-go"
-	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/kataras/iris"
 	"hoper/client/controller"
 	"hoper/client/middleware"
@@ -44,23 +43,6 @@ func (r *Resolver) GetUser(ctx context.Context, args struct{ ID graphql.ID }) (*
 
 func UserRouter(app *iris.Application) {
 
-	s := `
-                schema {
-                      query: Query
-                }
-				type Query {
-  					getUser(id: ID!): User
-				}
-                type User {
-                        ID:ID!
-						Name:String!
-						Sex:String!
-						Phone:String!
-                }
-        `
-
-	schema := graphql.MustParseSchema(s, &Resolver{}, graphql.UseStringDescriptions())
-
 	userRouter := app.Party("/api/user")
 	{
 		userRouter.Get("/active/{id:uint64}/{secret:string}", controller.ActiveAccount)
@@ -72,6 +54,6 @@ func UserRouter(app *iris.Application) {
 		userRouter.Post("/rpc/login", user.Login)
 		userRouter.Get("/rpc/logout", user.Logout)
 		userRouter.Post("/rpc/signup", user.Signup)
-		userRouter.Post("/graphql", iris.FromStd(&relay.Handler{Schema: schema}))
+
 	}
 }

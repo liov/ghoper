@@ -1,10 +1,6 @@
 package controller
 
 import (
-	"github.com/gomodule/redigo/redis"
-	"github.com/jinzhu/gorm"
-	"github.com/sirupsen/logrus"
-	"github.com/valyala/fasthttp"
 	"fastService/controller/common"
 	"fastService/controller/common/e"
 	"fastService/controller/common/gredis"
@@ -12,6 +8,10 @@ import (
 	"fastService/initialize"
 	"fastService/model"
 	"fastService/utils"
+	"github.com/gomodule/redigo/redis"
+	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
+	"github.com/valyala/fasthttp"
 	"strconv"
 	"strings"
 	"time"
