@@ -223,7 +223,7 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 
 			defer resp.Body.Close()
 
-			imgUploadedInfo := upload.GenerateUploadedInfo("", ext)
+			imgUploadedInfo := upload.GenerateUploadedInfo(ext)
 			if err := os.MkdirAll(imgUploadedInfo.UploadDir, 0777); err != nil {
 				fmt.Println(err.Error())
 				return

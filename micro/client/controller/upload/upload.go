@@ -14,12 +14,54 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
+
+func GenerateUploadedInfo(ext string) model.FileUploadInfo {
+
+	sep := string(os.PathSeparator)
+	uploadImgDir := initialize.Config.Server.UploadDir
+	length := utf8.RuneCountInString(uploadImgDir)
+	lastChar := uploadImgDir[length-1:]
+	ymStr := utils.GetTodayYM(sep)
+
+	var uploadDir string
+	if lastChar != sep {
+		uploadDir = uploadImgDir + sep + ymStr
+	} else {
+		uploadDir = uploadImgDir + ymStr
+	}
+
+	uuidName := uuid.NewV4().String()
+	filename := uuidName + ext
+	uploadFilePath := uploadDir + sep + filename
+	fileURL := strings.Join([]string{
+		"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+		ymStr,
+		filename,
+	}, "/")
+	var fileUpload model.FileUploadInfo
+
+	fileUpload.FileName = filename
+	fileUpload.File.URL = fileURL
+	fileUpload.UUID = uuidName
+	fileUpload.UploadDir = uploadDir
+	fileUpload.UploadFilePath = uploadFilePath
+
+	/*	fileUpload = model.FileUploadInfo{
+		File:       model.File{FileName:filename,},
+		FileURL:        fileURL,
+		UUIDName:       uuidName,
+		UploadDir:      uploadDir,
+		UploadFilePath: uploadFilePath,
+	}*/
+	return fileUpload
+}
 
 func GetExt(file *multipart.FileHeader) (string, error) {
 	var ext string
 	var index = strings.LastIndex(file.Filename, ".")
-	if index != -1 {
+	if index == -1 {
 		return "", nil
 	} else {
 		ext = file.Filename[index:]
