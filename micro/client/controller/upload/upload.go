@@ -1,8 +1,6 @@
 package upload
 
 import (
-	"errors"
-	"fmt"
 	"github.com/kataras/iris"
 	"github.com/satori/go.uuid"
 	"hoper/client/controller/common"
@@ -42,91 +40,82 @@ func GenerateImgUploadedInfo(ext string) model.FileUploadInfo {
 		ymStr,
 		filename,
 	}, "/")
-	var fileUpload model.FileUploadInfo
 
-	fileUpload.FileName = filename
-	fileUpload.FileURL = fileURL
-	fileUpload.UUIDName = uuidName
-	fileUpload.UploadDir = uploadDir
-	fileUpload.UploadFilePath = uploadFilePath
-
-	/*	fileUpload = model.FileUploadInfo{
-		File:       model.File{FileName:filename,},
+	fileUpload := model.FileUploadInfo{
+		File:           model.File{FileName: filename},
 		FileURL:        fileURL,
 		UUIDName:       uuidName,
 		UploadDir:      uploadDir,
 		UploadFilePath: uploadFilePath,
-	}*/
+	}
 	return fileUpload
 }
 
 // Upload 文件上传
-func Upload(c iris.Context) (map[string]interface{}, error) {
-	_, info, err := c.FormFile("upFile")
+func Upload(ctx iris.Context) *model.FileUploadInfo {
+	file, info, err := ctx.FormFile("file")
 
 	if err != nil {
-		return nil, errors.New("参数无效")
+		common.Response(ctx, "参数无效")
+		return nil
 	}
-
+	defer file.Close()
 	var filename = info.Filename
 	var index = strings.LastIndex(filename, ".")
 
 	if index < 0 {
-		return nil, errors.New("无效的文件名")
+		common.Response(ctx, "无效的文件名")
+		return nil
 	}
 
 	var ext = filename[index:]
 	if len(ext) == 1 {
-		return nil, errors.New("无效的扩展名")
+		common.Response(ctx, "无效的扩展名")
+		return nil
 	}
 	var mimeType = mime.TypeByExtension(ext)
 
-	fmt.Printf("filename %s, index %d, ext %s, mimeType %s\n", filename, index, ext, mimeType)
 	if mimeType == "" && ext == ".jpeg" {
-		mimeType = "image/jpeg"
+		mimeType = "f/jpeg"
 	}
 	if mimeType == "" {
-		return nil, errors.New("无效的图片类型")
+		common.Response(ctx, "无效的图片类型")
+		return nil
+	}
+	uploadedInfo := GenerateImgUploadedInfo(ext)
+
+	if err := os.MkdirAll(uploadedInfo.UploadDir, 0777); err != nil {
+		common.Response(ctx, err.Error())
+		return nil
 	}
 
-	imgUploadedInfo := GenerateImgUploadedInfo(ext)
-
-	fmt.Println(imgUploadedInfo.UploadDir)
-
-	if err := os.MkdirAll(imgUploadedInfo.UploadDir, 0777); err != nil {
-		fmt.Println(err.Error())
-		return nil, errors.New("error")
+	if err := SaveUploadedFile(info, uploadedInfo.UploadFilePath); err != nil {
+		common.Response(ctx, err.Error())
+		return nil
 	}
 
-	if err := SaveUploadedFile(info, imgUploadedInfo.UploadFilePath); err != nil {
-		return nil, errors.New("error1")
-	}
-
-	image := model.File{
-		FileName:    imgUploadedInfo.FileName,
+	f := model.File{
+		FileName:    uploadedInfo.FileName,
 		OrignalName: filename,
-		URL:         imgUploadedInfo.FileURL,
+		URL:         uploadedInfo.FileURL,
 		Mime:        mimeType,
 	}
 
-	if err := initialize.DB.Create(&image).Error; err != nil {
-		fmt.Println(err.Error())
-		return nil, errors.New("image error")
+	uploadedInfo.File = f
+
+	if err := initialize.DB.Create(&uploadedInfo).Error; err != nil {
+
+		common.Response(ctx, err.Error())
+		return nil
 	}
 
-	return map[string]interface{}{
-		"id":       image.ID,
-		"url":      imgUploadedInfo.FileURL,
-		"title":    imgUploadedInfo.FileName, //新文件名
-		"original": filename,                 //原始文件名
-		"type":     mimeType,                 //文件类型
-	}, nil
+	return &uploadedInfo
 }
 
 // UploadHandler 文件上传
 func UploadHandler(c iris.Context) {
-	data, err := Upload(c)
-	if err != nil {
+	data := Upload(c)
+	if data == nil {
 		common.Response(c, 500, nil)
 		return
 	}

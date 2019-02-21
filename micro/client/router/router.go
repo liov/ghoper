@@ -11,6 +11,7 @@ import (
 	"hoper/client/controller"
 	"hoper/client/controller/hnsq"
 	"hoper/client/controller/hwebsocket"
+	"hoper/client/controller/upload"
 	"hoper/client/middleware"
 	"net/http"
 	"runtime/debug"
@@ -60,6 +61,9 @@ func IrisRouter() *iris.Application {
 	MomentRouter(app)
 
 	GraphqlRouter(app)
+	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
+		upload.Upload(ctx)
+	})
 
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)

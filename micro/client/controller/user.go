@@ -792,12 +792,12 @@ func Top100(c iris.Context) {
 // UploadAvatar 上传用户头像
 func UploadAvatar(c iris.Context) {
 
-	data, err := upload.Upload(c)
-	if err != nil {
+	data := upload.Upload(c)
+	if data == nil {
 		return
 	}
 
-	avatarURL := data["url"].(string)
+	avatarURL := data.URL
 	userInter := c.GetViewData()["user"]
 	user := userInter.(User)
 

@@ -24,10 +24,12 @@
     "graphql-tag": "^2.10.1",
     "koa": "^2.6.2",
     "mavon-editor": "^2.6.17",
+    "medium-editor": "^5.23.3",
     "nuxt": "^2.4.0",
     "vditor": "^0.2.5",
     "vuetify": "^1.5.1",
-    "vuetify-loader": "^1.2.1"
+    "vuetify-loader": "^1.2.1",
+    "wangeditor": "^3.1.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^0.0.1",

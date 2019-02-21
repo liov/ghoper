@@ -19,6 +19,7 @@ module.exports = {
     'no-unused-vars':'off',
     'camelcase':'off',
     'no-console': 'off',
-    'vue/no-unused-components':'off'
+    'vue/no-unused-components':'off',
+    'no-undef':'off'
   }
 }
