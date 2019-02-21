@@ -5,7 +5,8 @@ import (
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/client/controller/common/e"
-	"hoper/client/controller/common/upload"
+	"hoper/client/controller/upload"
+
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/utils"
@@ -222,7 +223,7 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 
 			defer resp.Body.Close()
 
-			imgUploadedInfo := upload.GenerateImgUploadedInfo(ext)
+			imgUploadedInfo := upload.GenerateUploadedInfo("", ext)
 			if err := os.MkdirAll(imgUploadedInfo.UploadDir, 0777); err != nil {
 				fmt.Println(err.Error())
 				return

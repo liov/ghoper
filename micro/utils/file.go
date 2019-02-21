@@ -8,10 +8,12 @@ import (
 	"path"
 )
 
-func GetSize(f multipart.File) (int, error) {
+func GetSize(f multipart.File) int {
 	content, err := ioutil.ReadAll(f)
-
-	return len(content), err
+	if err != nil {
+		return 0
+	}
+	return len(content)
 }
 
 func GetExt(fileName string) string {

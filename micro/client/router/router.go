@@ -9,9 +9,11 @@ import (
 	"github.com/kataras/iris/middleware/i18n"
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
+	"hoper/client/controller/upload"
+
 	"hoper/client/controller/hnsq"
 	"hoper/client/controller/hwebsocket"
-	"hoper/client/controller/upload"
+
 	"hoper/client/middleware"
 	"net/http"
 	"runtime/debug"
@@ -64,7 +66,10 @@ func IrisRouter() *iris.Application {
 	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)
 	})
-
+	/*	app.Post("/api/upload_multiple/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
+			ctx.UploadFormFiles("./uploads", beforeSave)
+		})
+	*/
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)
 

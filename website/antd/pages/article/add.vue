@@ -1,9 +1,11 @@
 <template>
-  <div>
+  <div class="article">
     <a-row>
       <a-col :span="4">
         <a-form-item
           label=""
+          :label-col="{span: 4,offset:4}"
+          :wrapper-col="{span: 24,offset:4}"
         >
           <a-radio-group
             default-value="markdown"
@@ -22,12 +24,11 @@
         <a-form-item
           label="标题"
           required
-          :label-col="{span: 2}"
+          :label-col="{span: 6}"
           :wrapper-col="{span: 18}"
         >
           <a-input
             v-model="article.title"
-            size="large"
             placeholder="请输入标题！"
           />
         </a-form-item>
@@ -35,36 +36,104 @@
       <a-col :span="6">
         <a-form-item
           label="封面"
-          :label-col="{span: 2}"
-          :wrapper-col="{span: 18}"
+          :label-col="{span: 6}"
+          :wrapper-col="{span:18}"
         >
           <a-upload
             name="file"
-            list-type="picture-card"
-            class="avatar-uploader"
-            :show-upload-list="false"
             action="/api/upload/article"
             :before-upload="beforeUpload"
             @change="uploadChange"
           >
-            <img v-if="imageUrl" :src="imageUrl" alt="avatar">
-            <div v-else>
-              <a-icon :type="loading ? 'loading' : 'plus'" />
-              <div class="ant-upload-text">
-                Upload
-              </div>
-            </div>
+            <a-button>
+              <a-icon type="upload" /> 上传封面
+            </a-button>
           </a-upload>
         </a-form-item>
       </a-col>
+
+      <a-button id="display" @click="showImage=!showImage">
+        <span v-if="!showImage">显示封面</span>
+        <span v-if="showImage">不显示封面</span>
+      </a-button>
     </a-row>
 
-
-
-    <div v-show="editorType==='markdown'" id="editor">
-      <mavon-editor style="height: 20%" />
+    <div align="center">
+      <img v-if="showImage" :src="imageUrl">
     </div>
-    <div v-show="editorType==='rich'" id="weditor" />
+    <div id="tag">
+      <a-row>
+        <a-col :span="6">
+          <a-form-item
+            label="分类"
+            required
+            :label-col="{span: 4}"
+            :wrapper-col="{span:6}"
+          >
+            <a-select
+              placeholder="请选择分类"
+              :default-value="[]"
+              style="width: 200px"
+            >
+              <a-select-option v-for="(item,index) in existTags" :key="index">
+                {{ item }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item
+            label="标签"
+            required
+            :label-col="{span: 4}"
+            :wrapper-col="{span: 6}"
+          >
+            <a-select
+              mode="multiple"
+              placeholder="请选择标签"
+              :default-value="[]"
+              style="width: 200px"
+            >
+              <a-select-option v-for="(item,index) in existTags" :key="index">
+                {{ item }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item
+            label="权限"
+            required
+            :label-col="{span: 4}"
+            :wrapper-col="{span:6}"
+          >
+            <a-select
+              placeholder="请选择权限"
+              :default-value="['0']"
+              style="width: 200px"
+            >
+              <a-select-option value="0">
+                全部可见
+              </a-select-option>
+              <a-select-option value="1">
+                自己可见
+              </a-select-option>
+              <a-select-option value="2" disabled>
+                部分可见
+              </a-select-option>
+              <a-select-option value="3">
+                陌生人可见
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+      </a-row>
+    </div>
+    <div id="editor">
+      <mavon-editor v-show="editorType==='markdown'" style="height: 20%" />
+
+      <div v-show="editorType==='rich'" id="weditor" />
+    </div>
   </div>
 </template>
 
@@ -76,6 +145,7 @@ import 'mavon-editor/dist/css/index.css'
 import E from 'wangeditor'
 import 'wangeditor/release/wangEditor.css'
 import axios from 'axios'
+import ARow from 'ant-design-vue/es/grid/Row'
 
 function getBase64(img, callback) {
   const reader = new FileReader()
@@ -84,6 +154,7 @@ function getBase64(img, callback) {
 }
 export default {
   components: {
+    ARow,
     mavonEditor
     // or 'mavon-editor': mavonEditor
   },
@@ -91,13 +162,16 @@ export default {
     return {
       editorType: 'markdown',
       article: {},
-      loading: false,
+      showImage: false,
       imageUrl: '',
-      formItemLayout: {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 8 }
-      }
+      existTags: ['韩雪', '徐峥', '胡歌', '张卫健'],
+      tagsGroup: [],
+      Tags: [],
+      tag: ''
     }
+  },
+  created() {
+    this.tagsGroup = this.tagGroup(this.existTags, 3)
   },
   mounted() {
     // const editor = new MediumEditor('.editable', {})
@@ -131,6 +205,29 @@ export default {
         this.$message.error('Image must smaller than 4MB!')
       }
       return isImg && isLt2M
+    },
+    addTag: function() {
+      if (this.tag !== '' && this.existTags.indexOf(this.tag) === -1) {
+        this.existTags.push(this.tag)
+        if (this.tagsGroup[this.tagsGroup.length - 1].length === 3) {
+          this.tagsGroup.push([this.tag])
+        } else {
+          this.tagsGroup[this.tagsGroup.length - 1].push(this.tag)
+        }
+        this.Tags.push(this.tag)
+        this.tag = ''
+      } else if (this.tag === '') this.$toast('标签为空')
+      else this.$toast('标签重复')
+    },
+    toggle(index) {
+      this.$refs.checkboxes[index].toggle()
+    },
+    tagGroup: function(arr, size) {
+      const arr2 = []
+      for (let i = 0; i < arr.length; i = i + size) {
+        arr2.push(arr.slice(i, i + size))
+      }
+      return arr2
     }
   }
 }
@@ -139,9 +236,22 @@ export default {
 <style scoped>
 /*@import '~vditor/dist/index.classic.css';*/
 /*@import '~vditor/dist/index.classic.css';*/
+.article {
+  width: 80%;
+  margin-left: 10%;
+}
 #editor {
   margin: auto;
-  width: 100%;
-  height: 300px;
+}
+#display {
+  margin-top: 3px;
+}
+#tag {
+  position: relative;
+  z-index: 2;
+}
+#editor {
+  position: relative;
+  z-index: 1;
 }
 </style>

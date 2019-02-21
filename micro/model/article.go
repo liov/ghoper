@@ -29,7 +29,7 @@ type Article struct {
 	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
 	Status        uint             `json:"status"`                        //状态
 	ModifyTimes   uint             `gorm:"default:0" json:"modify_times"` //修改次数
-	ParentID      uint             `json:"parent_id"`                     //父节点
+	ParentID      uint             `json:"parent_id"`                     //父ID
 	LastUser      User             `json:"last_user"`
 	LastUserID    uint             `json:"last_user_id"` //最后一个回复话题的人
 	LastCommentAt *time.Time       `json:"last_comment_at"`

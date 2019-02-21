@@ -2,10 +2,8 @@ package upload
 
 import (
 	"fmt"
-	"hoper/client/controller/common/logging"
 	"hoper/initialize"
 	"hoper/utils"
-	"log"
 	"mime/multipart"
 	"os"
 	"path"
@@ -25,7 +23,7 @@ func GetImageName(name string) string {
 }
 
 func GetImagePath() string {
-	return initialize.Config.Server.ImagePath
+	return initialize.Config.Server.UploadPath
 }
 
 func GetImageFullPath() string {
@@ -44,14 +42,12 @@ func CheckImageExt(fileName string) bool {
 }
 
 func CheckImageSize(f multipart.File) bool {
-	size, err := utils.GetSize(f)
-	if err != nil {
-		log.Println(err)
-		logging.Warn(err)
+	size := utils.GetSize(f)
+	if size == 0 {
 		return false
 	}
 
-	return size <= initialize.Config.Server.ImageMaxSize
+	return size <= initialize.Config.Server.FileMaxSize
 }
 
 func CheckImage(src string) error {

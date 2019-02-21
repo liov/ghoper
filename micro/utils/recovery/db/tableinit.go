@@ -23,12 +23,13 @@ func main() {
 
 	//db.CreateTable(&model.User{})
 
-	db.CreateTable(&model.User{},
+	/*	db.CreateTable(&model.User{},
 		&model.Tag{}, &model.Diary{}, &model.DiaryBook{}, &model.School{}, &model.Article{},
 		&model.Career{}, &model.Category{}, &model.Collection{}, &model.Love{}, &model.CrawlerArticle{},
 		&model.DiaryBookComment{}, &model.MomentComment{}, &model.FileUploadInfo{}, &model.DiaryComment{},
 		&model.Moment{}, &model.Mood{}, &model.DiaryBookHistory{}, &model.DiaryHistory{}, &model.ArticleHistory{},
-		&model.MomentHistory{})
+		&model.MomentHistory{})*/
+	db.CreateTable(&model.FileUploadInfo{})
 }
 
 /*

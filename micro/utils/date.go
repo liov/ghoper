@@ -45,7 +45,7 @@ func GetTodayYMD(sep string) string {
 	} else {
 		dateStr = strconv.Itoa(date)
 	}
-	return strconv.Itoa(year) + sep + monthStr + sep + dateStr
+	return strconv.Itoa(year) + sep + monthStr + sep + dateStr + sep
 }
 
 // GetTodayYM 得到以sep为分隔符的年、月字符串(今天所属于的月份)
@@ -60,7 +60,7 @@ func GetTodayYM(sep string) string {
 	} else {
 		monthStr = strconv.Itoa(month + 1)
 	}
-	return strconv.Itoa(year) + sep + monthStr
+	return strconv.Itoa(year) + sep + monthStr + sep
 }
 
 // GetYesterdayYMD 得到以sep为分隔符的年、月、日字符串(昨天)

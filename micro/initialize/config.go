@@ -20,10 +20,10 @@ type ServerConfig struct {
 	RuntimeRootPath string
 
 	ImagePrefixUrl string
-	UploadImgDir   string
-	ImagePath      string
-	ImgHost        string
-	ImageMaxSize   int
+	UploadDir      string
+	UploadPath     string
+	UploadHost     string
+	FileMaxSize    int
 	ImageAllowExts []string
 
 	LogSavePath string
@@ -128,7 +128,7 @@ func Setup() {
 		log.Fatalf("配置错误: %v", err)
 	}
 
-	Config.Server.ImageMaxSize = Config.Server.ImageMaxSize * 1024 * 1024
+	Config.Server.FileMaxSize = Config.Server.FileMaxSize * 1024 * 1024
 	Config.Server.ReadTimeout = Config.Server.ReadTimeout * time.Second
 	Config.Server.WriteTimeout = Config.Server.ReadTimeout * time.Second
 	Config.Redis.IdleTimeout = Config.Redis.IdleTimeout * time.Second
