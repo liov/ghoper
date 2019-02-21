@@ -40,6 +40,7 @@
           :wrapper-col="{span:18}"
         >
           <a-upload
+            multiple
             name="file"
             action="/api/upload/article"
             :before-upload="beforeUpload"

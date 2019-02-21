@@ -121,7 +121,7 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 	*/
 
 	prefixUrl = strings.Join([]string{
-		"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+		"http://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
 		dirType[0] + "s",
 		classify,
 		ymdStr,
