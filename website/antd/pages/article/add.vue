@@ -40,7 +40,6 @@
           :wrapper-col="{span:18}"
         >
           <a-upload
-            multiple
             name="file"
             action="/api/upload/article"
             :before-upload="beforeUpload"
@@ -189,6 +188,7 @@ export default {
         return
       }
       if (info.file.status === 'done') {
+        this.$message.error(info.file.response.data.url)
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => {
           this.imageUrl = imageUrl
