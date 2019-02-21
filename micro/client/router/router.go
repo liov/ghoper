@@ -66,10 +66,10 @@ func IrisRouter() *iris.Application {
 	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)
 	})
-	/*	app.Post("/api/upload_multiple/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
-			ctx.UploadFormFiles("./uploads", beforeSave)
-		})
-	*/
+	app.Post("/api/upload_multiple/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
+		upload.UploadMultiple(ctx)
+	})
+
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)
 
