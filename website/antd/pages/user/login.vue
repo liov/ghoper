@@ -1,7 +1,9 @@
 <template>
   <a-row :gutter="24">
     <a-col :span="12">
-      ss
+      <nuxt-link to="/article/add">
+        ss
+      </nuxt-link>
     </a-col>
     <a-col :span="12">
       <a-form :form="user">
@@ -48,7 +50,6 @@
                 {rules: [{ required: formType==='login', message: '请输入密码!' }]}
               ]"
               type="password"
-
               placeholder="请输入密码！"
             />
           </a-form-item>
@@ -205,12 +206,12 @@ export default {
             vm.$store.commit('SET_USER', res.data.data)
             vm.$store.commit('SET_TOKEN', res.data.token)
             localStorage.setItem('user', res.data.data.id)
-            vm.$toast('登录成功')
-            vm.$router.replace('/')
+            vm.$message.info('登录成功')
+            // vm.$router.replace('/')
           } else if (res.data.msg === '账号未激活') {
-            vm.$toast(res.data.user.email)
+            vm.$message.warning(res.data.user.email)
           } else {
-            vm.$toast(res.data.msg)
+            vm.$message.error(res.data.msg)
           }
         })
         .catch(function(err) {

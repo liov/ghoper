@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
@@ -12,11 +11,43 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/utils"
+	"time"
 
 	"strconv"
 	"strings"
 	"unicode/utf8"
 )
+
+type Article struct {
+	ID            uint             `gorm:"primary_key" json:"id"`
+	CreatedAt     time.Time        `json:"created_at"`
+	Title         string           `gorm:"type:varchar(100)" json:"title"`
+	Content       string           `gorm:"type:text" json:"content"`
+	HTMLContent   string           `gorm:"type:text" json:"html_content"`
+	ContentType   int              `json:"content_type"`                       //文本类型
+	ImageUrl      string           `gorm:"type:varchar(100)" json:"image_url"` //封面
+	Categories    []Category       `gorm:"-" json:"categories"`                //分类
+	Tags          []Tag            `gorm:"-" json:"tags"`
+	User          User             `gorm:"-" json:"user"`
+	UserID        uint             `json:"user_id"`
+	Comments      []ArticleComment `gorm:"-" json:"comments"`              //评论
+	BrowseCount   uint             `json:"browse_count"`                   //浏览
+	CommentCount  uint             `gorm:"default:0" json:"comment_count"` //评论
+	CollectCount  uint             `gorm:"default:0" json:"collect_count"` //收藏
+	CollectUsers  []User           `gorm:"-" gorm:"many2many:article_collection" json:"collect_users"`
+	LoveCount     uint             `gorm:"default:0" json:"love_count"` //点赞
+	LoveUsers     []User           `gorm:"-" gorm:"many2many:article_love" json:"love_users"`
+	Permission    uint8            `gorm:"type:smallint;default:0" json:"permission"` //查看权限
+	DescFlag      uint8            `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
+	UpdatedAt     *time.Time       `json:"updated_at"`
+	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
+	Status        uint             `json:"status"`                        //状态
+	ModifyTimes   uint             `gorm:"default:0" json:"modify_times"` //修改次数
+	ParentID      uint             `json:"parent_id"`                     //父ID
+	LastUser      User             `json:"last_user"`
+	LastUserID    uint             `json:"last_user_id"` //最后一个回复话题的人
+	LastCommentAt *time.Time       `json:"last_comment_at"`
+}
 
 func GetArticle(c iris.Context) {
 
@@ -32,7 +63,7 @@ func GetArticle(c iris.Context) {
 			logging.Info(err)
 		} else {
 			json.Unmarshal(data, &articleCache)
-			common.Response(c, e.SUCCESS, articleCache)
+			common.Response(c, articleCache)
 			return
 		}
 	}
@@ -92,7 +123,7 @@ func GetArticles(c iris.Context) {
 			logging.Info(err)
 		} else {
 			json.Unmarshal(data, &cacheArticle)
-			common.Response(c, e.SUCCESS, cacheArticle)
+			common.Response(c, cacheArticle)
 			return
 		}
 	}
@@ -103,10 +134,10 @@ func GetArticles(c iris.Context) {
 	}
 	gredis.Set(key, articles, 3600)
 
-	common.Response(c, e.SUCCESS, articles)
+	common.Response(c, articles)
 }
 
-func articleValidation(c iris.Context, article *model.Article) (err error) {
+func articleValidation(c iris.Context, article *Article) (err error) {
 
 	err = &e.ValidtionError{Msg: "参数无效"}
 
@@ -151,22 +182,22 @@ func articleValidation(c iris.Context, article *model.Article) (err error) {
 		return
 	}
 
-	for i := 0; i < len(article.Categories); i++ {
-		var category model.Category
-		if err := initialize.DB.First(&category, article.Categories[i].ID).Error; err != nil {
-			common.Response(c, "无效的版块id")
-			return err
+	/*	for i := 0; i < len(article.Categories); i++ {
+			var category model.Category
+			if err := initialize.DB.First(&category, article.Categories[i]).Error; err != nil {
+				common.Response(c, "无效的版块id")
+				return err
+			}
+			article.Categories[i] = category.ID
 		}
-		article.Categories[i] = category
-	}
-
+	*/
 	return nil
 }
 
 // Create 创建文章
 func AddArticle(c iris.Context) {
 
-	user := c.GetViewData()["user"].(model.User)
+	user := c.Values().Get("user").(User)
 
 	if limitErr := common.Limit(model.ArticleMinuteLimit,
 		model.ArticleMinuteLimitCount,
@@ -176,42 +207,49 @@ func AddArticle(c iris.Context) {
 		return
 	}
 
-	var article model.Article
+	var article Article
 
 	if err := c.ReadJSON(&article); err != nil {
-		fmt.Println(err.Error())
 		common.Response(c, "参数无效")
 		return
 	}
 
 	if err := articleValidation(c, &article); err != nil {
-		common.Response(c, "参数无效")
 		return
 	}
 
+	article.UserID = user.ID
 	article.BrowseCount = 1
-	article.Status = model.ArticleVerifying
+	article.Status = model.ArticleVerifySuccess
 	article.ModifyTimes = 0
 	article.ContentType = model.ContentTypeMarkdown
 	article.ParentID = 0
 	user.Score = user.Score + model.ArticleScore
 	user.ArticleCount = user.ArticleCount + 1
-	/*if UserToRedis(user) != nil {
-		common.SendErr(c,"error")
-		return
-	}*/
 
 	article.Title = utils.AvoidXSS(article.Title)
 	article.Title = strings.TrimSpace(article.Title)
 
-	article.Content = strings.TrimSpace(article.Content)
-	article.HTMLContent = strings.TrimSpace(article.HTMLContent)
-
 	if article.HTMLContent != "" {
 		article.HTMLContent = utils.AvoidXSS(article.HTMLContent)
 	}
-
 	saveErr := initialize.DB.Create(&article).Error
+	nowTime := time.Now()
+	for _, v := range article.Tags {
+		if tag := ExistTagByName(v.Name); tag != nil {
+			initialize.DB.Model(tag).Update("count", tag.Count+1)
+		} else {
+			newTag := Tag{CreatedAt: nowTime, Name: v.Name, Count: 1}
+			initialize.DB.Create(&newTag)
+		}
+		momentTag := model.ArticleTag{ArticleID: article.ID, TagName: v.Name}
+		initialize.DB.Create(&momentTag)
+	}
+
+	for _, v := range article.Categories {
+		articleCategory := model.ArticleCategory{ArticleID: article.ID, CategoryID: v.ID}
+		initialize.DB.Create(&articleCategory)
+	}
 
 	if saveErr == nil {
 		// 发表文章后，用户的积分、文章数会增加，如果保存失败了，不作处理
@@ -219,7 +257,7 @@ func AddArticle(c iris.Context) {
 			"article_count": user.ArticleCount,
 			"score":         user.Score,
 		}).Error; userErr != nil {
-			fmt.Println(userErr.Error())
+
 		}
 	}
 
@@ -227,7 +265,7 @@ func AddArticle(c iris.Context) {
 		return
 	}
 
-	common.Response(c, e.SUCCESS, "创建成功")
+	common.Response(c, "创建成功")
 }
 
 func historyArticle(c iris.Context, isDel uint) (model.ArticleHistory, model.Article, error) {

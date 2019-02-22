@@ -87,3 +87,18 @@ type ArticleHistory struct {
 	DeleteFlag   uint             `json:"delete_flag"`                            //是否删除
 	Status       uint8            `gorm:"type:smallint ;default:0" json:"status"` //状态
 }
+
+type ArticleTag struct {
+	ArticleID uint   `gorm:"primary_key" json:"article_id"`
+	TagName   string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
+}
+
+type ArticleHistoryTag struct {
+	ArticletHistoryID uint   `gorm:"primary_key" json:"articlet_history_id"`
+	TagName           string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
+}
+
+type ArticleCategory struct {
+	ArticleID  uint `gorm:"primary_key" json:"article_id"`
+	CategoryID uint `gorm:"primary_key" json:"category_id"`
+}

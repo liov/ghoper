@@ -179,22 +179,34 @@ func UploadMultiple(ctx iris.Context) {
 		return
 	}
 
+	var dir, url string
 	form := ctx.Request().MultipartForm
-	files := form.File["files[]"]
 	failures := 0
-	dir, url, err := GetDirAndUrl(classify, files[0])
-	for _, file := range files {
-		upInfo, err := SaveUploadedFile(file, dir, url)
+	var urls []string
+	for _, file := range form.File {
+		if dir == "" {
+			dir, url, err = GetDirAndUrl(classify, file[0])
+		}
+
+		upInfo, err := SaveUploadedFile(file[0], dir, url)
 		if err != nil {
 			failures++
-			common.Response(ctx, file.Filename+"上传失败")
+			common.Response(ctx, file[0].Filename+"上传失败")
 		} else {
 			if err := initialize.DB.Create(&upInfo).Error; err != nil {
 				common.Response(ctx, err.Error())
 			}
+			urls = append(urls, upInfo.URL)
 		}
 	}
-	common.Response(ctx, len(files)-failures)
+	if classify == "article" {
+		common.Res(ctx, iris.Map{
+			"errno": 0,
+			"data":  urls,
+		})
+		return
+	}
+	common.Response(ctx, len(form.File)-failures)
 }
 
 func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*model.FileUploadInfo, error) {

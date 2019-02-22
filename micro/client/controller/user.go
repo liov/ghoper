@@ -37,15 +37,20 @@ type User struct {
 	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
 	Password    string     `gorm:"type:varchar(100)" json:"-"`
 	//Sex         uint8      `gorm:"type:tinyint(1) unsigned;not null" json:"sex"`
-	Email     string    `gorm:"type:varchar(20);unique_index;not null" json:"-"`
-	Phone     *string   `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
-	Sex       uint8     `gorm:"type:smallint;not null" json:"sex"`
-	Score     uint      `gorm:default:0" json:"score"`               //积分
-	Signature string    `gorm:"type:varchar(100)" json:"signature"`  //个人签名
-	AvatarURL string    `gorm:"type:varchar(100)" json:"avatar_url"` //头像
-	Role      uint8     `gorm:"type:smallint;default:0" json:"-"`    //管理员or用户
-	CreatedAt time.Time `json:"-"`
-	Status    uint8     `gorm:"type:smallint;default:0" json:"-"` //0 都生效，1前面生效，2后面生效，3都不生效
+	Email          string    `gorm:"type:varchar(20);unique_index;not null" json:"-"`
+	Phone          *string   `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
+	Sex            uint8     `gorm:"type:smallint;not null" json:"sex"`
+	Score          uint      `gorm:default:0" json:"score"`               //积分
+	Signature      string    `gorm:"type:varchar(100)" json:"signature"`  //个人签名
+	AvatarURL      string    `gorm:"type:varchar(100)" json:"avatar_url"` //头像
+	Role           uint8     `gorm:"type:smallint;default:0" json:"-"`    //管理员or用户
+	CreatedAt      time.Time `json:"-"`
+	Status         uint8     `gorm:"type:smallint;default:0" json:"-"` //0 都生效，1前面生效，2后面生效，3都不生效
+	ArticleCount   uint      `gorm:"default:0" json:"article_count"`   //文章数量
+	MomentCount    uint      `gorm:"default:0" json:"moment_count"`
+	DiaryBookCount uint      `gorm:"default:0" json:"diary_book_count"`
+	DiaryCount     uint      `gorm:"default:0" json:"diary_count"`
+	CommentCount   uint      `gorm:"default:0" json:"comment_count"` //评论数量
 }
 
 func sendMail(action string, title string, curTime int64, user User) {
@@ -381,7 +386,7 @@ func Login(c iris.Context) {
 }
 
 func SignInFlag(c iris.Context) {
-	user := c.GetViewData()["user"]
+	user := c.Values().Get("user")
 
 	/*session := sessions.Default(c)
 	user:= session.Get("user")
@@ -468,7 +473,7 @@ func Signup(c iris.Context) {
 
 // Logout 退出登录
 func Logout(c iris.Context) {
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	var user User
 	if userInter != nil {
 		user = userInter.(User)
@@ -500,7 +505,7 @@ func UpdateInfo(c iris.Context) {
 		common.Response(c, "参数无效")
 		return
 	}
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(User)
 
 	field := c.FormValue("field")
@@ -579,7 +584,7 @@ func UpdatePassword(c iris.Context) {
 		return
 	}
 
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(User)
 
 	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
@@ -624,7 +629,7 @@ func PublicInfo(c iris.Context) {
 
 // SecretInfo 返回用户信息，包含一些私密字段
 func SecretInfo(c iris.Context) {
-	if user := c.GetViewData()["user"]; user != nil {
+	if user := c.Values().Get("user"); user != nil {
 		common.Response(c,
 			iris.Map{
 				"user": user,
@@ -635,7 +640,7 @@ func SecretInfo(c iris.Context) {
 // InfoDetail 返回用户详情信息(教育经历、职业经历等)，包含一些私密字段
 func InfoDetail(c iris.Context) {
 
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(model.User)
 
 	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
@@ -668,7 +673,7 @@ func InfoDetail(c iris.Context) {
 // AllList 查询用户列表，只有管理员才能调此接口
 func AllList(c iris.Context) {
 
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(User)
 
 	allUserRole := []uint8{
@@ -798,7 +803,7 @@ func UploadAvatar(c iris.Context) {
 	}
 
 	avatarURL := data.URL
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(User)
 
 	if err := initialize.DB.Model(&user).Update("avatar_url", avatarURL).Error; err != nil {
@@ -847,7 +852,7 @@ func AddCareer(c iris.Context) {
 		return
 	}
 
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(User)
 	career.UserID = user.ID
 
@@ -893,7 +898,7 @@ func AddSchool(c iris.Context) {
 		return
 	}
 
-	userInter := c.GetViewData()["user"]
+	userInter := c.Values().Get("user")
 	user := userInter.(User)
 	school.UserID = user.ID
 

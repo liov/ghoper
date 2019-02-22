@@ -43,7 +43,7 @@ type User struct {
 	Articles       []Article    `json:"articles"`
 	Moments        []Moment     `json:"moments"`
 	DiaryBooks     []DiaryBook  `json:"diary_books"`
-	Diarys         []Diary      `json:"diarys"`
+	Diaries        []Diary      `json:"diaries"`
 }
 
 type Follow struct {

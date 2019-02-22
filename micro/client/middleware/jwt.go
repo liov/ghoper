@@ -30,21 +30,21 @@ func JWT(ctx iris.Context) {
 			"data": e.GetMsg(code)})
 		return
 	}
-	ctx.ViewData("user", user)
+	ctx.Values().Set("user", user)
 	ctx.Next()
 }
 
 func GetUser() iris.Handler {
 	return func(ctx iris.Context) {
 		user, _ := getUser(ctx)
-		ctx.ViewData("user", user)
+		ctx.Values().Set("user", user)
 		ctx.Next()
 	}
 }
 
 func getUser(ctx iris.Context) (controller.User, error) {
 	var user controller.User
-	tokenString := ctx.GetHeader("token")
+	tokenString := ctx.GetCookie("token")
 	if len(tokenString) == 0 {
 		tokenString = ctx.GetHeader("Authorization")
 	}
@@ -75,17 +75,6 @@ func getUser(ctx iris.Context) (controller.User, error) {
 	return user, errors.New("未登录")
 }
 
-// SetContextUser 给 context 设置 user
-func SetContextUser(ctx iris.Context) {
-	var user controller.User
-	var err error
-	if user, err = getUser(ctx); err != nil {
-		ctx.ViewData("user", nil)
-		return
-	}
-	ctx.ViewData("user", user)
-}
-
 // SigninRequired 必须是登录用户
 func SigninRequired(ctx iris.Context) {
 
@@ -95,7 +84,7 @@ func SigninRequired(ctx iris.Context) {
 		common.Response(ctx, "未登录", e.LoginTimeout)
 		return
 	}
-	ctx.ViewData("user", user)
+	ctx.Values().Set("user", user)
 }
 
 // EditorRequired 必须是网站编辑
@@ -108,7 +97,7 @@ func EditorRequired(ctx iris.Context) {
 		return
 	}
 	if user.Role == model.UserRoleEditor || user.Role == model.UserRoleAdmin || user.Role == model.UserRoleCrawler || user.Role == model.UserRoleSuperAdmin {
-		ctx.ViewData("user", user)
+		ctx.Values().Set("user", user)
 	} else {
 		common.Response(ctx, "没有权限", 1003)
 	}
@@ -124,7 +113,7 @@ func AdminRequired(ctx iris.Context) {
 		return
 	}
 	if user.Role == model.UserRoleAdmin || user.Role == model.UserRoleCrawler || user.Role == model.UserRoleSuperAdmin {
-		ctx.ViewData("user", user)
+		ctx.Values().Set("user", user)
 	} else {
 		common.Response(ctx, "没有权限", 1003)
 	}

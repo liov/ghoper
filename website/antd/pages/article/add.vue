@@ -14,11 +14,11 @@
             <a-radio-button value="markdown">
               markdown
             </a-radio-button>
-            <a-radio-button value="rich">
+            <a-radio-button value="html">
               富文本
             </a-radio-button>
           </a-radio-group>
-          <a-button v-if="editorType==='rich'">
+          <a-button v-if="editorType==='html'" @click="save">
             <a-icon type="save" />
           </a-button>
         </a-form-item>
@@ -79,12 +79,13 @@
             :wrapper-col="{span:6}"
           >
             <a-select
-              v-model="article.categories"
+              v-model="categories"
+              mode="multiple"
               placeholder="请选择分类"
               :default-value="[]"
               style="width: 200px"
             >
-              <a-select-option v-for="(item,index) in existTags" :key="index">
+              <a-select-option v-for="(item,index) in existCategories" :key="index">
                 {{ item }}
               </a-select-option>
             </a-select>
@@ -98,13 +99,13 @@
             :wrapper-col="{span: 6}"
           >
             <a-select
-              v-model="article.tags"
+              v-model="tags"
               mode="multiple"
               placeholder="请选择标签"
               :default-value="[]"
               style="width: 200px"
             >
-              <a-select-option v-for="(item,index) in existTags" :key="index">
+              <a-select-option v-for="item in existTags" :key="item">
                 {{ item }}
               </a-select-option>
             </a-select>
@@ -163,7 +164,7 @@
     </div>
     <div id="editor">
       <mavon-editor v-show="editorType==='markdown'" ref="md" @imgAdd="imgAdd" @save="save" />
-      <div v-show="editorType==='rich'" id="weditor" />
+      <div v-show="editorType==='html'" id="weditor" />
     </div>
   </div>
 </template>
@@ -183,6 +184,7 @@ function getBase64(img, callback) {
   reader.readAsDataURL(img)
 }
 export default {
+  middleware: 'auth',
   components: {
     mavonEditor
     // or 'mavon-editor': mavonEditor
@@ -191,22 +193,26 @@ export default {
     return {
       editorType: 'markdown',
       article: {
-        categories: '',
+        categories: [],
         tags: [],
         permission: 0
       },
       showImage: false,
       imageUrl: '',
-      categories: '',
+      existCategories: ['小说', '散文', '戏剧', '诗歌'],
       existTags: ['韩雪', '徐峥', '胡歌', '张卫健'],
-      tag: ''
+      tag: '',
+      categories: [],
+      tags: [],
+      editor: {}
     }
   },
   created() {},
   mounted() {
     // const editor = new MediumEditor('.editable', {})
-    const editor = new E('#weditor')
-    editor.create()
+    this.editor = new E('#weditor')
+    this.editor.customConfig.uploadImgServer = '/api/upload_multiple/article'
+    this.editor.create()
   },
   methods: {
     handleChange(e) {
@@ -240,7 +246,7 @@ export default {
     addTag: function() {
       if (this.tag !== '' && this.existTags.indexOf(this.tag) === -1) {
         this.existTags.push(this.tag)
-        this.article.tags.push(this.existTags.length - 1)
+        this.article.tags.push(this.tag)
         this.tag = ''
       } else if (this.tag === '') this.$message.error('标签为空')
       else this.$message.error('标签重复')
@@ -267,7 +273,18 @@ export default {
     save(value) {
       const vm = this
       this.article.contentType = this.editorType
-      this.article.content = value
+      if (this.editorType === 'markdown') this.article.content = value
+      else {
+        this.article.html_content = this.editor.txt.html()
+        this.article.content = this.editor.txt.text()
+      }
+
+      for (const i of this.tags) {
+        this.article.tags.push({ name: i })
+      }
+      for (const i of this.categories) {
+        this.article.categories.push({ id: i })
+      }
       axios
         .post(`/api/article`, this.article)
         .then(function(res) {
