@@ -163,7 +163,7 @@
       </a-row>
     </div>
     <div id="editor">
-      <mavon-editor v-show="editorType==='markdown'" ref="md" @imgAdd="imgAdd" @save="save" />
+      <mavon-editor v-show="editorType==='markdown'" ref="md" style="height: 650px" @imgAdd="imgAdd" @save="save" />
       <div v-show="editorType==='html'" id="weditor" />
     </div>
   </div>
@@ -212,6 +212,7 @@ export default {
     // const editor = new MediumEditor('.editable', {})
     this.editor = new E('#weditor')
     this.editor.customConfig.uploadImgServer = '/api/upload_multiple/article'
+    this.editor.customConfig.height = '550px'
     this.editor.create()
   },
   methods: {
