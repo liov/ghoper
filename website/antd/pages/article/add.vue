@@ -1,11 +1,11 @@
 <template>
   <div class="article">
     <a-row>
-      <a-col :span="4">
+      <a-col :span="5">
         <a-form-item
           label=""
-          :label-col="{span: 4,offset:4}"
-          :wrapper-col="{span: 24,offset:4}"
+          :label-col="{span: 4,offset:2}"
+          :wrapper-col="{span: 24,offset:2}"
         >
           <a-radio-group
             default-value="markdown"
@@ -18,13 +18,16 @@
               富文本
             </a-radio-button>
           </a-radio-group>
+          <a-button v-if="editorType==='rich'">
+            <a-icon type="save" />
+          </a-button>
         </a-form-item>
       </a-col>
       <a-col :span="12">
         <a-form-item
           label="标题"
           required
-          :label-col="{span: 6}"
+          :label-col="{span: 4}"
           :wrapper-col="{span: 18}"
         >
           <a-input
@@ -37,25 +40,30 @@
         <a-form-item
           label="封面"
           :label-col="{span: 6}"
-          :wrapper-col="{span:18}"
+          :wrapper-col="{span:15}"
         >
-          <a-upload
-            name="file"
-            action="/api/upload/article"
-            :before-upload="beforeUpload"
-            @change="uploadChange"
-          >
-            <a-button>
-              <a-icon type="upload" /> 上传封面
-            </a-button>
-          </a-upload>
+          <a-row>
+            <a-col :span="16">
+              <a-upload
+                name="file"
+                action="/api/upload/article"
+                :before-upload="beforeUpload"
+                @change="uploadChange"
+              >
+                <a-button>
+                  <a-icon type="upload" /> 上传封面
+                </a-button>
+              </a-upload>
+            </a-col>
+            <a-col :span="8">
+              <a-button class="formbuttion" @click="showImage=!showImage">
+                <span v-if="!showImage">显示封面</span>
+                <span v-if="showImage">不显示封面</span>
+              </a-button>
+            </a-col>
+          </a-row>
         </a-form-item>
       </a-col>
-
-      <a-button id="display" @click="showImage=!showImage">
-        <span v-if="!showImage">显示封面</span>
-        <span v-if="showImage">不显示封面</span>
-      </a-button>
     </a-row>
 
     <div align="center">
@@ -71,6 +79,7 @@
             :wrapper-col="{span:6}"
           >
             <a-select
+              v-model="article.categories"
               placeholder="请选择分类"
               :default-value="[]"
               style="width: 200px"
@@ -89,6 +98,7 @@
             :wrapper-col="{span: 6}"
           >
             <a-select
+              v-model="article.tags"
               mode="multiple"
               placeholder="请选择标签"
               :default-value="[]"
@@ -102,26 +112,48 @@
         </a-col>
         <a-col :span="6">
           <a-form-item
+            label="新标签"
+            required
+            :label-col="{span:6}"
+            :wrapper-col="{span: 12}"
+          >
+            <a-row>
+              <a-col :span="16">
+                <a-input
+                  v-model="tag"
+                />
+              </a-col>
+              <a-col :span="6">
+                <a-button class="formbuttion" @click="addTag">
+                  添加
+                </a-button>
+              </a-col>
+            </a-row>
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item
             label="权限"
             required
             :label-col="{span: 4}"
             :wrapper-col="{span:6}"
           >
             <a-select
+              v-model="article.permission"
               placeholder="请选择权限"
-              :default-value="['0']"
+              :default-value="[0]"
               style="width: 200px"
             >
-              <a-select-option value="0">
+              <a-select-option :key="0">
                 全部可见
               </a-select-option>
-              <a-select-option value="1">
+              <a-select-option :key="1">
                 自己可见
               </a-select-option>
-              <a-select-option value="2" disabled>
+              <a-select-option :key="2" disabled>
                 部分可见
               </a-select-option>
-              <a-select-option value="3">
+              <a-select-option :key="3" disabled>
                 陌生人可见
               </a-select-option>
             </a-select>
@@ -130,8 +162,7 @@
       </a-row>
     </div>
     <div id="editor">
-      <mavon-editor v-show="editorType==='markdown'" style="height: 20%" />
-
+      <mavon-editor v-show="editorType==='markdown'" ref="md" @imgAdd="imgAdd" @save="save" />
       <div v-show="editorType==='rich'" id="weditor" />
     </div>
   </div>
@@ -145,7 +176,6 @@ import 'mavon-editor/dist/css/index.css'
 import E from 'wangeditor'
 import 'wangeditor/release/wangEditor.css'
 import axios from 'axios'
-import ARow from 'ant-design-vue/es/grid/Row'
 
 function getBase64(img, callback) {
   const reader = new FileReader()
@@ -154,25 +184,25 @@ function getBase64(img, callback) {
 }
 export default {
   components: {
-    ARow,
     mavonEditor
     // or 'mavon-editor': mavonEditor
   },
   data() {
     return {
       editorType: 'markdown',
-      article: {},
+      article: {
+        categories: '',
+        tags: [],
+        permission: 0
+      },
       showImage: false,
       imageUrl: '',
+      categories: '',
       existTags: ['韩雪', '徐峥', '胡歌', '张卫健'],
-      tagsGroup: [],
-      Tags: [],
       tag: ''
     }
   },
-  created() {
-    this.tagsGroup = this.tagGroup(this.existTags, 3)
-  },
+  created() {},
   mounted() {
     // const editor = new MediumEditor('.editable', {})
     const editor = new E('#weditor')
@@ -188,7 +218,7 @@ export default {
         return
       }
       if (info.file.status === 'done') {
-        this.$message.error(info.file.response.data.url)
+        this.article.imageUrl = info.file.response.data.url
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => {
           this.imageUrl = imageUrl
@@ -199,36 +229,55 @@ export default {
     beforeUpload(file) {
       const isImg = /image\//.test(file.type)
       if (!isImg) {
-        this.$message.error('You can only upload JPG file!')
+        this.$message.error('只能上传图片!')
       }
-      const isLt2M = file.size / 1024 / 1024 < 3
+      const isLt2M = file.size / 1024 / 1024 < 4
       if (!isLt2M) {
-        this.$message.error('Image must smaller than 4MB!')
+        this.$message.error('不能超过 4MB!')
       }
       return isImg && isLt2M
     },
     addTag: function() {
       if (this.tag !== '' && this.existTags.indexOf(this.tag) === -1) {
         this.existTags.push(this.tag)
-        if (this.tagsGroup[this.tagsGroup.length - 1].length === 3) {
-          this.tagsGroup.push([this.tag])
-        } else {
-          this.tagsGroup[this.tagsGroup.length - 1].push(this.tag)
-        }
-        this.Tags.push(this.tag)
+        this.article.tags.push(this.existTags.length - 1)
         this.tag = ''
-      } else if (this.tag === '') this.$toast('标签为空')
-      else this.$toast('标签重复')
+      } else if (this.tag === '') this.$message.error('标签为空')
+      else this.$message.error('标签重复')
     },
-    toggle(index) {
-      this.$refs.checkboxes[index].toggle()
+    imgAdd(pos, $file) {
+      // 第一步.将图片上传到服务器.
+      const formdata = new FormData()
+      formdata.append('file', $file)
+      axios({
+        url: '/api/upload/article',
+        method: 'post',
+        data: formdata,
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).then(res => {
+        // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
+        /**
+         * $vm 指为mavonEditor实例，可以通过如下两种方式获取
+         * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，`$vm`为`mavonEditor`
+         * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
+         */
+        this.$refs.md.$img2Url(pos, res.data.data.url)
+      })
     },
-    tagGroup: function(arr, size) {
-      const arr2 = []
-      for (let i = 0; i < arr.length; i = i + size) {
-        arr2.push(arr.slice(i, i + size))
-      }
-      return arr2
+    save(value) {
+      const vm = this
+      this.article.contentType = this.editorType
+      this.article.content = value
+      axios
+        .post(`/api/article`, this.article)
+        .then(function(res) {
+          // success
+          if (res.data.msg === '保存成功') vm.$router.push({ path: '/article' })
+          else vm.$message.error(res.data.msg)
+        })
+        .catch(function(err) {
+          vm.$message.error(err)
+        })
     }
   }
 }
@@ -244,8 +293,8 @@ export default {
 #editor {
   margin: auto;
 }
-#display {
-  margin-top: 3px;
+.formbuttion {
+  margin-top: 4px;
 }
 #tag {
   position: relative;
