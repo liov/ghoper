@@ -8,6 +8,8 @@ type Article struct {
 	ID            uint             `gorm:"primary_key" json:"id"`
 	CreatedAt     time.Time        `json:"created_at"`
 	Title         string           `gorm:"type:varchar(100)" json:"title"`
+	Intro         string           `gorm:"type:varchar(100)" json:"intro"`
+	Abstract      string           `gorm:"type:varchar(200)" json:"abstract"`
 	Content       string           `gorm:"type:text" json:"content"`
 	HTMLContent   string           `gorm:"type:text" json:"html_content"`
 	ContentType   int              `json:"content_type"`                                 //文本类型
@@ -24,7 +26,7 @@ type Article struct {
 	LoveCount     uint             `gorm:"default:0" json:"love_count"` //点赞
 	LoveUsers     []User           `gorm:"many2many:article_love" json:"love_users"`
 	Permission    uint8            `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	DescFlag      uint8            `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
+	Sort          uint8            `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`
 	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
 	Status        uint             `json:"status"`                        //状态

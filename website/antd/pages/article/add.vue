@@ -225,7 +225,7 @@ export default {
         return
       }
       if (info.file.status === 'done') {
-        this.article.imageUrl = info.file.response.data.url
+        this.article.image_url = info.file.response.data.url
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, imageUrl => {
           this.imageUrl = imageUrl
@@ -290,7 +290,7 @@ export default {
         .post(`/api/article`, this.article)
         .then(function(res) {
           // success
-          if (res.data.msg === '保存成功') vm.$router.push({ path: '/article' })
+          if (res.data.code === 200) vm.$router.push({ path: '/article' })
           else vm.$message.error(res.data.msg)
         })
         .catch(function(err) {

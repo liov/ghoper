@@ -27,7 +27,7 @@ type Diary struct {
 	LoveCount    uint           `gorm:"default:0" json:"love_count"` //点赞
 	LoveUsers    []User         `gorm:"many2many:diary_love" json:"love_users"`
 	Permission   uint8          `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	DescFlag     uint8          `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
+	Sort         uint8          `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	Status       uint8          `gorm:"type:smallint;default:0" json:"status"`     //状态
 	ModifyTimes  uint           `gorm:"default:0" json:"modify_times"`             //修改次数
 	ParentID     uint           `json:"parent_id"`                                 //父节点
@@ -64,7 +64,7 @@ type DiaryBook struct {
 	UpdatedAt    *time.Time         `json:"updated_at"`
 	DeletedAt    *time.Time         `sql:"index" json:"deleted_at"`
 	Title        string             `gorm:"type:varchar(100)" json:"title"`
-	Diarys       []Diary            `json:"diarys"`
+	Diaries      []Diary            `json:"diaries"`
 	Description  string             `gorm:"type:varchar(500)" json:"description"` //描述
 	Tags         []Tag              `gorm:"many2many:diary_book_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	Comments     []DiaryBookComment `json:"comments"` //评论
@@ -78,7 +78,7 @@ type DiaryBook struct {
 	LoveCount    uint               `gorm:"default:0" json:"love_count"` //点赞
 	LoveUsers    []User             `gorm:"many2many:diary_book_love" json:"love_users"`
 	Permission   int8               `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	DescFlag     uint8              `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
+	Sort         uint8              `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	Status       uint8              `gorm:"type:smallint;default:0" json:"status"`     //状态
 	ModifyTimes  uint               `gorm:"default:0" json:"modify_times"`             //修改次数
 	ParentID     uint               `json:"parent_id"`                                 //父节点
@@ -88,7 +88,7 @@ type DiaryBookHistory struct {
 	ID           uint               `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time          `json:"created_at"`
 	Title        string             `gorm:"type:varchar(100)" json:"title"`
-	Diarys       []Diary            `json:"diarys"`
+	Diaries      []Diary            `json:"diaries"`
 	Description  string             `gorm:"type:varchar(500)" json:"description"` //描述
 	Tags         []Tag              `gorm:"many2many:diary_book_history_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	Comments     []DiaryBookComment `json:"comments"` //评论

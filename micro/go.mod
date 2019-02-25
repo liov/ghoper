@@ -16,6 +16,7 @@ require (
 	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/bluele/gcache v0.0.0-20190203144525-2016d595ccb0
 	github.com/boombuler/barcode v1.0.0
+	github.com/bytedance/go-tagexpr v1.1.3 // indirect
 	github.com/certifi/gocertifi v0.0.0-20190105021004-abcd57078448 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/eapache/go-resiliency v1.1.0 // indirect
@@ -29,6 +30,7 @@ require (
 	github.com/gin-gonic/gin v1.3.0 // indirect
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
+	github.com/go-swagger/go-swagger v0.18.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -66,6 +68,7 @@ require (
 	github.com/klauspost/compress v1.4.1 // indirect
 	github.com/klauspost/cpuid v1.2.0 // indirect
 	github.com/lib/pq v1.0.0 // indirect
+	github.com/lni/dragonboat v2.1.0+incompatible // indirect
 	github.com/markbates/goth v1.49.0
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect

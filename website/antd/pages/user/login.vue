@@ -201,12 +201,13 @@ export default {
         .then(res => {
           //
           // success
-          if (res.data.msg === '登录成功') {
+          if (res.data.code === 200) {
             localStorage.setItem('token', res.data.token)
             vm.$store.commit('SET_USER', res.data.data)
             vm.$store.commit('SET_TOKEN', res.data.token)
             localStorage.setItem('user', res.data.data.id)
             vm.$message.info('登录成功')
+            vm.$router.replace(vm.$route.query.callbackUrl)
             // vm.$router.replace('/')
           } else if (res.data.msg === '账号未激活') {
             vm.$message.warning(res.data.user.email)

@@ -12,11 +12,16 @@ import (
 )
 
 type Tag struct {
-	Description string    `gorm:"type:varchar(100)" json:"description"`
-	Name        string    `gorm:"type:varchar(10);primary_key" json:"name"`
-	Count       uint      `gorm:"default:0" json:"count"`
-	CreatedAt   time.Time `json:"created_at"`
-	CreatedBy   uint      `json:"created_by"`
+	Name        string     `gorm:"type:varchar(10);primary_key" json:"name"`
+	Description string     `gorm:"type:varchar(100)" json:"description"`
+	DeletedAt   *time.Time `sql:"index"`
+	CreatedBy   User       `gorm:"-" json:"created_by"`
+	UserID      uint       `json:"user_id"`
+	Count       uint       `gorm:"default:0" json:"count"`
+	Sort        uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	Status      uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 func GetTags(c iris.Context) {
@@ -56,8 +61,8 @@ func AddTag(c iris.Context) bool {
 	name := c.URLParam("name")
 	user := c.GetViewData()["user"].(User)
 	initialize.DB.Create(&Tag{
-		Name:      name,
-		CreatedBy: user.ID,
+		Name:   name,
+		UserID: user.ID,
 	})
 
 	return true

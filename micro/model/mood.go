@@ -14,8 +14,9 @@ type Mood struct {
 		ArticleCount   uint   `json:"article_count"`
 		DiaryBookCount uint   `json:"diary_book_count"`
 		DiaryCount     uint   `json:"diary_count"`*/
+	Count     uint       `gorm:"default:0" json:"count"`
+	Sort      uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
-	Count     uint       `gorm:"default:0" json:"count"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }

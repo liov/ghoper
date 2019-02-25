@@ -6,6 +6,8 @@ import "time"
 type Career struct {
 	ID        uint       `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
+	StartTime time.Time  `json:"start_time"`
+	EndTime   time.Time  `json:"end_time"`
 	Company   string     `json:"company"` //公司或组织
 	Title     string     `json:"title"`   //职位
 	UserID    uint       `json:"user_id"`

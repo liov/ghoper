@@ -396,7 +396,7 @@ func SignInFlag(c iris.Context) {
 		user = *user.(*User)
 	}*/
 	//跟前端的store初始化配合
-	common.Response(c, user, "登录成功")
+	common.Response(c, user, "登录成功", e.SUCCESS)
 }
 
 // Signup 用户注册

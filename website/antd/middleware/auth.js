@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default function({ store, error, req, redirect }) {
+export default function({ store, error, req, route, redirect }) {
   if (!store.state.user) {
     if (process.server) {
       if (req.headers.cookie) {
@@ -14,12 +14,14 @@ export default function({ store, error, req, redirect }) {
               const user = res.data.data
               store.commit('SET_USER', user)
             } else {
-              redirect({ path: '/user/login' })
+              redirect({
+                path: '/user/login?callbackUrl=' + route.currentRoute.path
+              })
             }
           })
         }
       } else {
-        redirect({ path: '/user/login' })
+        redirect({ path: '/user/login?callbackUrl=' + route.currentRoute.path })
       }
     } else {
       axios.get(`/api/user/get`).then(res => {
@@ -27,7 +29,9 @@ export default function({ store, error, req, redirect }) {
           const user = res.data.data
           store.commit('SET_USER', user)
         } else {
-          redirect({ path: '/user/login' })
+          route.push({
+            path: '/user/login?callbackUrl=' + route.currentRoute.path
+          })
         }
       })
     }

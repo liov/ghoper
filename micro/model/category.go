@@ -9,6 +9,7 @@ type Category struct {
 	Sequence       int        `json:"sequence"`  //同级别的分类可根据sequence的值来排序
 	ParentID       int        `json:"parent_id"` //直接父分类的ID
 	Articles       []Article  `json:"articles"`
+	Sort           uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
 	MomentCount    uint       `json:"moment_count"`
 	ArticleCount   uint       `json:"article_count"`
 	DiaryBookCount uint       `json:"diary_book_count"`

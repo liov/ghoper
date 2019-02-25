@@ -5,29 +5,29 @@ import (
 )
 
 type Moment struct {
-	ID             uint            `gorm:"primary_key" json:"id"`
-	CreatedAt      time.Time       `json:"created_at"`
-	Content        string          `gorm:"type:varchar(500)" json:"content"`
-	ImageUrl       string          `gorm:"type:varchar(100)" json:"image_url"` //图片
-	Mood           Mood            `gorm:"foreignkey:MoodName;association_foreignkey:Name" json:"mood"`
-	MoodName       string          `gorm:"type:varchar(20)" json:"mood_name"`
-	Tags           []Tag           `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
-	Comments       []MomentComment `json:"comments"` //评论
-	User           User            `json:"user"`
-	UserID         uint            `json:"user_id"`
-	UpdatedAt      *time.Time      `json:"updated_at"`
-	DeletedAt      *time.Time      `sql:"index" json:"deleted_at"`
-	BrowseCount    uint            `json:"browse_count"`  //浏览
-	CommentCount   uint            `json:"comment_count"` //评论
-	CollectCount   uint            `json:"collect_count"` //收藏
-	CollectUsers   []User          `gorm:"many2many:moment_collection" json:"collect_users"`
-	LoveCount      uint            `json:"love_count"` //点赞
-	LoveUsers      []User          `gorm:"many2many:moment_love" json:"love_users"`
-	DescFlag       uint8           `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
-	Permission     uint8           `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	Status         uint8           `gorm:"type:smallint;default:0" json:"status"`     //状态
-	ModifyTimes    uint            `gorm:"default:0" json:"modify_times"`             //修改次数
-	MomentHistorys []MomentHistory `json:"moment_historys"`
+	ID              uint            `gorm:"primary_key" json:"id"`
+	CreatedAt       time.Time       `json:"created_at"`
+	Content         string          `gorm:"type:varchar(500)" json:"content"`
+	ImageUrl        string          `gorm:"type:varchar(100)" json:"image_url"` //图片
+	Mood            Mood            `gorm:"foreignkey:MoodName;association_foreignkey:Name" json:"mood"`
+	MoodName        string          `gorm:"type:varchar(20)" json:"mood_name"`
+	Tags            []Tag           `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
+	Comments        []MomentComment `json:"comments"` //评论
+	User            User            `json:"user"`
+	UserID          uint            `json:"user_id"`
+	UpdatedAt       *time.Time      `json:"updated_at"`
+	DeletedAt       *time.Time      `sql:"index" json:"deleted_at"`
+	BrowseCount     uint            `json:"browse_count"`  //浏览
+	CommentCount    uint            `json:"comment_count"` //评论
+	CollectCount    uint            `json:"collect_count"` //收藏
+	CollectUsers    []User          `gorm:"many2many:moment_collection" json:"collect_users"`
+	LoveCount       uint            `json:"love_count"` //点赞
+	LoveUsers       []User          `gorm:"many2many:moment_love" json:"love_users"`
+	Sort            uint8           `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
+	Permission      uint8           `gorm:"type:smallint;default:0" json:"permission"` //查看权限
+	Status          uint8           `gorm:"type:smallint;default:0" json:"status"`     //状态
+	ModifyTimes     uint            `gorm:"default:0" json:"modify_times"`             //修改次数
+	MomentHistories []MomentHistory `json:"moment_histories"`
 }
 
 type MomentHistory struct {

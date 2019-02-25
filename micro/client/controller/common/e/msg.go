@@ -25,6 +25,8 @@ const (
 	ErrorUploadCheckImageFail = 30002
 	// 校验图片错误，图片格式或大小有问题
 	ErrorUploadCheckImageFormat = 30003
+	//尝试次数过多
+	TimeTooMuch = 40001
 )
 
 var MsgFlags = map[int]string{

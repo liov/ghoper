@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
@@ -22,23 +23,25 @@ type Article struct {
 	ID            uint             `gorm:"primary_key" json:"id"`
 	CreatedAt     time.Time        `json:"created_at"`
 	Title         string           `gorm:"type:varchar(100)" json:"title"`
+	Intro         string           `gorm:"type:varchar(100)" json:"intro"`
+	Abstract      string           `gorm:"type:varchar(200)" json:"abstract"`
 	Content       string           `gorm:"type:text" json:"content"`
 	HTMLContent   string           `gorm:"type:text" json:"html_content"`
-	ContentType   int              `json:"content_type"`                       //文本类型
-	ImageUrl      string           `gorm:"type:varchar(100)" json:"image_url"` //封面
-	Categories    []Category       `gorm:"-" json:"categories"`                //分类
-	Tags          []Tag            `gorm:"-" json:"tags"`
-	User          User             `gorm:"-" json:"user"`
+	ContentType   int              `json:"content_type"`                                 //文本类型
+	ImageUrl      string           `gorm:"type:varchar(100)" json:"image_url"`           //封面
+	Categories    []Category       `gorm:"many2many:article_category" json:"categories"` //分类
+	Tags          []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
+	User          User             `json:"user"`
 	UserID        uint             `json:"user_id"`
-	Comments      []ArticleComment `gorm:"-" json:"comments"`              //评论
+	Comments      []ArticleComment `json:"comments"`                       //评论
 	BrowseCount   uint             `json:"browse_count"`                   //浏览
 	CommentCount  uint             `gorm:"default:0" json:"comment_count"` //评论
 	CollectCount  uint             `gorm:"default:0" json:"collect_count"` //收藏
-	CollectUsers  []User           `gorm:"-" gorm:"many2many:article_collection" json:"collect_users"`
+	CollectUsers  []User           `gorm:"many2many:article_collection" json:"collect_users"`
 	LoveCount     uint             `gorm:"default:0" json:"love_count"` //点赞
-	LoveUsers     []User           `gorm:"-" gorm:"many2many:article_love" json:"love_users"`
+	LoveUsers     []User           `gorm:"many2many:article_love" json:"love_users"`
 	Permission    uint8            `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	DescFlag      uint8            `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
+	Sort          uint8            `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`
 	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
 	Status        uint             `json:"status"`                        //状态
@@ -79,8 +82,8 @@ func GetArticle(c iris.Context) {
 
 func GetArticles(c iris.Context) {
 
-	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
-	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
+	pageNo := c.URLParam("pageNo")
+	pageSize := c.URLParam("pageSize")
 	orderType := c.URLParam("orderType")
 
 	tagID := c.URLParam("tagID")
@@ -88,28 +91,29 @@ func GetArticles(c iris.Context) {
 	categories := c.URLParam("categories")
 
 	orderStr := "created_at"
-	if orderType != "" {
-		switch orderType {
-		case "1":
-			orderStr = "created_at"
-		case "2":
-			orderStr = "like_count"
-		case "3":
-			orderStr = "comment_count"
-		}
-	}
-	order := "desc_flag desc" + orderStr + "desc"
 
-	maps := map[string]interface{}{
+	if orderType != "" {
+		orderStr = orderType
+	}
+	/*		switch orderType {
+			case "1":
+				orderStr = "created_at"
+			case "2":
+				orderStr = "like_count"
+			case "3":
+				orderStr = "comment_count"
+			}
+		}*/
+	order := "sort desc," + orderStr + " desc"
+
+	/*	maps := map[string]interface{}{
 
 		"tag_id": tagID,
 
-		"keyword": keyword,
-
 		"categories": categories,
-	}
+	}*/
 
-	var articles, cacheArticle []*model.Article
+	var articles, cacheArticles []model.Article
 
 	key := strings.Join([]string{
 		gredis.CacheArticle,
@@ -117,24 +121,48 @@ func GetArticles(c iris.Context) {
 		tagID, keyword, categories, orderStr,
 	}, "_")
 
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
 	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
+		data, err := redis.Bytes(conn.Do("GET", key))
+		count, err := redis.Int(conn.Do("GET", key+"_count"))
+		common.Json.Unmarshal(data, &cacheArticles)
 		if err != nil {
 			logging.Info(err)
 		} else {
-			json.Unmarshal(data, &cacheArticle)
-			common.Response(c, cacheArticle)
+			common.Res(c, iris.Map{
+				"data":  cacheArticles,
+				"count": count,
+				"msg":   e.GetMsg(e.SUCCESS),
+				"code":  e.SUCCESS,
+			})
 			return
 		}
 	}
-
-	err := initialize.DB.Preload("Tag").Where(maps).Order(order).Offset(pageNo).Limit(pageSize).Find(&articles).Error
+	var count int
+	err := initialize.DB.Order(order).Offset(pageNo).Limit(pageSize).Find(&articles).Count(&count).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
-	gredis.Set(key, articles, 3600)
+	for i, a := range articles {
+		var tags []model.Tag
+		initialize.DB.Model(&a).Related(&tags, "Tags")
+		articles[i].Tags = tags
+	}
 
-	common.Response(c, articles)
+	as, _ := common.Json.Marshal(articles)
+	conn.Do("SET", key, as)
+	conn.Do("EXPIRE", key, 3600)
+	conn.Do("SET", key+"_count", strconv.Itoa(count))
+	conn.Do("EXPIRE", key+"_count", 3600)
+
+	common.Res(c, iris.Map{
+		"data":  articles,
+		"count": count,
+		"msg":   e.GetMsg(e.SUCCESS),
+		"code":  e.SUCCESS,
+	})
 }
 
 func articleValidation(c iris.Context, article *Article) (err error) {
@@ -178,7 +206,7 @@ func articleValidation(c iris.Context, article *Article) (err error) {
 
 	if len(article.Categories) > model.MaxCategoryCount {
 		msg := "文章最多属于" + strconv.Itoa(model.MaxCategoryCount) + "个版块"
-		common.Response(c, msg)
+		common.Response(c, msg, e.ERROR)
 		return
 	}
 
@@ -203,14 +231,14 @@ func AddArticle(c iris.Context) {
 		model.ArticleMinuteLimitCount,
 		model.ArticleDayLimit,
 		model.ArticleMinuteLimitCount, user.ID); limitErr != "" {
-		common.Response(c, limitErr)
+		common.Response(c, limitErr, e.TimeTooMuch)
 		return
 	}
 
 	var article Article
 
 	if err := c.ReadJSON(&article); err != nil {
-		common.Response(c, "参数无效")
+		common.Response(c, "参数无效", e.ERROR)
 		return
 	}
 
@@ -233,13 +261,23 @@ func AddArticle(c iris.Context) {
 	if article.HTMLContent != "" {
 		article.HTMLContent = utils.AvoidXSS(article.HTMLContent)
 	}
-	saveErr := initialize.DB.Create(&article).Error
+
+	if s := []rune(article.Content); len(s) > 200 {
+
+		article.Intro = string(s[:200])
+		article.Abstract = string(s[:200])
+	} else {
+		article.Intro = article.Content
+		article.Abstract = article.Content
+	}
+
+	saveErr := initialize.DB.Set("gorm:association_autocreate", false).Create(&article).Error
 	nowTime := time.Now()
 	for _, v := range article.Tags {
 		if tag := ExistTagByName(v.Name); tag != nil {
 			initialize.DB.Model(tag).Update("count", tag.Count+1)
 		} else {
-			newTag := Tag{CreatedAt: nowTime, Name: v.Name, Count: 1}
+			newTag := Tag{CreatedAt: nowTime, Name: v.Name, Count: 1, UserID: user.ID}
 			initialize.DB.Create(&newTag)
 		}
 		momentTag := model.ArticleTag{ArticleID: article.ID, TagName: v.Name}
@@ -265,7 +303,7 @@ func AddArticle(c iris.Context) {
 		return
 	}
 
-	common.Response(c, "创建成功")
+	common.Response(c, "保存成功", e.SUCCESS)
 }
 
 func historyArticle(c iris.Context, isDel uint) (model.ArticleHistory, model.Article, error) {
@@ -315,7 +353,7 @@ func EditArticle(c iris.Context) {
 	}
 
 	if err := c.ReadJSON(&article); err != nil {
-		common.Response(c, "参数无效")
+		common.Response(c, "参数无效", e.ERROR)
 		return
 	}
 
@@ -329,7 +367,7 @@ func EditArticle(c iris.Context) {
 		return
 	}
 
-	common.Response(c, e.SUCCESS, "修改成功")
+	common.Response(c, "修改成功", e.SUCCESS)
 }
 
 func DeleteArticle(c iris.Context) {
