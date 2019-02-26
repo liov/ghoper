@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
@@ -82,13 +81,13 @@ func GetArticle(c iris.Context) {
 
 func GetArticles(c iris.Context) {
 
-	pageNo := c.URLParam("pageNo")
-	pageSize := c.URLParam("pageSize")
+	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 	orderType := c.URLParam("orderType")
 
-	tagID := c.URLParam("tagID")
-	keyword := c.URLParam("keyword")
-	categories := c.URLParam("categories")
+	/*	tagID := c.URLParam("tagID")
+		keyword := c.URLParam("keyword")
+		categories := c.URLParam("categories")*/
 
 	orderStr := "created_at"
 
@@ -113,8 +112,9 @@ func GetArticles(c iris.Context) {
 		"categories": categories,
 	}*/
 
-	var articles, cacheArticles []model.Article
+	var articles []model.Article
 
+	/*var  cacheArticles []model.Article
 	key := strings.Join([]string{
 		gredis.CacheArticle,
 		"LIST",
@@ -139,9 +139,10 @@ func GetArticles(c iris.Context) {
 			})
 			return
 		}
-	}
+	}*/
 	var count int
-	err := initialize.DB.Order(order).Offset(pageNo).Limit(pageSize).Find(&articles).Count(&count).Error
+	err := initialize.DB.Order(order).Offset(pageNo * pageSize).Limit(pageSize).Find(&articles).Error
+	initialize.DB.Table("article").Count(&count)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
@@ -151,11 +152,11 @@ func GetArticles(c iris.Context) {
 		articles[i].Tags = tags
 	}
 
-	as, _ := common.Json.Marshal(articles)
-	conn.Do("SET", key, as)
-	conn.Do("EXPIRE", key, 3600)
-	conn.Do("SET", key+"_count", strconv.Itoa(count))
-	conn.Do("EXPIRE", key+"_count", 3600)
+	/*	as, _ := common.Json.Marshal(articles)
+		conn.Do("SET", key, as)
+		conn.Do("EXPIRE", key, 3600)
+		conn.Do("SET", key+"_count", strconv.Itoa(count))
+		conn.Do("EXPIRE", key+"_count", 3600)*/
 
 	common.Res(c, iris.Map{
 		"data":  articles,
