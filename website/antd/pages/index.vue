@@ -3,7 +3,7 @@
     <div>
       <logo />
       <h1 class="title">
-        antd
+        hoper
       </h1>
       <h2 class="subtitle">
         hoper
