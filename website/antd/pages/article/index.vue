@@ -12,7 +12,7 @@
         :data-source="articleList"
       >
         <div slot="footer">
-          <b>ant design vue</b> footer part
+          <b />
         </div>
         <a-list-item slot="renderItem" key="item.title" slot-scope="item">
           <template v-for="type of actions" slot="actions">
