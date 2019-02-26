@@ -65,6 +65,8 @@ func IrisRouter() *iris.Application {
 
 	//app.Logger().Printer.SetOutput(logging.F)
 
+	hwebsocket.SetupWebsocket(app)
+
 	TPLRouter(app)
 
 	ArticleRouter(app)
@@ -92,6 +94,6 @@ func IrisRouter() *iris.Application {
 
 	app.Post("/api/nsq", hnsq.Start)
 
-	app.Get("/api/chat/ws", hwebsocket.Chat)
+	app.Get("/ws/chat", hwebsocket.Chat)
 	return app
 }
