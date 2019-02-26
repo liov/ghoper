@@ -101,6 +101,7 @@ require (
 	github.com/sirupsen/logrus v1.3.0
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/ugorji/go/codec v0.0.0-20190204201341-e444a5086c43
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc // indirect
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
 	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect

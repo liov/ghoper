@@ -2,6 +2,7 @@ package router
 
 //go:generate qtc -dir=../template
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/getsentry/raven-go"
@@ -10,6 +11,7 @@ import (
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/controller/upload"
+	"time"
 
 	"hoper/client/controller/hnsq"
 	"hoper/client/controller/hwebsocket"
@@ -26,6 +28,13 @@ func init() {
 func IrisRouter() *iris.Application {
 	app := iris.New()
 
+	iris.RegisterOnInterrupt(func() {
+		timeout := 5 * time.Second
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+		//关闭所有主机
+		app.Shutdown(ctx)
+	})
 	app.StaticWeb("/api/static", "../static")
 
 	app.WrapRouter(func(w http.ResponseWriter, r *http.Request, router http.HandlerFunc) {
