@@ -332,7 +332,7 @@ func Login(c iris.Context) {
 
 	var user User
 	if err := initialize.DB.Where(sql, loginInput).Find(&user).Error; err != nil {
-		common.Response(c, "账号不存在")
+		common.Response(c, "账号不存在", e.ERROR)
 		return
 	}
 
@@ -378,6 +378,7 @@ func Login(c iris.Context) {
 			"token": tokenString,
 			"data":  user,
 			"msg":   "登录成功",
+			"code":  e.SUCCESS,
 		})
 
 		return
@@ -451,7 +452,7 @@ func Signup(c iris.Context) {
 	newUser.Status = model.UserStatusInActive
 
 	if err := initialize.DB.Create(&newUser).Error; err != nil {
-		common.Response(c, "error")
+		common.Response(c, "error", e.ERROR)
 		return
 	}
 
@@ -468,7 +469,7 @@ func Signup(c iris.Context) {
 		sendMail("/active", "账号激活", curTime, newUser)
 	}()
 
-	common.Response(c, newUser, "注册成功")
+	common.Response(c, newUser, "注册成功", e.SUCCESS)
 }
 
 // Logout 退出登录

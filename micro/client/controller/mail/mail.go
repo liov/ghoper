@@ -14,7 +14,7 @@ func SendMail(toEmail, subject, content string) error {
 	host := initialize.Config.Server.MailHost
 	port := initialize.Config.Server.MailPort
 	email := initialize.Config.Server.MailUser
-	password := initialize.Config.Server.MailPassWord
+	password := initialize.Config.Server.MailPassword
 	emailFrom := initialize.Config.Server.MailFrom
 
 	headers := make(map[string]string)

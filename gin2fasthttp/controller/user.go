@@ -15,6 +15,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/valyala/fasthttp"
+	"hoper/client/controller/upload"
 	"regexp"
 	"strconv"
 	"strings"
@@ -324,7 +325,7 @@ func Login(c *fasthttp.RequestCtx) {
 
 	var user User
 	if err := initialize.DB.Where(sql, signinInput).Find(&user).Error; err != nil {
-		common.Response(c, "账号不存在")
+		common.Response(c, "账号不存在", e.ERROR)
 		return
 	}
 
@@ -341,12 +342,12 @@ func Login(c *fasthttp.RequestCtx) {
 		})
 		tokenString, err := token.SignedString(utils.ToBytes(initialize.Config.Server.TokenSecret))
 		if err != nil {
-			common.Response(c, "内部错误")
+			common.Response(c, "内部错误", e.ERROR)
 			return
 		}
 
 		if err := UserToRedis(user); err != nil {
-			common.Response(c, "内部错误.")
+			common.Response(c, "内部错误.", e.ERROR)
 			return
 		}
 
@@ -361,6 +362,7 @@ func Login(c *fasthttp.RequestCtx) {
 			"token": tokenString,
 			"data":  user,
 			"msg":   "登录成功",
+			"code":  200,
 		})
 
 		return

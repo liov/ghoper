@@ -15,17 +15,35 @@
           <b />
         </div>
         <a-list-item slot="renderItem" key="item.title" slot-scope="item">
-          <template v-for="type of actions" slot="actions">
-            <span :key="type">
-              <a-icon :type="type" style="margin-right: 8px" />
-              1
-            </span>
-          </template>
+          <span slot="actions">
+            <a-icon type="star-o" style="margin-right: 8px" />
+            {{ item.collect_count }}
+          </span>
+          <span slot="actions">
+            <a-icon type="like-o" style="margin-right: 8px" />
+            {{ item.love_count }}
+          </span>
+          <span slot="actions">
+            <a-icon type="message" style="margin-right: 8px" />
+            {{ item.comment_count }}
+          </span>
           <img v-if="item.image_url!==''" slot="extra" height="120" alt="logo" :src="item.image_url">
           <a-list-item-meta
             :description="item.intro"
           >
-            <a slot="title" href="/">{{ item.title }}</a>
+            <span slot="title" href="/">
+              <a-row>
+                <a-col :span="6" style="font-size: 10px">
+                  {{ item.user.name }}
+                </a-col>
+                <a-col :span="12">
+                  {{ item.title }}
+                </a-col>
+                <a-col :span="6">
+                  <span style="font-size: 10px"> {{ item.created_at|dateFormat }}</span>
+                </a-col>
+              </a-row>
+            </span>
             <a-avatar slot="avatar" :src="item.image_url" />
           </a-list-item-meta>
           {{ item.content }}
@@ -55,15 +73,16 @@
 
 <script>
 import axios from 'axios'
+import ARow from 'ant-design-vue/es/grid/Row'
 export default {
+  components: { ARow },
   data() {
     return {
       pageSizeOptions: ['5', '10', '15', '20'],
       pageSize: 5,
       current: 1,
       lastFlag: false,
-      firstFlag: true,
-      actions: ['star-o', 'like-o', 'message']
+      firstFlag: true
     }
   },
   watch: {

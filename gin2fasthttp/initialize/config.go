@@ -37,7 +37,7 @@ type ServerConfig struct {
 	MailHost     string
 	MailPort     int
 	MailUser     string
-	MailPassWord string
+	MailPassword string
 	MailFrom     string
 
 	LuosimaoVerifyURL string

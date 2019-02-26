@@ -8,7 +8,7 @@ type User struct {
 	ID              uint       `gorm:"primary_key" json:"id"`
 	ActivatedAt     *time.Time `json:"activated_at"` //激活时间
 	Name            string     `gorm:"type:varchar(10);not null" json:"name"`
-	PassWord        string     `gorm:"type:varchar(100)" json:"-"`
+	Password        string     `gorm:"type:varchar(100)" json:"-"`
 	Email           string     `gorm:"type:varchar(20);unique_index;not null" json:"-"`
 	Phone           *string    `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
 	Sex             uint8      `gorm:"type:smallint;not null" json:"sex"`

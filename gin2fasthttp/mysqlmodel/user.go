@@ -12,7 +12,7 @@ type User struct {
 	ID              uint       `gorm:"primary_key" json:"id"`
 	ActivatedAt     *time.Time `json:"activated_at"` //激活时间
 	Name            string     `gorm:"type:varchar(10);not null" json:"name"`
-	PassWord        string     `json:"password"`
+	Password        string     `json:"password"`
 	Email           string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
 	Phone           *string    `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
 	Sex             uint8      `gorm:"type:tinyint(1) unsigned;not null" json:"sex"`
@@ -62,19 +62,19 @@ type Follow struct {
 
 // CheckPassword 验证密码是否正确
 func (user User) CheckPassword(password string) bool {
-	if password == "" || user.PassWord == "" {
+	if password == "" || user.Password == "" {
 		return false
 	}
-	return user.EncryptPassword(password, user.Salt()) == user.PassWord
+	return user.EncryptPassword(password, user.Salt()) == user.Password
 }
 
 // Salt 每个用户都有一个不同的盐
 func (user User) Salt() string {
 	var userSalt string
-	if user.PassWord == "" {
+	if user.Password == "" {
 		userSalt = strconv.Itoa(int(time.Now().Unix()))
 	} else {
-		userSalt = user.PassWord[0:5]
+		userSalt = user.Password[0:5]
 	}
 	return userSalt
 }

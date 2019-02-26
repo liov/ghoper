@@ -66,11 +66,6 @@ var manager = ClientManager{
 	clients:    make(map[*Client]bool),
 }
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
 func (manager *ClientManager) start() {
 	for {
 		select {
@@ -160,32 +155,11 @@ func (c *Client) write() {
 	}
 }
 
-/*func Chat(c *gin.Context) {
-	conn, error := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(c.Writer, c.Request, nil)
-	if error != nil {
-		http.NotFound(c.Writer, c.Request)
-		return
-	}
-
-	var dviceName string
-	if strings.Contains(c.Request.Header.Get("User-Agent"), "iPhone") {
-		dviceName = "iPhone"
-	} else if strings.Contains(c.Request.Header.Get("User-Agent"), "Android") {
-		dviceName = "Android"
-	} else {
-		dviceName = "PC"
-	}
-
-	client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), device: dviceName}
-
-	manager.register <- client
-
-	go client.read()
-	go client.write()
-}*/
-
 func Chat(c iris.Context) {
-	conn, error := (&websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}).Upgrade(c.ResponseWriter(), c.Request(), nil)
+	conn, error := (&websocket.Upgrader{
+		CheckOrigin:     func(r *http.Request) bool { return true },
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024}).Upgrade(c.ResponseWriter(), c.Request(), nil)
 	if error != nil {
 		http.NotFound(c.ResponseWriter(), c.Request())
 		return

@@ -49,6 +49,13 @@ func TPLRouter(app *iris.Application) {
 			ctx.Redirect("/", iris.StatusTemporaryRedirect)
 		})
 
+		tplRouter.Get("/ws", func(ctx iris.Context) {
+			// try to get the user without re-authenticating
+			if err := ctx.View("ws.html"); err != nil {
+				ctx.Writef("%v", err)
+			}
+		})
+
 		tplRouter.Get("/wasm", func(ctx iris.Context) {
 			// try to get the user without re-authenticating
 			if err := ctx.View("wasm.html"); err != nil {
