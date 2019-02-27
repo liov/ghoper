@@ -51,7 +51,8 @@
                 @change="uploadChange"
               >
                 <a-button>
-                  <a-icon type="upload" /> 上传封面
+                  <a-icon type="upload" />
+                  上传封面
                 </a-button>
               </a-upload>
             </a-col>
@@ -164,7 +165,7 @@
     </div>
     <div id="editor">
       <mavon-editor v-show="editorType==='markdown'" ref="md" style="height: 650px" @imgAdd="imgAdd" @save="save" />
-      <div v-show="editorType==='html'" id="weditor" />
+      <!--    <div v-show="editorType==='html'" id="weditor" />-->
       <div v-show="editorType==='html'">
         <editor :init="init" />
       </div>
@@ -193,12 +194,8 @@ import 'tinymce/plugins/contextmenu'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/colorpicker'
 import 'tinymce/plugins/textcolor'
+import { upload, getBase64 } from '../../plugins/utils/upload'
 
-function getBase64(img, callback) {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
 export default {
   middleware: 'auth',
   components: {
@@ -221,32 +218,42 @@ export default {
       categories: [],
       tags: [],
       editor: null,
+      tinymce: null,
       init: {
         language_url: '../tinymce/lang/zh_CN.js',
         language: 'zh_CN',
         skin: 'oxide',
-        height: 300,
+        height: 650,
         plugins:
           'link lists image code table colorpicker textcolor wordcount contextmenu',
         toolbar:
           'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code | removeformat',
-        branding: false
+        branding: false,
+        menubar: false,
+        // 此处为图片上传处理函数，这个直接用了base64的图片形式上传图片，
+        // 如需ajax上传可参考https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
+        images_upload_handler: async (blobInfo, success, failure) => {
+          const url = await upload('article', blobInfo.blob())
+          success(url)
+        }
+        // images_upload_url: '/api/upload/article'
       }
     }
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.tinymce = tinymce
+  },
   methods: {
     handleChange(e) {
       this.editorType = e.target.value
-      if (e.target.value === 'html' && this.editor === null) {
-        console.log('shu')
-        this.editor = new E('#weditor')
-        this.editor.customConfig.uploadImgServer =
-          '/api/upload_multiple/article'
-        this.editor.customConfig.height = '550px'
-        this.editor.create()
-        tinymce.init({})
+      if (e.target.value === 'html' && this.tinymce === null) {
+        /*       this.editor = new E('#weditor')
+          this.editor.customConfig.uploadImgServer =
+            '/api/upload_multiple/article'
+          this.editor.customConfig.height = '550px'
+          this.editor.create() */
+        this.tinymce.init(this.init)
       }
     },
     uploadChange(info) {
@@ -282,32 +289,24 @@ export default {
       } else if (this.tag === '') this.$message.error('标签为空')
       else this.$message.error('标签重复')
     },
-    imgAdd(pos, $file) {
+    async imgAdd(pos, $file) {
       // 第一步.将图片上传到服务器.
-      const formdata = new FormData()
-      formdata.append('file', $file)
-      axios({
-        url: '/api/upload/article',
-        method: 'post',
-        data: formdata,
-        headers: { 'Content-Type': 'multipart/form-data' }
-      }).then(res => {
-        // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
-        /**
-         * $vm 指为mavonEditor实例，可以通过如下两种方式获取
-         * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，`$vm`为`mavonEditor`
-         * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
-         */
-        this.$refs.md.$img2Url(pos, res.data.data.url)
-      })
+      const url = await upload('article', $file)
+      // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
+      /**
+       * $vm 指为mavonEditor实例，可以通过如下两种方式获取
+       * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，`$vm`为`mavonEditor`
+       * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
+       */
+      this.$refs.md.$img2Url(pos, url)
     },
     save(value) {
       const vm = this
       this.article.contentType = this.editorType
       if (this.editorType === 'markdown') this.article.content = value
       else {
-        this.article.html_content = this.editor.txt.html()
-        this.article.content = this.editor.txt.text()
+        /*  this.article.html_content = this.editor.txt.html()
+          this.article.content = this.editor.txt.text() */
       }
 
       for (const i of this.tags) {
@@ -338,16 +337,20 @@ export default {
   width: 80%;
   margin-left: 10%;
 }
+
 #editor {
   margin: auto;
 }
+
 .formbuttion {
   margin-top: 4px;
 }
+
 #tag {
   position: relative;
   z-index: 2;
 }
+
 #editor {
   position: relative;
   z-index: 1;
