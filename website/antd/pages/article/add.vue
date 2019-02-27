@@ -165,6 +165,9 @@
     <div id="editor">
       <mavon-editor v-show="editorType==='markdown'" ref="md" style="height: 650px" @imgAdd="imgAdd" @save="save" />
       <div v-show="editorType==='html'" id="weditor" />
+      <div v-show="editorType==='html'">
+        <editor :init="init" />
+      </div>
     </div>
   </div>
 </template>
@@ -172,11 +175,21 @@
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-// import MediumEditor from 'medium-editor'
-// import 'medium-editor/dist/css/medium-editor.min.css'
 import E from 'wangeditor'
 import 'wangeditor/release/wangEditor.css'
 import axios from 'axios'
+import tinymce from 'tinymce/tinymce'
+import 'tinymce/themes/silver/theme'
+import Editor from '@tinymce/tinymce-vue'
+import 'tinymce/plugins/image'
+import 'tinymce/plugins/link'
+import 'tinymce/plugins/code'
+import 'tinymce/plugins/table'
+import 'tinymce/plugins/lists'
+import 'tinymce/plugins/contextmenu'
+import 'tinymce/plugins/wordcount'
+import 'tinymce/plugins/colorpicker'
+import 'tinymce/plugins/textcolor'
 
 function getBase64(img, callback) {
   const reader = new FileReader()
@@ -186,8 +199,8 @@ function getBase64(img, callback) {
 export default {
   middleware: 'auth',
   components: {
-    mavonEditor
-    // or 'mavon-editor': mavonEditor
+    mavonEditor,
+    Editor
   },
   data() {
     return {
@@ -204,20 +217,34 @@ export default {
       tag: '',
       categories: [],
       tags: [],
-      editor: {}
+      editor: null,
+      init: {
+        language_url: '../_nuxt/lang/zh_CN.js',
+        language: 'zh_CN',
+        skin: 'oxide',
+        height: 300,
+        plugins:
+          'link lists image code table colorpicker textcolor wordcount contextmenu',
+        toolbar:
+          'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code | removeformat',
+        branding: false
+      }
     }
   },
   created() {},
-  mounted() {
-    // const editor = new MediumEditor('.editable', {})
-    this.editor = new E('#weditor')
-    this.editor.customConfig.uploadImgServer = '/api/upload_multiple/article'
-    this.editor.customConfig.height = '550px'
-    this.editor.create()
-  },
+  mounted() {},
   methods: {
     handleChange(e) {
       this.editorType = e.target.value
+      if (e.target.value === 'html' && this.editor === null) {
+        console.log('shu')
+        this.editor = new E('#weditor')
+        this.editor.customConfig.uploadImgServer =
+          '/api/upload_multiple/article'
+        this.editor.customConfig.height = '550px'
+        this.editor.create()
+        tinymce.init({})
+      }
     },
     uploadChange(info) {
       if (info.file.status === 'uploading') {
