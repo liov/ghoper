@@ -1,7 +1,7 @@
 <template>
   <div class="article">
     <a-row>
-      <a-col :span="5">
+      <a-col :span="5" style="z-index: 0">
         <a-form-item
           label=""
           :label-col="{span: 4,offset:2}"
@@ -179,6 +179,9 @@ import E from 'wangeditor'
 import 'wangeditor/release/wangEditor.css'
 import axios from 'axios'
 import tinymce from 'tinymce/tinymce'
+import 'tinymce/skins/ui/oxide/skin.min.css'
+import 'tinymce/skins/ui/oxide/content.min.css'
+import 'tinymce/skins/content/default/content.css'
 import 'tinymce/themes/silver/theme'
 import Editor from '@tinymce/tinymce-vue'
 import 'tinymce/plugins/image'
@@ -219,7 +222,7 @@ export default {
       tags: [],
       editor: null,
       init: {
-        language_url: '../_nuxt/lang/zh_CN.js',
+        language_url: '../tinymce/lang/zh_CN.js',
         language: 'zh_CN',
         skin: 'oxide',
         height: 300,
