@@ -164,10 +164,19 @@
       </a-row>
     </div>
     <div id="editor">
-      <mavon-editor v-show="editorType==='markdown'" ref="md" style="height: 650px" @imgAdd="imgAdd" @save="save" />
+      <mavon-editor
+        v-show="editorType==='markdown'"
+        ref="md"
+        v-model="html_code"
+        style="height: 650px"
+        @imgAdd="imgAdd"
+        @save="save"
+      />
       <!--    <div v-show="editorType==='html'" id="weditor" />-->
       <div v-show="editorType==='html'">
-        <editor :init="init" />
+        <!--   <editor :init="init" />-->
+        <!--        <editor-t />-->
+        <div id="editor_t" />
       </div>
     </div>
   </div>
@@ -176,15 +185,16 @@
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-import E from 'wangeditor'
+// import E from 'wangeditor'
 import 'wangeditor/release/wangEditor.css'
 import axios from 'axios'
+// import Editor from '@tinymce/tinymce-vue'
 import tinymce from 'tinymce/tinymce'
+// import EditorT from '../../components/Tinymce'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import 'tinymce/skins/content/default/content.css'
 import 'tinymce/themes/silver/theme'
-import Editor from '@tinymce/tinymce-vue'
 import 'tinymce/plugins/image'
 import 'tinymce/plugins/link'
 import 'tinymce/plugins/code'
@@ -199,8 +209,8 @@ import { upload, getBase64 } from '../../plugins/utils/upload'
 export default {
   middleware: 'auth',
   components: {
-    mavonEditor,
-    Editor
+    mavonEditor
+    // EditorT
   },
   data() {
     return {
@@ -217,9 +227,9 @@ export default {
       tag: '',
       categories: [],
       tags: [],
-      editor: null,
-      tinymce: null,
+      html_code: '',
       init: {
+        selector: '#editor_t',
         language_url: '../tinymce/lang/zh_CN.js',
         language: 'zh_CN',
         skin: 'oxide',
@@ -229,32 +239,38 @@ export default {
         toolbar:
           'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code | removeformat',
         branding: false,
-        menubar: false,
+        menubar: true,
         // 此处为图片上传处理函数，这个直接用了base64的图片形式上传图片，
         // 如需ajax上传可参考https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
         images_upload_handler: async (blobInfo, success, failure) => {
           const url = await upload('article', blobInfo.blob())
           success(url)
-        }
+        },
+        convert_urls: false
         // images_upload_url: '/api/upload/article'
       }
     }
   },
   created() {},
   mounted() {
-    this.tinymce = tinymce
+    if (tinymce.activeEditor !== null) {
+      tinymce.activeEditor.destroy()
+    }
+    tinymce.init(this.init)
   },
   methods: {
     handleChange(e) {
       this.editorType = e.target.value
-      if (e.target.value === 'html' && this.tinymce === null) {
-        /*       this.editor = new E('#weditor')
-          this.editor.customConfig.uploadImgServer =
-            '/api/upload_multiple/article'
-          this.editor.customConfig.height = '550px'
-          this.editor.create() */
-        this.tinymce.init(this.init)
-      }
+
+      /*      if (e.target.value === 'html' && tinymce.activeEditor === null) {
+        /!*       this.editor = new E('#weditor')
+                this.editor.customConfig.uploadImgServer =
+                  '/api/upload_multiple/article'
+                this.editor.customConfig.height = '550px'
+                this.editor.create() *!/
+        // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
+        tinymce.init(this.init)
+      } */
     },
     uploadChange(info) {
       if (info.file.status === 'uploading') {
@@ -300,13 +316,17 @@ export default {
        */
       this.$refs.md.$img2Url(pos, url)
     },
-    save(value) {
+    save(value, render) {
       const vm = this
       this.article.contentType = this.editorType
-      if (this.editorType === 'markdown') this.article.content = value
-      else {
-        /*  this.article.html_content = this.editor.txt.html()
-          this.article.content = this.editor.txt.text() */
+      if (this.editorType === 'markdown') {
+        this.article.html_content = render
+        this.article.content = value
+      } else {
+        this.article.html_content = tinymce.activeEditor.getContent()
+        this.article.content = tinymce.activeEditor.getContent({
+          format: 'text'
+        })
       }
 
       for (const i of this.tags) {

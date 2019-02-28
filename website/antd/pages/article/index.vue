@@ -4,6 +4,9 @@
       <nuxt-link to="/article/add">
         添加
       </nuxt-link>
+      <nuxt-link to="/article/edit">
+        编辑
+      </nuxt-link>
     </a-col>
     <a-col :span="8">
       <a-list

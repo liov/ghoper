@@ -18,7 +18,7 @@ func Response(ctx iris.Context, res ...interface{}) {
 	var code int
 	var data interface{}
 	if len(res) == 1 {
-		code = e.SUCCESS
+		code = e.ERROR
 		if msgTmp, ok := res[0].(string); ok {
 			msg = msgTmp
 			data = nil

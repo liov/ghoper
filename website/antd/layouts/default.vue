@@ -63,7 +63,7 @@
           </a-menu>
         </div>
       </div>
-      <a-layout-content>
+      <a-layout-content style="background-color: #fff">
         <nuxt />
       </a-layout-content>
       <a-layout-footer style="text-align: center">

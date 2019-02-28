@@ -13,9 +13,9 @@ type File struct {
 
 type FileUploadInfo struct {
 	File
-	UUID           string    `gorm:"type:varchar(100);unique;not null"`
+	UUID           string    `gorm:"type:varchar(100);unique;not null" json:"uuid"`
 	UploadAt       time.Time `json:"upload_at"`
-	UploadDir      string    `gorm:"type:varchar(100);not null"`
-	UploadFilePath string    `gorm:"type:varchar(100);not null"`
+	UploadDir      string    `gorm:"type:varchar(100);not null" json:"upload_dir"`
+	UploadFilePath string    `gorm:"type:varchar(100);not null" json:"upload_file_path"`
 	Status         uint8     `gorm:"type:smallint;default:0" json:"status"`
 }

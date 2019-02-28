@@ -11,6 +11,8 @@ import (
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/controller/upload"
+	"hoper/initialize"
+	"hoper/model"
 	"time"
 
 	"hoper/client/controller/hnsq"
@@ -93,6 +95,15 @@ func IrisRouter() *iris.Application {
 	app.Get("/api/chat/getChat", hwebsocket.GetChat)
 
 	app.Post("/api/nsq", hnsq.Start)
+
+	app.Get("/api/init", func(c iris.Context) {
+		initialize.DB.CreateTable(&model.User{},
+			&model.Tag{}, &model.Diary{}, &model.DiaryBook{}, &model.School{}, &model.Article{},
+			&model.Career{}, &model.Category{}, &model.Collection{}, &model.Love{}, &model.CrawlerArticle{},
+			&model.DiaryBookComment{}, &model.MomentComment{}, &model.FileUploadInfo{}, &model.DiaryComment{},
+			&model.Moment{}, &model.Mood{}, &model.DiaryBookHistory{}, &model.DiaryHistory{}, &model.ArticleHistory{},
+			&model.MomentHistory{})
+	})
 
 	return app
 }

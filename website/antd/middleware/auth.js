@@ -12,7 +12,7 @@ export default async function({ store, error, req, route, redirect }) {
           await axios
             .get(`/api/user/get`, { timeout: 3000 })
             .then(res => {
-              if (res.data.msg === '登录成功') {
+              if (res.data.code === 200) {
                 const user = res.data.data
                 store.commit('SET_USER', user)
               } else {
@@ -32,9 +32,9 @@ export default async function({ store, error, req, route, redirect }) {
       }
     } else {
       await axios
-        .get(`/api/user/get`, { timeout: 3 })
+        .get(`/api/user/get`, { timeout: 3000 })
         .then(res => {
-          if (res.data.msg === '登录成功') {
+          if (res.data.code === 200) {
             const user = res.data.data
             store.commit('SET_USER', user)
           } else {
