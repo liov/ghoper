@@ -8,5 +8,8 @@
 #netstat -apn
 
 #kill -9 [PID]
-cd ../micro/client/hoper
+cd ../micro/client
 nohup ./hoper &
+
+#git status
+#git checkout
