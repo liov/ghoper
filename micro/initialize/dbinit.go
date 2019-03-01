@@ -40,7 +40,6 @@ func initializeDB() {
 	db, err := gorm.Open(Config.Database.Type, url)
 
 	if err != nil {
-		fmt.Println(err.Error())
 		os.Exit(-1)
 	}
 	if err != nil {
