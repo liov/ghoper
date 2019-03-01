@@ -13,7 +13,9 @@ export default {
       )
       .then(res => {
         vm.$message.info(res.data.msg)
-        vm.$router.push({ path: '/user/sign' })
+        if (res.data.code === 200) {
+          vm.$router.push({ path: '/user/login?email=' + res.data.data })
+        }
       })
   }
 }

@@ -12,6 +12,11 @@ type H map[string]interface{}
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 //先信息后数据最后状态码
+//入参 data interface{},msg string,code int
+//data,msg code默认SUCCESS
+//msg data默认nil code默认ERROR
+//data msg默认"",code默认SUCCESS
+//msg,code data默认nil
 func Response(ctx iris.Context, res ...interface{}) {
 
 	var msg string

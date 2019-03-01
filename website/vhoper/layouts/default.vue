@@ -22,7 +22,7 @@
                 <a-icon type="file-text" /> 博客
               </nuxt-link>
             </a-menu-item>
-            <a-menu-item key="book">
+            <!--<a-menu-item key="book">
               <nuxt-link to="/diary">
                 <a-icon type="book" /> 日记
               </nuxt-link>
@@ -31,7 +31,7 @@
               <nuxt-link to="/moment">
                 <a-icon type="picture" /> 瞬间
               </nuxt-link>
-            </a-menu-item>
+            </a-menu-item>-->
             <a-menu-item key="chat">
               <nuxt-link to="/chat">
                 <a-icon type="message" />聊天
@@ -56,6 +56,11 @@
                 </a-menu-item>
               </a-menu-item-group>
             </a-sub-menu>
+            <a-menu-item key="user">
+              <nuxt-link to="/user/login">
+                <a-icon type="user" />登录
+              </nuxt-link>
+            </a-menu-item>
             <a-switch
               :default-checked="false"
               @change="changeTheme"

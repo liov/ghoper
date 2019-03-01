@@ -171,6 +171,12 @@ export default {
       user: this.$form.createForm(this)
     }
   },
+  created() {},
+  mounted() {
+    if (this.$route.query.email !== null) {
+      this.user.setFieldsValue({ input: this.$route.query.email })
+    }
+  },
   methods: {
     check() {
       this.user.validateFields(err => {
@@ -202,12 +208,16 @@ export default {
           //
           // success
           if (res.data.code === 200) {
-            localStorage.setItem('token', res.data.token)
-            vm.$store.commit('SET_USER', res.data.data)
-            vm.$store.commit('SET_TOKEN', res.data.token)
-            localStorage.setItem('user', res.data.data.id)
-            vm.$message.info('登录成功')
-            vm.$router.replace(vm.$route.query.callbackUrl)
+            if (res.data.msg === '登录成功') {
+              localStorage.setItem('token', res.data.token)
+              vm.$store.commit('SET_USER', res.data.data)
+              vm.$store.commit('SET_TOKEN', res.data.token)
+              localStorage.setItem('user', res.data.data.id)
+              vm.$message.info('登录成功')
+              vm.$router.replace(vm.$route.query.callbackUrl)
+            } else if (res.data.msg === '注册成功') {
+              vm.$message.info('注册成功，请到邮箱激活')
+            }
             // vm.$router.replace('/')
           } else if (res.data.msg === '账号未激活') {
             vm.$message.warning(res.data.user.email)

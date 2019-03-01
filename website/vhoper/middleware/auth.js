@@ -16,19 +16,20 @@ export default async function({ store, error, req, route, redirect }) {
                 const user = res.data.data
                 store.commit('SET_USER', user)
               } else {
+                console.log(route)
                 redirect({
-                  path: '/user/login?callbackUrl=' + route.currentRoute.path
+                  path: '/user/login?callbackUrl=' + route.path
                 })
               }
             })
             .catch(function() {
-              route.push({
-                path: '/user/login?callbackUrl=' + route.currentRoute.path
+              redirect({
+                path: '/user/login?callbackUrl=' + route.path
               })
             })
         }
       } else {
-        redirect({ path: '/user/login?callbackUrl=' + route.currentRoute.path })
+        redirect({ path: '/user/login?callbackUrl=' + route.path })
       }
     } else {
       await axios

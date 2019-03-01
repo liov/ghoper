@@ -11,6 +11,7 @@ import (
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/client/controller/common/e"
+	"hoper/client/controller/common/logging"
 	"hoper/client/controller/mail"
 	"hoper/client/controller/upload"
 	"hoper/initialize"
@@ -61,7 +62,7 @@ func sendMail(action string, title string, curTime int64, user User) {
 	actionURL := siteURL + "/user" + action + "/"
 
 	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + "/" + secretStr
-	fmt.Println(actionURL)
+
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
 		"<a href=\"" + actionURL + "\">" + actionURL + "</a>" +
@@ -83,18 +84,18 @@ func sendMail(action string, title string, curTime int64, user User) {
 func verifyLink(cacheKey string, c iris.Context) (User, error) {
 	var user User
 
-	userID, _ := strconv.Atoi(c.GetViewData()["id"].(string))
+	userID, _ := c.Params().GetInt("id")
 	if userID <= 0 {
 		return user, errors.New("无效的链接")
 	}
-	secret := c.GetViewData()["secret"]
-	if secret == nil {
+	secret := c.Params().Get("secret")
+	if secret == "" {
 		return user, errors.New("无效的链接")
 	}
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+c.GetViewData()["id"].(string)))
+	emailTime, redisErr := redis.Int64(RedisConn.Do("GET", cacheKey+strconv.Itoa(userID)))
 	if redisErr != nil {
 		return user, errors.New("无效的链接")
 	}
@@ -107,7 +108,7 @@ func verifyLink(cacheKey string, c iris.Context) (User, error) {
 
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 
-	if secret.(string) != secretStr {
+	if secret != secretStr {
 		return user, errors.New("无效的链接")
 	}
 	return user, nil
@@ -170,18 +171,13 @@ func ActiveAccount(c iris.Context) {
 		return
 	}
 
-	if user.ID <= 0 {
-		common.Response(c, "激活链接已失效")
-		return
-	}
-
 	updatedData := map[string]interface{}{
 		"status":       model.UserStatusActived,
 		"activated_at": time.Now(),
 	}
 
 	if err := initialize.DB.Model(&user).Updates(updatedData).Error; err != nil {
-		common.Response(c, "error")
+		common.Response(c, "创建出错", e.ERROR)
 		return
 	}
 
@@ -189,9 +185,9 @@ func ActiveAccount(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
-		fmt.Println("redis delelte failed:", err)
+		logging.Info(err)
 	}
-	common.Res(c, iris.Map{"email": user.Email, "msg": "激活成功"})
+	common.Response(c, user.Email, "激活成功", e.SUCCESS)
 }
 
 // ResetPasswordMail 发送重置密码的邮件
@@ -432,7 +428,7 @@ func Signup(c iris.Context) {
 
 	var user model.User
 	if err := initialize.DB.Where("email = ? OR phone = ?", userData.Email, userData.Phone).Find(&user).Error; err == nil {
-		if user.Phone != nil && user.Phone == userData.Phone {
+		if user.Phone != nil && *user.Phone == *userData.Phone {
 			common.Response(c, "手机号已被注册")
 			return
 		} else if user.Email == userData.Email {
@@ -448,11 +444,12 @@ func Signup(c iris.Context) {
 	newUser.Email = userData.Email
 	newUser.Phone = userData.Phone
 	newUser.Password = encryptPassword(userData.Password, userData.Password)
+	newUser.AvatarURL = "http://hoper.xyz/static/imgaes/6cbeb5c8-7160-4b6f-a342-d96d3c00367a.jpg"
 	//newUser.Role = model.UserRoleNormal
 	newUser.Status = model.UserStatusInActive
 
 	if err := initialize.DB.Create(&newUser).Error; err != nil {
-		common.Response(c, "error", e.ERROR)
+		common.Response(c, err.Error(), e.ERROR)
 		return
 	}
 

@@ -65,7 +65,7 @@ module.exports = {
         clientConfigs: {
             default: {
                 // required
-                httpEndpoint: 'http://localhost/api/graphql',
+                httpEndpoint: 'http://hoper.xyz/api/graphql',
                 // optional
                 // See https://www.apollographql.com/docs/link/links/http.html#options
                 httpLinkOptions: {
@@ -83,8 +83,8 @@ module.exports = {
                 websocketsOnly: false // Optional
             },
             test: {
-                httpEndpoint: 'http://localhost/api/graphql',
-                //wsEndpoint: 'ws://localhost/api/chat/ws',
+                httpEndpoint: 'http://hoper.xyz/api/graphql',
+                //wsEndpoint: 'ws://localhost/ws/echo',
                 tokenName: 'apollo-token'
             },
             // alternative: user path to config which returns exact same config options
