@@ -118,7 +118,7 @@ export default {
       }
       this.ws.onmessage = function(evt) {
         vm.submitting = false
-        vm.msgs = [evt.data, ...vm.msgs]
+        vm.msgs = [...vm.msgs, JSON.parse(evt.data)]
         vm.value = ''
       }
       this.ws.onclose = function() {
