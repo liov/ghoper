@@ -17,23 +17,18 @@
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.0-rc4",
     "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/markdownit": "^1.2.3",
     "@nuxtjs/pwa": "^2.6.0",
     "@tinymce/tinymce-vue": "^2.0.0",
     "ant-design-vue": "^1.1.10",
     "apollo-link-http": "^1.5.11",
     "cookieparser": "^0.1.0",
     "cross-env": "^5.2.0",
-    "element-ui": "^2.5.4",
     "graphql-tag": "^2.10.1",
     "koa": "^2.6.2",
     "mavon-editor": "^2.6.17",
-    "medium-editor": "^5.23.3",
     "nuxt": "^2.4.0",
-    "tinymce": "^5.0.1",
-    "vditor": "^0.2.5",
-    "vuetify": "^1.5.1",
-    "vuetify-loader": "^1.2.1",
-    "wangeditor": "^3.1.1"
+    "tinymce": "^5.0.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^0.0.1",

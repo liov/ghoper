@@ -185,8 +185,6 @@
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-// import E from 'wangeditor'
-import 'wangeditor/release/wangEditor.css'
 import axios from 'axios'
 // import Editor from '@tinymce/tinymce-vue'
 import tinymce from 'tinymce/tinymce'
@@ -262,15 +260,10 @@ export default {
     handleChange(e) {
       this.editorType = e.target.value
 
-      /*      if (e.target.value === 'html' && tinymce.activeEditor === null) {
-        /!*       this.editor = new E('#weditor')
-                this.editor.customConfig.uploadImgServer =
-                  '/api/upload_multiple/article'
-                this.editor.customConfig.height = '550px'
-                this.editor.create() *!/
-        // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
-        tinymce.init(this.init)
-      } */
+      /* if (e.target.value === 'html' && tinymce.activeEditor === null) {
+                  // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
+                  tinymce.init(this.init)
+                } */
     },
     uploadChange(info) {
       if (info.file.status === 'uploading') {

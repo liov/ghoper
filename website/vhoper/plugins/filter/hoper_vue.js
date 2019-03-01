@@ -1,8 +1,7 @@
 import Vue from 'vue'
-// import Vant from 'vant';
+
 import Antd from 'ant-design-vue/lib'
 import lioHint from '../../components/hint'
-// import Vuetify from 'vuetify'
 
 Vue.filter('dateFormat', function(value) {
   const date = new Date(value)
@@ -22,5 +21,4 @@ Vue.filter('dateFormat', function(value) {
 })
 Vue.component('lio-hint', lioHint)
 
-// Vue.use(Vuetify)
 Vue.use(Antd)

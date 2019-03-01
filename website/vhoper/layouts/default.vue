@@ -76,11 +76,9 @@
 import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
-import ALayoutSider from 'ant-design-vue/es/layout/Sider'
 
 moment.locale('zh-cn')
 export default {
-  components: { ALayoutSider },
   data() {
     return {
       current: ['main'],
