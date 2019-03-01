@@ -10,6 +10,7 @@ import (
 	"github.com/kataras/iris/middleware/i18n"
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
+	"hoper/client/controller/common/logging"
 	"hoper/client/controller/upload"
 	"hoper/initialize"
 	"hoper/model"
@@ -65,7 +66,7 @@ func IrisRouter() *iris.Application {
 			"zh-CN": "../i18n/locale_zh-CN.ini"}})
 	app.Use(globalLocale)
 
-	//app.Logger().Printer.SetOutput(logging.F)
+	app.Logger().Printer.SetOutput(logging.F)
 
 	WS(app)
 
