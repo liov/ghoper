@@ -6,9 +6,8 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	//_ "github.com/jinzhu/gorm/dialects/sqlite"
-	//_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
+
 	"os"
 	"reflect"
 	"strings"
@@ -40,12 +39,9 @@ func initializeDB() {
 	db, err := gorm.Open(Config.Database.Type, url)
 
 	if err != nil {
+		log.Println(err)
 		os.Exit(-1)
 	}
-	if err != nil {
-		log.Println(err)
-	}
-
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return Config.Database.TablePrefix + defaultTableName
 	}

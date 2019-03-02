@@ -83,9 +83,7 @@ export default {
     return {
       pageSizeOptions: ['5', '10', '15', '20'],
       pageSize: 5,
-      current: 1,
-      lastFlag: false,
-      firstFlag: true
+      current: 1
     }
   },
   watch: {

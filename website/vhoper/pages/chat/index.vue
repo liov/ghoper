@@ -21,8 +21,8 @@
             <p slot="content">
               {{ item.content }}
             </p>
-            <a-tooltip slot="datetime" :title="moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')">
-              <span>{{ item.created_at }}</span>
+            <a-tooltip slot="datetime" :title="item.created_at">
+              <span>{{ item.created_at|dateFormat }}</span>
             </a-tooltip>
           </a-comment>
         </a-list-item>

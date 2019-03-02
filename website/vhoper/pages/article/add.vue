@@ -115,7 +115,6 @@
         <a-col :span="6">
           <a-form-item
             label="新标签"
-            required
             :label-col="{span:6}"
             :wrapper-col="{span: 12}"
           >
@@ -136,7 +135,6 @@
         <a-col :span="6">
           <a-form-item
             label="权限"
-            required
             :label-col="{span: 4}"
             :wrapper-col="{span:6}"
           >
@@ -225,7 +223,6 @@ export default {
       tag: '',
       categories: [],
       tags: [],
-      html_code: '',
       init: {
         selector: '#editor_t',
         language_url: '../tinymce/lang/zh_CN.js',

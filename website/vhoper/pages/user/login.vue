@@ -214,7 +214,9 @@ export default {
               vm.$store.commit('SET_TOKEN', res.data.token)
               localStorage.setItem('user', res.data.data.id)
               vm.$message.info('登录成功')
-              vm.$router.replace(vm.$route.query.callbackUrl)
+              if (vm.$route.query.callbackUrl !== undefined) {
+                vm.$router.replace(vm.$route.query.callbackUrl)
+              } else vm.$router.replace('/')
             } else if (res.data.msg === '注册成功') {
               vm.$message.info('注册成功，请到邮箱激活')
             }

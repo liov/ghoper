@@ -66,8 +66,11 @@ func GetMoments(c iris.Context) {
 
 	var moments Moments
 
-	if moments := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
-		common.Response(c, *moments)
+	if moments, count := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
+		common.Res(c, iris.Map{"data": *moments,
+			"count": count,
+			"msg":   e.GetMsg(e.SUCCESS),
+			"code":  e.SUCCESS})
 		return
 	}
 	//gorm 的ORM 弃用，决定手写sql
@@ -79,18 +82,19 @@ func GetMoments(c iris.Context) {
 		initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 			return db.Select("name,moment_id")
 		}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
-			Where("desc_flag > ?", 0).Order("id desc").Find(&moments.TopMoments)
+			Where("sort > ?", 0).Order("id desc").Find(&moments.TopMoments)
 	}
 
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
-		Where("desc_flag = ?", 0).Order("id desc").Limit(pageSize - len(moments.TopMoments)).
+		Where("sort = ?", 0).Order("id desc").Limit(pageSize - len(moments.TopMoments)).
 		Offset(pageNo*pageSize - topNum).Find(&moments.NormalMoments).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
-
+	var count int
+	initialize.DB.Find(&moments.NormalMoments).Count(&count)
 	//原来想存进链表，但不知道链表怎么序列化
 	/*	for i := 0; i < len(moments); i++ {
 			l.PushBack(moments[i])
@@ -120,23 +124,35 @@ func GetMoments(c iris.Context) {
 		}
 	*/
 
-	setRedisMoments(topKey, normalKey, moments)
+	if len(moments.NormalMoments) == 0 && len(moments.NormalMoments) == 0 {
+		common.Res(c, iris.Map{"data": moments,
+			"count": count,
+			"msg":   e.GetMsg(e.SUCCESS),
+			"code":  e.SUCCESS})
+		return
+	}
 
-	if moments := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
-		common.Response(c, *moments)
+	setRedisMoments(topKey, normalKey, moments, count)
+
+	if moments, count := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
+		common.Res(c, iris.Map{"data": *moments,
+			"count": count,
+			"msg":   e.GetMsg(e.SUCCESS),
+			"code":  e.SUCCESS})
 		return
 	}
 }
 
-func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) *Moments {
+func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) (*Moments, int) {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
+
 	var moments Moments
 	/*	if exist, err := redis.Bool(conn.Do("EXISTS", topKey)); !exist || err != nil {
 		return nil
 	}*/
 	if exist, err := redis.Bool(conn.Do("EXISTS", normalKey)); !exist || err != nil {
-		return nil
+		return nil, 0
 	}
 
 	if pageNo == 0 {
@@ -180,13 +196,14 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) *M
 	}
 
 	if moments.NormalMoments == nil && moments.TopMoments == nil {
-		return nil
+		return nil, 0
 	}
 
-	return &moments
+	count, _ := redis.Int(conn.Do("GET", "Moment_List_Count"))
+	return &moments, count
 }
 
-func setRedisMoments(topKey string, normalKey string, moments Moments) error {
+func setRedisMoments(topKey string, normalKey string, moments Moments, count int) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
@@ -211,6 +228,7 @@ func setRedisMoments(topKey string, normalKey string, moments Moments) error {
 			return err
 		}
 	}
+	conn.Do("SET", "Moment_List_Count", strconv.Itoa(count))
 	/*	_, err := conn.Do("EXPIRE", topKey, time)
 		if err != nil {
 			return err
@@ -222,7 +240,7 @@ func GetMoment(c iris.Context) {
 	top := c.URLParam("t")
 	index := c.URLParam("index")
 
-	user := c.GetViewData()["user"].(User)
+	user := c.Values().Get("user").(User)
 
 	if moment := getRedisMoment(top, index); moment != nil {
 		if moment.UserID == user.ID {
@@ -327,7 +345,7 @@ func getRedisMoment(top string, index string) *Moment {
 
 func AddMoment(c iris.Context) {
 
-	user := c.GetViewData()["user"].(User)
+	user := c.Values().Get("user").(User)
 
 	//Limit这个函数的封装呢，费了点功夫，之前的返回值想到用err，不过在sendErr这出了点问题，决定返回值改用string，这样是不规范的
 	if limitErr := common.Limit(model.MomentMinuteLimit,
@@ -435,7 +453,7 @@ func AddMoment(c iris.Context) {
 		return
 	}
 
-	common.Response(c, "新建成功")
+	common.Response(c, "新建成功", e.SUCCESS)
 }
 
 func validationMoment(c iris.Context, moment *Moment) (err error) {
@@ -653,4 +671,85 @@ func DeleteMoment(c iris.Context) {
 	}
 	common.Response(c, "删除成功")
 
+}
+
+func GetMomentsV2(c iris.Context) {
+	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
+	//l := list.New()
+
+	key := gredis.Moments + "_V2"
+
+	var moments []Moment
+
+	if moments, count, topCount := getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
+		common.Res(c, iris.Map{"data": moments,
+			"count":     count,
+			"top_count": topCount,
+			"msg":       e.GetMsg(e.SUCCESS),
+			"code":      e.SUCCESS})
+		return
+	}
+
+	var count, topCount int
+	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
+		return db.Select("name,moment_id")
+	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
+		Order("sort desc,id desc").Limit(pageSize).
+		Offset(pageNo * pageSize).Find(&moments).Count(&count).Error
+	err = initialize.DB.Model(Moment{}).Where("sort = ?", 9).Count(&topCount).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return
+	}
+
+	common.Res(c, iris.Map{"data": moments,
+		"count":     count,
+		"top_count": topCount,
+		"msg":       e.GetMsg(e.SUCCESS),
+		"code":      e.SUCCESS})
+	return
+
+	setRedisMomentsV2(key, moments, count, topCount)
+
+}
+
+func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]Moment, int, int) {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	var moments []Moment
+	if exist, err := redis.Bool(conn.Do("EXISTS", key)); !exist || err != nil {
+		return nil, 0, 0
+	}
+	start := pageNo * PageSize
+
+	data, _ := redis.Strings(conn.Do("LRANGE", key, start, start+PageSize-1))
+	for mi, mv := range data {
+		var moment Moment
+		common.Json.UnmarshalFromString(mv, &moment)
+		moment.BrowseCount = moment.BrowseCount + 1
+		moments = append(moments, moment)
+		data, _ := common.Json.MarshalToString(&moment)
+		conn.Do("LSET", key, mi, data)
+
+	}
+	count, _ := redis.Int(conn.Do("GET", "Moment_List_Count"))
+	topCount, _ := redis.Int(conn.Do("GET", "Moment_List_Top_Count"))
+	return moments, count, topCount
+}
+
+func setRedisMomentsV2(key string, moments []Moment, count int, topCount int) error {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	for _, mv := range moments {
+		mv.BrowseCount = mv.BrowseCount + 1
+		//mv.Index = mi
+		value, _ := common.Json.MarshalToString(mv)
+		_, err := conn.Do("RPUSH", key, value)
+		if err != nil {
+			return err
+		}
+	}
+	conn.Do("SET", "Moment_List_Count", strconv.Itoa(count))
+	conn.Do("SET", "Moment_List_Top_Count", strconv.Itoa(topCount))
+	return nil
 }

@@ -18,10 +18,10 @@ type Article struct {
 	Tags          []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	User          User             `json:"user"`
 	UserID        uint             `json:"user_id"`
-	Comments      []ArticleComment `json:"comments"`                       //评论
-	BrowseCount   uint             `json:"browse_count"`                   //浏览
-	CommentCount  uint             `gorm:"default:0" json:"comment_count"` //评论
-	CollectCount  uint             `gorm:"default:0" json:"collect_count"` //收藏
+	Comments      []ArticleComment `gorm:"ForeignKey:ArticleID" json:"comments"` //评论
+	BrowseCount   uint             `json:"browse_count"`                         //浏览
+	CommentCount  uint             `gorm:"default:0" json:"comment_count"`       //评论
+	CollectCount  uint             `gorm:"default:0" json:"collect_count"`       //收藏
 	CollectUsers  []User           `gorm:"many2many:article_collection" json:"collect_users"`
 	LoveCount     uint             `gorm:"default:0" json:"love_count"` //点赞
 	LoveUsers     []User           `gorm:"many2many:article_love" json:"love_users"`

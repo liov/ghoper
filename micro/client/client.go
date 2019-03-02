@@ -17,7 +17,7 @@ import (
 )
 
 func Client() {
-
+	defer initialize.DB.Close()
 	//crawler.M131()
 	//go crawler.MM131()
 
@@ -44,7 +44,7 @@ func Client() {
 
 }
 
-func pub(){
+func pub() {
 	service := micro.NewService(
 		micro.Name("go.micro.cli.pubsub"),
 	)

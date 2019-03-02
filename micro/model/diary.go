@@ -14,7 +14,7 @@ type Diary struct {
 	Mood         Mood           `gorm:"foreignkey:MoodName;association_foreignkey:Name" json:"mood"`
 	MoodName     string         `gorm:"type:varchar(20)" json:"mood_name"`
 	Tags         []Tag          `gorm:"many2many:diary_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
-	Comments     []DiaryComment `gorm:"ForeignKey:ArticleID" json:"comments"` //评论
+	Comments     []DiaryComment `gorm:"ForeignKey:DiaryID" json:"comments"` //评论
 	User         User           `json:"user"`
 	UserID       uint           `json:"user_id"`
 	ImageUrl     string         `json:"image_url"` //封面
