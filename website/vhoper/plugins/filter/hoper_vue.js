@@ -1,12 +1,11 @@
 import Vue from 'vue'
-
+import moment from 'moment'
 import Antd from 'ant-design-vue/lib'
 import lioHint from '../../components/hint'
 
 Vue.filter('dateFormat', function(value) {
-  const date = new Date(value)
-  return (
-    date.getFullYear() +
+  return moment(value).format('YYYY-MM-DD HH:mm:ss')
+  /* date.getFullYear() +
     '-' +
     (date.getMonth() + 1) +
     '-' +
@@ -16,8 +15,7 @@ Vue.filter('dateFormat', function(value) {
     ':' +
     date.getMinutes() +
     ':' +
-    date.getSeconds()
-  )
+    date.getSeconds() */
 })
 Vue.component('lio-hint', lioHint)
 

@@ -165,7 +165,6 @@
       <mavon-editor
         v-show="editorType==='markdown'"
         ref="md"
-        v-model="html_code"
         style="height: 650px"
         @imgAdd="imgAdd"
         @save="save"
@@ -181,16 +180,16 @@
 </template>
 
 <script>
-import { mavonEditor } from 'mavon-editor'
+// import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import axios from 'axios'
 // import Editor from '@tinymce/tinymce-vue'
-import tinymce from 'tinymce/tinymce'
+// import tinymce from 'tinymce/tinymce'
 // import EditorT from '../../components/Tinymce'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
-import 'tinymce/skins/content/default/content.css'
-import 'tinymce/themes/silver/theme'
+import '../../static/css/content.css'
+/* import 'tinymce/themes/silver/theme'
 import 'tinymce/plugins/image'
 import 'tinymce/plugins/link'
 import 'tinymce/plugins/code'
@@ -199,13 +198,13 @@ import 'tinymce/plugins/lists'
 import 'tinymce/plugins/contextmenu'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/colorpicker'
-import 'tinymce/plugins/textcolor'
+import 'tinymce/plugins/textcolor' */
 import { upload, getBase64 } from '../../plugins/utils/upload'
 
 export default {
   middleware: 'auth',
   components: {
-    mavonEditor
+    // mavonEditor
     // EditorT
   },
   data() {
@@ -223,6 +222,7 @@ export default {
       tag: '',
       categories: [],
       tags: [],
+      tinymce: null,
       init: {
         selector: '#editor_t',
         language_url: '../tinymce/lang/zh_CN.js',
@@ -247,20 +247,32 @@ export default {
     }
   },
   created() {},
-  mounted() {
-    if (tinymce.activeEditor !== null) {
-      tinymce.activeEditor.destroy()
-    }
-    tinymce.init(this.init)
+  mounted() {},
+  beforeDestroy() {
+    tinymce.activeEditor.destroy()
   },
   methods: {
     handleChange(e) {
       this.editorType = e.target.value
 
-      /* if (e.target.value === 'html' && tinymce.activeEditor === null) {
-                  // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
-                  tinymce.init(this.init)
-                } */
+      // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
+      // 两种方式，1.插件客户端渲染，2.有window后引入
+      if (typeof window !== 'undefined') {
+        /*        require('tinymce/tinymce')
+        require('tinymce/themes/silver/theme')
+        require('tinymce/plugins/image')
+        require('tinymce/plugins/link')
+        require('tinymce/plugins/code')
+        require('tinymce/plugins/table')
+        require('tinymce/plugins/lists')
+        require('tinymce/plugins/contextmenu')
+        require('tinymce/plugins/wordcount')
+        require('tinymce/plugins/colorpicker')
+        require('tinymce/plugins/textcolor') */
+        if (e.target.value === 'html' && tinymce.activeEditor === null) {
+          tinymce.init(this.init)
+        }
+      }
     },
     uploadChange(info) {
       if (info.file.status === 'uploading') {
