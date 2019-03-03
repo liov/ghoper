@@ -1,6 +1,14 @@
 <template>
   <a-row>
-    <a-col :span="24">
+    <a-col :span="2" style="padding: 24px 0">
+      <div style="text-align: center">
+        死<br>生<br>契<br>阔<br>，<br>与<br>子<br>成<br>说<br>。
+      </div>
+      <div style="text-align: center">
+        执<br>子<br>之<br>手<br>，<br>与<br>子<br>偕<br>老<br>。
+      </div>
+    </a-col>
+    <a-col :span="20">
       <a-list
         class="comment-list"
         :header="`${msgs.length} 条消息`"
@@ -24,7 +32,8 @@
           </a-comment>
         </a-list-item>
       </a-list>
-      <div>
+
+      <div id="bottom">
         <a-list
           v-if="comments.length"
           :data-source="comments"
@@ -64,12 +73,14 @@
         </a-comment>
       </div>
     </a-col>
+    <a-col :span="2" />
   </a-row>
 </template>
 
 <script>
 import moment from 'moment'
 import axios from 'axios'
+
 export default {
   middleware: 'auth',
   data() {
@@ -96,14 +107,22 @@ export default {
   },
   mounted: function() {
     this.newWs()
+    // 这是什么黑科技？？？，本来以为DOM没有渲染完就执行，所以没效果，
+    // 加了个定时器，时间一直从500减到0，都一直有效
+    setTimeout(function() {
+      document.querySelector('#bottom').scrollIntoView()
+    }, 0)
     /* this.chatContent=JSON.parse(localStorage.getItem("chatContent"));
-          if(this.chatContent === null) this.chatContent=[]; */
-    /*    const div = document.querySelector('.chat')
-    div.scrollIntoView(false) */
+            if(this.chatContent === null) this.chatContent=[]; */
   },
-  /*       beforeDestroy(){
-            vm.ws.close()
-        }, */
+  updated: function() {
+    this.$nextTick(function() {
+      document.querySelector('#bottom').scrollIntoView()
+    })
+  },
+  beforeDestroy() {
+    this.ws.close()
+  },
   methods: {
     newWs: function() {
       // 不能放在created里
@@ -111,34 +130,24 @@ export default {
       this.ws = new WebSocket('ws://' + window.location.host + '/ws/chat')
       this.ws.onopen = function() {
         vm.$message.info('建立websocket连接')
+        if (vm.value !== '') {
+          vm.handleSubmit()
+        }
       }
       this.ws.onmessage = function(evt) {
         vm.submitting = false
         vm.msgs = [...vm.msgs, JSON.parse(evt.data)]
         vm.value = ''
       }
+      this.ws.onerror = function() {
+        vm.newWs()
+      }
       this.ws.onclose = function() {
         vm.$message.info('websocket连接关闭')
       }
-    },
-    send: function() {
-      const vm = this
-      if (vm.ws.readyState !== 1) {
-        this.newWs()
-      }
-      if (this.newMsg !== '') {
-        this.ws.send(
-          JSON.stringify({
-            recipient_user_id: vm.recipient,
-            sender_user_id:
-              vm.$store.state.user !== null
-                ? vm.$store.state.user.id
-                : parseInt(localStorage.getItem('user')),
-            content: vm.newMsg // Strip out html
-          })
-        )
-        this.newMsg = '' // Reset newMsg
-      }
+
+      document.scrollingElement.scrollTop =
+        document.scrollingElement.scrollHeight
     },
     delChat: function() {
       localStorage.removeItem('chatContent')
@@ -148,8 +157,10 @@ export default {
       if (!this.value) {
         return
       }
+
       if (this.ws.readyState !== 1) {
         this.newWs()
+        return
       }
       this.submitting = true
 

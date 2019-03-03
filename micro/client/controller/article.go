@@ -141,7 +141,7 @@ func GetArticles(c iris.Context) {
 		}
 	}*/
 	var count int
-	err := initialize.DB.Order(order).Offset(pageNo * pageSize).Limit(pageSize).Find(&articles).Error
+	err := initialize.DB.Preload("User").Order(order).Offset(pageNo * pageSize).Limit(pageSize).Find(&articles).Error
 	initialize.DB.Table("article").Count(&count)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return

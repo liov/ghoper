@@ -1,6 +1,6 @@
 <template>
   <a-row>
-    <a-col :span="8">
+    <a-col :span="2">
       <nuxt-link to="/article/add">
         添加
       </nuxt-link>
@@ -8,7 +8,7 @@
         编辑
       </nuxt-link>
     </a-col>
-    <a-col :span="8">
+    <a-col :span="20">
       <a-list
         item-layout="vertical"
         size="large"
@@ -47,7 +47,7 @@
                 </a-col>
               </a-row>
             </span>
-            <a-avatar slot="avatar" :src="item.image_url" />
+            <a-avatar slot="avatar" :src="item.user.avatar_url" />
           </a-list-item-meta>
           {{ item.content }}
         </a-list-item>
@@ -68,7 +68,7 @@
         </template>
       </a-pagination>
     </a-col>
-    <a-col :span="8">
+    <a-col :span="2">
       col-8
     </a-col>
   </a-row>
@@ -76,9 +76,8 @@
 
 <script>
 import axios from 'axios'
-import ARow from 'ant-design-vue/es/grid/Row'
+
 export default {
-  components: { ARow },
   data() {
     return {
       pageSizeOptions: ['5', '10', '15', '20'],

@@ -24,9 +24,10 @@
             :author="item.user.name"
             :avatar="item.user.avatar_url"
           >
-            <!--   <template slot="actions">
-              <span v-for="(action,index) in item.actions" :key="index">{{ action }}</span>
-            </template>-->
+            <template slot="actions">
+              <span>回复</span>
+              <span v-if="item.user.id=user.id">编辑</span>
+            </template>
             <p slot="content">
               {{ item.content }}
             </p>
@@ -63,7 +64,8 @@ export default {
     return {
       pageSizeOptions: ['5', '10', '15', '20'],
       current: 1,
-      pageSize: 5
+      pageSize: 5,
+      user: null
     }
   },
   computed: {},
@@ -84,7 +86,9 @@ export default {
       topCount: res.data.top_count
     }
   },
-  created: function() {},
+  created: function() {
+    this.user = this.$store.state.user
+  },
   mounted: function() {},
   methods: {
     async onShowSizeChange(current, pageSize) {
