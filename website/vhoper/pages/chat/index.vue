@@ -115,11 +115,7 @@ export default {
     /* this.chatContent=JSON.parse(localStorage.getItem("chatContent"));
             if(this.chatContent === null) this.chatContent=[]; */
   },
-  updated: function() {
-    this.$nextTick(function() {
-      document.querySelector('#bottom').scrollIntoView()
-    })
-  },
+  updated: function() {},
   beforeDestroy() {
     this.ws.close()
   },
@@ -138,6 +134,9 @@ export default {
         vm.submitting = false
         vm.msgs = [...vm.msgs, JSON.parse(evt.data)]
         vm.value = ''
+        vm.$nextTick(function() {
+          document.querySelector('#bottom').scrollIntoView()
+        })
       }
       this.ws.onerror = function() {
         vm.newWs()
