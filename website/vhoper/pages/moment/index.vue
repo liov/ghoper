@@ -1,17 +1,19 @@
 <template>
   <a-row>
-    <a-col :span="6">
+    <a-col :span="3">
       <a-form-item
         label=""
         :label-col="{span: 4,offset:2}"
         :wrapper-col="{span: 24,offset:2}"
       >
         <nuxt-link to="/moment/add">
-          <a-icon type="edit" />
+          <a-button icon="edit">
+            添加
+          </a-button>
         </nuxt-link>
       </a-form-item>
     </a-col>
-    <a-col :span="12">
+    <a-col :span="21">
       <a-list
         class="comment-list"
         item-layout="horizontal"
@@ -49,7 +51,6 @@
         </template>
       </a-pagination>
     </a-col>
-    <a-col :span="6" />
   </a-row>
 </template>
 

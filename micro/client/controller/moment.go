@@ -694,7 +694,7 @@ func GetMomentsV2(c iris.Context) {
 	var count, topCount int
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
+	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
 		Order("sort desc,id desc").Limit(pageSize).
 		Offset(pageNo * pageSize).Find(&moments).Count(&count).Error
 	err = initialize.DB.Model(Moment{}).Where("sort = ?", 9).Count(&topCount).Error
