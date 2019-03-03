@@ -129,7 +129,7 @@ export default {
       const vm = this
       this.ws = new WebSocket('ws://' + window.location.host + '/ws/chat')
       this.ws.onopen = function() {
-        vm.$message.info('建立websocket连接')
+        console.log('建立websocket连接')
         if (vm.value !== '') {
           vm.handleSubmit()
         }
@@ -143,7 +143,7 @@ export default {
         vm.newWs()
       }
       this.ws.onclose = function() {
-        vm.$message.info('websocket连接关闭')
+        console.log('websocket连接关闭')
       }
 
       document.scrollingElement.scrollTop =
