@@ -707,7 +707,6 @@ func GetMomentsV2(c iris.Context) {
 		"top_count": topCount,
 		"msg":       e.GetMsg(e.SUCCESS),
 		"code":      e.SUCCESS})
-	return
 
 	setRedisMomentsV2(key, moments, count, topCount)
 
