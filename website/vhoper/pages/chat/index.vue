@@ -1,9 +1,6 @@
 <template>
   <a-row>
-    <a-col :span="6">
-      ss
-    </a-col>
-    <a-col :span="12">
+    <a-col :span="24">
       <a-list
         class="comment-list"
         :header="`${msgs.length} 条消息`"
@@ -67,7 +64,6 @@
         </a-comment>
       </div>
     </a-col>
-    <a-col :span="6" />
   </a-row>
 </template>
 
