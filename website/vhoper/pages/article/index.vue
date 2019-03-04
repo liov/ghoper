@@ -75,8 +75,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -90,15 +88,15 @@ export default {
       await this.next(this.current - 1)
     }
   },
-  async asyncData() {
+  async asyncData({ $axios }) {
     const params = {
       pageNo: 0,
       pageSize: 5
     }
-    const res = await axios.get(`/api/article`, { params })
+    const res = await $axios.$get(`/api/article`, { params })
     return {
-      articleList: res.data.data,
-      total: res.data.count
+      articleList: res.data,
+      total: res.count
     }
   },
   methods: {
@@ -111,9 +109,9 @@ export default {
         pageNo: pageNo,
         pageSize: this.pageSize
       }
-      const res = await axios.get(`/api/article`, { params })
-      this.articleList = res.data.data
-      this.total = res.data.count
+      const res = await this.$axios.get(`/api/article`, { params })
+      this.articleList = res.data
+      this.total = res.count
     }
   }
 }

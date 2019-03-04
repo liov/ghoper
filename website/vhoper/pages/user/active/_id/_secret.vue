@@ -7,14 +7,14 @@ import axios from 'axios'
 export default {
   mounted() {
     const vm = this
-    axios
-      .get(
+    this.$axios
+      .$get(
         `/api/user/active/${this.$route.params.id}/${this.$route.params.secret}`
       )
       .then(res => {
-        vm.$message.info(res.data.msg)
-        if (res.data.code === 200) {
-          vm.$router.push({ path: '/user/login?email=' + res.data.data })
+        vm.$message.info(res.msg)
+        if (res.code === 200) {
+          vm.$router.push({ path: '/user/login?email=' + res.data })
         }
       })
   }

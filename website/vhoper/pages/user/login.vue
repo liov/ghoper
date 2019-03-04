@@ -153,7 +153,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 const formItemLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 8 }
@@ -202,29 +201,29 @@ export default {
     },
     commit: function() {
       const vm = this
-      axios
-        .post(`/api/user/` + vm.formType, vm.user.getFieldsValue())
+      this.$axios
+        .$post(`/api/user/` + vm.formType, vm.user.getFieldsValue())
         .then(res => {
-          //
+          console.log(res)
           // success
-          if (res.data.code === 200) {
-            if (res.data.msg === '登录成功') {
-              localStorage.setItem('token', res.data.token)
-              vm.$store.commit('SET_USER', res.data.data)
-              vm.$store.commit('SET_TOKEN', res.data.token)
-              localStorage.setItem('user', res.data.data.id)
+          if (res.code === 200) {
+            if (res.msg === '登录成功') {
+              localStorage.setItem('token', res.token)
+              vm.$store.commit('SET_USER', res.data)
+              vm.$store.commit('SET_TOKEN', res.token)
+              localStorage.setItem('user', res.data.id)
               vm.$message.info('登录成功')
               if (vm.$route.query.callbackUrl !== undefined) {
                 vm.$router.replace(vm.$route.query.callbackUrl)
               } else vm.$router.replace('/')
-            } else if (res.data.msg === '注册成功') {
+            } else if (res.msg === '注册成功') {
               vm.$message.info('注册成功，请到邮箱激活')
             }
             // vm.$router.replace('/')
-          } else if (res.data.msg === '账号未激活') {
-            vm.$message.warning(res.data.user.email)
+          } else if (res.msg === '账号未激活') {
+            vm.$message.warning(res.user.email)
           } else {
-            vm.$message.error(res.data.msg)
+            vm.$message.error(res.msg)
           }
         })
         .catch(function(err) {

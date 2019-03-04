@@ -56,8 +56,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   filters: {},
   data() {
@@ -74,16 +72,16 @@ export default {
       await this.next(this.current - 1)
     }
   },
-  async asyncData() {
+  async asyncData({ $axios }) {
     const params = {
       pageNo: 0,
       pageSize: 5
     }
-    const res = await axios.get(`/api/moment`, { params })
+    const res = await $axios.$get(`/api/moment`, { params })
     return {
-      momentList: res.data.data,
-      total: res.data.count,
-      topCount: res.data.top_count
+      momentList: res.data,
+      total: res.count,
+      topCount: res.top_count
     }
   },
   created: function() {
@@ -105,9 +103,9 @@ export default {
       }
 
       // 这里可以这么写，async，await函数，或者 return axios().then((res)=>{})返回Promise
-      const res = await axios.get(`/api/moment`, { params })
+      const res = await this.$axios.$get(`/api/moment`, { params })
 
-      const momentList = res.data.data
+      const momentList = res.data
 
       this.momentList = momentList
     }

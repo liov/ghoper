@@ -162,17 +162,16 @@
       </a-row>
     </div>
     <div id="editor">
-      <mavon-editor
-        v-show="editorType==='markdown'"
-        ref="md"
-        style="height: 650px"
-        @imgAdd="imgAdd"
-        @save="save"
-      />
-      <!--    <div v-show="editorType==='html'" id="weditor" />-->
+      <no-ssr placeholder="Loading...">
+        <mavon-editor
+          v-show="editorType==='markdown'"
+          ref="md"
+          style="height: 650px"
+          @imgAdd="imgAdd"
+          @save="save"
+        />
+      </no-ssr>
       <div v-show="editorType==='html'">
-        <!--   <editor :init="init" />-->
-        <!--        <editor-t />-->
         <div id="editor_t" />
       </div>
     </div>
@@ -180,32 +179,18 @@
 </template>
 
 <script>
-// import { mavonEditor } from 'mavon-editor'
+import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-import axios from 'axios'
-// import Editor from '@tinymce/tinymce-vue'
-// import tinymce from 'tinymce/tinymce'
-// import EditorT from '../../components/Tinymce'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
-/* import 'tinymce/themes/silver/theme'
-import 'tinymce/plugins/image'
-import 'tinymce/plugins/link'
-import 'tinymce/plugins/code'
-import 'tinymce/plugins/table'
-import 'tinymce/plugins/lists'
-import 'tinymce/plugins/contextmenu'
-import 'tinymce/plugins/wordcount'
-import 'tinymce/plugins/colorpicker'
-import 'tinymce/plugins/textcolor' */
 import { upload, getBase64 } from '../../plugins/utils/upload'
+import 'vditor/dist/index.classic.css'
 
 export default {
   middleware: 'auth',
   components: {
-    // mavonEditor
-    // EditorT
+    mavonEditor
   },
   data() {
     return {
@@ -222,15 +207,13 @@ export default {
       tag: '',
       categories: [],
       tags: [],
-      tinymce: null,
       init: {
         selector: '#editor_t',
         language_url: '../tinymce/lang/zh_CN.js',
         language: 'zh_CN',
         skin: 'oxide',
         height: 650,
-        plugins:
-          'link lists image code table colorpicker textcolor wordcount contextmenu',
+        plugins: 'link lists image code table wordcount ',
         toolbar:
           'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code | removeformat',
         branding: false,
@@ -258,17 +241,10 @@ export default {
       // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
       // 两种方式，1.插件客户端渲染，2.有window后引入
       if (typeof window !== 'undefined') {
-        /*        require('tinymce/tinymce')
-        require('tinymce/themes/silver/theme')
-        require('tinymce/plugins/image')
-        require('tinymce/plugins/link')
-        require('tinymce/plugins/code')
-        require('tinymce/plugins/table')
-        require('tinymce/plugins/lists')
-        require('tinymce/plugins/contextmenu')
-        require('tinymce/plugins/wordcount')
-        require('tinymce/plugins/colorpicker')
-        require('tinymce/plugins/textcolor') */
+        /*        const Vditor = require('vditor')
+        const vditor = new Vditor('content', {})
+        vditor.focus() */
+        require('../../plugins/filter/tinymce')
         if (e.target.value === 'html' && tinymce.activeEditor === null) {
           tinymce.init(this.init)
         }
@@ -337,12 +313,12 @@ export default {
       for (const i of this.categories) {
         this.article.categories.push({ id: i })
       }
-      axios
-        .post(`/api/article`, this.article)
+      this.$axios
+        .$post(`/api/article`, this.article)
         .then(function(res) {
           // success
-          if (res.data.code === 200) vm.$router.push({ path: '/article' })
-          else vm.$message.error(res.data.msg)
+          if (res.code === 200) vm.$router.push({ path: '/article' })
+          else vm.$message.error(res.msg)
         })
         .catch(function(err) {
           vm.$message.error(err)
@@ -353,7 +329,6 @@ export default {
 </script>
 
 <style scoped>
-/*@import '~vditor/dist/index.classic.css';*/
 /*@import '~vditor/dist/index.classic.css';*/
 .article {
   width: 80%;

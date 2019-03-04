@@ -79,7 +79,6 @@
 
 <script>
 import moment from 'moment'
-import axios from 'axios'
 
 export default {
   middleware: 'auth',
@@ -96,10 +95,10 @@ export default {
       joined: false // True if email and username have been filled in
     }
   },
-  async asyncData() {
-    const res = await axios.get(`/api/chat/getChat`)
+  async asyncData({ $axios }) {
+    const res = await $axios.$get(`/api/chat/getChat`)
 
-    return { msgs: res.data.data !== null ? res.data.data : [] }
+    return { msgs: res.data !== null ? res.data : [] }
   },
   created: function() {
     // 运行在服务端

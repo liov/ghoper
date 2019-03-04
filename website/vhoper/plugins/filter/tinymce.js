@@ -1,5 +1,3 @@
-import Vue from 'vue'
-import { mavonEditor } from 'mavon-editor'
 import tinymce from 'tinymce/tinymce'
 import 'tinymce/themes/silver/theme'
 import 'tinymce/plugins/image'
@@ -11,4 +9,3 @@ import 'tinymce/plugins/contextmenu'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/colorpicker'
 import 'tinymce/plugins/textcolor'
-Vue.component('mavonEditor', mavonEditor)

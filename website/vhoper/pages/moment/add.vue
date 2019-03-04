@@ -124,7 +124,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   // middleware: 'auth',
   data() {
@@ -184,12 +183,12 @@ export default {
       for (const i of this.tags) {
         this.moment.tags.push({ name: i })
       }
-      axios
-        .post(`/api/moment`, this.moment)
+      this.$axios
+        .$post(`/api/moment`, this.moment)
         .then(function(res) {
           // success
-          if (res.data.code === 200) vm.$router.push({ path: '/moment' })
-          else vm.$message.error(res.data.msg)
+          if (res.code === 200) vm.$router.push({ path: '/moment' })
+          else vm.$message.error(res.msg)
         })
         .catch(function(err) {
           vm.$message.error(err)

@@ -14,9 +14,7 @@
 
 <script>
 export default {
-  name: 'Error',
-  props: ['error'],
-  layout: 'moment'
+  props: { error: new Error('页面错误') }
 }
 </script>
 

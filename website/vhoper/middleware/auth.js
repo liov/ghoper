@@ -1,6 +1,4 @@
-import axios from 'axios'
-
-export default async function({ store, error, req, route, redirect }) {
+export default async function({ store, $axios, error, req, route, redirect }) {
   if (!store.state.user) {
     if (process.server) {
       if (req.headers.cookie) {
@@ -8,15 +6,14 @@ export default async function({ store, error, req, route, redirect }) {
         const parsed = cookieparser.parse(req.headers.cookie)
         if (parsed.token) {
           store.commit('SET_TOKEN', parsed.token)
-          axios.defaults.headers.common.Cookie = req.headers.cookie
-          await axios
-            .get(`/api/user/get`, { timeout: 3000 })
+          $axios.defaults.headers.common.Cookie = req.headers.cookie
+          await $axios
+            .$get(`/api/user/get`, { timeout: 3000 })
             .then(res => {
-              if (res.data.code === 200) {
-                const user = res.data.data
+              if (res.code === 200) {
+                const user = res.data
                 store.commit('SET_USER', user)
               } else {
-                console.log(route)
                 redirect({
                   path: '/user/login?callbackUrl=' + route.path
                 })
@@ -32,11 +29,11 @@ export default async function({ store, error, req, route, redirect }) {
         redirect({ path: '/user/login?callbackUrl=' + route.path })
       }
     } else {
-      await axios
-        .get(`/api/user/get`, { timeout: 3000 })
+      await $axios
+        .$get(`/api/user/get`, { timeout: 3000 })
         .then(res => {
-          if (res.data.code === 200) {
-            const user = res.data.data
+          if (res.code === 200) {
+            const user = res.data
             store.commit('SET_USER', user)
           } else {
             route.push({
