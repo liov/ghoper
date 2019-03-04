@@ -29,11 +29,11 @@ type Moment struct {
 	Tags         []Tag     `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	User         User      `json:"user"`
 	UserID       uint      `json:"user_id"`
-	BrowseCount  uint      `json:"browse_count"`                                         //浏览
-	CommentCount uint      `json:"comment_count"`                                        //评论
-	CollectCount uint      `json:"collect_count"`                                        //收藏
-	LoveCount    uint      `json:"love_count"`                                           //点赞
-	Permission   uint8     `gorm:"type:tinyint(1) unsigned;default:0" json:"permission"` //查看权限
+	BrowseCount  uint      `json:"browse_count"`                                       //浏览
+	CommentCount uint      `json:"comment_count"`                                      //评论
+	CollectCount uint      `json:"collect_count"`                                      //收藏
+	LoveCount    uint      `json:"love_count"`                                         //点赞
+	Permission   uint8     `gorm:"type:smallint unsigned;default:0" json:"permission"` //查看权限
 	//Index        int       `json:"index"`                                                //redis列表中排序
 }
 

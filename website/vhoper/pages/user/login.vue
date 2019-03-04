@@ -114,12 +114,15 @@
             :wrapper-col="formItemLayout.wrapperCol"
           >
             <a-radio-group
-              default-value="1"
+              v-decorator="[
+                'sex',
+                {rules: [{ required: formType===true, message: '请输入手机号!' }]}
+              ]"
             >
-              <a-radio-button value="1">
+              <a-radio-button value="男">
                 男
               </a-radio-button>
-              <a-radio-button value="0">
+              <a-radio-button value="女">
                 女
               </a-radio-button>
             </a-radio-group>
@@ -204,7 +207,6 @@ export default {
       this.$axios
         .$post(`/api/user/` + vm.formType, vm.user.getFieldsValue())
         .then(res => {
-          console.log(res)
           // success
           if (res.code === 200) {
             if (res.msg === '登录成功') {

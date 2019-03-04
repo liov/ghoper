@@ -77,7 +77,7 @@ type DiaryBook struct {
 	CollectUsers []User             `gorm:"many2many:diary_book_collection" json:"collect_users"`
 	LoveCount    uint               `gorm:"default:0" json:"love_count"` //点赞
 	LoveUsers    []User             `gorm:"many2many:diary_book_love" json:"love_users"`
-	Permission   int8               `gorm:"type:smallint;default:0" json:"permission"` //查看权限
+	Permission   uint8              `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sort         uint8              `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	Status       uint8              `gorm:"type:smallint;default:0" json:"status"`     //状态
 	ModifyTimes  uint               `gorm:"default:0" json:"modify_times"`             //修改次数
@@ -103,5 +103,5 @@ type DiaryBookHistory struct {
 	ParentID     uint               `json:"parent_id"`                                  //父节点
 	ModifyTimes  uint               `json:"modify_times"`                               //修改次数
 	DeleteFlag   uint8              `gorm:"type:smallint;default:0" json:"delete_flag"` //是否删除
-	Status       int8               `gorm:"type:smallint;default:0" json:"status"`      //状态
+	Status       uint8              `gorm:"type:smallint;default:0" json:"status"`      //状态
 }

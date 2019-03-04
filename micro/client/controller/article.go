@@ -39,8 +39,8 @@ type Article struct {
 	CollectUsers  []User           `gorm:"many2many:article_collection" json:"collect_users"`
 	LoveCount     uint             `gorm:"default:0" json:"love_count"` //点赞
 	LoveUsers     []User           `gorm:"many2many:article_love" json:"love_users"`
-	Permission    uint8            `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	Sort          uint8            `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
+	Permission    int8             `gorm:"type:smallint;default:0" json:"permission"` //查看权限
+	Sort          int8             `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`
 	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
 	Status        uint             `json:"status"`                        //状态

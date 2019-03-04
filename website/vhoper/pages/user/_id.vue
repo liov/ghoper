@@ -1,50 +1,75 @@
 <template>
-  <!-- Apollo watched Graphql query -->
-  <ApolloQuery
-    :query="require('../../graphql/HelloWorld.gql')"
-  >
-    <template slot-scope="{ result: { loading, error, data } }">
-      <!-- Loading -->
-      <div v-if="loading" class="loading apollo">
-        Loading...
-      </div>
+  <a-row>
+    <a-col :span="6" style="text-align: right">
+      <a-avatar shape="square" :size="100" :src="user.avatar_url" />
+    </a-col>
+    <a-col :span="16">
+      <a-form-item
+        label="用户名"
+        :label-col="{ span: 2 }"
+        :wrapper-col="{ span: 12 }"
+      >
+        <a-input
+          v-model="user.name"
+        >
+          <a-icon slot="prefix" type="user" />
+        </a-input>
+      </a-form-item>
 
-      <!-- Error -->
-      <div v-else-if="error" class="error apollo">
-        An error occured
-      </div>
-
-      <!-- Result -->
-      <div v-else-if="data" class="result apollo">
-        {{ data.getUser.Name }}
-        <div>{{ data.getUser.ID }}</div>
-      </div>
-
-      <!-- No result -->
-      <div v-else class="no-result apollo">
-        No result :(
-      </div>
-    </template>
-  </ApolloQuery>
+      <a-form-item
+        label="性别"
+        :label-col="{ span: 2 }"
+        :wrapper-col="{ span: 12 }"
+      >
+        <a-radio-group
+          v-model="user.sex"
+        >
+          <a-radio-button value="男">
+            男
+          </a-radio-button>
+          <a-radio-button value="女">
+            女
+          </a-radio-button>
+        </a-radio-group>
+      </a-form-item>
+      <a-row>
+        <a-col :span="12" />
+        <a-col :span="12" />
+      </a-row>
+    </a-col>
+    <a-col :span="2" />
+  </a-row>
 </template>
 
 <script>
-import ApolloExample from '../../components/ApolloExample.vue'
-
 export default {
-  components: {
-    ApolloExample
+  middleware: 'auth',
+  async asyncData({ $axios }) {
+    const params = {
+      pageNo: 0,
+      pageSize: 5
+    }
+    const res = await $axios.$get(`/api/user/edit`, { params })
+    return {
+      user: res.data
+    }
+  },
+  created() {},
+  methods: {
+    getStatus: function() {
+      fetch('http://hoper.xyz/user/1', {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+      }).then(res => {
+        return res.json().status
+      })
+    }
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped>
 </style>

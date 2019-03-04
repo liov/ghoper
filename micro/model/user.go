@@ -11,7 +11,8 @@ type User struct {
 	Password        string       `gorm:"type:varchar(100)" json:"-"`
 	Email           string       `gorm:"type:varchar(20);unique_index;not null" json:"-"`
 	Phone           *string      `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
-	Sex             uint8        `gorm:"type:smallint;not null" json:"sex"`
+	Sex             string       `gorm:"type:varchar(1);not null" json:"sex"`
+	Birthday        *time.Time   `json:"birthday"`
 	Introduce       string       `gorm:"type:varchar(500)" json:"introduce"`  //简介
 	Score           uint         `gorm:default:0" json:"score"`               //积分
 	Signature       string       `gorm:"type:varchar(100)" json:"signature"`  //个人签名
@@ -87,12 +88,12 @@ const (
 
 const (
 	// UserSexMale 男
-	UserSexMale = iota
+	UserSexMale = "男"
 
 	// UserSexFemale 女
-	UserSexFemale
+	UserSexFemale = "女"
 	//未填写
-	UserSexNil
+	UserSexNil = "未填写"
 )
 const (
 	// MaxUserNameLen 用户名的最大长度

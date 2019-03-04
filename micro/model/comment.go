@@ -17,7 +17,7 @@ type ArticleComment struct {
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sort      uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    int8       `gorm:"type:smallint;default:0" json:"status"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type MomentComment struct {
@@ -31,7 +31,7 @@ type MomentComment struct {
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sort      uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    int8       `gorm:"type:smallint;default:0" json:"status"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type DiaryComment struct {
@@ -45,7 +45,7 @@ type DiaryComment struct {
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sort      uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    int8       `gorm:"type:smallint;default:0" json:"status"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type DiaryBookComment struct {
@@ -59,7 +59,7 @@ type DiaryBookComment struct {
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sort      uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    int8       `gorm:"type:smallint;default:0" json:"status"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 const (
