@@ -32,7 +32,7 @@ module.exports = {
   plugins: [
     '@/plugins/filter/hoper_vue',
     '@/plugins/filter/hoper_axios',
-    '@/plugins/markdown-it',
+    '@/plugins/markdown-it'
     //{src:'@/plugins/filter/mavonEditor',ssr:false}
   ],
 

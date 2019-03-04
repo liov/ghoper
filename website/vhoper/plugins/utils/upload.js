@@ -1,9 +1,9 @@
-import $axios from '@nuxtjs/axios'
+import axios from 'axios'
 const upload = async function(classify, $file) {
   // 第一步.将图片上传到服务器.
   const formdata = new FormData()
   formdata.append('file', $file)
-  const res = await $axios({
+  const res = await axios({
     url: '/api/upload/' + classify,
     method: 'post',
     data: formdata,
