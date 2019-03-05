@@ -117,21 +117,16 @@ module.exports = {
           }
         })
       }
-      config.module.rules.push({
-        enforce: 'pre',
-        test: /\.less$/,
-        loader: 'style-loader!css-loadder!less-loader',
-        exclude: /(node_modules)/,
-        include:[join(__dirname,"node_modules/antd-design-vue")],
-        options: {
-          modifyVars: {
+    },
+    loaders:{
+      less:{
+        modifyVars: {
             'primary-color': '#1DA57A',
-            'link-color': '#1DA57A',
-            'border-radius-base': '2px',
-          },
-          javascriptEnabled: true
-        }
-      })
+           'link-color': '#1DA57A',
+           'border-radius-base': '2px',
+         },
+          javascriptEnabled: true,
+      }
     },
     postcss: {
       plugins: {
