@@ -9,16 +9,16 @@ type User struct {
 	ActivatedAt     *time.Time   `json:"activated_at"` //激活时间
 	Name            string       `gorm:"type:varchar(10);not null" json:"name"`
 	Password        string       `gorm:"type:varchar(100)" json:"-"`
-	Email           string       `gorm:"type:varchar(20);unique_index;not null" json:"-"`
-	Phone           *string      `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
+	Email           string       `gorm:"type:varchar(20);unique_index;not null" json:"email"`
+	Phone           *string      `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
 	Sex             string       `gorm:"type:varchar(1);not null" json:"sex"`
 	Birthday        *time.Time   `json:"birthday"`
-	Introduce       string       `gorm:"type:varchar(500)" json:"introduce"`  //简介
-	Score           uint         `gorm:default:0" json:"score"`               //积分
-	Signature       string       `gorm:"type:varchar(100)" json:"signature"`  //个人签名
-	Role            uint8        `gorm:"type:smallint;default:0" json:"role"` //管理员or用户
-	AvatarURL       string       `gorm:"type:varchar(100)" json:"avatar_url"` //头像
-	CoverURL        string       `gorm:"type:varchar(100)" json:"cover_url"`  //个人主页背景图片URL
+	Introduction    string       `gorm:"type:varchar(500)" json:"introduction"` //简介
+	Score           uint         `gorm:default:0" json:"score"`                 //积分
+	Signature       string       `gorm:"type:varchar(100)" json:"signature"`    //个人签名
+	Role            uint8        `gorm:"type:smallint;default:0" json:"role"`   //管理员or用户
+	AvatarURL       string       `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
+	CoverURL        string       `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
 	Address         string       `gorm:"type:varchar(100)" json:"address"`
 	Location        string       `gorm:"type:varchar(100)" json:"location"`
 	Schools         []School     `json:"schools"` //教育经历

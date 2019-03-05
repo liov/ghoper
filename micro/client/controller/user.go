@@ -33,22 +33,22 @@ const (
 )
 
 type User struct {
-	ID          uint       `gorm:"primary_key" json:"id"`
-	ActivatedAt *time.Time `json:"activated_at"` //激活时间
-	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
-	Password    string     `gorm:"type:varchar(100)" json:"-"`
-	Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
-	Phone       *string    `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
-	Sex         string     `gorm:"type:varchar(1);not null" json:"sex"`
-	Birthday    *time.Time `json:"birthday"`
-	Introduce   string     `gorm:"type:varchar(500)" json:"introduce"`  //简介
-	Score       uint       `gorm:default:0" json:"score"`               //积分
-	Signature   string     `gorm:"type:varchar(100)" json:"signature"`  //个人签名
-	Role        uint8      `gorm:"type:smallint;default:0" json:"-"`    //管理员or用户
-	AvatarURL   string     `gorm:"type:varchar(100)" json:"avatar_url"` //头像
-	CoverURL    string     `gorm:"type:varchar(100)" json:"cover_url"`  //个人主页背景图片URL
-	Address     string     `gorm:"type:varchar(100)" json:"address"`
-	Location    string     `gorm:"type:varchar(100)" json:"location"`
+	ID           uint       `gorm:"primary_key" json:"id"`
+	ActivatedAt  *time.Time `json:"activated_at"` //激活时间
+	Name         string     `gorm:"type:varchar(10);not null" json:"name"`
+	Password     string     `gorm:"type:varchar(100)" json:"-"`
+	Email        string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
+	Phone        *string    `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
+	Sex          string     `gorm:"type:varchar(1);not null" json:"sex"`
+	Birthday     *time.Time `json:"birthday"`
+	Introduction string     `gorm:"type:varchar(500)" json:"introduction"` //简介
+	Score        uint       `gorm:default:0" json:"score"`                 //积分
+	Signature    string     `gorm:"type:varchar(100)" json:"signature"`    //个人签名
+	Role         uint8      `gorm:"type:smallint;default:0" json:"-"`      //管理员or用户
+	AvatarURL    string     `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
+	CoverURL     string     `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
+	Address      string     `gorm:"type:varchar(100)" json:"address"`
+	Location     string     `gorm:"type:varchar(100)" json:"location"`
 	//Schools         []School     `json:"schools"` //教育经历
 	//Careers         []Career     `json:"careers"` //职业经历
 	UpdatedAt       *time.Time `json:"updated_at"`
@@ -83,7 +83,7 @@ func sendMail(action string, title string, curTime int64, user User) {
 	actionURL := siteURL + "/user" + action + "/"
 
 	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + "/" + secretStr
-
+	fmt.Println(actionURL)
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
 		"<a href=\"" + actionURL + "\">" + actionURL + "</a>" +
@@ -463,6 +463,7 @@ func Signup(c iris.Context) {
 	nowTime := time.Now()
 	newUser.CreatedAt = nowTime
 	newUser.Name = userData.Name
+	newUser.Sex = userData.Sex
 	newUser.Email = userData.Email
 	newUser.Phone = userData.Phone
 	newUser.Password = encryptPassword(userData.Password, userData.Password)
@@ -581,18 +582,18 @@ func UpdateInfo(c iris.Context) {
 		}
 		resData[field] = userReqData.Location
 	case "introduce":
-		userReqData.Introduce = utils.AvoidXSS(userReqData.Introduce)
-		userReqData.Introduce = strings.TrimSpace(userReqData.Introduce)
+		userReqData.Introduction = utils.AvoidXSS(userReqData.Introduction)
+		userReqData.Introduction = strings.TrimSpace(userReqData.Introduction)
 		// 个人简介可以为空
-		if utf8.RuneCountInString(userReqData.Introduce) > model.MaxIntroduceLen {
+		if utf8.RuneCountInString(userReqData.Introduction) > model.MaxIntroduceLen {
 			common.Response(c, "个人简介不能超过"+strconv.Itoa(model.MaxIntroduceLen)+"个字符")
 			return
 		}
-		if err := initialize.DB.Model(&user).Update("introduce", userReqData.Introduce).Error; err != nil {
+		if err := initialize.DB.Model(&user).Update("introduce", userReqData.Introduction).Error; err != nil {
 			common.Response(c, "error")
 			return
 		}
-		resData[field] = userReqData.Introduce
+		resData[field] = userReqData.Introduction
 	default:
 		common.Response(c, "参数无效")
 		return

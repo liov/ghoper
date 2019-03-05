@@ -1,6 +1,6 @@
 <template>
   <a-row>
-    <a-col :span="6" style="text-align: right">
+    <a-col :span="3" style="text-align: right">
       <a-avatar shape="square" :size="100" :src="user.avatar_url" /><br>
       <a-upload
         name="file"
@@ -14,11 +14,11 @@
         </a-button>
       </a-upload>
     </a-col>
-    <a-col :span="16">
+    <a-col :span="12">
       <a-form-item
         label="用户名"
-        :label-col="{ span: 2 }"
-        :wrapper-col="{ span: 12 }"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 14 }"
       >
         <a-input
           v-model="user.name"
@@ -27,28 +27,41 @@
           <a-icon slot="prefix" type="user" />
         </a-input>
       </a-form-item>
+      <a-row>
+        <a-col :span="10">
+          <a-form-item
+            label="性别"
+            :label-col="{ span: 14 }"
+            :wrapper-col="{ span: 10 }"
+          >
+            <a-radio-group
+              v-model="user.sex"
+            >
+              <a-radio-button value="男">
+                男
+              </a-radio-button>
+              <a-radio-button value="女">
+                女
+              </a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col :span="14">
+          <a-form-item
+            label="生日"
+            :label-col="{ span: 3 }"
+            :wrapper-col="{ span:10 }"
+          >
+            <a-date-picker show-time />
+          </a-form-item>
+        </a-col>
+      </a-row>
 
-      <a-form-item
-        label="性别"
-        :label-col="{ span: 2 }"
-        :wrapper-col="{ span: 12 }"
-      >
-        <a-radio-group
-          v-model="user.sex"
-        >
-          <a-radio-button value="男">
-            男
-          </a-radio-button>
-          <a-radio-button value="女">
-            女
-          </a-radio-button>
-        </a-radio-group>
-      </a-form-item>
 
       <a-form-item
         label="邮箱"
-        :label-col="{ span: 2 }"
-        :wrapper-col="{ span: 12 }"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 14 }"
       >
         <a-input
           v-model="user.email"
@@ -57,11 +70,10 @@
           <a-icon slot="prefix" type="mail" />
         </a-input>
       </a-form-item>
-
       <a-form-item
         label="手机"
-        :label-col="{ span: 2 }"
-        :wrapper-col="{ span: 12 }"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 14 }"
       >
         <a-input
           v-model="user.phone"
@@ -70,19 +82,50 @@
           <a-icon slot="prefix" type="phone" />
         </a-input>
       </a-form-item>
+      <a-form-item
+        label="个人简介"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 14 }"
+      >
+        <a-input
+          v-model="user.introduction"
+        >
+          <a-icon slot="prefix" type="profile" />
+        </a-input>
+      </a-form-item>
+      <a-form-item
+        label="个人签名"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 14 }"
+      >
+        <a-input
+          v-model="user.signature"
+        >
+          <a-icon slot="prefix" type="profile" />
+        </a-input>
+      </a-form-item>
 
       <a-row>
         <a-col :span="12" />
         <a-col :span="12" />
       </a-row>
     </a-col>
-    <a-col :span="2" />
+    <a-col :span="4">
+      积&nbsp;&nbsp;&nbsp;分：{{ user.Score }}<br>
+      文&nbsp;&nbsp;&nbsp;章：{{ user.article_count }}<br>
+      瞬&nbsp;&nbsp;&nbsp;间：{{ user.moment_count }}<br>
+      日记本：{{ user.diary_book_count }}<br>
+      日&nbsp;&nbsp;&nbsp;记：{{ user.diary_count }}
+    </a-col>
   </a-row>
 </template>
 
 <script>
 export default {
   middleware: 'auth',
+  data() {
+    return {}
+  },
   async asyncData({ $axios }) {
     const params = {
       pageNo: 0,

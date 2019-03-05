@@ -72,7 +72,7 @@ require (
 	github.com/markbates/goth v1.49.0
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect
-	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6 // indirect
+	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6
 	github.com/micro/go-micro v0.17.1-0.20190110221432-3043841cf529
 	github.com/micro/go-plugins v0.18.0 // indirect
 	github.com/micro/go-rcache v0.0.0-20180418165751-a581a57b5133 // indirect
