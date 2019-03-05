@@ -32,7 +32,7 @@ type Moment struct {
 	BrowseCount  uint      `json:"browse_count"`                                       //浏览
 	CommentCount uint      `json:"comment_count"`                                      //评论
 	CollectCount uint      `json:"collect_count"`                                      //收藏
-	LoveCount    uint      `json:"love_count"`                                         //点赞
+	LikeCount    uint      `json:"like_count"`                                         //点赞
 	Permission   uint8     `gorm:"type:smallint unsigned;default:0" json:"permission"` //查看权限
 	//Index        int       `json:"index"`                                                //redis列表中排序
 }
@@ -81,13 +81,13 @@ func GetMoments(c iris.Context) {
 	if pageNo == 0 {
 		initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 			return db.Select("name,moment_id")
-		}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
+		}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
 			Where("sort > ?", 0).Order("id desc").Find(&moments.TopMoments)
 	}
 
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
+	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
 		Where("sort = ?", 0).Order("id desc").Limit(pageSize - len(moments.TopMoments)).
 		Offset(pageNo*pageSize - topNum).Find(&moments.NormalMoments).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -107,7 +107,7 @@ func GetMoments(c iris.Context) {
 	//排序这种事是交给前端还是后端呢，给前端吧，代码多，给后端吧，怕效率不行
 	/*
 		//为了性能考虑，手写sql，联表查询的结果不组装对象，全部丢给前端，让前端去处理
-		momentSql := "SELECT id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count,permission FROM moment WHERE status=0 ORDER BY desc_flag desc, created_at desc LIMIT ? OFFSET ?"
+		momentSql := "SELECT id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count,permission FROM moment WHERE status=0 ORDER BY desc_flag desc, created_at desc LIMIT ? OFFSET ?"
 		initialize.DB.Raw(momentSql,pageSize,pageNo).Scan(&moments)
 		tagsSql :="SELECT name FROM tag INNER JOIN moment_tag ON moment_tag.tag_name = tag.name WHERE (moment_tag.moment_id IN ('7','6','5','4','3','2','1')) AND status=0"
 		type MomentTag struct {
@@ -271,7 +271,7 @@ func GetMoment(c iris.Context) {
 
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count,permission").
+	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count,permission").
 		Where("id = ?", id).First(&moment).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
@@ -614,7 +614,7 @@ func EditMoment(c iris.Context) {
 		BrowseCount:  moment.BrowseCount,
 		CommentCount: moment.CommentCount,
 		CollectCount: moment.CollectCount,
-		LoveCount:    moment.LoveCount,
+		LikeCount:    moment.LikeCount,
 		Permission:   moment.Permission,
 	}
 	//topNum
@@ -694,7 +694,7 @@ func GetMomentsV2(c iris.Context) {
 	var count, topCount int
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count").
+	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
 		Order("sort desc,id desc").Limit(pageSize).
 		Offset(pageNo * pageSize).Find(&moments).Count(&count).Error
 	err = initialize.DB.Model(Moment{}).Where("sort = ?", 9).Count(&topCount).Error

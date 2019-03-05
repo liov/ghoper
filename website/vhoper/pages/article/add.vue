@@ -185,8 +185,6 @@ import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
 import { upload } from '../../plugins/utils/upload'
-import 'vditor/dist/index.classic.css'
-
 export default {
   middleware: 'auth',
   components: {
@@ -230,7 +228,19 @@ export default {
     }
   },
   created() {},
-  mounted() {},
+  mounted() {
+    /*
+    this.component = () => ({
+      component: import(`mavon-editor`)
+    })
+*/
+    /*    Vue.component('mavon-editor', resolve => {
+      // 这个特殊的 `require` 语法将会告诉 webpack
+      // 自动将你的构建代码切割成多个包，这些包
+      // 会通过 Ajax 请求加载
+      require(['mavon-editor'], ({ mavonEditor }) => resolve(mavonEditor))
+    }) */
+  },
   beforeDestroy() {
     tinymce.activeEditor.destroy()
   },

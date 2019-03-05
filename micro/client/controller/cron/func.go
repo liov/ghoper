@@ -20,7 +20,7 @@ func RedisToDB() {
 				common.Json.UnmarshalFromString(mv, &moment)
 				initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
 					BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
-					LoveCount: moment.LoveCount,
+					LikeCount: moment.LikeCount,
 				})
 			}
 		}
@@ -32,7 +32,7 @@ func RedisToDB() {
 			common.Json.UnmarshalFromString(mv, &moment)
 			initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
 				BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
-				LoveCount: moment.LoveCount,
+				LikeCount: moment.LikeCount,
 			})
 		}
 	}

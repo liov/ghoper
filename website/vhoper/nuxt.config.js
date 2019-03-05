@@ -24,7 +24,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ['ant-design-vue/dist/antd.min.css'],
+  css: ['ant-design-vue/dist/antd.less'],
 
   /*
   ** Plugins to load before mounting the App
@@ -51,12 +51,12 @@ module.exports = {
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-    baseURL:'http://hoper.xyz',
-    browserBaseURL:'http://hoper.xyz',
-    proxy:false
+    baseURL: 'http://hoper.xyz',
+    browserBaseURL: 'http://hoper.xyz',
+    proxy: false
   },
   proxy: [
-    ['/api', { target: 'https://hoper.xyz/', pathRewrite: { '^/api': '/api/v1' } }]
+    ['/api', {target: 'https://hoper.xyz/', pathRewrite: {'^/api': '/api/v1'}}]
   ],
   apollo: {
     tokenName: 'yourApolloTokenName', // optional, default: apollo-token
@@ -117,6 +117,21 @@ module.exports = {
           }
         })
       }
+      config.module.rules.push({
+        enforce: 'pre',
+        test: /\.less$/,
+        loader: 'style-loader!css-loadder!less-loader',
+        exclude: /(node_modules)/,
+        include:[join(__dirname,"node_modules/antd-design-vue")],
+        options: {
+          modifyVars: {
+            'primary-color': '#1DA57A',
+            'link-color': '#1DA57A',
+            'border-radius-base': '2px',
+          },
+          javascriptEnabled: true
+        }
+      })
     },
     postcss: {
       plugins: {

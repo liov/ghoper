@@ -75,20 +75,20 @@ export const actions = {
       }
     }
   }
-  /*    async login({ commit }, { username, password }) {
-        try {
-            const { data } = await axios.post('/user/login', { username, password })
-            commit('SET_USER', data)
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                throw new Error('Bad credentials')
-            }
-            throw error
-        }
-    },
+  /*  async login({ commit }, params) {
+    try {
+      const { data } = await $axios.$post('/user/login', params)
+      commit('SET_USER', data)
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        throw new Error('Bad credentials')
+      }
+      throw error
+    }
+  },
 
-    async logout({ commit }) {
-        await axios.get('/user/logout')
-        commit('SET_USER', null)
-    } */
+  async logout({ commit }) {
+    await $axios.$get('/user/logout')
+    commit('SET_USER', null)
+  } */
 }

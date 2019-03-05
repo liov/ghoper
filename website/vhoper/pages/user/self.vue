@@ -1,24 +1,40 @@
 <template>
   <a-row>
     <a-col :span="3" style="text-align: right">
-      <a-avatar shape="square" :size="100" :src="user.avatar_url" /><br>
+      <a-avatar shape="square" :size="100" :src="user.avatar_url" />
+      <br>
       <a-upload
         name="file"
         action="/api/upload/avatar"
         :before-upload="beforeUpload"
-        @change="uploadChange"
+        @change="uploadAvatarChange"
       >
         <a-button>
           <a-icon type="upload" />
           上传头像
         </a-button>
       </a-upload>
+      <a-upload
+        name="file"
+        action="/api/upload/cover"
+        :before-upload="beforeUpload"
+        @change="uploadCoverChange"
+      >
+        <a-button>
+          <a-icon type="upload" />
+          上传背景
+        </a-button>
+      </a-upload>
     </a-col>
-    <a-col :span="12">
+    <a-col
+      :span="15"
+      :style="{background:'url('+user.cover_url+') no-repeat',
+               backgroundSize: 'cover'}"
+    >
       <a-form-item
         label="用户名"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 14 }"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
       >
         <a-input
           v-model="user.name"
@@ -31,7 +47,7 @@
         <a-col :span="10">
           <a-form-item
             label="性别"
-            :label-col="{ span: 14 }"
+            :label-col="{ span: 12 }"
             :wrapper-col="{ span: 10 }"
           >
             <a-radio-group
@@ -46,10 +62,10 @@
             </a-radio-group>
           </a-form-item>
         </a-col>
-        <a-col :span="14">
+        <a-col :span="13">
           <a-form-item
             label="生日"
-            :label-col="{ span: 3 }"
+            :label-col="{ span: 5 }"
             :wrapper-col="{ span:10 }"
           >
             <a-date-picker show-time />
@@ -60,8 +76,8 @@
 
       <a-form-item
         label="邮箱"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 14 }"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
       >
         <a-input
           v-model="user.email"
@@ -72,8 +88,8 @@
       </a-form-item>
       <a-form-item
         label="手机"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 14 }"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
       >
         <a-input
           v-model="user.phone"
@@ -84,8 +100,8 @@
       </a-form-item>
       <a-form-item
         label="个人简介"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 14 }"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
       >
         <a-input
           v-model="user.introduction"
@@ -95,8 +111,8 @@
       </a-form-item>
       <a-form-item
         label="个人签名"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 14 }"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
       >
         <a-input
           v-model="user.signature"
@@ -104,13 +120,58 @@
           <a-icon slot="prefix" type="profile" />
         </a-input>
       </a-form-item>
-
+      <a-form-item
+        v-for="(item,index) in schools"
+        :key="index"
+        label="教育经历"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="{ span: 18 }"
+      >
+        <a-input-group>
+          <a-col :span="7">
+            <a-input v-model="schools[index].name" placeholder="请输入学习名称!" />
+          </a-col>
+          <a-col :span="7">
+            <a-input v-model="schools[index].speciality" placeholder="请输入专业!" />
+          </a-col>
+          <a-col :span="7">
+            <a-range-picker>
+              <a-icon slot="suffixIcon" type="smile" />
+            </a-range-picker>
+          </a-col>
+          <a-button icon="plus" @click="addSchool" />
+        </a-input-group>
+      </a-form-item>
+      <a-form-item
+        v-for="(item,index) in careers"
+        :key="index+schools.length"
+        label="职业经历"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="{ span: 18 }"
+      >
+        <a-input-group>
+          <a-col :span="7">
+            <a-input v-model="careers[index].company" placeholder="请输入公司!" />
+          </a-col>
+          <a-col :span="7">
+            <a-input v-model="careers[index].title" placeholder="请输入职务!" />
+          </a-col>
+          <a-col :span="7">
+            <a-range-picker>
+              <a-icon slot="suffixIcon" type="smile" />
+            </a-range-picker>
+          </a-col>
+          <a-button icon="plus" @click="addCareer" />
+        </a-input-group>
+      </a-form-item>
       <a-row>
         <a-col :span="12" />
         <a-col :span="12" />
       </a-row>
     </a-col>
     <a-col :span="4">
+      关&nbsp;&nbsp;&nbsp;注：{{ user.follow_count }}<br>
+      粉&nbsp;&nbsp;&nbsp;丝：{{ user.followed_count }}<br>
       积&nbsp;&nbsp;&nbsp;分：{{ user.Score }}<br>
       文&nbsp;&nbsp;&nbsp;章：{{ user.article_count }}<br>
       瞬&nbsp;&nbsp;&nbsp;间：{{ user.moment_count }}<br>
@@ -124,7 +185,15 @@
 export default {
   middleware: 'auth',
   data() {
-    return {}
+    return {
+      formItemLayout: {
+        labelCol: { span: 5 },
+        wrapperCol: { span: 15 }
+      },
+      schools: [{ name: '', speciality: '', start_time: '', end_time: '' }],
+      careers: [{ company: '', title: '', start_time: '', end_time: '' }],
+      loading: false
+    }
   },
   async asyncData({ $axios }) {
     const params = {
@@ -149,13 +218,23 @@ export default {
         return res.json().status
       })
     },
-    uploadChange(info) {
+    uploadAvatarChange(info) {
       if (info.file.status === 'uploading') {
         this.loading = true
         return
       }
       if (info.file.status === 'done') {
         this.user.avatar_url = info.file.response.data.url
+        this.loading = false
+      }
+    },
+    uploadCoverChange(info) {
+      if (info.file.status === 'uploading') {
+        this.loading = true
+        return
+      }
+      if (info.file.status === 'done') {
+        this.user.cover_url = info.file.response.data.url
         this.loading = false
       }
     },
@@ -169,6 +248,30 @@ export default {
         this.$message.error('不能超过 4MB!')
       }
       return isImg && isLt2M
+    },
+    addSchool() {
+      if (this.schools.length < 5) {
+        this.schools.push({
+          name: '',
+          speciality: '',
+          start_time: '',
+          end_time: ''
+        })
+        return
+      }
+      this.$message.warning('添加过多!')
+    },
+    addCareer() {
+      if (this.careers.length < 5) {
+        this.careers.push({
+          company: '',
+          title: '',
+          start_time: '',
+          end_time: ''
+        })
+        return
+      }
+      this.$message.warning('添加过多!')
     }
   }
 }

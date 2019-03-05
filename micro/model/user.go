@@ -29,8 +29,8 @@ type User struct {
 	LastActivatedAt *time.Time   `json:"last_activated_at"`                     //激活时间
 	LastName        string       `gorm:"type:varchar(100)" json:"last_name"`    //上个名字
 	Status          uint8        `gorm:"type:smallint;default:0" json:"status"` //状态
-	Like            Love         `json:"love"`                                  //和Collection挺像的，不过一个User可以对应多个C，只能对应一个L
-	LikeID          uint         `json:"love_id"`
+	Like            Like         `json:"like"`                                  //和Collection挺像的，不过一个User可以对应多个C，只能对应一个L
+	LikeID          uint         `json:"like_id"`
 	Follows         []*User      `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
 	Followeds       []*User      `gorm:"-" json:"followeds"`              //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
 	FollowCount     uint         `gorm:"default:0" json:"follow_count"`   //关注数量

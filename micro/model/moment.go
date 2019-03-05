@@ -21,8 +21,8 @@ type Moment struct {
 	CommentCount    uint            `json:"comment_count"` //评论
 	CollectCount    uint            `json:"collect_count"` //收藏
 	CollectUsers    []User          `gorm:"many2many:moment_collection" json:"collect_users"`
-	LoveCount       uint            `json:"love_count"` //点赞
-	LoveUsers       []User          `gorm:"many2many:moment_love" json:"love_users"`
+	LikeCount       uint            `json:"like_count"` //点赞
+	LikeUsers       []User          `gorm:"many2many:moment_like" json:"like_users"`
 	Sort            uint8           `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	Permission      uint8           `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Status          uint8           `gorm:"type:smallint;default:0" json:"status"`     //状态
@@ -45,7 +45,7 @@ type MomentHistory struct {
 	BrowseCount  uint            `json:"browse_count"`  //浏览
 	CommentCount uint            `json:"comment_count"` //评论
 	CollectCount uint            `json:"collect_count"` //收藏
-	LoveCount    uint            `json:"love_count"`    //点赞
+	LikeCount    uint            `json:"like_count"`    //点赞
 	MomentID     uint            `json:"moment_id"`     //根结点
 	//ParentID     uint            `json:"parent_id"`                                          //父节点
 	ModifyTimes uint  `gorm:"type:smallint" json:"modify_times"`          //修改次数

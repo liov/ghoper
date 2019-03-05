@@ -7,6 +7,8 @@ type School struct {
 	ID         uint       `gorm:"primary_key" json:"id"`
 	Name       string     `gorm:"type:varchar(20)" json:"name"`
 	Speciality string     `gorm:"type:varchar(100)" json:"speciality"` //专业
+	StartTime  time.Time  `json:"start_time"`
+	EndTime    time.Time  `json:"end_time"`
 	User       *User      `json:"user"`
 	UserID     uint       `json:"user_id"`
 	CreatedAt  time.Time  `json:"created_at"`

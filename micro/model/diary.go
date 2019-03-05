@@ -24,8 +24,8 @@ type Diary struct {
 	CommentCount uint           `gorm:"default:0" json:"comment_count"` //评论数
 	CollectCount uint           `gorm:"default:0" json:"collect_count"` //收藏
 	CollectUsers []User         `gorm:"many2many:diary_collection" json:"collect_users"`
-	LoveCount    uint           `gorm:"default:0" json:"love_count"` //点赞
-	LoveUsers    []User         `gorm:"many2many:diary_love" json:"love_users"`
+	LikeCount    uint           `gorm:"default:0" json:"like_count"` //点赞
+	LikeUsers    []User         `gorm:"many2many:diary_like" json:"like_users"`
 	Permission   uint8          `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sort         uint8          `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	Status       uint8          `gorm:"type:smallint;default:0" json:"status"`     //状态
@@ -50,7 +50,7 @@ type DiaryHistory struct {
 	BrowseCount  uint           `json:"browse_count"`  //浏览
 	CommentCount uint           `json:"comment_count"` //评论数
 	CollectCount uint           `json:"collect_count"` //收藏
-	LoveCount    uint           `json:"love_count"`    //点赞
+	LikeCount    uint           `json:"like_count"`    //点赞
 	DiaryID      uint           `json:"diary_id"`
 	ParentID     uint           `json:"parent_id"`                                  //父节点
 	ModifyTimes  uint           `json:"modify_times"`                               //修改次数
@@ -75,8 +75,8 @@ type DiaryBook struct {
 	CommentCount uint               `gorm:"default:0" json:"comment_count"`     //评论数
 	CollectCount uint               `gorm:"default:0" json:"collect_count"`     //收藏
 	CollectUsers []User             `gorm:"many2many:diary_book_collection" json:"collect_users"`
-	LoveCount    uint               `gorm:"default:0" json:"love_count"` //点赞
-	LoveUsers    []User             `gorm:"many2many:diary_book_love" json:"love_users"`
+	LikeCount    uint               `gorm:"default:0" json:"like_count"` //点赞
+	LikeUsers    []User             `gorm:"many2many:diary_book_like" json:"like_users"`
 	Permission   uint8              `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sort         uint8              `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
 	Status       uint8              `gorm:"type:smallint;default:0" json:"status"`     //状态
@@ -98,7 +98,7 @@ type DiaryBookHistory struct {
 	BrowseCount  uint               `json:"browse_count"`                       //浏览
 	CommentCount uint               `json:"comment_count"`                      //评论数
 	CollectCount uint               `json:"collect_count"`                      //收藏
-	LoveCount    uint               `json:"love_count"`                         //点赞
+	LikeCount    uint               `json:"like_count"`                         //点赞
 	DiaryBookID  uint               `json:"diary_book_id"`
 	ParentID     uint               `json:"parent_id"`                                  //父节点
 	ModifyTimes  uint               `json:"modify_times"`                               //修改次数
