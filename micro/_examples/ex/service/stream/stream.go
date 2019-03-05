@@ -2,8 +2,8 @@ package main
 
 import (
 	"google.golang.org/grpc"
-	"hoper/examples/ex/protobuf"
-	"hoper/examples/ex/service/say"
+	"hoper/_examples/ex/protobuf"
+	"hoper/_examples/ex/service/say"
 	"log"
 
 	"net"

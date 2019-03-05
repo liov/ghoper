@@ -1,12 +1,12 @@
-package service
+package server
 
 import (
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/server"
 	"hoper/client/controller/common/logging"
 	"hoper/protobuf"
-	"hoper/service/handler/sub"
-	"hoper/service/handler/user"
+	"hoper/server/handler/sub"
+	"hoper/server/handler/user"
 )
 
 func Service() {
@@ -18,7 +18,6 @@ func Service() {
 	service.Init()
 
 	protobuf.RegisterUserServiceHandler(service.Server(), new(user.UserHandler))
-
 
 	// register subscriber
 	micro.RegisterSubscriber("example.topic.pubsub.1", service.Server(), new(sub.Sub))

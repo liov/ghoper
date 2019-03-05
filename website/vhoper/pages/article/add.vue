@@ -184,7 +184,7 @@ import 'mavon-editor/dist/css/index.css'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
-import { upload, getBase64 } from '../../plugins/utils/upload'
+import { upload } from '../../plugins/utils/upload'
 import 'vditor/dist/index.classic.css'
 
 export default {
@@ -242,8 +242,8 @@ export default {
       // 两种方式，1.插件客户端渲染，2.有window后引入
       if (typeof window !== 'undefined') {
         /*        const Vditor = require('vditor')
-        const vditor = new Vditor('content', {})
-        vditor.focus() */
+          const vditor = new Vditor('content', {})
+          vditor.focus() */
         require('../../plugins/filter/tinymce')
         if (e.target.value === 'html' && tinymce.activeEditor === null) {
           tinymce.init(this.init)
@@ -258,10 +258,8 @@ export default {
       if (info.file.status === 'done') {
         this.article.image_url = info.file.response.data.url
         // Get this url from response in real world.
-        getBase64(info.file.originFileObj, imageUrl => {
-          this.imageUrl = imageUrl
-          this.loading = false
-        })
+        this.imageUrl = imageUrl
+        this.loading = false
       }
     },
     beforeUpload(file) {

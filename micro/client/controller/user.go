@@ -37,8 +37,8 @@ type User struct {
 	ActivatedAt *time.Time `json:"activated_at"` //激活时间
 	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
 	Password    string     `gorm:"type:varchar(100)" json:"-"`
-	Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"-"`
-	Phone       *string    `gorm:"type:varchar(20);unique_index" json:"-"` //手机号
+	Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
+	Phone       *string    `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
 	Sex         string     `gorm:"type:varchar(1);not null" json:"sex"`
 	Birthday    *time.Time `json:"birthday"`
 	Introduce   string     `gorm:"type:varchar(500)" json:"introduce"`  //简介
@@ -520,6 +520,9 @@ func Logout(c iris.Context) {
 func GetUser(c iris.Context) {
 	user := c.Values().Get("user").(User)
 	initialize.DB.Find(&user)
+	//*string改值的方法
+	phone := (*(user.Phone))[0:3] + "XXXX" + (*(user.Phone))[7:]
+	user.Phone = &phone
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
 
