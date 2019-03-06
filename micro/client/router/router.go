@@ -77,6 +77,9 @@ func IrisRouter() *iris.Application {
 	MomentRouter(app)
 
 	GraphqlRouter(app)
+
+	Smart(app)
+
 	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)
 	})

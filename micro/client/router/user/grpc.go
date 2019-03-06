@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
 	"hoper/client/controller/common"
+	"hoper/client/controller/common/e"
 	"hoper/protobuf"
 )
 
@@ -55,7 +56,7 @@ func Login(ctx iris.Context) {
 }
 
 func Logout(ctx iris.Context) {
-	userInter := ctx.GetViewData()["user"]
+	userInter := ctx.Values().Get("user")
 
 	logoutReq := protobuf.LogoutReq{ID: userInter.(protobuf.User).ID}
 
@@ -66,4 +67,15 @@ func Logout(ctx iris.Context) {
 		return
 	}
 	common.Response(ctx, rsp.GetMsg())
+}
+
+func GetUser(ctx iris.Context) {
+	id := ctx.Params().GetUint64Default("id", 0)
+	getReq := protobuf.GetReq{ID: id}
+	user, err := userService.GetUser(context.TODO(), &getReq)
+	if err != nil {
+		common.Response(ctx, err.Error())
+		return
+	}
+	common.Response(ctx, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }

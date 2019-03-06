@@ -163,6 +163,11 @@ func (u *UserHandler) Logout(ctx context.Context, logoutReq *protobuf.LogoutReq,
 	return nil
 }
 
+func (u *UserHandler) GetUser(ctx context.Context, getReq *protobuf.GetReq, user *protobuf.User) error {
+	initialize.DB.Where("id = ?", getReq.ID).Find(&user)
+	return nil
+}
+
 // EncryptPassword 给密码加密
 func encryptPassword(password, salt string) (hash string) {
 	password = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(password)))
@@ -232,7 +237,7 @@ func UserToRedis(user protobuf.User) error {
 	defer RedisConn.Close()
 
 	if _, redisErr := RedisConn.Do("SET", loginUserKey, UserString, "EX", initialize.Config.Server.TokenMaxAge); redisErr != nil {
-		return errors.New("error")
+		return errors.New("缓存用户信息出错")
 	}
 	return nil
 }

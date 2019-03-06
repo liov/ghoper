@@ -9,6 +9,7 @@ It is generated from these files:
 
 It has these top-level messages:
 	User
+	GetReq
 	SignupReq
 	LoginReq
 	LoginRep
@@ -53,6 +54,7 @@ type UserService interface {
 	Signup(ctx context.Context, in *SignupReq, opts ...client.CallOption) (*LoginRep, error)
 	Login(ctx context.Context, in *LoginReq, opts ...client.CallOption) (*LoginRep, error)
 	Logout(ctx context.Context, in *LogoutReq, opts ...client.CallOption) (*LogoutRep, error)
+	GetUser(ctx context.Context, in *GetReq, opts ...client.CallOption) (*User, error)
 }
 
 type userService struct {
@@ -103,12 +105,23 @@ func (c *userService) Logout(ctx context.Context, in *LogoutReq, opts ...client.
 	return out, nil
 }
 
+func (c *userService) GetUser(ctx context.Context, in *GetReq, opts ...client.CallOption) (*User, error) {
+	req := c.c.NewRequest(c.name, "UserService.GetUser", in)
+	out := new(User)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserService service
 
 type UserServiceHandler interface {
 	Signup(context.Context, *SignupReq, *LoginRep) error
 	Login(context.Context, *LoginReq, *LoginRep) error
 	Logout(context.Context, *LogoutReq, *LogoutRep) error
+	GetUser(context.Context, *GetReq, *User) error
 }
 
 func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts ...server.HandlerOption) error {
@@ -116,6 +129,7 @@ func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts .
 		Signup(ctx context.Context, in *SignupReq, out *LoginRep) error
 		Login(ctx context.Context, in *LoginReq, out *LoginRep) error
 		Logout(ctx context.Context, in *LogoutReq, out *LogoutRep) error
+		GetUser(ctx context.Context, in *GetReq, out *User) error
 	}
 	type UserService struct {
 		userService
@@ -138,4 +152,8 @@ func (h *userServiceHandler) Login(ctx context.Context, in *LoginReq, out *Login
 
 func (h *userServiceHandler) Logout(ctx context.Context, in *LogoutReq, out *LogoutRep) error {
 	return h.UserServiceHandler.Logout(ctx, in, out)
+}
+
+func (h *userServiceHandler) GetUser(ctx context.Context, in *GetReq, out *User) error {
+	return h.UserServiceHandler.GetUser(ctx, in, out)
 }
