@@ -33,30 +33,30 @@ const (
 )
 
 type User struct {
-	ID           uint       `gorm:"primary_key" json:"id"`
-	ActivatedAt  *time.Time `json:"activated_at"` //激活时间
-	Name         string     `gorm:"type:varchar(10);not null" json:"name"`
-	Password     string     `gorm:"type:varchar(100)" json:"-"`
-	Email        string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
-	Phone        *string    `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
-	Sex          string     `gorm:"type:varchar(1);not null" json:"sex"`
-	Birthday     *time.Time `json:"birthday"`
-	Introduction string     `gorm:"type:varchar(500)" json:"introduction"` //简介
-	Score        uint       `gorm:default:0" json:"score"`                 //积分
-	Signature    string     `gorm:"type:varchar(100)" json:"signature"`    //个人签名
-	Role         uint8      `gorm:"type:smallint;default:0" json:"-"`      //管理员or用户
-	AvatarURL    string     `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
-	CoverURL     string     `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
-	Address      string     `gorm:"type:varchar(100)" json:"address"`
-	Location     string     `gorm:"type:varchar(100)" json:"location"`
-	//Schools         []School     `json:"schools"` //教育经历
-	//Careers         []Career     `json:"careers"` //职业经历
-	UpdatedAt       *time.Time `json:"updated_at"`
-	BannedAt        *time.Time `sql:"index" json:"banned_at"`
-	CreatedAt       time.Time  `json:"created_at"`
-	LastActivatedAt *time.Time `json:"last_activated_at"`                     //激活时间
-	LastName        string     `gorm:"type:varchar(100)" json:"last_name"`    //上个名字
-	Status          uint8      `gorm:"type:smallint;default:0" json:"status"` //状态
+	ID              uint        `gorm:"primary_key" json:"id"`
+	ActivatedAt     *time.Time  `json:"activated_at"` //激活时间
+	Name            string      `gorm:"type:varchar(10);not null" json:"name"`
+	Password        string      `gorm:"type:varchar(100)" json:"-"`
+	Email           string      `gorm:"type:varchar(20);unique_index;not null" json:"email"`
+	Phone           *string     `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
+	Sex             string      `gorm:"type:varchar(1);not null" json:"sex"`
+	Birthday        *time.Time  `json:"birthday"`
+	Introduction    string      `gorm:"type:varchar(500)" json:"introduction"` //简介
+	Score           uint        `gorm:default:0" json:"score"`                 //积分
+	Signature       string      `gorm:"type:varchar(100)" json:"signature"`    //个人签名
+	Role            uint8       `gorm:"type:smallint;default:0" json:"-"`      //管理员or用户
+	AvatarURL       string      `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
+	CoverURL        string      `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
+	Address         string      `gorm:"type:varchar(100)" json:"address"`
+	Location        string      `gorm:"type:varchar(100)" json:"location"`
+	EduExps         []Education `json:"edu_exps"`  //教育经历
+	WorkExps        []Work      `json:"work_exps"` //职业经历
+	UpdatedAt       *time.Time  `json:"updated_at"`
+	BannedAt        *time.Time  `sql:"index" json:"banned_at"`
+	CreatedAt       time.Time   `json:"created_at"`
+	LastActivatedAt *time.Time  `json:"last_activated_at"`                     //激活时间
+	LastName        string      `gorm:"type:varchar(100)" json:"last_name"`    //上个名字
+	Status          uint8       `gorm:"type:smallint;default:0" json:"status"` //状态
 	//Like            Like         `json:"like"`                                  //和Collection挺像的，不过一个User可以对应多个C，只能对应一个L
 	LikeID         uint    `json:"like_id"`
 	Follows        []*User `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
@@ -370,6 +370,8 @@ func Login(c iris.Context) {
 			return
 		}
 
+		initialize.DB.Model(&user).UpdateColumn("last_activated_at", time.Now())
+
 		if err := UserToRedis(user); err != nil {
 			common.Response(c, "内部错误.")
 			return
@@ -420,7 +422,7 @@ func LoginFlag(c iris.Context) {
 // Signup 用户注册
 func Signup(c iris.Context) {
 
-	type UserReqData struct {
+	type RegisterUser struct {
 		Name     string  `json:"name" binding:"required,min=3,max=20"`
 		Email    string  `json:"email" binding:"required,email"`
 		Password string  `json:"password" binding:"required,min=6,max=20"`
@@ -428,32 +430,32 @@ func Signup(c iris.Context) {
 		Sex      string  `json:"sex"`
 	}
 
-	var userData UserReqData
-	/*	if err := c.ShouldBindWith(&userData, binding.JSON); err != nil {
+	var registerUser RegisterUser
+	/*	if err := c.ShouldBindWith(&registerUser, binding.JSON); err != nil {
 		fmt.Println(err)
 		common.Response(c,"参数无效")
 		return
 	}*/
 
-	if err := c.ReadJSON(&userData); err != nil {
+	if err := c.ReadJSON(&registerUser); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
-	userData.Name = utils.AvoidXSS(userData.Name)
-	userData.Name = strings.TrimSpace(userData.Name)
-	userData.Email = strings.TrimSpace(userData.Email)
+	registerUser.Name = utils.AvoidXSS(registerUser.Name)
+	registerUser.Name = strings.TrimSpace(registerUser.Name)
+	registerUser.Email = strings.TrimSpace(registerUser.Email)
 
-	if strings.Index(userData.Name, "@") != -1 {
+	if strings.Index(registerUser.Name, "@") != -1 {
 		common.Response(c, "用户名中不能含有@字符")
 		return
 	}
 
 	var user model.User
-	if err := initialize.DB.Where("email = ? OR phone = ?", userData.Email, userData.Phone).Find(&user).Error; err == nil {
-		if user.Phone != nil && *user.Phone == *userData.Phone {
+	if err := initialize.DB.Where("email = ? OR phone = ?", registerUser.Email, registerUser.Phone).Find(&user).Error; err == nil {
+		if user.Phone != nil && *user.Phone == *registerUser.Phone {
 			common.Response(c, "手机号已被注册")
 			return
-		} else if user.Email == userData.Email {
+		} else if user.Email == registerUser.Email {
 			common.Response(c, "邮箱已存在")
 			return
 		}
@@ -462,11 +464,11 @@ func Signup(c iris.Context) {
 	var newUser User
 	nowTime := time.Now()
 	newUser.CreatedAt = nowTime
-	newUser.Name = userData.Name
-	newUser.Sex = userData.Sex
-	newUser.Email = userData.Email
-	newUser.Phone = userData.Phone
-	newUser.Password = encryptPassword(userData.Password, userData.Password)
+	newUser.Name = registerUser.Name
+	newUser.Sex = registerUser.Sex
+	newUser.Email = registerUser.Email
+	newUser.Phone = registerUser.Phone
+	newUser.Password = encryptPassword(registerUser.Password, registerUser.Password)
 	newUser.AvatarURL = "http://hoper.xyz/static/images/6cbeb5c8-7160-4b6f-a342-d96d3c00367a.jpg"
 	//newUser.Role = model.UserRoleNormal
 	newUser.Status = model.UserStatusInActive
@@ -494,17 +496,15 @@ func Signup(c iris.Context) {
 
 // Logout 退出登录
 func Logout(c iris.Context) {
-	userInter := c.Values().Get("user")
-	var user User
-	if userInter != nil {
-		user = userInter.(User)
+	user := c.Values().Get("user").(User)
+	initialize.DB.Model(&user).UpdateColumn("last_activated_at", time.Now())
 
-		RedisConn := initialize.RedisPool.Get()
-		defer RedisConn.Close()
+	RedisConn := initialize.RedisPool.Get()
+	defer RedisConn.Close()
 
-		if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
-		}
+	if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
 	}
+
 	c.SetCookie(&http.Cookie{
 		Name:     "token",
 		Value:    "del",
@@ -527,6 +527,21 @@ func GetUser(c iris.Context) {
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
 
+func UpdateUser(c iris.Context) {
+	var nUser User
+	if err := c.ReadJSON(&nUser); err != nil {
+		common.Response(c, "参数无效")
+		return
+	}
+	user := c.Values().Get("user").(User)
+
+	if err := initialize.DB.Model(&user).Updates(nUser).Error; err != nil {
+		common.Response(c, "error")
+		return
+	}
+	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
+}
+
 // UpdateInfo 更新用户信息
 func UpdateInfo(c iris.Context) {
 
@@ -535,8 +550,7 @@ func UpdateInfo(c iris.Context) {
 		common.Response(c, "参数无效")
 		return
 	}
-	userInter := c.Values().Get("user")
-	user := userInter.(User)
+	user := c.Values().Get("user").(User)
 
 	field := c.FormValue("field")
 	resData := make(map[string]interface{})
@@ -549,8 +563,7 @@ func UpdateInfo(c iris.Context) {
 			return
 		}
 		if err := initialize.DB.Model(&user).Update("sex", userReqData.Sex).Error; err != nil {
-			fmt.Println(err.Error())
-			common.Response(c, "error")
+			common.Response(c, "修改失败")
 			return
 		}
 		resData[field] = userReqData.Sex
@@ -678,12 +691,12 @@ func InfoDetail(c iris.Context) {
 		return
 	}
 
-	if err := initialize.DB.Model(&user).Related(&user.Schools).Error; err != nil {
+	if err := initialize.DB.Model(&user).Related(&user.EduExps).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
 
-	if err := initialize.DB.Model(&user).Related(&user.Careers).Error; err != nil {
+	if err := initialize.DB.Model(&user).Related(&user.WorkExps).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
@@ -851,117 +864,117 @@ func UploadAvatar(c iris.Context) {
 // AddCareer 添加职业经历
 func AddCareer(c iris.Context) {
 
-	var career model.Career
-	if err := c.ReadJSON(&career); err != nil {
+	var work model.Work
+	if err := c.ReadJSON(&work); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
 
-	career.Company = utils.AvoidXSS(career.Company)
-	career.Company = strings.TrimSpace(career.Company)
-	career.Title = utils.AvoidXSS(career.Title)
-	career.Title = strings.TrimSpace(career.Title)
+	work.Company = utils.AvoidXSS(work.Company)
+	work.Company = strings.TrimSpace(work.Company)
+	work.Title = utils.AvoidXSS(work.Title)
+	work.Title = strings.TrimSpace(work.Title)
 
-	if career.Company == "" {
+	if work.Company == "" {
 		common.Response(c, "公司或组织名称不能为空")
 		return
 	}
 
-	if utf8.RuneCountInString(career.Company) > model.MaxCareerCompanyLen {
+	if utf8.RuneCountInString(work.Company) > model.MaxCareerCompanyLen {
 		common.Response(c, "公司或组织名称不能超过"+strconv.Itoa(model.MaxCareerCompanyLen)+"个字符")
 		return
 	}
 
-	if career.Title == "" {
+	if work.Title == "" {
 		common.Response(c, "职位不能为空")
 		return
 	}
 
-	if utf8.RuneCountInString(career.Title) > model.MaxCareerTitleLen {
+	if utf8.RuneCountInString(work.Title) > model.MaxCareerTitleLen {
 		common.Response(c, "职位不能超过"+strconv.Itoa(model.MaxCareerTitleLen)+"个字符")
 		return
 	}
 
 	userInter := c.Values().Get("user")
 	user := userInter.(User)
-	career.UserID = user.ID
+	work.UserID = user.ID
 
-	if err := initialize.DB.Create(&career).Error; err != nil {
+	if err := initialize.DB.Create(&work).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
 
-	common.Response(c, career)
+	common.Response(c, work)
 }
 
 // AddSchool 添加教育经历
 func AddSchool(c iris.Context) {
 
-	var school model.School
-	if err := c.ReadJSON(&school); err != nil {
+	var edu model.Education
+	if err := c.ReadJSON(&edu); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
 
-	school.Name = utils.AvoidXSS(school.Name)
-	school.Name = strings.TrimSpace(school.Name)
-	school.Speciality = utils.AvoidXSS(school.Speciality)
-	school.Speciality = strings.TrimSpace(school.Speciality)
+	edu.Name = utils.AvoidXSS(edu.Name)
+	edu.Name = strings.TrimSpace(edu.Name)
+	edu.Speciality = utils.AvoidXSS(edu.Speciality)
+	edu.Speciality = strings.TrimSpace(edu.Speciality)
 
-	if school.Name == "" {
+	if edu.Name == "" {
 		common.Response(c, "学校或教育机构名不能为空")
 		return
 	}
 
-	if utf8.RuneCountInString(school.Name) > model.MaxSchoolNameLen {
+	if utf8.RuneCountInString(edu.Name) > model.MaxSchoolNameLen {
 		common.Response(c, "学校或教育机构名不能超过"+strconv.Itoa(model.MaxSchoolNameLen)+"个字符")
 		return
 	}
 
-	if school.Speciality == "" {
+	if edu.Speciality == "" {
 		common.Response(c, "专业方向不能为空")
 		return
 	}
 
-	if utf8.RuneCountInString(school.Speciality) > model.MaxSchoolSpecialityLen {
+	if utf8.RuneCountInString(edu.Speciality) > model.MaxSchoolSpecialityLen {
 		common.Response(c, "专业方向不能超过"+strconv.Itoa(model.MaxSchoolSpecialityLen)+"个字符")
 		return
 	}
 
 	userInter := c.Values().Get("user")
 	user := userInter.(User)
-	school.UserID = user.ID
+	edu.UserID = user.ID
 
-	if err := initialize.DB.Create(&school).Error; err != nil {
+	if err := initialize.DB.Create(&edu).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
 
-	common.Response(c, school)
+	common.Response(c, edu)
 }
 
-// DeleteCareer 删除职业经历
-func DeleteCareer(c iris.Context) {
+//删除职业经历
+func DeleteWork(c iris.Context) {
 
 	id := c.Params().GetUint64Default("id", 0)
 
-	var career model.Career
-	if err := initialize.DB.First(&career, id).Error; err != nil {
+	var work model.Work
+	if err := initialize.DB.First(&work, id).Error; err != nil {
 		common.Response(c, "无效的id.")
 		return
 	}
 
-	if err := initialize.DB.Delete(&career).Error; err != nil {
+	if err := initialize.DB.Delete(&work).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
 
-	common.Response(c, iris.Map{"id": career.ID})
+	common.Response(c, iris.Map{"id": work.ID})
 
 }
 
-// DeleteSchool 删除教育经历
-func DeleteSchool(c iris.Context) {
+// 删除教育经历
+func DeleteEdu(c iris.Context) {
 
 	id := c.Params().GetUint64Default("id", 0)
 
@@ -1028,12 +1041,6 @@ func UserToRedis(user User) error {
 	return nil
 }
 
-/*	type RegisterUser struct {
-	Name        string     `gorm:"type:varchar(10);not null" json:"name"`
-	Password    string     `json:"password"`
-	Email       string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
-	Phone       string     `gorm:"type:varchar(20)" json:"phone"`                    //手机号
-} */
 // CheckPassword 验证密码是否正确
 func checkPassword(password string, user User) bool {
 	if password == "" || user.Password == "" {

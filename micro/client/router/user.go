@@ -22,5 +22,6 @@ func UserRouter(app *iris.Application) {
 		userRouter.Post("/rpc/signup", user.Signup)
 		userRouter.Get("/edit", middleware.JWT, controller.GetUser)
 		userRouter.Get("/{id:uint64}", user.GetUser)
+		userRouter.Put("/", middleware.JWT, controller.UpdateUser)
 	}
 }

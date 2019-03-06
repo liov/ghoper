@@ -14,18 +14,21 @@ export default async function({ store, $axios, error, req, route, redirect }) {
                 const user = res.data
                 store.commit('SET_USER', user)
               } else {
+                store.commit('SET_TOKEN', null)
                 redirect({
                   path: '/user/login?callbackUrl=' + route.path
                 })
               }
             })
             .catch(function() {
+              store.commit('SET_TOKEN', null)
               redirect({
                 path: '/user/login?callbackUrl=' + route.path
               })
             })
         }
       } else {
+        store.commit('SET_TOKEN', null)
         redirect({ path: '/user/login?callbackUrl=' + route.path })
       }
     } else {
@@ -36,6 +39,7 @@ export default async function({ store, $axios, error, req, route, redirect }) {
             const user = res.data
             store.commit('SET_USER', user)
           } else {
+            store.commit('SET_TOKEN', null)
             route.push({
               path: '/user/login?callbackUrl=' + route.currentRoute.path
             })

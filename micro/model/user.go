@@ -21,8 +21,8 @@ type User struct {
 	CoverURL        string       `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
 	Address         string       `gorm:"type:varchar(100)" json:"address"`
 	Location        string       `gorm:"type:varchar(100)" json:"location"`
-	Schools         []School     `json:"schools"` //教育经历
-	Careers         []Career     `json:"careers"` //职业经历
+	EduExps         []Education  `json:"edu_exps"`  //教育经历
+	WorkExps        []Work       `json:"work_exps"` //职业经历
 	UpdatedAt       *time.Time   `json:"updated_at"`
 	BannedAt        *time.Time   `sql:"index" json:"banned_at"`
 	CreatedAt       time.Time    `json:"created_at"`

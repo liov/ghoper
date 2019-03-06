@@ -10,6 +10,8 @@ import (
 	"hoper/client/controller/common/e"
 	"hoper/initialize"
 	"hoper/model"
+	"net/http"
+	"time"
 )
 
 func JWT(ctx iris.Context) {
@@ -25,9 +27,20 @@ func JWT(ctx iris.Context) {
 
 	if code != e.SUCCESS {
 		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.SetCookie(&http.Cookie{
+			Name:     "token",
+			Value:    "del",
+			Path:     "/",
+			Domain:   "hoper.xyz",
+			Expires:  time.Now().Add(-1),
+			MaxAge:   -1,
+			Secure:   false,
+			HttpOnly: true,
+		})
 		ctx.JSON(iris.Map{
 			"code": code,
 			"data": e.GetMsg(code)})
+
 		return
 	}
 	ctx.Values().Set("user", user)
