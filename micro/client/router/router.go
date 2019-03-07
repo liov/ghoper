@@ -6,21 +6,19 @@ import (
 	"errors"
 	"fmt"
 	"github.com/getsentry/raven-go"
+	"github.com/iris-contrib/middleware/prometheus"
 	"github.com/kataras/iris"
-	"github.com/kataras/iris/middleware/basicauth"
 	"github.com/kataras/iris/middleware/i18n"
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/controller/common/logging"
-	"hoper/client/controller/upload"
-	"time"
-
 	"hoper/client/controller/hnsq"
 	"hoper/client/controller/hwebsocket"
-
+	"hoper/client/controller/upload"
 	"hoper/client/middleware"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 func init() {
@@ -52,8 +50,32 @@ func IrisRouter() *iris.Application {
 
 		router(w, r)
 	})
-
+	//api文档
+	/*	yaag.Init(&yaag.Config{
+			On:       true,                 //是否开启自动生成API文档功能
+			DocTitle: "Iris",
+			DocPath:  "../static/api/apidoc.html",        //生成API文档名称存放路径
+			BaseUrls: map[string]string{"Production": "", "Staging": ""},
+		})
+		//注册中间件
+		app.Use(irisyaag.New())*/
+	//https://rpm.newrelic.com/accounts/2269290/applications
+	/*	config := newrelic.Config("hoper", "199e00247f278548fe92d6c81aeaadac0fc52b4b")
+		m, err := newrelic.New(config)
+		if err != nil {
+			app.Logger().Fatal(err)
+		}
+		app.Use(m.ServeHTTP)*/
 	app.Use(New())
+
+	prometheus := prometheus.New("hoper")
+	app.Use(prometheus.ServeHTTP)
+	app.OnErrorCode(iris.StatusNotFound, func(ctx iris.Context) {
+		//错误代码处理程序不与其他路由共享相同的中间件，所以单独执行错误
+		prometheus.ServeHTTP(ctx)
+		ctx.Writef("Not Found")
+	})
+
 	/*middleware必须要写ctx.next(),且写在路由前，路由后的midddleware在请求之前的路由时不生效
 	  iris.FromStd()将其他Handler转为iris的Handler
 	*/
@@ -66,6 +88,8 @@ func IrisRouter() *iris.Application {
 	app.Use(globalLocale)
 
 	app.Logger().Printer.SetOutput(logging.F)
+
+	UserRouter(app)
 
 	WS(app)
 
@@ -89,24 +113,13 @@ func IrisRouter() *iris.Application {
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)
 
-	UserRouter(app)
-
 	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment)
 
-	//app.Get("/api/push",controller.Push)
+	app.Get("/api/push", controller.Push)
 
 	app.Get("/api/chat/getChat", hwebsocket.GetChat)
 
 	app.Post("/api/nsq", hnsq.Start)
-
-	authConfig := basicauth.Config{
-		Users:   map[string]string{"admin": "lby604"},
-		Realm:   "Authorization Required", // defaults to "Authorization Required"
-		Expires: time.Duration(30) * time.Minute,
-	}
-
-	authentication := basicauth.New(authConfig)
-	app.Get("/api/init", authentication, DBInit)
 
 	return app
 }

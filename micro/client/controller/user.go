@@ -518,9 +518,9 @@ func Logout(c iris.Context) {
 	common.Response(c, "已注销", e.SUCCESS)
 }
 
-func GetUser(c iris.Context) {
+func GetUserSelf(c iris.Context) {
 	user := c.Values().Get("user").(User)
-	initialize.DB.Find(&user)
+	initialize.DB.Preload("EduExps").Preload("WorkExps").Find(&user)
 	//*string改值的方法
 	phone := (*(user.Phone))[0:3] + "XXXX" + (*(user.Phone))[7:]
 	user.Phone = &phone
@@ -536,7 +536,7 @@ func UpdateUser(c iris.Context) {
 	user := c.Values().Get("user").(User)
 
 	if err := initialize.DB.Model(&user).Updates(nUser).Error; err != nil {
-		common.Response(c, "error")
+		common.Response(c, "更新失败")
 		return
 	}
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
@@ -916,17 +916,17 @@ func AddSchool(c iris.Context) {
 		return
 	}
 
-	edu.Name = utils.AvoidXSS(edu.Name)
-	edu.Name = strings.TrimSpace(edu.Name)
+	edu.School = utils.AvoidXSS(edu.School)
+	edu.School = strings.TrimSpace(edu.School)
 	edu.Speciality = utils.AvoidXSS(edu.Speciality)
 	edu.Speciality = strings.TrimSpace(edu.Speciality)
 
-	if edu.Name == "" {
+	if edu.School == "" {
 		common.Response(c, "学校或教育机构名不能为空")
 		return
 	}
 
-	if utf8.RuneCountInString(edu.Name) > model.MaxSchoolNameLen {
+	if utf8.RuneCountInString(edu.School) > model.MaxSchoolNameLen {
 		common.Response(c, "学校或教育机构名不能超过"+strconv.Itoa(model.MaxSchoolNameLen)+"个字符")
 		return
 	}

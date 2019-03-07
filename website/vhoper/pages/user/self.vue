@@ -157,7 +157,7 @@
           :key="index"
         >
           <a-col :span="6">
-            <a-input v-model="edu_exps[index].name" :disabled="!edit" placeholder="请输入学校!" />
+            <a-input v-model="edu_exps[index].school" :disabled="!edit" placeholder="请输入学校!" />
           </a-col>
           <a-col :span="6">
             <a-input v-model="edu_exps[index].speciality" :disabled="!edit" placeholder="请输入专业!" />
@@ -213,7 +213,8 @@
         <a-button icon="book">
           喜欢
         </a-button>
-      </nuxt-link><br>
+      </nuxt-link>
+      <br>
       <nuxt-link to="/collection">
         <a-button icon="book">
           收藏
@@ -224,6 +225,8 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   middleware: 'auth',
   data() {
@@ -283,7 +286,36 @@ export default {
       address: res.data.address.split(' ')
     }
   },
-  created() {},
+  created() {
+    this.user.birthday = moment(this.user.birthday, 'YYYY-MM-DD HH:mm:ss')
+    for (const v of this.user.edu_exps) {
+      this.edu_exps.push({
+        id: v.id,
+        school: v.school,
+        speciality: v.speciality,
+        start_time: moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+        end_time: moment(v.end_time, 'YYYY-MM-DD HH:mm:ss'),
+        time: [
+          moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+          moment(v.end_time, 'YYYY-MM-DD HH:mm:ss')
+        ]
+      })
+    }
+
+    for (const v of this.user.work_exps) {
+      this.work_exps.push({
+        id: v.id,
+        company: v.company,
+        title: v.title,
+        start_time: moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+        end_time: moment(v.end_time, 'YYYY-MM-DD HH:mm:ss'),
+        time: [
+          moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+          moment(v.end_time, 'YYYY-MM-DD HH:mm:ss')
+        ]
+      })
+    }
+  },
   methods: {
     getStatus: function() {
       fetch('http://hoper.xyz/user/1', {
@@ -379,8 +411,11 @@ export default {
         edu_exps: this.edu_exps,
         work_exps: this.work_exps
       })
-      if (res !== undefined && res.code === 200) this.$message.info('修改成功')
-      else this.$message.info('修改失败')
+      if (res !== undefined && res.code === 200) {
+        this.$store.commit('SET_USER', res.data)
+        this.edit = false
+        this.$message.info('修改成功')
+      } else this.$message.info('修改失败')
     },
     eduTime(index) {
       this.edu_exps[index].start_time = this.edu_exps[index].time[0]

@@ -240,6 +240,11 @@ export default {
       // 会通过 Ajax 请求加载
       require(['mavon-editor'], ({ mavonEditor }) => resolve(mavonEditor))
     }) */
+    // 这个函数真是无敌
+    this.$nextTick(function() {
+      require('../../plugins/filter/tinymce')
+      tinymce.init(this.init)
+    })
   },
   beforeDestroy() {
     tinymce.activeEditor.destroy()
@@ -250,15 +255,15 @@ export default {
 
       // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
       // 两种方式，1.插件客户端渲染，2.有window后引入
-      if (typeof window !== 'undefined') {
-        /*        const Vditor = require('vditor')
+      /*      if (typeof window !== 'undefined') {
+        /!*        const Vditor = require('vditor')
           const vditor = new Vditor('content', {})
-          vditor.focus() */
+          vditor.focus() *!/
         require('../../plugins/filter/tinymce')
         if (e.target.value === 'html' && tinymce.activeEditor === null) {
           tinymce.init(this.init)
         }
-      }
+      } */
     },
     uploadChange(info) {
       if (info.file.status === 'uploading') {

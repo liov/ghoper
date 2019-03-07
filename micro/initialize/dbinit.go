@@ -54,7 +54,7 @@ func initializeDB() {
 	db.DB().SetMaxIdleConns(Config.Database.MaxIdleConns)
 	db.DB().SetMaxOpenConns(Config.Database.MaxOpenConns)
 	//db.Callback().Create().Remove("gorm:update_time_stamp")
-	db.Callback().Update().Remove("gorm:update_time_stamp")
+	//db.Callback().Update().Remove("gorm:update_time_stamp")
 	db.Callback().Create().Remove("gorm:save_before_associations")
 	db.Callback().Create().Remove("gorm:save_after_associations")
 	//db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)

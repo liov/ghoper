@@ -41,6 +41,7 @@ func TPLRouter(app *iris.Application) {
 		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
 		tplRouter.Get("/markdown", markdown.MarkdownTest)
+		app.Get("/init", authentication, DBInit)
 		tplRouter.Get("/time", iris.Cache304(10*time.Second), html.Time)
 		tplRouter.Get("/auth", authentication, html.Auth)
 		tplRouter.Get("/values", authentication, html.Values)

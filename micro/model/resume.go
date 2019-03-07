@@ -5,7 +5,7 @@ import "time"
 // Education 教育经历
 type Education struct {
 	ID         uint       `gorm:"primary_key" json:"id"`
-	Name       string     `gorm:"type:varchar(20)" json:"name"`
+	School     string     `gorm:"type:varchar(20)" json:"school"`
 	Speciality string     `gorm:"type:varchar(100)" json:"speciality"` //专业
 	StartTime  time.Time  `json:"start_time"`
 	EndTime    time.Time  `json:"end_time"`

@@ -20,7 +20,7 @@ func UserRouter(app *iris.Application) {
 		userRouter.Post("/rpc/login", user.Login)
 		userRouter.Get("/rpc/logout", user.Logout)
 		userRouter.Post("/rpc/signup", user.Signup)
-		userRouter.Get("/edit", middleware.JWT, controller.GetUser)
+		userRouter.Get("/edit", middleware.JWT, controller.GetUserSelf)
 		userRouter.Get("/{id:uint64}", user.GetUser)
 		userRouter.Put("/", middleware.JWT, controller.UpdateUser)
 	}

@@ -2,18 +2,15 @@ module hoper
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
-	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/DataDog/zstd v1.3.5 // indirect
-	github.com/Joker/jade v1.0.0 // indirect
 	github.com/PuerkitoBio/goquery v1.5.0
-	github.com/Shopify/goreferrer v0.0.0-20181106222321-ec9c9a553398 // indirect
 	github.com/Shopify/sarama v1.20.1 // indirect
 	github.com/antchfx/htmlquery v1.0.0 // indirect
 	github.com/antchfx/xmlquery v1.0.0 // indirect
 	github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/aws/aws-sdk-go v1.16.31
-	github.com/aymerick/raymond v2.0.2+incompatible // indirect
+	github.com/betacraft/yaag v1.0.0
 	github.com/bluele/gcache v0.0.0-20190203144525-2016d595ccb0
 	github.com/boombuler/barcode v1.0.0
 	github.com/bytedance/go-tagexpr v1.1.3 // indirect
@@ -22,12 +19,7 @@ require (
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
-	github.com/fatih/structs v1.1.0 // indirect
-	github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769 // indirect
 	github.com/getsentry/raven-go v0.2.0
-	github.com/gin-contrib/sse v0.0.0-20190125020943-a7658810eb74 // indirect
-	github.com/gin-gonic/gin v1.3.0 // indirect
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-swagger/go-swagger v0.18.0 // indirect
@@ -53,25 +45,18 @@ require (
 	github.com/hashicorp/go-sockaddr v0.0.0-20190103214136-e92cdb5343bb // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
 	github.com/hashicorp/serf v0.8.1 // indirect
-	github.com/iris-contrib/blackfriday v2.0.0+incompatible // indirect
-	github.com/iris-contrib/formBinder v0.0.0-20190104093907-fbd5963f41e1 // indirect
-	github.com/iris-contrib/go.uuid v2.0.0+incompatible // indirect
 	github.com/iris-contrib/i18n v0.0.0-20171121225848-987a633949d0 // indirect
+	github.com/iris-contrib/middleware v0.0.0-20181021162728-8bd5d51b3c2e
 	github.com/jinzhu/configor v0.0.0-20180614024415-4edaf76fe188
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/json-iterator/go v1.1.5
-	github.com/kataras/golog v0.0.0-20180321173939-03be10146386 // indirect
 	github.com/kataras/iris v11.1.1+incompatible
-	github.com/kataras/pio v0.0.0-20190103105442-ea782b38602d // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/klauspost/compress v1.4.1 // indirect
-	github.com/klauspost/cpuid v1.2.0 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/lni/dragonboat v2.1.0+incompatible // indirect
 	github.com/markbates/goth v1.49.0
-	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect
 	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6
 	github.com/micro/go-micro v0.17.1-0.20190110221432-3043841cf529
@@ -86,31 +71,26 @@ require (
 	github.com/miekg/dns v1.1.2 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/newrelic/go-agent v2.5.0+incompatible // indirect
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
+	github.com/prometheus/client_golang v0.9.2 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967
 	github.com/russross/blackfriday v2.0.0+incompatible
-	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.3.0
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/ugorji/go/codec v0.0.0-20190204201341-e444a5086c43
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc // indirect
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
 	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
-	golang.org/x/net v0.0.0-20190110044637-be1c187aa6c6
+	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
 	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890 // indirect
 	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4 // indirect
-	golang.org/x/sys v0.0.0-20190109145017-48ac38b7c8cb // indirect
 	golang.org/x/tools v0.0.0-20190110015856-aa033095749b // indirect
 	google.golang.org/appengine v1.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20190108161440-ae2f86662275 // indirect
