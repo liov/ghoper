@@ -57,6 +57,8 @@ func initializeDB() {
 	//db.Callback().Update().Remove("gorm:update_time_stamp")
 	db.Callback().Create().Remove("gorm:save_before_associations")
 	db.Callback().Create().Remove("gorm:save_after_associations")
+	db.Callback().Update().Remove("gorm:save_before_associations")
+	db.Callback().Update().Remove("gorm:save_after_associations")
 	//db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
 	//db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 	//db.Callback().Create().Replace("gorm:save_before_associations", saveBeforeAssociationsCallback)

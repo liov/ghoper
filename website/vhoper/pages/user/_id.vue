@@ -7,11 +7,14 @@
 </template>
 
 <script>
-import ARow from 'ant-design-vue/es/grid/Row'
 export default {
-  components: { ARow }
+  mounted() {
+    const client = new EventSource('/api/sse/events')
+    client.onmessage = function(evt) {
+      console.log(evt)
+    }
+  }
 }
 </script>
-
 <style scoped>
 </style>

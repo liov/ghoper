@@ -11,7 +11,6 @@ import (
 	"github.com/kataras/iris/middleware/i18n"
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
-	"hoper/client/controller/common/logging"
 	"hoper/client/controller/hnsq"
 	"hoper/client/controller/hwebsocket"
 	"hoper/client/controller/upload"
@@ -87,21 +86,21 @@ func IrisRouter() *iris.Application {
 			"zh-CN": "../i18n/locale_zh-CN.ini"}})
 	app.Use(globalLocale)
 
-	app.Logger().Printer.SetOutput(logging.F)
+	//app.Logger().Printer.SetOutput(logging.F)
 
 	UserRouter(app)
 
 	WS(app)
 
-	TPLRouter(app)
-
 	ArticleRouter(app)
 
 	MomentRouter(app)
-
+	//试验性
 	GraphqlRouter(app)
-
+	TPLRouter(app)
 	Smart(app)
+	//自己做还是第三方库刷新writer都没用
+	//Sse(app)
 
 	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)

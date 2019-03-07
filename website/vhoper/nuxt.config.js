@@ -30,7 +30,9 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/filter/hoper_vue',
+    '@/plugins/filter/hoper_antd',
+    '@/plugins/filter/hoper_utils',
+    '@/plugins/filter/ctx-inject',
     '@/plugins/filter/hoper_axios',
     '@/plugins/markdown-it'
     //{src:'@/plugins/filter/mavonEditor',ssr:false}

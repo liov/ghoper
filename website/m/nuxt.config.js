@@ -83,7 +83,7 @@ export default {
     ],
     plugins: [
         {src:'~plugins/filter/hoper_axios.js'},
-        {src:'~plugins/filter/hoper_vue.js',ssr: true}
+        {src:'~plugins/filter/hoper_antd.js',ssr: true}
     ],
 
 };

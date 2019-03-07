@@ -535,10 +535,34 @@ func UpdateUser(c iris.Context) {
 	}
 	user := c.Values().Get("user").(User)
 
-	if err := initialize.DB.Model(&user).Updates(nUser).Error; err != nil {
+	tx := initialize.DB.Begin()
+
+	for _, v := range nUser.EduExps {
+		v.UserID = user.ID
+		v.Status = 1
+		if v.ID != 0 {
+			tx.Model(&v).Updates(&v)
+		} else {
+			tx.Create(&v)
+		}
+	}
+
+	for _, v := range nUser.WorkExps {
+		v.UserID = user.ID
+		v.Status = 1
+		if v.ID != 0 {
+			tx.Model(&v).Updates(&v)
+		} else {
+			tx.Create(&v)
+		}
+	}
+
+	if err := tx.Model(&user).Updates(nUser).Error; err != nil {
+		tx.Rollback()
 		common.Response(c, "更新失败")
 		return
 	}
+	tx.Commit()
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
 

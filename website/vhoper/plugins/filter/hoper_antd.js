@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import moment from 'moment'
 import {
   Affix,
   Anchor,
@@ -60,22 +59,9 @@ import {
   Comment,
   ConfigProvider
 } from 'ant-design-vue'
+
 import lioHint from '../../components/hint'
 
-Vue.filter('dateFormat', function(value) {
-  return moment(value).format('YYYY-MM-DD HH:mm:ss')
-  /* date.getFullYear() +
-    '-' +
-    (date.getMonth() + 1) +
-    '-' +
-    date.getDate() +
-    ' ' +
-    date.getHours() +
-    ':' +
-    date.getMinutes() +
-    ':' +
-    date.getSeconds() */
-})
 Vue.component('lio-hint', lioHint)
 Vue.prototype.$message = message
 Vue.prototype.$notification = notification

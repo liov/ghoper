@@ -225,8 +225,6 @@
 </template>
 
 <script>
-import moment from 'moment'
-
 export default {
   middleware: 'auth',
   data() {
@@ -287,17 +285,17 @@ export default {
     }
   },
   created() {
-    this.user.birthday = moment(this.user.birthday, 'YYYY-MM-DD HH:mm:ss')
+    this.user.birthday = this.$s2date(this.user.birthday, 'YYYY-MM-DD HH:mm:ss')
     for (const v of this.user.edu_exps) {
       this.edu_exps.push({
         id: v.id,
         school: v.school,
         speciality: v.speciality,
-        start_time: moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
-        end_time: moment(v.end_time, 'YYYY-MM-DD HH:mm:ss'),
+        start_time: this.$s2date(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+        end_time: this.$s2date(v.end_time, 'YYYY-MM-DD HH:mm:ss'),
         time: [
-          moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
-          moment(v.end_time, 'YYYY-MM-DD HH:mm:ss')
+          this.$s2date(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+          this.$s2date(v.end_time, 'YYYY-MM-DD HH:mm:ss')
         ]
       })
     }
@@ -307,11 +305,11 @@ export default {
         id: v.id,
         company: v.company,
         title: v.title,
-        start_time: moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
-        end_time: moment(v.end_time, 'YYYY-MM-DD HH:mm:ss'),
+        start_time: this.$s2date(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+        end_time: this.$s2date(v.end_time, 'YYYY-MM-DD HH:mm:ss'),
         time: [
-          moment(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
-          moment(v.end_time, 'YYYY-MM-DD HH:mm:ss')
+          this.$s2date(v.start_time, 'YYYY-MM-DD HH:mm:ss'),
+          this.$s2date(v.end_time, 'YYYY-MM-DD HH:mm:ss')
         ]
       })
     }
@@ -362,6 +360,7 @@ export default {
     changeEdu(index) {
       if (index < 0 && this.edu_exps.length < 5) {
         this.edu_exps.push({
+          id: 0,
           name: '',
           speciality: '',
           start_time: '',
@@ -377,6 +376,7 @@ export default {
     changeWork(index) {
       if (index < 0 && this.work_exps.length < 5) {
         this.work_exps.push({
+          id: 0,
           company: '',
           title: '',
           start_time: '',

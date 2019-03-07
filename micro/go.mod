@@ -52,6 +52,7 @@ require (
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/json-iterator/go v1.1.5
+	github.com/kataras/golog v0.0.0-20180321173939-03be10146386
 	github.com/kataras/iris v11.1.1+incompatible
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/lib/pq v1.0.0 // indirect
@@ -77,6 +78,7 @@ require (
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_golang v0.9.2 // indirect
+	github.com/r3labs/sse v0.0.0-20181217150409-243b7807c4c4
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967
 	github.com/russross/blackfriday v2.0.0+incompatible
@@ -95,6 +97,7 @@ require (
 	google.golang.org/appengine v1.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20190108161440-ae2f86662275 // indirect
 	google.golang.org/grpc v1.17.0
+	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	honnef.co/go/tools v0.0.0-20190109154334-5bcec433c8ea // indirect
