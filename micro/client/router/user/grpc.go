@@ -12,10 +12,15 @@ import (
 var userService protobuf.UserService
 
 func init() {
+	/*	reg := etcdv3.NewRegistry(func(options *registry.Options) {
+		options.Addrs =[]string{
+			"http://192.168.3.34:2379",
+		}
+	})*/
 	// Create a new service. Optionally include some options here.
 	service := micro.NewService(micro.Name("user.client"))
+	// Init will parse the command line flags.
 	service.Init()
-
 	// Create new user client
 	userService = protobuf.NewUserService("user", service.Client())
 }
