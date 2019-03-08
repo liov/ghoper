@@ -7,6 +7,9 @@ import (
 )
 
 func WS(app *iris.Application) {
+
+	app.Get("/api/chat/getChat", hwebsocket.GetChat)
+
 	app.Get("/ws/chat", hwebsocket.Chat)
 
 	ws := hwebsocket.GetWebsocket()

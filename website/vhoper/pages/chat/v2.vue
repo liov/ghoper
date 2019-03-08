@@ -86,10 +86,10 @@ export default {
       submitting: false,
       value: '',
       user: null,
-      ws: null, // Our websocket
+      socket: null, // Our websocket
       newMsg: '', // Holds new messages to be sent to the server
-      recipient: null, // Email address used for grabbing an avatar
-      joined: false // True if email and username have been filled in
+      recipient: 0, // Email address used for grabbing an avatar
+      scheme: ''
     }
   },
   async asyncData({ $axios }) {
@@ -102,44 +102,52 @@ export default {
     this.user = this.$store.state.user
   },
   mounted: function() {
-    this.newWs()
-    // 这是什么黑科技？？？，本来以为DOM没有渲染完就执行，所以没效果，
-    // 加了个定时器，时间一直从500减到0，都一直有效
+    // fetch(`/tpl/iris-ws.js`)
+    const vm = this
+    const script = document.createElement('script')
+    script.type = 'text/javascript' // 设置Type
+    script.src = '/tpl/iris-ws.js' // 设置src
+    document.head.appendChild(script) // 异步加载
+    script.onload = function() {
+      vm.scheme = document.location.protocol === 'https:' ? 'wss' : 'ws'
+      // see app.Get("/echo", ws.Handler()) on main.go
+      vm.newWs()
+    }
     setTimeout(function() {
       document.querySelector('#bottom').scrollIntoView()
     }, 0)
     /* this.chatContent=JSON.parse(localStorage.getItem("chatContent"));
-            if(this.chatContent === null) this.chatContent=[]; */
+              if(this.chatContent === null) this.chatContent=[]; */
   },
   updated: function() {},
   beforeDestroy() {
-    this.ws.close()
+    this.socket.Disconnect()
   },
   methods: {
     newWs: function() {
       // 不能放在created里
       const vm = this
-      this.ws = new WebSocket('ws://' + window.location.host + '/ws/chat')
-      this.ws.onopen = function() {
-        // console.log('建立websocket连接')
+      const wsURL = this.scheme + '://' + 'hoper.xyz' + '/ws/echo'
+      this.socket = new Ws(wsURL)
+      this.socket.OnConnect(function() {
         if (vm.value !== '') {
           vm.handleSubmit()
         }
-      }
-      this.ws.onmessage = function(evt) {
+      })
+
+      this.socket.OnDisconnect(function() {
+        // console.log('websocket连接关闭')
+      })
+
+      // read events from the server
+      this.socket.On('chat', function(msg) {
         vm.submitting = false
-        vm.msgs = [...vm.msgs, JSON.parse(evt.data)]
+        vm.msgs = [...vm.msgs, JSON.parse(msg)]
         vm.value = ''
         vm.$nextTick(function() {
           document.querySelector('#bottom').scrollIntoView()
         })
-      }
-      this.ws.onerror = function() {
-        vm.newWs()
-      }
-      this.ws.onclose = function() {
-        // console.log('websocket连接关闭')
-      }
+      })
 
       document.scrollingElement.scrollTop =
         document.scrollingElement.scrollHeight
@@ -153,13 +161,14 @@ export default {
         return
       }
 
-      if (this.ws.readyState !== 1) {
+      if (this.socket.conn.readyState !== 1) {
         this.newWs()
         return
       }
       this.submitting = true
 
-      this.ws.send(
+      this.socket.Emit(
+        'chat',
         JSON.stringify({
           recipient_user_id: this.recipient,
           sender_user_id:

@@ -3,10 +3,6 @@ package router
 //go:generate qtc -dir=../template
 import (
 	"context"
-	"errors"
-	"fmt"
-	"github.com/getsentry/raven-go"
-	"github.com/iris-contrib/middleware/prometheus"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/i18n"
 	"github.com/kataras/iris/middleware/logger"
@@ -14,19 +10,15 @@ import (
 	"hoper/client/controller"
 	"hoper/client/controller/common/logging"
 	"hoper/client/controller/hnsq"
-	"hoper/client/controller/hwebsocket"
 	"hoper/client/controller/upload"
 	"hoper/client/middleware"
 	"hoper/client/router/other"
-	"net/http"
-	"os"
-	"runtime/debug"
 	"strings"
 	"time"
 )
 
 func init() {
-	raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
+	//raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
 }
 
 func IrisRouter() *iris.Application {
@@ -40,8 +32,8 @@ func IrisRouter() *iris.Application {
 		app.Shutdown(ctx)
 	})
 	app.StaticWeb("/api/static", "../static")
-
-	app.WrapRouter(func(w http.ResponseWriter, r *http.Request, router http.HandlerFunc) {
+	//路由装饰
+	/*	app.WrapRouter(func(w http.ResponseWriter, r *http.Request, router http.HandlerFunc) {
 		defer func() {
 			if rval := recover(); rval != nil {
 				debug.PrintStack()
@@ -53,7 +45,8 @@ func IrisRouter() *iris.Application {
 		}()
 
 		router(w, r)
-	})
+	})*/
+
 	//api文档
 	/*	yaag.Init(&yaag.Config{
 			On:       true,                 //是否开启自动生成API文档功能
@@ -72,14 +65,14 @@ func IrisRouter() *iris.Application {
 		app.Use(m.ServeHTTP)*/
 	app.Use(New())
 
-	prometheus := prometheus.New("hoper")
-	app.Use(prometheus.ServeHTTP)
-	app.OnErrorCode(iris.StatusNotFound, func(ctx iris.Context) {
-		//错误代码处理程序不与其他路由共享相同的中间件，所以单独执行错误
-		prometheus.ServeHTTP(ctx)
-		ctx.Writef("Not Found")
-	})
-
+	/*	prometheus := prometheus.New("hoper")
+		app.Use(prometheus.ServeHTTP)
+		app.OnErrorCode(iris.StatusNotFound, func(ctx iris.Context) {
+			//错误代码处理程序不与其他路由共享相同的中间件，所以单独执行错误
+			prometheus.ServeHTTP(ctx)
+			ctx.Writef("Not Found")
+		})
+	*/
 	/*middleware必须要写ctx.next(),且写在路由前，路由后的midddleware在请求之前的路由时不生效
 	  iris.FromStd()将其他Handler转为iris的Handler
 	*/
@@ -91,16 +84,15 @@ func IrisRouter() *iris.Application {
 			"zh-CN": "../i18n/locale_zh-CN.ini"}})
 	app.Use(globalLocale)
 
-	loggerM, close := loggerMiddel()
-	defer close()
+	logM := logMid()
 
-	app.Use(loggerM)
+	app.Use(logM)
 	/*
 		app.OnErrorCode(404 ,customLogger, func(ctx iris.Context) {
 		   ctx.Writef("My Custom 404 error page ")
 		})
 	*/
-	app.OnAnyErrorCode(loggerM, func(ctx iris.Context) {
+	app.OnAnyErrorCode(logM, func(ctx iris.Context) {
 		//这应该被添加到日志中，因为`logger.Config＃MessageContextKey`
 		ctx.Values().Set("logger_message",
 			"a dynamic message passed to the logs")
@@ -120,7 +112,7 @@ func IrisRouter() *iris.Application {
 	TPLRouter(app)
 	other.Smart(app)
 	//自己做还是第三方库刷新writer都没用
-	other.Sse(app)
+	//other.Sse(app)
 
 	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)
@@ -136,14 +128,12 @@ func IrisRouter() *iris.Application {
 
 	app.Get("/api/push", controller.Push)
 
-	app.Get("/api/chat/getChat", hwebsocket.GetChat)
-
 	app.Post("/api/nsq", hnsq.Start)
 
 	return app
 }
 
-func loggerMiddel() (h iris.Handler, close func() error) {
+func logMid() iris.Handler {
 	var excludeExtensions = [...]string{
 		".js",
 		".css",
@@ -152,7 +142,7 @@ func loggerMiddel() (h iris.Handler, close func() error) {
 		".ico",
 		".svg",
 	}
-	close = func() error { return nil }
+
 	c := logger.Config{
 		//状态显示状态代码
 		Status: true,
@@ -173,13 +163,7 @@ func loggerMiddel() (h iris.Handler, close func() error) {
 	}
 
 	logFile := logging.F
-	close = func() error {
-		err := logFile.Close()
-		if err != nil {
-			err = os.Remove(logFile.Name())
-		}
-		return err
-	}
+
 	c.LogFunc = func(now time.Time, latency time.Duration, status, ip, method, path string, message interface{}, headerMessage interface{}) {
 		output := logger.Columnize(now.Format("2006/01/02 - 15:04:05"), latency, status, ip, method, path, message, headerMessage)
 		logFile.Write([]byte(output))
@@ -194,6 +178,6 @@ func loggerMiddel() (h iris.Handler, close func() error) {
 		}
 		return false
 	})
-	h = logger.New(c)
-	return
+	h := logger.New(c)
+	return h
 }

@@ -43,26 +43,27 @@ func JWT(ctx iris.Context) {
 
 		return
 	}
-	ctx.Values().Set("user", user)
+	ctx.Values().Set("user", *user)
 	ctx.Next()
 }
 
+//中间件的两种方式
 func GetUser() iris.Handler {
 	return func(ctx iris.Context) {
 		user, _ := getUser(ctx)
-		ctx.Values().Set("user", user)
+		ctx.Values().Set("user", user) //坑哦，这里存的是指针哦，虽然这个函数没用过
 		ctx.Next()
 	}
 }
 
-func getUser(ctx iris.Context) (controller.User, error) {
-	var user controller.User
+func getUser(ctx iris.Context) (*controller.User, error) {
+
 	tokenString := ctx.GetCookie("token")
 	if len(tokenString) == 0 {
 		tokenString = ctx.GetHeader("Authorization")
 	}
 	if len(tokenString) == 0 {
-		return user, errors.New("没有token")
+		return nil, errors.New("没有token")
 	}
 
 	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -73,27 +74,25 @@ func getUser(ctx iris.Context) (controller.User, error) {
 	})
 
 	if tokenErr != nil {
-		return user, errors.New("未登录")
+		return nil, errors.New("未登录")
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		userID := int(claims["id"].(float64))
-		var err error
-		user, err = controller.UserFromRedis(userID)
+		user, err := controller.UserFromRedis(userID)
 		if err != nil {
-			return user, errors.New("登录超时")
+			return nil, errors.New("登录超时")
 		}
-		return user, nil
+		return &user, nil
 	}
-	return user, errors.New("未登录")
+	return nil, errors.New("未登录")
 }
 
 // SigninRequired 必须是登录用户
 func SigninRequired(ctx iris.Context) {
 
-	var user controller.User
-	var err error
-	if user, err = getUser(ctx); err != nil {
+	user, err := getUser(ctx)
+	if err != nil {
 		common.Response(ctx, "未登录", e.LoginTimeout)
 		return
 	}
@@ -103,9 +102,8 @@ func SigninRequired(ctx iris.Context) {
 // EditorRequired 必须是网站编辑
 func EditorRequired(ctx iris.Context) {
 
-	var user controller.User
-	var err error
-	if user, err = getUser(ctx); err != nil {
+	user, err := getUser(ctx)
+	if err != nil {
 		common.Response(ctx, "未登录", e.LoginTimeout)
 		return
 	}
@@ -119,9 +117,8 @@ func EditorRequired(ctx iris.Context) {
 // AdminRequired 必须是管理员
 func AdminRequired(ctx iris.Context) {
 
-	var user controller.User
-	var err error
-	if user, err = getUser(ctx); err != nil {
+	user, err := getUser(ctx)
+	if err != nil {
 		common.Response(ctx, "未登录", e.LoginTimeout)
 		return
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
 	"github.com/satori/go.uuid"
+	"hoper/client/controller/common/logging"
 	"hoper/client/controller/cron"
 	"hoper/client/controller/hwebsocket"
 	"hoper/client/router"
@@ -23,6 +24,8 @@ func Client() {
 
 	cron.New().Start()
 	defer cron.New().Stop()
+
+	defer logging.F.Close()
 
 	go hwebsocket.Start()
 

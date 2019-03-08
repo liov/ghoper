@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" style="text-align: center">
     <h1 v-if="error.statusCode === 404">
       页面不存在
     </h1>
