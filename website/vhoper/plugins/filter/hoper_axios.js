@@ -26,9 +26,6 @@ export default function({ app, store, $axios, req }) {
     return Promise.reject(error)
   }) */
   $axios.onResponseError(error => {
-    if (typeof window !== 'undefined') {
-      return (error.response.status = 300)
-    }
     if (error.response) {
       switch (error.response.status) {
         case 401: // token过期，清除token并跳转到登录页面
@@ -38,6 +35,11 @@ export default function({ app, store, $axios, req }) {
           app.router.push({
             path: '/user/login?callbackUrl=' + app.router.currentRoute.path
           })
+          break
+        default:
+          if (typeof window !== 'undefined') {
+            return (error.response.status = 300)
+          }
       }
     }
     return Promise.reject(error.response.data)

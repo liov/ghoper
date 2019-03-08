@@ -9,14 +9,19 @@ import (
 	"github.com/iris-contrib/middleware/prometheus"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/i18n"
+	"github.com/kataras/iris/middleware/logger"
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
+	"hoper/client/controller/common/logging"
 	"hoper/client/controller/hnsq"
 	"hoper/client/controller/hwebsocket"
 	"hoper/client/controller/upload"
 	"hoper/client/middleware"
+	"hoper/client/router/other"
 	"net/http"
+	"os"
 	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -86,6 +91,21 @@ func IrisRouter() *iris.Application {
 			"zh-CN": "../i18n/locale_zh-CN.ini"}})
 	app.Use(globalLocale)
 
+	loggerM, close := loggerMiddel()
+	defer close()
+
+	app.Use(loggerM)
+	/*
+		app.OnErrorCode(404 ,customLogger, func(ctx iris.Context) {
+		   ctx.Writef("My Custom 404 error page ")
+		})
+	*/
+	app.OnAnyErrorCode(loggerM, func(ctx iris.Context) {
+		//这应该被添加到日志中，因为`logger.Config＃MessageContextKey`
+		ctx.Values().Set("logger_message",
+			"a dynamic message passed to the logs")
+		ctx.Writef("My Custom error page")
+	})
 	//app.Logger().Printer.SetOutput(logging.F)
 
 	UserRouter(app)
@@ -96,11 +116,11 @@ func IrisRouter() *iris.Application {
 
 	MomentRouter(app)
 	//试验性
-	GraphqlRouter(app)
+	other.GraphqlRouter(app)
 	TPLRouter(app)
-	Smart(app)
+	other.Smart(app)
 	//自己做还是第三方库刷新writer都没用
-	//Sse(app)
+	other.Sse(app)
 
 	app.Post("/api/upload/{classify:string}", iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)
@@ -121,4 +141,59 @@ func IrisRouter() *iris.Application {
 	app.Post("/api/nsq", hnsq.Start)
 
 	return app
+}
+
+func loggerMiddel() (h iris.Handler, close func() error) {
+	var excludeExtensions = [...]string{
+		".js",
+		".css",
+		".jpg",
+		".png",
+		".ico",
+		".svg",
+	}
+	close = func() error { return nil }
+	c := logger.Config{
+		//状态显示状态代码
+		Status: true,
+		// IP显示请求的远程地址
+		IP: true,
+		//方法显示http方法
+		Method: true,
+		// Path显示请求路径
+		Path: true,
+		// Query将url查询附加到Path。
+		Query: true,
+		//Columns：true，
+		// 如果不为空然后它的内容来自`ctx.Values(),Get("logger_message")
+		//将添加到日志中。
+		MessageContextKeys: []string{"logger_message"},
+		//如果不为空然后它的内容来自`ctx.GetHeader（“User-Agent”）
+		MessageHeaderKeys: []string{"User-Agent"},
+	}
+
+	logFile := logging.F
+	close = func() error {
+		err := logFile.Close()
+		if err != nil {
+			err = os.Remove(logFile.Name())
+		}
+		return err
+	}
+	c.LogFunc = func(now time.Time, latency time.Duration, status, ip, method, path string, message interface{}, headerMessage interface{}) {
+		output := logger.Columnize(now.Format("2006/01/02 - 15:04:05"), latency, status, ip, method, path, message, headerMessage)
+		logFile.Write([]byte(output))
+	}
+	//我们不想使用记录器，一些静态请求等
+	c.AddSkipper(func(ctx iris.Context) bool {
+		path := ctx.Path()
+		for _, ext := range excludeExtensions {
+			if strings.HasSuffix(path, ext) {
+				return true
+			}
+		}
+		return false
+	})
+	h = logger.New(c)
+	return
 }

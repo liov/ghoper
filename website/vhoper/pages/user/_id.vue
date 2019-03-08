@@ -1,20 +1,14 @@
 <template>
   <a-row>
-    <a-col :span="8" />
-    <a-col :span="8" />
-    <a-col :span="8" />
+    <a_col :span="8" />
+    <a_col :span="8" />
+    <a_col :span="8" />
   </a-row>
 </template>
 
 <script>
-export default {
-  mounted() {
-    const client = new EventSource('/api/sse/events')
-    client.onmessage = function(evt) {
-      console.log(evt)
-    }
-  }
-}
+export default {}
 </script>
+
 <style scoped>
 </style>

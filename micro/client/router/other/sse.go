@@ -1,4 +1,4 @@
-package router
+package other
 
 import (
 	"fmt"
@@ -70,6 +70,7 @@ func (b *Broker) ServeHTTP(ctx context.Context) {
 	//设置与事件流相关的header，如果发送纯文本，则可以省略“application/json”
 	//如果你开发了一个go客户端，你必须设置：“Accept”：“application/json，text/event-stream”header
 	ctx.ContentType("application/json, text/event-stream")
+	ctx.Header("X-Accel-Buffering", "no") //nginx的锅必须加
 	ctx.Header("Cache-Control", "no-cache")
 	ctx.Header("Connection", "keep-alive")
 	//我们还添加了跨源资源共享标头，以便不同域上的浏览器仍然可以连接
@@ -84,16 +85,31 @@ func (b *Broker) ServeHTTP(ctx context.Context) {
 		b.closingClients <- messageChan
 	})
 	//阻止等待在此连接的消息上广播的消息
-
 	for {
-		//写入ResponseWriter
-		// Server Sent Events兼容
 		ctx.Writef("data: %s\n\n", <-messageChan)
-		//或json：data：{obj}
-		//立即刷新数据而不是稍后缓冲它
-		//根本就没用，找不到原因
 		flusher.Flush()
 	}
+	/*Loop:
+	for {
+		//有趣的是
+		//ctx.Writef("data: %s\n\n", s)
+		//flusher.Flush()
+		//这俩直接写在for循环里，先执行的是flusher.Flush()
+
+		select {
+		case s:=<-messageChan:
+			//写入ResponseWriter
+			// Server Sent Events兼容
+			ctx.Writef("data: %s\n\n", s)
+			//或json：data：{obj}
+			//立即刷新数据而不是稍后缓冲它
+			//根本就没用，找不到原因,nginx的锅
+			flusher.Flush()
+			if utils.ToSting(s) == "stop"{
+				break Loop
+			}
+		}
+	}*/
 }
 
 type event struct {
@@ -103,23 +119,21 @@ type event struct {
 
 func Sse(app *iris.Application) {
 	broker := NewBroker()
-	go func() {
-		for {
-			time.Sleep(time.Second)
-			now := time.Now()
-			evt := event{
-				Timestamp: now.Unix(),
-				Message:   fmt.Sprintf("Hello at %s", now.Format(time.RFC1123)),
-			}
-			evtBytes, err := common.Json.Marshal(evt)
-			if err != nil {
-				golog.Error(err)
-				continue
-			}
-			broker.Notifier <- evtBytes
+
+	app.Get("/api/set/events", func(c context.Context) {
+		now := time.Now()
+		evt := event{
+			Timestamp: now.Unix(),
+			Message:   fmt.Sprintf("Hello at %s", now.Format(time.RFC1123)),
 		}
-	}()
-	app.Get("/api/sse/events", broker.ServeHTTP)
+		evtBytes, err := common.Json.Marshal(evt)
+		if err != nil {
+			golog.Error(err)
+		}
+		broker.Notifier <- evtBytes
+
+	})
+	app.Get("/api/get/events", broker.ServeHTTP)
 
 	/*	s := sse.New()
 		s.CreateStream("messages")

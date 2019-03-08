@@ -1,4 +1,4 @@
-package router
+package other
 
 //模板置入二进制
 
