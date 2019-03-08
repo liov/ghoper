@@ -16,10 +16,9 @@ type ClientManagerI struct {
 }
 
 type ClientI struct {
-	uuid   string
-	conn   websocket.Connection
-	send   chan []byte
-	device string
+	uuid string
+	conn websocket.Connection
+	send chan []byte
 }
 
 var managerI = ClientManagerI{
@@ -50,7 +49,6 @@ func handleConnection(c websocket.Connection) {
 		// Print the message to the console, c.Context() is the iris's http context.
 		// Write message back to the client message owner with:
 
-		var deviceName string
 		/*			if strings.Contains(c.Context().Request().UserAgent(), "iPhone") {
 						dviceName = "iPhone"
 					} else if strings.Contains(c.Context().Request().UserAgent(), "Android") {
@@ -58,7 +56,7 @@ func handleConnection(c websocket.Connection) {
 					} else {
 						dviceName = "PC"
 					}*/
-		client := &ClientI{uuid: uuid.NewV4().String(), conn: c, send: make(chan []byte), device: deviceName}
+		client := &ClientI{uuid: uuid.NewV4().String(), conn: c, send: make(chan []byte)}
 
 		managerI.clients[client] = true
 		user := c.Context().Values().Get("user").(controller.User)
@@ -71,13 +69,26 @@ func handleConnection(c websocket.Connection) {
 			//RecipientUser:nil,
 			Content: receiveMessage.Content,
 			Remarks: receiveMessage.Remarks,
-			Device:  deviceName,
+			Device:  "",
 		}
 
 		ms, _ := common.Json.Marshal(sendMessage)
 		MsgRedis(ms)
-		c.Emit("chat", ms)
+		//c.Emit("chat", ms)
 		// Write message to all except this client with:
-		//c.To(websocket.Broadcast).Emit("chat",msg)
+		c.To(websocket.All).Emit("chat", ms)
 	})
+}
+
+type User struct {
+	ID           uint       `gorm:"primary_key" json:"id"`
+	Name         string     `gorm:"type:varchar(10);not null" json:"name"`
+	Sex          string     `gorm:"type:varchar(1);not null" json:"sex"`
+	Birthday     *time.Time `json:"birthday"`
+	Introduction string     `gorm:"type:varchar(500)" json:"introduction"` //简介
+	Score        uint       `gorm:default:0" json:"score"`                 //积分
+	Signature    string     `gorm:"type:varchar(100)" json:"signature"`    //个人签名
+	AvatarURL    string     `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
+	CoverURL     string     `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
+	Address      string     `gorm:"type:varchar(100)" json:"address"`
 }

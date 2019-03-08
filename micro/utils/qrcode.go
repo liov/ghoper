@@ -3,7 +3,6 @@ package utils
 import (
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
-	"hoper/initialize"
 	"image/jpeg"
 )
 
@@ -31,7 +30,7 @@ func NewQrCode(url string, width, height int, level qr.ErrorCorrectionLevel, mod
 	}
 }
 
-func GetQrCodePath() string {
+/*func GetQrCodePath() string {
 	return initialize.Config.Server.QrCodeSavePath
 }
 
@@ -41,7 +40,7 @@ func GetQrCodeFullPath() string {
 
 func GetQrCodeFullUrl(name string) string {
 	return initialize.Config.Server.PrefixUrl + "/" + GetQrCodePath() + name
-}
+}*/
 
 func GetQrCodeFileName(value string) string {
 	return EncodeMD5(value)

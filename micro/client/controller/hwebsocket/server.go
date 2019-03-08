@@ -23,10 +23,10 @@ type ClientManager struct {
 }
 
 type Client struct {
-	uuid   string
-	conn   *websocket.Conn
-	send   chan []byte
-	device string
+	uuid    string
+	conn    *websocket.Conn
+	send    chan []byte
+	content iris.Context
 }
 
 type Message struct {
@@ -122,15 +122,14 @@ func (c *Client) read() {
 		var receiveMessage ReceiveMessage
 		common.Json.Unmarshal(msg, &receiveMessage)
 		receiveMessage.CreatedAt = time.Now()
-		sendUser, _ := controller.UserFromRedis(int(receiveMessage.SenderUserID))
 		sendMessage := SendMessage{
 			ID:        receiveMessage.ID,
 			CreatedAt: receiveMessage.CreatedAt,
-			SendUser:  sendUser,
+			SendUser:  c.content.Values().Get("user").(controller.User),
 			//RecipientUser:nil,
 			Content: receiveMessage.Content,
 			Remarks: receiveMessage.Remarks,
-			Device:  c.device,
+			Device:  "",
 		}
 		jsonMessage, _ := json.Marshal(&sendMessage)
 		MsgRedis(jsonMessage)
@@ -165,7 +164,6 @@ func Chat(c iris.Context) {
 		return
 	}
 
-	var dviceName string
 	/*	if strings.Contains(c.Request().Header.Get("User-Agent"), "iPhone") {
 			dviceName = "iPhone"
 		} else if strings.Contains(c.Request().Header.Get("User-Agent"), "Android") {
@@ -174,7 +172,7 @@ func Chat(c iris.Context) {
 			dviceName = "PC"
 		}*/
 
-	client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), device: dviceName}
+	client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), content: c}
 
 	manager.register <- client
 
