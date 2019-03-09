@@ -21,6 +21,8 @@ func init() {
 	//raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
 }
 
+var Ch = make(chan struct{}, 1)
+
 func IrisRouter() *iris.Application {
 	app := iris.New()
 
@@ -109,10 +111,18 @@ func IrisRouter() *iris.Application {
 
 	app.Post("/api/nsq", hnsq.Start)
 
-	app.Get("/api/shutdown", middleware.JWT, func(c iris.Context) {
+	app.Get("/api/restart", func(c iris.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		app.Shutdown(ctx)
+		c.WriteString("重启了")
+	})
+	app.Get("/api/shutdown", func(c iris.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		Ch <- struct{}{}
+		app.Shutdown(ctx)
+
 	})
 	return app
 }

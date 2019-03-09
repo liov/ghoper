@@ -32,14 +32,20 @@ func Client() {
 	//go hcache.Start()
 
 	irisRouter := router.IrisRouter()
+Loop:
+	for {
+		select {
+		case <-router.Ch:
+			break Loop
+		default:
+			// listen and serve on http://0.0.0.0:8000.
+			if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
+				iris.WithConfiguration(iris.YAML("../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
+				log.Printf("Listen: %s\n", err)
+			}
+		}
 
-	// listen and serve on http://0.0.0.0:8080.
-	if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
-		iris.WithConfiguration(iris.YAML("../config/iris.yml")),
-		iris.WithoutServerError(iris.ErrServerClosed)); err != nil && err != http.ErrServerClosed {
-		log.Printf("Listen: %s\n", err)
 	}
-
 	/*	opts := groupcache.HTTPPoolOptions{BasePath: hcache.BasePath}
 		peers := groupcache.NewHTTPPoolOpts("", &opts)
 		peers.Set("http://localhost:8333", "http://localhost:8222")

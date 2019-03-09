@@ -133,7 +133,7 @@ func (a *ArticlePosterBg) DrawPoster(d *DrawText, fontName string) error {
 }
 
 func (a *ArticlePosterBg) Generate() (string, string, error) {
-	fullPath := utils.GetQrCodeFullPath()
+	fullPath := initialize.Config.Server.RuntimeRootPath + initialize.Config.Server.QrCodeSavePath
 	fileName, path, err := a.Qr.Encode(fullPath)
 	if err != nil {
 		return "", "", err
