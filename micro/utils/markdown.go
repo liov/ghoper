@@ -36,7 +36,7 @@ func MarkdownToHTML(md string) string {
 	options = blackfriday.WithExtensions(myExtensions)
 
 	bytes := blackfriday.Run([]byte(md), options)
-	theHTML := string(bytes)
+	theHTML := ToSting(bytes)
 	return bluemonday.UGCPolicy().Sanitize(theHTML)
 }
 

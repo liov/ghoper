@@ -32,30 +32,10 @@ func IrisRouter() *iris.Application {
 		app.Shutdown(ctx)
 	})
 	app.StaticWeb("/api/static", "../static")
-	//路由装饰
-	/*	app.WrapRouter(func(w http.ResponseWriter, r *http.Request, router http.HandlerFunc) {
-		defer func() {
-			if rval := recover(); rval != nil {
-				debug.PrintStack()
-				rvalStr := fmt.Sprint(rval)
-				packet := raven.NewPacket(rvalStr, raven.NewException(errors.New(rvalStr), raven.NewStacktrace(2, 3, nil)), raven.NewHttp(r))
-				raven.Capture(packet, nil)
-				w.WriteHeader(http.StatusInternalServerError)
-			}
-		}()
-
-		router(w, r)
-	})*/
-
+	app.Use(New())
+	//other.Wrap(app)
 	//api文档
-	/*	yaag.Init(&yaag.Config{
-			On:       true,                 //是否开启自动生成API文档功能
-			DocTitle: "Iris",
-			DocPath:  "../static/api/apidoc.html",        //生成API文档名称存放路径
-			BaseUrls: map[string]string{"Production": "", "Staging": ""},
-		})
-		//注册中间件
-		app.Use(irisyaag.New())*/
+	//other.Api(app)
 	//https://rpm.newrelic.com/accounts/2269290/applications
 	/*	config := newrelic.Config("hoper", "199e00247f278548fe92d6c81aeaadac0fc52b4b")
 		m, err := newrelic.New(config)
@@ -63,7 +43,6 @@ func IrisRouter() *iris.Application {
 			app.Logger().Fatal(err)
 		}
 		app.Use(m.ServeHTTP)*/
-	app.Use(New())
 
 	/*	prometheus := prometheus.New("hoper")
 		app.Use(prometheus.ServeHTTP)

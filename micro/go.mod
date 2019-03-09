@@ -43,6 +43,7 @@ require (
 	github.com/hashicorp/go-multierror v1.0.0 // indirect
 	github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90 // indirect
 	github.com/hashicorp/go-sockaddr v0.0.0-20190103214136-e92cdb5343bb // indirect
+	github.com/hashicorp/go-version v1.1.0 // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
 	github.com/hashicorp/serf v0.8.1 // indirect
 	github.com/iris-contrib/i18n v0.0.0-20171121225848-987a633949d0 // indirect
