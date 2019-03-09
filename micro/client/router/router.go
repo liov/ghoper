@@ -109,6 +109,11 @@ func IrisRouter() *iris.Application {
 
 	app.Post("/api/nsq", hnsq.Start)
 
+	app.Get("/api/shutdown", middleware.JWT, func(c iris.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		app.Shutdown(ctx)
+	})
 	return app
 }
 
