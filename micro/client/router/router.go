@@ -13,6 +13,7 @@ import (
 	"hoper/client/controller/upload"
 	"hoper/client/middleware"
 	"hoper/client/router/other"
+	"os"
 	"strings"
 	"time"
 )
@@ -21,7 +22,7 @@ func init() {
 	//raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
 }
 
-var Ch = make(chan struct{}, 1)
+var Ch = make(chan os.Signal, 1)
 
 func IrisRouter() *iris.Application {
 	app := iris.New()
@@ -120,7 +121,7 @@ func IrisRouter() *iris.Application {
 	app.Get("/api/shutdown", func(c iris.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		Ch <- struct{}{}
+		Ch <- os.Kill
 		app.Shutdown(ctx)
 
 	})
