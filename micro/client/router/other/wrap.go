@@ -1,6 +1,7 @@
 package other
 
 import (
+	"errors"
 	"fmt"
 	"github.com/getsentry/raven-go"
 	"github.com/kataras/iris"
