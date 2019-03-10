@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"hoper/model"
 	"hoper/utils"
-	"reflect"
 	"testing"
 )
 
@@ -17,8 +16,17 @@ func TestMap(t *testing.T) {
 	fmt.Println(l)
 }
 
+type UU struct {
+	Name string
+	ID   uint
+	Sex  string
+}
+
 func TestCopy(t *testing.T) {
-	u := model.User{}
-	Stype := reflect.TypeOf(u).Kind()
-	fmt.Println(Stype == reflect.Struct)
+	u := model.User{Name: "贾一饼", ID: 1, Sex: "男"}
+	var uu UU
+	if e := utils.Copy(u, &uu); e != nil {
+		fmt.Println(e)
+	}
+	fmt.Println(uu)
 }
