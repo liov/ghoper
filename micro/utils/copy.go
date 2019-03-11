@@ -11,7 +11,7 @@ func CopyProperties(source interface{}, target interface{}) error {
 	typeOfS := reflect.TypeOf(source)
 	typeOfT := reflect.TypeOf(target)
 
-	if typeOfS.Kind() != reflect.Struct && (typeOfS.Kind() == reflect.Ptr && typeOfS.Elem().Kind() != reflect.Struct) && typeOfS.Kind() != reflect.String {
+	if typeOfS.Kind() != reflect.Struct && (typeOfS.Kind() == reflect.Ptr && typeOfS.Elem().Kind() != reflect.Struct) {
 		return errors.New("source is not a struct or string")
 	}
 	if typeOfS.Kind() == reflect.Ptr {
@@ -21,6 +21,9 @@ func CopyProperties(source interface{}, target interface{}) error {
 		return errors.New("target is not a ptr for struct")
 	}
 	valueOfS := reflect.ValueOf(source)
+	if typeOfS.Kind() == reflect.Ptr {
+		valueOfS = valueOfS.Elem()
+	}
 	typeOfT = reflect.TypeOf(target).Elem()
 	valueOfT := reflect.ValueOf(target).Elem()
 	for i := 0; i < typeOfT.NumField(); i++ {
