@@ -64,7 +64,7 @@ export const actions = {
           $axios.defaults.headers.common.Cookie = req.headers.cookie
           await $axios.$get(`/api/user/get`).then(res => {
             // 跟后端的初始化配合
-            if (res.msg === '登录成功') {
+            if (res.code === 200) {
               user = res.data
               commit('SET_USER', user)
             }

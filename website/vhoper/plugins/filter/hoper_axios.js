@@ -1,6 +1,6 @@
 import cookie from '../utils/cookie'
 
-export default function({ app, store, $axios, req }) {
+export default function({ app, route, store, $axios, req }) {
   $axios.onRequest(config => {
     let token
     if (typeof window !== 'undefined') {
@@ -33,7 +33,7 @@ export default function({ app, store, $axios, req }) {
             localStorage.removeItem('token')
           }
           app.router.push({
-            path: '/user/login?callbackUrl=' + app.router.currentRoute.path
+            path: '/user/login?callbackUrl=' + route.path
           })
           break
         default:

@@ -227,7 +227,7 @@ export default {
           }
         })
         .catch(function(err) {
-          console.log(err)
+          vm.$message.error(err)
         })
     },
     async login() {

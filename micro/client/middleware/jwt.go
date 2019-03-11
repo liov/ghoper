@@ -39,6 +39,38 @@ func JWT(ctx iris.Context) {
 		})
 		ctx.JSON(iris.Map{
 			"code": code,
+			"data": "未登录"})
+
+		return
+	}
+	ctx.Values().Set("user", *user)
+	ctx.Next()
+}
+
+func Login(ctx iris.Context) {
+	code := e.SUCCESS
+	user, err := getUser(ctx)
+	if err != nil && err.Error() == "没有token" {
+		code = e.InvalidParams
+	} else if err != nil && err.Error() == "未登录" {
+		code = e.ErrorAuthCheckTokenFail
+	} else if err != nil && err.Error() == "登录超时" {
+		code = e.ErrorAuthCheckTokenTimeout
+	}
+
+	if code != e.SUCCESS {
+		ctx.SetCookie(&http.Cookie{
+			Name:     "token",
+			Value:    "del",
+			Path:     "/",
+			Domain:   "hoper.xyz",
+			Expires:  time.Now().Add(-1),
+			MaxAge:   -1,
+			Secure:   false,
+			HttpOnly: true,
+		})
+		ctx.JSON(iris.Map{
+			"code": code,
 			"data": e.GetMsg(code)})
 
 		return
