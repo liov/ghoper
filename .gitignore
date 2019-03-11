@@ -1,5 +1,8 @@
 .idea
 node_modules
+.idea
+target
+*.iml
 .nuxt
 logs
 nohup.out
@@ -81,9 +84,6 @@ dist
 
 # Serverless directories
 .serverless
-
-# IDE
-.idea
 
 # Service worker
 sw.*
