@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hoper/model"
 	"hoper/utils"
+	"log"
 	"testing"
 )
 
@@ -42,8 +43,8 @@ func TestCopyFromBytes(t *testing.T) {
 	u := model.User{}
 
 	//使用 json.Unmarshal(data []byte, v interface{})进行转换,返回 error 信息
-	if e := utils.CopyFromBytes(utils.ToBytes(jsonStr), &u); e != nil {
-		fmt.Println(e)
+	if err := utils.Json.Unmarshal(utils.ToBytes(jsonStr), &u); err != nil {
+		log.Fatal(err)
 	}
 	fmt.Println(u)
 }
