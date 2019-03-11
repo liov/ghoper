@@ -1,11 +1,9 @@
 package test
 
 import (
-	"encoding/json"
 	"fmt"
 	"hoper/model"
 	"hoper/utils"
-	"log"
 	"testing"
 )
 
@@ -33,7 +31,7 @@ func TestCopy(t *testing.T) {
 	fmt.Println(uu)
 }
 
-func TestMap2(t *testing.T) {
+func TestCopyFromBytes(t *testing.T) {
 	jsonStr := `
     {
         "name":"贾一饼",
@@ -44,8 +42,8 @@ func TestMap2(t *testing.T) {
 	u := model.User{}
 
 	//使用 json.Unmarshal(data []byte, v interface{})进行转换,返回 error 信息
-	if err := json.Unmarshal([]byte(jsonStr), &u); err != nil {
-		log.Fatal(err)
+	if e := utils.CopyFromBytes(utils.ToBytes(jsonStr), &u); e != nil {
+		fmt.Println(e)
 	}
 	fmt.Println(u)
 }
