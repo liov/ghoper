@@ -1,10 +1,12 @@
 package utils
 
 import (
-	"encoding/json"
 	"errors"
+	"github.com/json-iterator/go"
 	"reflect"
 )
+
+var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func CopyProperties(source interface{}, target interface{}) error {
 
@@ -42,7 +44,7 @@ func CopyFromBytes(source []byte, target interface{}) error {
 	if typeOfT.Kind() != reflect.Ptr && typeOfT.Elem().Kind() != reflect.Struct {
 		return errors.New("target is not a ptr for struct")
 	}
-	if err := json.Unmarshal(source, &target); err != nil {
+	if err := Json.Unmarshal(source, &target); err != nil {
 		return err
 	}
 

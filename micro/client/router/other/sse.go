@@ -5,7 +5,7 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
-	"hoper/client/controller/common"
+	"hoper/utils"
 	"time"
 )
 
@@ -126,7 +126,7 @@ func Sse(app *iris.Application) {
 			Timestamp: now.Unix(),
 			Message:   fmt.Sprintf("Hello at %s", now.Format(time.RFC1123)),
 		}
-		evtBytes, err := common.Json.Marshal(evt)
+		evtBytes, err := utils.Json.Marshal(evt)
 		if err != nil {
 			golog.Error(err)
 		}
@@ -146,7 +146,7 @@ func Sse(app *iris.Application) {
 					Timestamp: now.Unix(),
 					Message:   fmt.Sprintf("Hello at %s", now.Format(time.RFC1123)),
 				}
-				evtBytes, err := common.Json.Marshal(evt)
+				evtBytes, err := utils.Json.Marshal(evt)
 				if err != nil {
 					golog.Error(err)
 					continue

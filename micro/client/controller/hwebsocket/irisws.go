@@ -4,7 +4,7 @@ import (
 	"github.com/kataras/iris/websocket"
 	"github.com/satori/go.uuid"
 	"hoper/client/controller"
-	"hoper/client/controller/common"
+	"hoper/utils"
 	"time"
 )
 
@@ -61,7 +61,7 @@ func handleConnection(c websocket.Connection) {
 		managerI.clients[client] = true
 		user := c.Context().Values().Get("user").(controller.User)
 		var receiveMessage ReceiveMessage
-		common.Json.UnmarshalFromString(msg, &receiveMessage)
+		utils.Json.UnmarshalFromString(msg, &receiveMessage)
 		sendMessage := SendMessage{
 			ID:        receiveMessage.ID,
 			CreatedAt: time.Now(),
@@ -72,7 +72,7 @@ func handleConnection(c websocket.Connection) {
 			Device:  "",
 		}
 
-		ms, _ := common.Json.Marshal(sendMessage)
+		ms, _ := utils.Json.Marshal(sendMessage)
 		MsgRedis(ms)
 		//c.Emit("chat", ms)
 		// Write message to all except this client with:

@@ -1041,7 +1041,7 @@ func UserFromRedis(userID int) (User, error) {
 		return User{}, errors.New("未登录")
 	}
 	var user User
-	bytesErr := common.Json.UnmarshalFromString(userBytes, &user)
+	bytesErr := utils.Json.UnmarshalFromString(userBytes, &user)
 	if bytesErr != nil {
 		return user, errors.New("未登录")
 	}
@@ -1050,7 +1050,7 @@ func UserFromRedis(userID int) (User, error) {
 
 // UserToRedis 将用户信息存到redis
 func UserToRedis(user User) error {
-	UserString, err := common.Json.MarshalToString(user)
+	UserString, err := utils.Json.MarshalToString(user)
 	if err != nil {
 		return errors.New("error")
 	}

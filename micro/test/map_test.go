@@ -36,7 +36,7 @@ func TestCopy(t *testing.T) {
 func TestMap2(t *testing.T) {
 	jsonStr := `
     {
-        "name":"qqw",
+        "name":"贾一饼",
         "id":1,
 		"sex":"男"
     }

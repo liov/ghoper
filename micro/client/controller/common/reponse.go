@@ -2,14 +2,11 @@ package common
 
 import (
 	"fmt"
-	"github.com/json-iterator/go"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common/e"
 )
 
 type H map[string]interface{}
-
-var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 //先信息后数据最后状态码
 //入参 data interface{},msg string,code int

@@ -127,7 +127,7 @@ func GetArticles(c iris.Context) {
 	if gredis.Exists(key) {
 		data, err := redis.Bytes(conn.Do("GET", key))
 		count, err := redis.Int(conn.Do("GET", key+"_count"))
-		common.Json.Unmarshal(data, &cacheArticles)
+		utils.Json.Unmarshal(data, &cacheArticles)
 		if err != nil {
 			logging.Info(err)
 		} else {
@@ -152,7 +152,7 @@ func GetArticles(c iris.Context) {
 		articles[i].Tags = tags
 	}
 
-	/*	as, _ := common.Json.Marshal(articles)
+	/*	as, _ := utils.Json.Marshal(articles)
 		conn.Do("SET", key, as)
 		conn.Do("EXPIRE", key, 3600)
 		conn.Do("SET", key+"_count", strconv.Itoa(count))

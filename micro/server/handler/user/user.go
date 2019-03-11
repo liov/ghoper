@@ -217,7 +217,7 @@ func UserFromRedis(userID int) (protobuf.User, error) {
 		return protobuf.User{}, errors.New("未登录")
 	}
 	var user protobuf.User
-	bytesErr := common.Json.UnmarshalFromString(userBytes, &user)
+	bytesErr := utils.Json.UnmarshalFromString(userBytes, &user)
 	if bytesErr != nil {
 		fmt.Println(bytesErr)
 		return user, errors.New("未登录")
@@ -227,7 +227,7 @@ func UserFromRedis(userID int) (protobuf.User, error) {
 
 // UserToRedis 将用户信息存到redis
 func UserToRedis(user protobuf.User) error {
-	UserString, err := common.Json.MarshalToString(user)
+	UserString, err := utils.Json.MarshalToString(user)
 	if err != nil {
 		return errors.New("error")
 	}

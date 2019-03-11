@@ -9,6 +9,7 @@ import (
 	"hoper/client/controller"
 	"hoper/client/controller/common"
 	"hoper/initialize"
+	"hoper/utils"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -120,7 +121,7 @@ func (c *Client) read() {
 			break
 		}
 		var receiveMessage ReceiveMessage
-		common.Json.Unmarshal(msg, &receiveMessage)
+		utils.Json.Unmarshal(msg, &receiveMessage)
 		receiveMessage.CreatedAt = time.Now()
 		sendMessage := SendMessage{
 			ID:        receiveMessage.ID,
@@ -282,7 +283,7 @@ func GetChat(c iris.Context) {
 
 	for _, v := range data {
 		var message SendMessage
-		common.Json.Unmarshal(v, &message)
+		utils.Json.Unmarshal(v, &message)
 		messages = append(messages, message)
 	}
 	common.Response(c, messages)

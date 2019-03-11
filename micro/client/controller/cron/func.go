@@ -3,9 +3,9 @@ package cron
 import (
 	"github.com/gomodule/redigo/redis"
 	"hoper/client/controller"
-	"hoper/client/controller/common"
 	"hoper/client/controller/common/gredis"
 	"hoper/initialize"
+	"hoper/utils"
 )
 
 func RedisToDB() {
@@ -17,7 +17,7 @@ func RedisToDB() {
 		for _, mv := range topData {
 			if mv != "" {
 				var moment controller.Moment
-				common.Json.UnmarshalFromString(mv, &moment)
+				utils.Json.UnmarshalFromString(mv, &moment)
 				initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
 					BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
 					LikeCount: moment.LikeCount,
@@ -29,7 +29,7 @@ func RedisToDB() {
 	for _, mv := range data {
 		if mv != "" {
 			var moment controller.Moment
-			common.Json.UnmarshalFromString(mv, &moment)
+			utils.Json.UnmarshalFromString(mv, &moment)
 			initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
 				BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
 				LikeCount: moment.LikeCount,
