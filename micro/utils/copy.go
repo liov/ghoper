@@ -38,15 +38,12 @@ func CopyProperties(source interface{}, target interface{}) error {
 	return nil
 }
 
-func CopyFromBytes(source []byte, target interface{}) error {
+//json转结构体就行
+/*func CopyFromBytes(source []byte, target interface{}) error {
 
-	typeOfT := reflect.TypeOf(target)
-	if typeOfT.Kind() != reflect.Ptr && typeOfT.Elem().Kind() != reflect.Struct {
-		return errors.New("target is not a ptr for struct")
-	}
 	if err := Json.Unmarshal(source, &target); err != nil {
 		return err
 	}
 
 	return nil
-}
+}*/
