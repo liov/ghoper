@@ -1,11 +1,13 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
 	"reflect"
 )
 
-func Copy(source interface{}, target interface{}) error {
+func CopyProperties(source interface{}, target interface{}) error {
+
 	typeOfS := reflect.TypeOf(source)
 	typeOfT := reflect.TypeOf(target)
 
@@ -22,10 +24,23 @@ func Copy(source interface{}, target interface{}) error {
 	typeOfT = reflect.TypeOf(target).Elem()
 	valueOfT := reflect.ValueOf(target).Elem()
 	for i := 0; i < typeOfT.NumField(); i++ {
-		// 获取每个成员的结构体字段类型
+		// 获取每个成员的结构体字段值
 		fieldType := typeOfT.Field(i)
-		// 输出成员名和tag
+		// 赋值
 		valueOfT.Field(i).Set(valueOfS.FieldByName(fieldType.Name))
+	}
+
+	return nil
+}
+
+func CopyFromBytes(source []byte, target interface{}) error {
+
+	typeOfT := reflect.TypeOf(target)
+	if typeOfT.Kind() != reflect.Ptr && typeOfT.Elem().Kind() != reflect.Struct {
+		return errors.New("target is not a ptr for struct")
+	}
+	if err := json.Unmarshal(source, &target); err != nil {
+		return err
 	}
 
 	return nil

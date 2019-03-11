@@ -1,9 +1,11 @@
 package test
 
 import (
+	"encoding/json"
 	"fmt"
 	"hoper/model"
 	"hoper/utils"
+	"log"
 	"testing"
 )
 
@@ -25,8 +27,25 @@ type UU struct {
 func TestCopy(t *testing.T) {
 	u := model.User{Name: "贾一饼", ID: 1, Sex: "男"}
 	var uu UU
-	if e := utils.Copy(u, &uu); e != nil {
+	if e := utils.CopyProperties(u, &uu); e != nil {
 		fmt.Println(e)
 	}
 	fmt.Println(uu)
+}
+
+func TestMap2(t *testing.T) {
+	jsonStr := `
+    {
+        "name":"qqw",
+        "id":1,
+		"sex":"男"
+    }
+    `
+	u := model.User{}
+
+	//使用 json.Unmarshal(data []byte, v interface{})进行转换,返回 error 信息
+	if err := json.Unmarshal([]byte(jsonStr), &u); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(u)
 }
