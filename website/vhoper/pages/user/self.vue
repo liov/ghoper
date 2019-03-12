@@ -138,6 +138,7 @@
       >
         <a-cascader
           v-model="address"
+          style="width: 50%"
           :options="options"
           placeholder="请选择"
           :disabled="!edit"
@@ -274,11 +275,7 @@ export default {
     }
   },
   async asyncData({ $axios }) {
-    const params = {
-      pageNo: 0,
-      pageSize: 5
-    }
-    const res = await $axios.$get(`/api/user/edit`, { params })
+    const res = await $axios.$get(`/api/user/edit`)
     return {
       user: res.data,
       address: res.data.address.split(' ')

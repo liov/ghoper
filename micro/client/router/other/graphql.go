@@ -5,6 +5,8 @@ import (
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/kataras/iris"
+	"hoper/client/router/user"
+	"hoper/protobuf"
 	"strconv"
 )
 
@@ -34,31 +36,28 @@ func GraphqlRouter(app *iris.Application) {
 }
 
 type UserResolver struct {
-	user User
+	user protobuf.User
 }
 
-func (u *UserResolver) ID() graphql.ID { return graphql.ID(strconv.Itoa(u.user.ID)) }
+func (u *UserResolver) ID() graphql.ID { return graphql.ID(strconv.Itoa(int(u.user.ID))) }
 func (u *UserResolver) Name() string   { return u.user.Name }
 func (u *UserResolver) Sex() string    { return u.user.Sex }
 func (u *UserResolver) Phone() string  { return u.user.Phone }
-
-type User struct {
-	ID    int
-	Name  string
-	Sex   string
-	Phone string
-}
 
 type Resolver struct {
 }
 
 func (r *Resolver) GetUser(ctx context.Context, args struct{ ID graphql.ID }) (*UserResolver, error) {
 	id, _ := strconv.Atoi(string(args.ID))
+	getReq := protobuf.GetReq{ID: uint64(id)}
+	user, err := user.Service.GetUser(context.TODO(), &getReq)
+	if err != nil {
 
-	user := User{ID: id, Name: "一二三", Sex: "男", Phone: "666"}
+		return nil, err
+	}
 
 	s := UserResolver{
-		user: user,
+		user: *user,
 	}
 
 	return &s, nil

@@ -1,7 +1,10 @@
 <template>
   <!-- Apollo watched Graphql query -->
   <ApolloQuery
-    :query="require('../../graphql/HelloWorld.gql')"
+    :query="require('../../../graphql/User.gql')"
+    :variables="{
+      id: $route.params.id
+    }"
   >
     <template slot-scope="{ result: { loading, error, data } }">
       <!-- Loading -->
@@ -16,8 +19,9 @@
 
       <!-- Result -->
       <div v-else-if="data" class="result apollo">
-        {{ data.getUser.Name }}
+        <div>{{ data.getUser.Name }}</div>
         <div>{{ data.getUser.ID }}</div>
+        <div>{{ data.getUser.Phone }}</div>
       </div>
 
       <!-- No result -->
@@ -29,13 +33,7 @@
 </template>
 
 <script>
-import ApolloExample from '../../components/ApolloExample.vue'
-
-export default {
-  components: {
-    ApolloExample
-  }
-}
+export default {}
 </script>
 
 <style>

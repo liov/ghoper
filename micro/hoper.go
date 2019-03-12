@@ -1,8 +1,12 @@
 package main
 
-import "hoper/client"
+import (
+	"hoper/client"
+	"hoper/server"
+)
 
 func main() {
+	go server.Service()
 	client.Client()
 }
 

@@ -11,6 +11,7 @@ export default function({ app, route, store, $axios, req }) {
       if (!token) {
         token = cookie.getCookie('token', req)
       }
+      config.headers.cookie = req.headers.cookie
       // config.baseURL = "http://"+context.req.host
       // 坑，用nginx转发，目前只能写死，或者在ng上改？
       // config.baseURL = 'http://hoper.xyz'
@@ -33,7 +34,7 @@ export default function({ app, route, store, $axios, req }) {
             localStorage.removeItem('token')
           }
           app.router.push({
-            path: '/user/login?callbackUrl=' + route.path
+            path: '/user/login?callbackUrl=' + route.query.callbackUrl
           })
           break
         default:

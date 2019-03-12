@@ -8,6 +8,7 @@ import (
 	"github.com/kataras/iris/hero"
 	"github.com/opentracing/opentracing-go/log"
 	"hoper/initialize"
+	"hoper/protobuf"
 )
 
 func Smart(app *iris.Application) {
@@ -20,7 +21,7 @@ func registerUsersRoutes(usersRouter iris.Party) {
 	usersRouter.PartyFunc("/{id:int}", registerUserRoutes)
 }
 func getAllUsersHandler(ctx iris.Context) {
-	var users []User
+	var users []protobuf.User
 	initialize.DB.Find(&users)
 	err := sendJSON(ctx, users)
 	if err != nil {
@@ -39,8 +40,8 @@ func registerUserRoutes(userRouter iris.Party) {
 	userRouter.Get("/name", userDeps.Handler(getUserNameHandler))
 }
 
-var userDependency = func(ctx iris.Context) *User {
-	var user User
+var userDependency = func(ctx iris.Context) *protobuf.User {
+	var user protobuf.User
 
 	id := ctx.Params().GetIntDefault("id", 0)
 
@@ -51,14 +52,14 @@ var userDependency = func(ctx iris.Context) *User {
 	return nil
 }
 
-func getUserHandler(ctx iris.Context, u *User) {
+func getUserHandler(ctx iris.Context, u *protobuf.User) {
 	if u == nil {
 		return
 	}
 	sendJSON(ctx, u)
 }
 
-func getUserNameHandler(ctx iris.Context, u *User) {
+func getUserNameHandler(ctx iris.Context, u *protobuf.User) {
 	if u == nil {
 		return
 	}

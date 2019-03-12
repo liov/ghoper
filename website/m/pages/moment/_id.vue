@@ -28,7 +28,6 @@
 </template>
 
 <script>
-    import {copy} from "../../plugins/utils/utils.js"
     import axios from 'axios'
     export default {
         data(){

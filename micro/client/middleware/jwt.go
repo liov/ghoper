@@ -17,9 +17,8 @@ import (
 func JWT(ctx iris.Context) {
 	code := e.SUCCESS
 	user, err := getUser(ctx)
-	if err != nil && err.Error() == "没有token" {
-		code = e.InvalidParams
-	} else if err != nil && err.Error() == "未登录" {
+
+	if err != nil && err.Error() == "未登录" {
 		code = e.ErrorAuthCheckTokenFail
 	} else if err != nil && err.Error() == "登录超时" {
 		code = e.ErrorAuthCheckTokenTimeout
@@ -37,9 +36,10 @@ func JWT(ctx iris.Context) {
 			Secure:   false,
 			HttpOnly: true,
 		})
+
 		ctx.JSON(iris.Map{
 			"code": code,
-			"data": "未登录"})
+			"msg":  err.Error()})
 
 		return
 	}
@@ -50,9 +50,8 @@ func JWT(ctx iris.Context) {
 func Login(ctx iris.Context) {
 	code := e.SUCCESS
 	user, err := getUser(ctx)
-	if err != nil && err.Error() == "没有token" {
-		code = e.InvalidParams
-	} else if err != nil && err.Error() == "未登录" {
+
+	if err != nil && err.Error() == "未登录" {
 		code = e.ErrorAuthCheckTokenFail
 	} else if err != nil && err.Error() == "登录超时" {
 		code = e.ErrorAuthCheckTokenTimeout
@@ -71,7 +70,7 @@ func Login(ctx iris.Context) {
 		})
 		ctx.JSON(iris.Map{
 			"code": code,
-			"data": e.GetMsg(code)})
+			"msg":  err.Error()})
 
 		return
 	}
@@ -95,7 +94,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 		tokenString = ctx.GetHeader("Authorization")
 	}
 	if len(tokenString) == 0 {
-		return nil, errors.New("没有token")
+		return nil, errors.New("未登录")
 	}
 
 	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

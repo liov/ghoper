@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
-	"hoper/client/controller/common"
 	"hoper/client/controller/mail"
 	"hoper/initialize"
 	"hoper/model"

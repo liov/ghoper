@@ -4,19 +4,20 @@ import (
 	"encoding/xml"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
+	"hoper/protobuf"
 )
 
 func Data(app *iris.Application) {
 	dataR := app.Party("/api/data")
 	dataR.Post("/decode", func(ctx iris.Context) {
 		// 参考 /http_request/read-json/main.go
-		var user User
+		var user protobuf.User
 		ctx.ReadJSON(&user)
 		ctx.Writef("%s %s is %d years old and comes from %s!", user.Name, user.Phone, user.Sex, user.ID)
 	})
 	// Write
 	dataR.Get("/encode", func(ctx iris.Context) {
-		peter := User{
+		peter := protobuf.User{
 			Name:  "John",
 			Phone: "186XXXX2064",
 			Sex:   "男",

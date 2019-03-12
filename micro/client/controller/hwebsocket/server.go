@@ -27,7 +27,7 @@ type Client struct {
 	uuid    string
 	conn    *websocket.Conn
 	send    chan []byte
-	content iris.Context
+	context iris.Context
 }
 
 type Message struct {
@@ -126,7 +126,7 @@ func (c *Client) read() {
 		sendMessage := SendMessage{
 			ID:        receiveMessage.ID,
 			CreatedAt: receiveMessage.CreatedAt,
-			SendUser:  c.content.Values().Get("user").(controller.User),
+			SendUser:  c.context.Values().Get("user").(controller.User),
 			//RecipientUser:nil,
 			Content: receiveMessage.Content,
 			Remarks: receiveMessage.Remarks,
@@ -173,7 +173,7 @@ func Chat(c iris.Context) {
 			dviceName = "PC"
 		}*/
 
-	client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), content: c}
+	client := &Client{uuid: uuid.NewV4().String(), conn: conn, send: make(chan []byte), context: c}
 
 	manager.register <- client
 

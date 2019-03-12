@@ -9,7 +9,7 @@ import (
 	"hoper/protobuf"
 )
 
-var userService protobuf.UserService
+var Service protobuf.UserService
 
 func init() {
 	/*	reg := etcdv3.NewRegistry(func(options *registry.Options) {
@@ -22,7 +22,7 @@ func init() {
 	// Init will parse the command line flags.
 	service.Init()
 	// Create new user client
-	userService = protobuf.NewUserService("user", service.Client())
+	Service = protobuf.NewUserService("user", service.Client())
 }
 
 func Signup(ctx iris.Context) {
@@ -33,7 +33,7 @@ func Signup(ctx iris.Context) {
 		return
 	}
 
-	rsp, err := userService.Signup(context.TODO(), &user)
+	rsp, err := Service.Signup(context.TODO(), &user)
 
 	if err != nil {
 		common.Response(ctx, err.Error())
@@ -51,7 +51,7 @@ func Login(ctx iris.Context) {
 		return
 	}
 
-	rsp, err := userService.Login(context.TODO(), &loginReq)
+	rsp, err := Service.Login(context.TODO(), &loginReq)
 
 	if err != nil {
 		common.Response(ctx, err.Error())
@@ -65,7 +65,7 @@ func Logout(ctx iris.Context) {
 
 	logoutReq := protobuf.LogoutReq{ID: userInter.(protobuf.User).ID}
 
-	rsp, err := userService.Logout(context.TODO(), &logoutReq)
+	rsp, err := Service.Logout(context.TODO(), &logoutReq)
 
 	if err != nil {
 		common.Response(ctx, err.Error())
@@ -77,7 +77,7 @@ func Logout(ctx iris.Context) {
 func GetUser(ctx iris.Context) {
 	id := ctx.Params().GetUint64Default("id", 0)
 	getReq := protobuf.GetReq{ID: id}
-	user, err := userService.GetUser(context.TODO(), &getReq)
+	user, err := Service.GetUser(context.TODO(), &getReq)
 	if err != nil {
 		common.Response(ctx, err.Error())
 		return

@@ -52,7 +52,7 @@
         <a-comment>
           <a-avatar
             slot="avatar"
-            :src="user.avatar_url"
+            :src="user!==null?user.avatar_url:''"
             alt="Han Solo"
           />
           <div slot="content">
@@ -92,10 +92,11 @@ export default {
       joined: false // True if email and username have been filled in
     }
   },
-  async asyncData({ $axios }) {
-    const res = await $axios.$get(`/api/chat/getChat`)
-
-    return { msgs: res.data !== null ? res.data : [] }
+  async asyncData({ $axios, route, redirect }) {
+    const res = await $axios.$get(`/api/chat/getChat`).catch(() => {})
+    if (res.code !== 200)
+      redirect({ path: '/user/login?callbackUrl=' + route.path })
+    return { msgs: res.data !== undefined ? res.data : [] }
   },
   created: function() {
     // 运行在服务端
@@ -109,7 +110,7 @@ export default {
       document.querySelector('#bottom').scrollIntoView()
     }, 0)
     /* this.chatContent=JSON.parse(localStorage.getItem("chatContent"));
-            if(this.chatContent === null) this.chatContent=[]; */
+              if(this.chatContent === null) this.chatContent=[]; */
   },
   updated: function() {},
   beforeDestroy() {
