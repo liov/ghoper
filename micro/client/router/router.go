@@ -87,8 +87,9 @@ func IrisRouter() *iris.Application {
 	WS(app)
 
 	ArticleRouter(app)
-
+	Category(app)
 	MomentRouter(app)
+
 	//试验性
 	other.GraphqlRouter(app)
 	TPLRouter(app)

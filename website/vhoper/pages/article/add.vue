@@ -8,7 +8,7 @@
           :wrapper-col="{span: 24,offset:2}"
         >
           <a-radio-group
-            default-value="markdown"
+            v-model="editorType"
             @change="handleChange"
           >
             <a-radio-button value="markdown">
@@ -83,11 +83,10 @@
               v-model="categories"
               mode="multiple"
               placeholder="请选择分类"
-              :default-value="[]"
               style="width: 200px"
             >
-              <a-select-option v-for="(item,index) in existCategories" :key="index">
-                {{ item }}
+              <a-select-option v-for="item in existCategories" :key="item.id">
+                {{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -106,8 +105,8 @@
               :default-value="[]"
               style="width: 200px"
             >
-              <a-select-option v-for="item in existTags" :key="item">
-                {{ item }}
+              <a-select-option v-for="item in existTags" :key="item.name">
+                {{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -185,6 +184,7 @@ import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
 import { upload } from '../../plugins/utils/upload'
+
 export default {
   middleware: 'auth',
   components: {
@@ -192,7 +192,7 @@ export default {
   },
   data() {
     return {
-      editorType: 'markdown',
+      editorType: 'html',
       article: {
         categories: [],
         tags: [],
@@ -200,10 +200,8 @@ export default {
       },
       showImage: false,
       imageUrl: '',
-      existCategories: ['小说', '散文', '戏剧', '诗歌'],
-      existTags: ['韩雪', '徐峥', '胡歌', '张卫健'],
       tag: '',
-      categories: [],
+      categories: [1],
       tags: [],
       init: {
         selector: '#editor_t',
@@ -227,19 +225,28 @@ export default {
       }
     }
   },
+  async asyncData({ $axios }) {
+    const cres = await $axios.$get(`/api/category`)
+    const params = { pageNO: 0, pageSize: 10 }
+    const tres = await $axios.$get(`/api/tag`, { params })
+    return {
+      existCategories: cres.data,
+      existTags: tres.data
+    }
+  },
   created() {},
   mounted() {
     /*
-    this.component = () => ({
-      component: import(`mavon-editor`)
-    })
-*/
+      this.component = () => ({
+        component: import(`mavon-editor`)
+      })
+  */
     /*    Vue.component('mavon-editor', resolve => {
-      // 这个特殊的 `require` 语法将会告诉 webpack
-      // 自动将你的构建代码切割成多个包，这些包
-      // 会通过 Ajax 请求加载
-      require(['mavon-editor'], ({ mavonEditor }) => resolve(mavonEditor))
-    }) */
+        // 这个特殊的 `require` 语法将会告诉 webpack
+        // 自动将你的构建代码切割成多个包，这些包
+        // 会通过 Ajax 请求加载
+        require(['mavon-editor'], ({ mavonEditor }) => resolve(mavonEditor))
+      }) */
     // 这个函数真是无敌
     this.$nextTick(function() {
       require('../../plugins/filter/tinymce')
@@ -256,14 +263,14 @@ export default {
       // 手动创建有bug，切换路由回来不渲染了,得destroy()了,另一个组件测试可以用show，无语
       // 两种方式，1.插件客户端渲染，2.有window后引入
       /*      if (typeof window !== 'undefined') {
-        /!*        const Vditor = require('vditor')
-          const vditor = new Vditor('content', {})
-          vditor.focus() *!/
-        require('../../plugins/filter/tinymce')
-        if (e.target.value === 'html' && tinymce.activeEditor === null) {
-          tinymce.init(this.init)
-        }
-      } */
+          /!*        const Vditor = require('vditor')
+            const vditor = new Vditor('content', {})
+            vditor.focus() *!/
+          require('../../plugins/filter/tinymce')
+          if (e.target.value === 'html' && tinymce.activeEditor === null) {
+            tinymce.init(this.init)
+          }
+        } */
     },
     uploadChange(info) {
       if (info.file.status === 'uploading') {
@@ -273,7 +280,7 @@ export default {
       if (info.file.status === 'done') {
         this.article.image_url = info.file.response.data.url
         // Get this url from response in real world.
-        this.imageUrl = imageUrl
+        this.imageUrl = info.file.response.data.url
         this.loading = false
       }
     },
@@ -289,12 +296,20 @@ export default {
       return isImg && isLt2M
     },
     addTag: function() {
-      if (this.tag !== '' && this.existTags.indexOf(this.tag) === -1) {
-        this.existTags.push(this.tag)
-        this.article.tags.push(this.tag)
-        this.tag = ''
-      } else if (this.tag === '') this.$message.error('标签为空')
-      else this.$message.error('标签重复')
+      const vm = this
+      if (this.tag === '') {
+        this.$message.error('标签为空')
+        return
+      }
+      for (const v of this.existTags) {
+        if (v.name === vm.tag) {
+          vm.$message.error('标签重复')
+          return
+        }
+      }
+      this.existTags.push({ name: this.tag })
+      this.tags.push(this.tag)
+      this.tag = ''
     },
     async imgAdd(pos, $file) {
       // 第一步.将图片上传到服务器.

@@ -12,7 +12,8 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint",
-    "test": "jest"
+    "test": "jest",
+    "post-update": "yarn upgrade --latest"
   },
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.0-rc4",
@@ -30,7 +31,9 @@
     "koa": "^2.6.2",
     "mavon-editor": "^2.6.17",
     "nuxt": "^2.4.0",
-    "tinymce": "^5.0.1"
+    "nuxt-ts": "^2.4.5",
+    "tinymce": "^5.0.1",
+    "vue-property-decorator": "^8.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^0.0.1",

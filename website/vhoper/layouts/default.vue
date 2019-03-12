@@ -19,11 +19,22 @@
                 <a-icon type="file-text" /> 博客
               </nuxt-link>
             </a-menu-item>
-            <a-menu-item key="chat">
-              <nuxt-link to="/chat">
-                <a-icon type="message" />聊天
-              </nuxt-link>
-            </a-menu-item>
+            <a-sub-menu>
+              <span slot="title" class="submenu-title-wrapper"><a-icon type="message" />聊天</span>
+
+              <a-menu-item key="chat:1">
+                <nuxt-link to="/chat/v2">
+                  version2
+                </nuxt-link>
+              </a-menu-item>
+
+
+              <a-menu-item key="chat:2">
+                <nuxt-link to="/chat">
+                  version1
+                </nuxt-link>
+              </a-menu-item>
+            </a-sub-menu>
             <a-menu-item key="picture">
               <nuxt-link to="/moment">
                 <a-icon type="picture" /> 瞬间
@@ -41,20 +52,20 @@
             </a-menu-item>-->
             <a-sub-menu>
               <span slot="title" class="submenu-title-wrapper"><a-icon type="setting" />设置</span>
-              <a-menu-item-group title="Item 1">
+              <a-menu-item-group title="初始化">
                 <a-menu-item key="setting:1">
-                  Option 1
+                  数据库初始化
                 </a-menu-item>
                 <a-menu-item key="setting:2">
-                  Option 2
+                  设置初始化
                 </a-menu-item>
               </a-menu-item-group>
-              <a-menu-item-group title="Item 2">
+              <a-menu-item-group title="危险操作">
                 <a-menu-item key="setting:3">
-                  Option 3
+                  重启
                 </a-menu-item>
                 <a-menu-item key="setting:4">
-                  Option 4
+                  关闭
                 </a-menu-item>
               </a-menu-item-group>
             </a-sub-menu>

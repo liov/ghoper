@@ -527,6 +527,13 @@ func GetUserSelf(c iris.Context) {
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
 
+func GetUser(c iris.Context) {
+	id := c.Params().GetUint64Default("id", 0)
+	var user User
+	initialize.DB.Where("id=?", id).First(&user)
+	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
+}
+
 func UpdateUser(c iris.Context) {
 	var nUser User
 	if err := c.ReadJSON(&nUser); err != nil {

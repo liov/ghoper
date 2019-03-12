@@ -148,8 +148,10 @@ func GetArticles(c iris.Context) {
 	}
 	for i, a := range articles {
 		var tags []model.Tag
-		initialize.DB.Model(&a).Related(&tags, "Tags")
+		var categories []model.Category
+		initialize.DB.Model(&a).Related(&tags, "Tags").Related(&categories, "Categories")
 		articles[i].Tags = tags
+		articles[i].Categories = categories
 	}
 
 	/*	as, _ := utils.Json.Marshal(articles)
@@ -189,8 +191,8 @@ func articleValidation(c iris.Context, article *Article) (err error) {
 		theContent = article.Content
 	}
 
-	if theContent == "" || utf8.RuneCountInString(theContent) <= 0 {
-		common.Response(c, "文章内容不能为空")
+	if theContent == "\n" || utf8.RuneCountInString(theContent) < 20 {
+		common.Response(c, "文章内容不能小于20个字")
 		return
 	}
 

@@ -16,10 +16,13 @@
         :data-source="msgs"
       >
         <a-list-item slot="renderItem" slot-scope="item">
-          <a-comment
-            :author="item.send_user.name"
-            :avatar="item.send_user.avatar_url"
-          >
+          <a-comment>
+            <nuxt-link slot="author" :to="'/user/'+item.send_user.id">
+              <span>{{ item.send_user.name }}</span>
+            </nuxt-link>
+            <nuxt-link slot="avatar" :to="'/user/'+item.send_user.id">
+              <a-avatar :src="item.send_user.avatar_url" alt="头像" />
+            </nuxt-link>
             <!--   <template slot="actions">
               <span v-for="(action,index) in item.actions" :key="index">{{ action }}</span>
             </template>-->
@@ -34,26 +37,11 @@
       </a-list>
 
       <div id="bottom">
-        <a-list
-          v-if="comments.length"
-          :data-source="comments"
-          :header="`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`"
-          item-layout="horizontal"
-        >
-          <a-list-item slot="renderItem" slot-scope="item">
-            <a-comment
-              :author="item.author"
-              :avatar="item.avatar"
-              :content="item.content"
-              :datetime="item.datetime"
-            />
-          </a-list-item>
-        </a-list>
         <a-comment>
           <a-avatar
             slot="avatar"
             :src="user!==null?user.avatar_url:''"
-            alt="Han Solo"
+            alt="头像"
           />
           <div slot="content">
             <a-form-item>

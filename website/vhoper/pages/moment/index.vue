@@ -20,10 +20,13 @@
         :data-source="momentList"
       >
         <a-list-item slot="renderItem" slot-scope="item">
-          <a-comment
-            :author="item.user.name"
-            :avatar="item.user.avatar_url"
-          >
+          <a-comment>
+            <nuxt-link slot="author" :to="'/user/'+item.user.id">
+              <span>{{ item.user.name }}</span>
+            </nuxt-link>
+            <nuxt-link slot="avatar" :to="'/user/'+item.user.id">
+              <a-avatar :src="item.user.avatar_url" alt="头像" />
+            </nuxt-link>
             <template slot="actions">
               <span>回复</span>
               <span v-if="item.user.id=user.id">编辑</span>

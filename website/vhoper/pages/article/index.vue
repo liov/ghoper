@@ -30,26 +30,42 @@
             <a-icon type="message" style="margin-right: 8px" />
             {{ item.comment_count }}
           </span>
+
+          <a-button-group slot="actions">
+            <a-button v-for="(subitem,subindex) in item.categories" :key="subindex">
+              {{ subitem.name }}
+            </a-button>
+          </a-button-group>
+
+          <div slot="actions">
+            <a-tag v-for="(subitem,subindex) in item.tags" :key="subindex" color="pink">
+              {{ subitem.name }}
+            </a-tag>
+          </div>
+
           <img v-if="item.image_url!==''" slot="extra" height="120" alt="logo" :src="item.image_url">
           <a-list-item-meta
             :description="item.intro"
           >
-            <span slot="title" href="/">
+            <nuxt-link slot="title" :to="'/article/'+item.id">
               <a-row>
-                <a-col :span="6" style="font-size: 10px">
-                  {{ item.user.name }}
+                <a-col :span="3" style="font-size: 10px">
+                  <nuxt-link :to="'/user/'+item.user.id">
+                    {{ item.user.name }}
+                  </nuxt-link>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="15">
                   {{ item.title }}
                 </a-col>
                 <a-col :span="6">
                   <span style="font-size: 10px"> {{ item.created_at|dateFormat }}</span>
                 </a-col>
               </a-row>
-            </span>
-            <a-avatar slot="avatar" :src="item.user.avatar_url" />
+            </nuxt-link>
+            <nuxt-link slot="avatar" :to="'/user/'+item.user.id">
+              <a-avatar :src="item.user.avatar_url" alt="头像" />
+            </nuxt-link>
           </a-list-item-meta>
-          {{ item.content }}
         </a-list-item>
       </a-list>
 
@@ -109,7 +125,7 @@ export default {
         pageNo: pageNo,
         pageSize: this.pageSize
       }
-      const res = await this.$axios.get(`/api/article`, { params })
+      const res = await this.$axios.$get(`/api/article`, { params })
       this.articleList = res.data
       this.total = res.count
     }

@@ -1,6 +1,12 @@
 package controller
 
-import "time"
+import (
+	"github.com/kataras/iris"
+	"hoper/client/controller/common"
+	"hoper/client/controller/common/e"
+	"hoper/initialize"
+	"time"
+)
 
 type Category struct {
 	ID             uint       `gorm:"primary_key" json:"id"`
@@ -16,4 +22,10 @@ type Category struct {
 	UpdatedAt      *time.Time `json:"updated_at"`
 	DeletedAt      *time.Time `sql:"index" json:"deleted_at"`
 	Status         uint8      `gorm:"type:smallint;default:0" json:"status"`
+}
+
+func GetCategory(c iris.Context) {
+	var categories []Category
+	initialize.DB.Find(&categories)
+	common.Response(c, categories, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
