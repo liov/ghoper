@@ -9,6 +9,15 @@
       </nuxt-link>
     </a-col>
     <a-col :span="20">
+      <a-breadcrumb>
+        <a-breadcrumb-item>主页</a-breadcrumb-item>
+        <a-breadcrumb-item>
+          <nuxt-link to="">
+            博客
+          </nuxt-link>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>列表</a-breadcrumb-item>
+      </a-breadcrumb>
       <a-list
         item-layout="vertical"
         size="large"
@@ -18,15 +27,15 @@
           <b />
         </div>
         <a-list-item slot="renderItem" key="item.title" slot-scope="item">
-          <span slot="actions" @click="star">
+          <span slot="actions" @click="star(item.id)">
             <a-icon type="star-o" style="margin-right: 8px" />
             {{ item.collect_count }}
           </span>
-          <span slot="actions" @click="like">
+          <span slot="actions" @click="like(item.id)">
             <a-icon type="like-o" style="margin-right: 8px" />
             {{ item.like_count }}
           </span>
-          <span slot="actions" @click="comment">
+          <span slot="actions" @click="comment(item.id)">
             <a-icon type="message" style="margin-right: 8px" />
             {{ item.comment_count }}
           </span>
@@ -38,7 +47,7 @@
           </a-button-group>
 
           <div slot="actions">
-            <a-tag v-for="(subitem,subindex) in item.tags" :key="subindex" color="pink">
+            <a-tag v-for="(subitem,subindex) in item.tags" :key="subindex" :color="color[subindex]">
               {{ subitem.name }}
             </a-tag>
           </div>
@@ -47,21 +56,23 @@
           <a-list-item-meta
             :description="item.intro"
           >
-            <nuxt-link slot="title" :to="'/article/'+item.id">
-              <a-row>
-                <a-col :span="3" style="font-size: 10px">
-                  <nuxt-link :to="'/user/'+item.user.id">
-                    {{ item.user.name }}
-                  </nuxt-link>
-                </a-col>
-                <a-col :span="15">
+            <a-row slot="title">
+              <a-col :span="3" style="font-size: 10px">
+                <nuxt-link :to="'/user/'+item.user.id">
+                  {{ item.user.name }}
+                </nuxt-link>
+              </a-col>
+              <nuxt-link :to="'/article/'+item.id">
+                <a-col :span="15" style="color:rgba(0, 0, 0, 0.85)">
                   {{ item.title }}
                 </a-col>
-                <a-col :span="6">
-                  <span style="font-size: 10px"> {{ item.created_at|dateFormat }}</span>
-                </a-col>
-              </a-row>
-            </nuxt-link>
+              </nuxt-link>
+              <a-col :span="6" style="font-size: 10px">
+                <span> {{ item.created_at|dateFormat }}</span>
+                <span>{{ $s2date(item.created_at).fromNow() }}</span>
+              </a-col>
+            </a-row>
+
             <nuxt-link slot="avatar" :to="'/user/'+item.user.id">
               <a-avatar :src="item.user.avatar_url" alt="头像" />
             </nuxt-link>
@@ -91,12 +102,14 @@
 </template>
 
 <script>
+// nuxt-link组件不能包多个col
 export default {
   data() {
     return {
       pageSizeOptions: ['5', '10', '15', '20'],
       pageSize: 5,
-      current: 1
+      current: 1,
+      color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple']
     }
   },
   watch: {
@@ -129,9 +142,9 @@ export default {
       this.articleList = res.data
       this.total = res.count
     },
-    star() {},
-    like() {},
-    comment() {}
+    star(id) {},
+    like(id) {},
+    comment(id) {}
   }
 }
 </script>

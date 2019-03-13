@@ -11,6 +11,23 @@
             添加
           </a-button>
         </nuxt-link>
+        <a-affix :offset-top="top">
+          <a-button type="primary" @click="showDrawer">
+            固钉
+          </a-button>
+        </a-affix>
+        <a-back-top />
+        <a-drawer
+          title="Basic Drawer"
+          placement="right"
+          :closable="false"
+          :visible="visible"
+          @close="onClose"
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </a-drawer>
       </a-form-item>
     </a-col>
     <a-col :span="21">
@@ -66,7 +83,9 @@ export default {
       pageSizeOptions: ['5', '10', '15', '20'],
       current: 1,
       pageSize: 5,
-      user: null
+      user: null,
+      top: 20,
+      visible: false
     }
   },
   computed: {},
@@ -111,6 +130,12 @@ export default {
       const momentList = res.data
 
       this.momentList = momentList
+    },
+    showDrawer() {
+      this.visible = true
+    },
+    onClose() {
+      this.visible = false
     }
   }
 }
