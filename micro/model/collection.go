@@ -14,7 +14,7 @@ type Collection struct {
 	Articles   []Article   `gorm:"many2many:article_collection" json:"articles"`
 	Moments    []Moment    `gorm:"many2many:moment_collection" json:"moments"`
 	DiaryBooks []DiaryBook `gorm:"many2many:diary_book_collection" json:"diary_books"`
-	Diarys     []Diary     `gorm:"many2many:diary_collection" json:"diarys"`
+	Diaries    []Diary     `gorm:"many2many:diary_collection" json:"diaries"`
 	UpdatedAt  *time.Time  `json:"updated_at"`
 	DeletedAt  *time.Time  `sql:"index" json:"deleted_at"`
 	Status     uint8       `gorm:"type:smallint;default:0" json:"status"`

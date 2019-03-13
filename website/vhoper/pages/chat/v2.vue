@@ -26,11 +26,13 @@
             <!--   <template slot="actions">
               <span v-for="(action,index) in item.actions" :key="index">{{ action }}</span>
             </template>-->
-            <p slot="content">
+            <span slot="content">
               {{ item.content }}
-            </p>
+            </span>
             <a-tooltip slot="datetime" :title="item.created_at">
               <span>{{ item.created_at|dateFormat }}</span>
+              <a-divider type="vertical" />
+              <span>{{ $s2date(item.created_at).fromNow() }}</span>
             </a-tooltip>
           </a-comment>
         </a-list-item>

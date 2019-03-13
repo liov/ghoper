@@ -255,7 +255,7 @@ func GetMoment(c *fasthttp.RequestCtx) {
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,love_count,permission").
-		Where("id = ?", id).First(&moment).Error
+		First(&moment, id).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}

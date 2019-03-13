@@ -69,6 +69,7 @@
               </nuxt-link>
               <a-col :span="6" style="font-size: 10px">
                 <span> {{ item.created_at|dateFormat }}</span>
+                <a-divider type="vertical" />
                 <span>{{ $s2date(item.created_at).fromNow() }}</span>
               </a-col>
             </a-row>
@@ -79,7 +80,56 @@
           </a-list-item-meta>
         </a-list-item>
       </a-list>
+      <a-modal
+        v-model="visible"
+        title="Title"
+        on-ok="handleOk"
+      >
+        <template slot="footer">
+          <a-button key="back" @click="handleCancel">
+            取消
+          </a-button>
+          <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+            确定
+          </a-button>
+        </template>
+        <a-form-item
+          label="标 签"
+          required
+          :label-col="{span: 4}"
+          :wrapper-col="{span: 6}"
+        >
+          <a-select
+            v-model="collections"
+            mode="multiple"
+            placeholder="请选择收藏夹"
+            style="width: 200px"
+          >
+            <a-select-option v-for="item in existCollections" :key="item.name">
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
 
+        <a-row>
+          <a-col :span="16">
+            <a-form-item
+              label="新标签"
+              :label-col="{span:6}"
+              :wrapper-col="{span: 16}"
+            >
+              <a-input
+                v-model="collection"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-button style="margin-top: 5px" @click="addCollection">
+              添加
+            </a-button>
+          </a-col>
+        </a-row>
+      </a-modal>
       <a-pagination
         v-model="current"
         :page-size-options="pageSizeOptions"
@@ -109,7 +159,12 @@ export default {
       pageSizeOptions: ['5', '10', '15', '20'],
       pageSize: 5,
       current: 1,
-      color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple']
+      color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple'],
+      loading: false,
+      visible: false,
+      collections: ['默认收藏夹'],
+      existCollections: [],
+      collection: ''
     }
   },
   watch: {
@@ -142,9 +197,46 @@ export default {
       this.articleList = res.data
       this.total = res.count
     },
-    star(id) {},
+    async star(id) {
+      this.visible = true
+      const res = await this.$axios.$get(`/api/collection`)
+      if (res !== undefined) {
+        this.existCollections = res.data
+      } else this.existCollections = [{ name: '默认收藏夹' }]
+      if (res === null) this.existCollections = [{ name: '默认收藏夹' }]
+    },
+    async handleOk(e) {
+      this.loading = true
+      const collections = []
+      for (const i of this.collections) {
+        collections.push({ name: i })
+      }
+      const res = await this.$axios.$post('/api/collection', collections)
+      if (res.code === 200) this.$message.info('收藏成功')
+      this.loading = false
+      this.visible = false
+    },
+    handleCancel(e) {
+      this.visible = false
+    },
     like(id) {},
-    comment(id) {}
+    comment(id) {},
+    addCollection() {
+      const vm = this
+      if (this.collection === '') {
+        this.$message.error('标签为空')
+        return
+      }
+      for (const v of this.existCollections) {
+        if (v.name === vm.tag) {
+          vm.$message.error('标签重复')
+          return
+        }
+      }
+      this.existCollections.push({ name: this.tag })
+      this.collections.push(this.collection)
+      this.collection = ''
+    }
   }
 }
 </script>

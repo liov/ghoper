@@ -20,7 +20,8 @@ type Moment struct {
 	BrowseCount     uint            `json:"browse_count"`  //浏览
 	CommentCount    uint            `json:"comment_count"` //评论
 	CollectCount    uint            `json:"collect_count"` //收藏
-	CollectUsers    []User          `gorm:"many2many:moment_collection" json:"collect_users"`
+	Collections     []Collection    `gorm:"many2many:moment_collection" json:"collections"`
+	CollectUsers    []User          `gorm:"-" json:"collect_users"`
 	LikeCount       uint            `json:"like_count"` //点赞
 	LikeUsers       []User          `gorm:"many2many:moment_like" json:"like_users"`
 	Sort            uint8           `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶

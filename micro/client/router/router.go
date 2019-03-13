@@ -88,6 +88,7 @@ func IrisRouter() *iris.Application {
 
 	ArticleRouter(app)
 	Category(app)
+	Like(app)
 	MomentRouter(app)
 
 	//试验性

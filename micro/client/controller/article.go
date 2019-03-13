@@ -1,12 +1,10 @@
 package controller
 
 import (
-	"encoding/json"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/client/controller/common/e"
-	"hoper/client/controller/common/gredis"
 	"hoper/client/controller/common/logging"
 	"hoper/initialize"
 	"hoper/model"
@@ -36,7 +34,8 @@ type Article struct {
 	BrowseCount   uint             `json:"browse_count"`                   //浏览
 	CommentCount  uint             `gorm:"default:0" json:"comment_count"` //评论
 	CollectCount  uint             `gorm:"default:0" json:"collect_count"` //收藏
-	CollectUsers  []User           `gorm:"many2many:article_collection" json:"collect_users"`
+	Collections   []Collection     `gorm:"many2many:article_collection" json:"collections"`
+	CollectUsers  []User           `gorm:"-" json:"collect_users"`
 	LikeCount     uint             `gorm:"default:0" json:"like_count"` //点赞
 	LikeUsers     []User           `gorm:"many2many:article_like" json:"like_users"`
 	Permission    int8             `gorm:"type:smallint;default:0" json:"permission"` //查看权限
@@ -53,29 +52,33 @@ type Article struct {
 
 func GetArticle(c iris.Context) {
 
-	var article, articleCache model.Article
+	var article model.Article
 
-	id := c.URLParam("id")
+	id := c.Params().GetUint64Default("id", 0)
 
-	key := "Article_" + id
-
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logging.Info(err)
-		} else {
-			json.Unmarshal(data, &articleCache)
-			common.Response(c, articleCache)
-			return
-		}
-	}
+	/*	key := "Article_" + id
+		if gredis.Exists(key) {
+			data, err := gredis.Get(key)
+			if err != nil {
+				logging.Info(err)
+			} else {
+				json.Unmarshal(data, &articleCache)
+				common.Response(c, articleCache)
+				return
+			}
+		}*/
 
 	if err := initialize.DB.First(&article, id).Error; err != nil {
-		common.Response(c, "无效的版块id")
+		common.Response(c, "无效的文章id")
 		return
 	}
+	var tags []model.Tag
+	var categories []model.Category
+	initialize.DB.Model(&article).Related(&tags, "Tags").Related(&categories, "Categories")
+	article.Tags = tags
+	article.Categories = categories
 
-	gredis.Set(key, article, 3600)
+	//gredis.Set(key, article, 3600)
 	common.Response(c, article)
 }
 

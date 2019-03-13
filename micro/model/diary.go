@@ -23,7 +23,8 @@ type Diary struct {
 	BrowseCount  uint           `json:"browse_count"`                   //浏览
 	CommentCount uint           `gorm:"default:0" json:"comment_count"` //评论数
 	CollectCount uint           `gorm:"default:0" json:"collect_count"` //收藏
-	CollectUsers []User         `gorm:"many2many:diary_collection" json:"collect_users"`
+	Collections  []Collection   `gorm:"many2many:diary_collection" json:"collections"`
+	CollectUsers []User         `gorm:"-" json:"collect_users"`
 	LikeCount    uint           `gorm:"default:0" json:"like_count"` //点赞
 	LikeUsers    []User         `gorm:"many2many:diary_like" json:"like_users"`
 	Permission   uint8          `gorm:"type:smallint;default:0" json:"permission"` //查看权限
@@ -74,7 +75,8 @@ type DiaryBook struct {
 	BrowseCount  uint               `json:"browse_count"`                       //浏览
 	CommentCount uint               `gorm:"default:0" json:"comment_count"`     //评论数
 	CollectCount uint               `gorm:"default:0" json:"collect_count"`     //收藏
-	CollectUsers []User             `gorm:"many2many:diary_book_collection" json:"collect_users"`
+	Collections  []Collection       `gorm:"many2many:diary_book_collection" json:"collections"`
+	CollectUsers []User             `gorm:"-" json:"collect_users"`
 	LikeCount    uint               `gorm:"default:0" json:"like_count"` //点赞
 	LikeUsers    []User             `gorm:"many2many:diary_book_like" json:"like_users"`
 	Permission   uint8              `gorm:"type:smallint;default:0" json:"permission"` //查看权限

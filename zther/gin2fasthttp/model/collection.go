@@ -8,6 +8,7 @@ import (
 type Collection struct {
 	ID         uint        `gorm:"primary_key" json:"id"`
 	CreatedAt  time.Time   `json:"created_at"`
+	Name       string      `gorm:"type:varchar(20)" json:"name"`
 	User       *User       `json:"user"`
 	UserID     uint        `json:"user_id"`
 	Count      uint        `json:"count"`

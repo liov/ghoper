@@ -36,13 +36,10 @@ func JWT(ctx iris.Context) {
 			Secure:   false,
 			HttpOnly: true,
 		})
-
-		ctx.JSON(iris.Map{
-			"code": code,
-			"msg":  err.Error()})
-
+		common.Response(ctx, err.Error(), code)
 		return
 	}
+	ctx.Values().Set("userId", user.ID)
 	ctx.Values().Set("user", *user)
 	ctx.Next()
 }
@@ -68,12 +65,10 @@ func Login(ctx iris.Context) {
 			Secure:   false,
 			HttpOnly: true,
 		})
-		ctx.JSON(iris.Map{
-			"code": code,
-			"msg":  err.Error()})
-
+		common.Response(ctx, err.Error(), code)
 		return
 	}
+	ctx.Values().Set("userId", user.ID)
 	ctx.Values().Set("user", *user)
 	ctx.Next()
 }
@@ -81,7 +76,11 @@ func Login(ctx iris.Context) {
 //中间件的两种方式
 func GetUser() iris.Handler {
 	return func(ctx iris.Context) {
-		user, _ := getUser(ctx)
+		user, err := getUser(ctx)
+		if err != nil {
+			common.Response(ctx, "请重新登录", 401)
+			return
+		}
 		ctx.Values().Set("user", user) //坑哦，这里存的是指针哦，虽然这个函数没用过
 		ctx.Next()
 	}

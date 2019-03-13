@@ -1,7 +1,7 @@
 package common
 
 import (
-	"fmt"
+	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common/e"
 )
@@ -9,11 +9,11 @@ import (
 type H map[string]interface{}
 
 //先信息后数据最后状态码
-//入参 data interface{},msg string,code int
-//data,msg code默认SUCCESS
-//msg data默认nil code默认ERROR
-//data msg默认"",code默认SUCCESS
-//msg,code data默认nil
+//入参1. data interface{},msg string,code int
+//2.msg,code |data默认nil
+//3.data,msg |code默认SUCCESS
+//4.msg |data默认nil code默认ERROR
+//5.data |msg默认"",code默认SUCCESS
 func Response(ctx iris.Context, res ...interface{}) {
 
 	var msg string
@@ -51,13 +51,13 @@ func Response(ctx iris.Context, res ...interface{}) {
 	})
 
 	if err != nil {
-		fmt.Println(num, err)
+		golog.Error(num, err)
 	}
 }
 
 func Res(c iris.Context, h iris.Map) {
 	num, err := c.JSON(h)
 	if err != nil {
-		fmt.Println(num, err)
+		golog.Error(num, err)
 	}
 }
