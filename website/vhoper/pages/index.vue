@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-carousel arrows effect="fade">
+    <a-carousel autoplay arrows effect="fade">
       <div
         slot="prevArrow"
         class="custom-slick-arrow"
@@ -42,7 +42,7 @@ export default {}
 </script>
 
 <style scoped>
-.ant-carousel >>> div .slick-slide {
+div .ant-carousel >>> div .slick-slide {
   text-align: center;
   height: 160px;
   line-height: 160px;
@@ -58,14 +58,14 @@ div .ant-carousel >>> div .custom-slick-arrow {
   background-color: rgba(31, 45, 61, 0.11);
   opacity: 0.3;
 }
-.ant-carousel >>> div .custom-slick-arrow:before {
+div .ant-carousel >>> div .custom-slick-arrow:before {
   display: none;
 }
-.ant-carousel >>> div .custom-slick-arrow:hover {
+div .ant-carousel >>> div .custom-slick-arrow:hover {
   opacity: 0.5;
 }
 
-.ant-carousel >>> .slick-slide h3 {
+div .ant-carousel >>> .slick-slide h3 {
   color: #fff;
 }
 </style>
