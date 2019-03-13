@@ -18,15 +18,15 @@
           <b />
         </div>
         <a-list-item slot="renderItem" key="item.title" slot-scope="item">
-          <span slot="actions">
+          <span slot="actions" @click="star">
             <a-icon type="star-o" style="margin-right: 8px" />
             {{ item.collect_count }}
           </span>
-          <span slot="actions">
+          <span slot="actions" @click="like">
             <a-icon type="like-o" style="margin-right: 8px" />
-            {{ item.love_count }}
+            {{ item.like_count }}
           </span>
-          <span slot="actions">
+          <span slot="actions" @click="comment">
             <a-icon type="message" style="margin-right: 8px" />
             {{ item.comment_count }}
           </span>
@@ -128,7 +128,10 @@ export default {
       const res = await this.$axios.$get(`/api/article`, { params })
       this.articleList = res.data
       this.total = res.count
-    }
+    },
+    star() {},
+    like() {},
+    comment() {}
   }
 }
 </script>

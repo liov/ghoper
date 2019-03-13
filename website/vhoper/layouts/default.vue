@@ -11,38 +11,34 @@
           >
             <a-menu-item key="home">
               <nuxt-link to="/">
-                <a-icon type="home" /> 主页
+                <a-icon type="home" />
+                主页
               </nuxt-link>
             </a-menu-item>
             <a-menu-item key="file-text">
               <nuxt-link to="/article">
-                <a-icon type="file-text" /> 博客
+                <a-icon type="file-text" />
+                博客
               </nuxt-link>
             </a-menu-item>
-            <a-sub-menu>
-              <span slot="title" class="submenu-title-wrapper"><a-icon type="message" />聊天</span>
 
-              <a-menu-item key="chat:1">
-                <nuxt-link to="/chat/v2">
-                  version2
-                </nuxt-link>
-              </a-menu-item>
+            <a-menu-item key="message">
+              <nuxt-link to="/chat/v2">
+                <a-icon type="message" />
+                聊天
+              </nuxt-link>
+            </a-menu-item>
 
-
-              <a-menu-item key="chat:2">
-                <nuxt-link to="/chat">
-                  version1
-                </nuxt-link>
-              </a-menu-item>
-            </a-sub-menu>
             <a-menu-item key="picture">
               <nuxt-link to="/moment">
-                <a-icon type="picture" /> 瞬间
+                <a-icon type="picture" />
+                瞬间
               </nuxt-link>
             </a-menu-item>
             <a-menu-item key="user">
               <nuxt-link to="/user/login">
-                <a-icon type="user" />登录
+                <a-icon type="user" />
+                登录
               </nuxt-link>
             </a-menu-item>
             <!--<a-menu-item key="book">
@@ -70,12 +66,14 @@
               </a-menu-item-group>
             </a-sub-menu>
             <a-menu-item key="app" disabled>
-              <a-icon type="appstore" />Hoper
+              <a-icon type="appstore" />
+              Hoper
             </a-menu-item>
             <a-switch
               :default-checked="false"
               @change="changeTheme"
-            /> 主题
+            />
+            主题
           </a-menu>
         </div>
       </div>
@@ -90,6 +88,7 @@
 </template>
 <script>
 import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
+
 export default {
   data() {
     return {
@@ -113,6 +112,7 @@ export default {
 .header {
   height: 64px;
 }
+
 .menu {
   width: 100%;
   text-align: center;

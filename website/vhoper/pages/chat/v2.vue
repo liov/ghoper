@@ -62,10 +62,12 @@
       </div>
     </a-col>
     <a-col :span="2">
-      <a-affix :offset-top="this.top">
-        <a-button type="primary" @click="()=>{this.top += 10}">
-          Affix top
-        </a-button>
+      <a-affix :offset-top="top">
+        <nuxt-link to="/chat">
+          <a-button type="primary">
+            固钉
+          </a-button>
+        </nuxt-link>
       </a-affix>
       <a-back-top />
     </a-col>
