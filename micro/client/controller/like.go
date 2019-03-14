@@ -30,6 +30,7 @@ type Collection struct {
 	Kind        string      `gorm:"type:varchar(10)" json:"kind"`
 	Favorites   []Favorites `json:"favorites"`
 	FavoritesID uint        `json:"favorites_id"`
+	UserID      uint        `json:"user_id"`
 	UpdatedAt   *time.Time  `json:"updated_at"`
 	DeletedAt   *time.Time  `sql:"index" json:"deleted_at"`
 	Status      uint8       `gorm:"type:smallint;default:0" json:"status"`

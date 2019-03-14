@@ -50,11 +50,11 @@
             </span>
             <span slot="actions" style="margin-right: 10px" @click="like(item.id,index)">
               <a-icon type="heart" theme="twoTone" two-tone-color="#eb2f96" />
-              喜欢：{{ item.collect_count }}
+              喜欢：{{ item.like_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="approve(item.id,index)">
               <a-icon type="like" />
-              点赞：{{ item.like_count }}
+              点赞：{{ item.approve_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="comment(item.id,index)">
               <a-icon type="message" />
@@ -168,7 +168,8 @@ export default {
       existFavorites: [],
       favorite: '',
       ref_id: 0,
-      tmpIdx: 0
+      tmpIdx: 0,
+      startIds: []
     }
   },
   computed: {},
@@ -192,7 +193,11 @@ export default {
   created: function() {
     this.user = this.$store.state.user
   },
-  mounted: function() {},
+  mounted: function() {
+    this.startIds = localStorage
+      .getItem('moment_start_' + this.user.id)
+      .split(',')
+  },
   methods: {
     async onShowSizeChange(current, pageSize) {
       this.pageSize = pageSize
@@ -243,8 +248,13 @@ export default {
         favorites_ids: this.favorites
       }
       const res = await this.$axios.$post('/api/collection', params)
-      if (res.code === 200) this.$message.info('收藏成功')
-      else this.$message.error(res.msg)
+      if (res.code === 200) {
+        this.$message.info('收藏成功')
+        localStorage.setItem(
+          'moment_star_' + this.user.id,
+          this.startIds + ',' + this.ref_id
+        )
+      } else this.$message.error(res.msg)
       this.momentList[this.tmpIdx].collect_count += 1
       this.loading = false
       this.collectVisible = false
@@ -270,7 +280,7 @@ export default {
       const res = await this.$axios.$post('/api/favorites', {
         name: this.favorite
       })
-      if (res.code === 200) this.$message.info('收藏成功')
+      if (res.code === 200) this.$message.info('添加收藏夹成功')
       this.existFavorites.push(res.data)
       this.favorites.push(res.data.id)
       this.favorite = ''
