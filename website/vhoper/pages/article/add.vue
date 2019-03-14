@@ -201,7 +201,7 @@ export default {
       showImage: false,
       imageUrl: '',
       tag: '',
-      categories: [1],
+      categories: [],
       tags: [],
       init: {
         selector: '#editor_t',
@@ -231,7 +231,8 @@ export default {
     const tres = await $axios.$get(`/api/tag`, { params })
     return {
       existCategories: cres.data,
-      existTags: tres.data
+      existTags: tres.data,
+      categories: cres.data[0].id
     }
   },
   created() {},

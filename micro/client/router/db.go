@@ -10,7 +10,7 @@ func DBInit(c iris.Context) {
 	initialize.DB.DropTableIfExists(&model.User{},
 		&model.Tag{}, &model.Diary{}, &model.DiaryBook{}, &model.Education{}, &model.Article{},
 		&model.Work{}, &model.Category{}, &model.Collection{}, &model.Like{}, &model.CrawlerArticle{},
-		&model.ArticleComment{},
+		&model.ArticleComment{}, &model.Favorites{},
 		&model.DiaryBookComment{}, &model.MomentComment{}, &model.FileUploadInfo{}, &model.DiaryComment{},
 		&model.Moment{}, &model.Mood{}, &model.DiaryBookHistory{}, &model.DiaryHistory{}, &model.ArticleHistory{},
 		&model.MomentHistory{}, "article_category", "article_collection", "article_comment", "article_history",
@@ -24,10 +24,11 @@ func DBInit(c iris.Context) {
 	initialize.DB.CreateTable(&model.User{},
 		&model.Tag{}, &model.Diary{}, &model.DiaryBook{}, &model.Education{}, &model.Article{},
 		&model.Work{}, &model.Category{}, &model.Collection{}, &model.Like{}, &model.CrawlerArticle{},
-		&model.ArticleComment{},
+		&model.ArticleComment{}, &model.Favorites{},
 		&model.DiaryBookComment{}, &model.MomentComment{}, &model.FileUploadInfo{}, &model.DiaryComment{},
 		&model.Moment{}, &model.Mood{}, &model.DiaryBookHistory{}, &model.DiaryHistory{}, &model.ArticleHistory{},
 		&model.MomentHistory{})
+	initialize.DB.Create(&model.Category{Name: "未分类"})
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 	RedisConn.Do("flushall")

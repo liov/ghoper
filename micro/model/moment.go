@@ -8,7 +8,7 @@ type Moment struct {
 	ID              uint            `gorm:"primary_key" json:"id"`
 	CreatedAt       time.Time       `json:"created_at"`
 	Content         string          `gorm:"type:varchar(500)" json:"content"`
-	ImageUrl        string          `gorm:"type:varchar(100)" json:"image_url"` //图片
+	ImageUrl        string          `gorm:"type:varchar(500)" json:"image_url"` //图片
 	Mood            Mood            `gorm:"foreignkey:MoodName;association_foreignkey:Name" json:"mood"`
 	MoodName        string          `gorm:"type:varchar(20)" json:"mood_name"`
 	Tags            []Tag           `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
@@ -20,11 +20,10 @@ type Moment struct {
 	BrowseCount     uint            `json:"browse_count"`  //浏览
 	CommentCount    uint            `json:"comment_count"` //评论
 	CollectCount    uint            `json:"collect_count"` //收藏
-	Collections     []Collection    `gorm:"many2many:moment_collection" json:"collections"`
 	CollectUsers    []User          `gorm:"-" json:"collect_users"`
 	LikeCount       uint            `json:"like_count"` //点赞
 	LikeUsers       []User          `gorm:"many2many:moment_like" json:"like_users"`
-	Sort            uint8           `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
+	Sequence        uint8           `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	Permission      uint8           `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Status          uint8           `gorm:"type:smallint;default:0" json:"status"`     //状态
 	ModifyTimes     uint            `gorm:"default:0" json:"modify_times"`             //修改次数

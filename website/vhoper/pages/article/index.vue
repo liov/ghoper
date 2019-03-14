@@ -100,12 +100,12 @@
           :wrapper-col="{span: 6}"
         >
           <a-select
-            v-model="collections"
+            v-model="favorites"
             mode="multiple"
             placeholder="请选择收藏夹"
             style="width: 200px"
           >
-            <a-select-option v-for="item in existCollections" :key="item.name">
+            <a-select-option v-for="item in existFavorites" :key="item.id">
               {{ item.name }}
             </a-select-option>
           </a-select>
@@ -119,12 +119,12 @@
               :wrapper-col="{span: 16}"
             >
               <a-input
-                v-model="collection"
+                v-model="favorite"
               />
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-button style="margin-top: 5px" @click="addCollection">
+            <a-button style="margin-top: 5px" @click="addFavorite">
               添加
             </a-button>
           </a-col>
@@ -162,9 +162,9 @@ export default {
       color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple'],
       loading: false,
       visible: false,
-      collections: ['默认收藏夹'],
-      existCollections: [],
-      collection: ''
+      favorites: [],
+      existFavorites: [],
+      favorite: ''
     }
   },
   watch: {
@@ -199,19 +199,22 @@ export default {
     },
     async star(id) {
       this.visible = true
-      const res = await this.$axios.$get(`/api/collection`)
+      if (this.existFavorites !== []) {
+        return
+      }
+      const res = await this.$axios.$get(`/api/favorite`)
       if (res !== undefined) {
-        this.existCollections = res.data
-      } else this.existCollections = [{ name: '默认收藏夹' }]
-      if (res === null) this.existCollections = [{ name: '默认收藏夹' }]
+        this.existFavorites = res.data
+        this.favorites.push(this.existFavorites[0].id)
+      } else this.$message.error('无法获取收藏夹')
     },
     async handleOk(e) {
       this.loading = true
-      const collections = []
-      for (const i of this.collections) {
-        collections.push({ name: i })
+      const favorites = []
+      for (const i of this.favorites) {
+        favorites.push({ name: i })
       }
-      const res = await this.$axios.$post('/api/collection', collections)
+      const res = await this.$axios.$post('/api/favorite', favorites)
       if (res.code === 200) this.$message.info('收藏成功')
       this.loading = false
       this.visible = false
@@ -221,21 +224,21 @@ export default {
     },
     like(id) {},
     comment(id) {},
-    addCollection() {
+    addFavorite() {
       const vm = this
-      if (this.collection === '') {
+      if (this.favorite === '') {
         this.$message.error('标签为空')
         return
       }
-      for (const v of this.existCollections) {
+      for (const v of this.existFavorites) {
         if (v.name === vm.tag) {
           vm.$message.error('标签重复')
           return
         }
       }
-      this.existCollections.push({ name: this.tag })
-      this.collections.push(this.collection)
-      this.collection = ''
+      this.existFavorites.push({ name: this.tag })
+      this.favorites.push(this.favorite)
+      this.favorite = ''
     }
   }
 }

@@ -202,6 +202,8 @@ func ActiveAccount(c iris.Context) {
 		return
 	}
 
+	initialize.DB.Create(&model.Favorites{Name: "默认收藏夹", UserID: user.ID, Status: 1, Count: 0})
+
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 

@@ -83,13 +83,13 @@ func GetMoments(c iris.Context) {
 		initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 			return db.Select("name,moment_id")
 		}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
-			Where("sort > ?", 0).Order("id desc").Find(&moments.TopMoments)
+			Where("sequence > ?", 0).Order("id desc").Find(&moments.TopMoments)
 	}
 
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
-		Where("sort = ?", 0).Order("id desc").Limit(pageSize - len(moments.TopMoments)).
+		Where("sequence = ?", 0).Order("id desc").Limit(pageSize - len(moments.TopMoments)).
 		Offset(pageNo*pageSize - topNum).Find(&moments.NormalMoments).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
@@ -696,9 +696,9 @@ func GetMomentsV2(c iris.Context) {
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
-		Order("sort desc,id desc").Limit(pageSize).
+		Order("sequence desc,id desc").Limit(pageSize).
 		Offset(pageNo * pageSize).Find(&moments).Count(&count).Error
-	err = initialize.DB.Model(Moment{}).Where("sort = ?", 9).Count(&topCount).Error
+	err = initialize.DB.Model(Moment{}).Where("sequence = ?", 9).Count(&topCount).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}

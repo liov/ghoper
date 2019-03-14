@@ -39,7 +39,7 @@ type Article struct {
 	LikeCount     uint             `gorm:"default:0" json:"like_count"` //点赞
 	LikeUsers     []User           `gorm:"many2many:article_like" json:"like_users"`
 	Permission    int8             `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	Sort          int8             `gorm:"type:smallint;default:0" json:"sort"`       //排序，置顶
+	Sequence      int8             `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`
 	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
 	Status        uint             `json:"status"`                        //状态
@@ -106,7 +106,7 @@ func GetArticles(c iris.Context) {
 				orderStr = "comment_count"
 			}
 		}*/
-	order := "sort desc," + orderStr + " desc"
+	order := "sequence desc," + orderStr + " desc"
 
 	/*	maps := map[string]interface{}{
 

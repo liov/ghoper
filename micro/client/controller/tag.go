@@ -18,7 +18,7 @@ type Tag struct {
 	CreatedBy   User       `gorm:"-" json:"created_by"`
 	UserID      uint       `json:"user_id"`
 	Count       uint       `gorm:"default:0" json:"count"`
-	Sort        uint8      `gorm:"type:smallint;default:0" json:"sort"` //排序，置顶
+	Sequence    uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	Status      uint8      `gorm:"type:smallint;default:0" json:"status"`
