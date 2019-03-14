@@ -45,12 +45,16 @@
               <a-avatar :src="item.user.avatar_url" alt="头像" />
             </nuxt-link>
             <span slot="actions" style="margin-right: 10px" @click="star(item.id,index)">
-              <a-icon type="star-o" />
+              <a-icon type="star" theme="outlined" two-tone-color="#eb2f96" />
               收藏：{{ item.collect_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="like(item.id,index)">
-              <a-icon type="like-o" />
-              喜欢：{{ item.like_count }}
+              <a-icon type="heart" theme="twoTone" two-tone-color="#eb2f96" />
+              喜欢：{{ item.collect_count }}
+            </span>
+            <span slot="actions" style="margin-right: 10px" @click="approve(item.id,index)">
+              <a-icon type="like" />
+              点赞：{{ item.like_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="comment(item.id,index)">
               <a-icon type="message" />
@@ -84,7 +88,7 @@
         on-ok="handleOk"
       >
         <template slot="footer">
-          <a-button key="back" @click="chandleCancel">
+          <a-button key="back" @click="collectCancel">
             取消
           </a-button>
           <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
@@ -162,7 +166,9 @@ export default {
       collectVisible: false,
       favorites: [],
       existFavorites: [],
-      favorite: ''
+      favorite: '',
+      ref_id: 0,
+      tmpIdx: 0
     }
   },
   computed: {},
@@ -216,44 +222,57 @@ export default {
       this.visible = false
     },
     async star(id, index) {
+      this.ref_id = id
+      this.tmpIdx = index
       this.collectVisible = true
-      const res = await this.$axios.$get(`/api/favorite`)
+      if (this.existFavorites.length > 0) {
+        this.favorites = [this.existFavorites[0].id]
+        return
+      }
+      const res = await this.$axios.$get(`/api/favorites`)
       if (res !== undefined) {
         this.existFavorites = res.data
-        this.favorites.push(this.existFavorites[0].id)
+        this.favorites = [this.existFavorites[0].id]
       } else this.$message.error('无法获取收藏夹')
     },
     async handleOk(e) {
       this.loading = true
-
       const params = {
-        pageNo: pageNo,
-        favorites: this.favorites
+        ref_id: this.ref_id,
+        kind: 'moment',
+        favorites_ids: this.favorites
       }
-      const res = await this.$axios.$post('/api/favorite', favorites)
+      const res = await this.$axios.$post('/api/collection', params)
       if (res.code === 200) this.$message.info('收藏成功')
+      else this.$message.error(res.msg)
+      this.momentList[this.tmpIdx].collect_count += 1
       this.loading = false
-      this.visible = false
-    },
-    chandleCancel(e) {
       this.collectVisible = false
     },
+    collectCancel(e) {
+      this.collectVisible = false
+    },
+    approve(id, index) {},
     like(id, index) {},
     comment(id, index) {},
-    addFavorite() {
+    async addFavorite() {
       const vm = this
       if (this.favorite === '') {
         this.$message.error('标签为空')
         return
       }
       for (const v of this.existFavorites) {
-        if (v.name === vm.tag) {
-          vm.$message.error('标签重复')
+        if (v.name === this.favorite) {
+          this.$message.error('标签重复')
           return
         }
       }
-      this.existFavorites.push({ name: this.tag })
-      this.favorites.push(this.favorite)
+      const res = await this.$axios.$post('/api/favorites', {
+        name: this.favorite
+      })
+      if (res.code === 200) this.$message.info('收藏成功')
+      this.existFavorites.push(res.data)
+      this.favorites.push(res.data.id)
       this.favorite = ''
     }
   }

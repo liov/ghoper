@@ -39,8 +39,8 @@ type User struct {
 	MomentCount     uint        `gorm:"default:0" json:"moment_count"`
 	DiaryBookCount  uint        `gorm:"default:0" json:"diary_book_count"`
 	DiaryCount      uint        `gorm:"default:0" json:"diary_count"`
-	CommentCount    uint        `gorm:"default:0" json:"comment_count"`            //评论数量
-	Favorites       []Favorites `gorm:"many2many:user_favorites" json:"favorites"` //收藏夹？
+	CommentCount    uint        `gorm:"default:0" json:"comment_count"` //评论数量
+	Favorites       []Favorites `json:"favorites"`                      //收藏夹？
 	Articles        []Article   `json:"articles"`
 	Moments         []Moment    `json:"moments"`
 	DiaryBooks      []DiaryBook `json:"diary_books"`

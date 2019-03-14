@@ -17,9 +17,10 @@ type Moment struct {
 	UserID          uint            `json:"user_id"`
 	UpdatedAt       *time.Time      `json:"updated_at"`
 	DeletedAt       *time.Time      `sql:"index" json:"deleted_at"`
-	BrowseCount     uint            `json:"browse_count"`  //浏览
-	CommentCount    uint            `json:"comment_count"` //评论
-	CollectCount    uint            `json:"collect_count"` //收藏
+	BrowseCount     uint            `json:"browse_count"`                   //浏览
+	CommentCount    uint            `json:"comment_count"`                  //评论
+	CollectCount    uint            `json:"collect_count"`                  //收藏
+	ApproveCount    uint            `gorm:"default:0" json:"approve_count"` //点赞
 	CollectUsers    []User          `gorm:"-" json:"collect_users"`
 	LikeCount       uint            `json:"like_count"` //点赞
 	LikeUsers       []User          `gorm:"many2many:moment_like" json:"like_users"`

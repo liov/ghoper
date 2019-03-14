@@ -199,7 +199,7 @@ export default {
     },
     async star(id) {
       this.visible = true
-      if (this.existFavorites !== []) {
+      if (this.existFavorites.length > 0) {
         return
       }
       const res = await this.$axios.$get(`/api/favorite`)
@@ -208,14 +208,14 @@ export default {
         this.favorites.push(this.existFavorites[0].id)
       } else this.$message.error('无法获取收藏夹')
     },
-    async handleOk(e) {
+    handleOk(e) {
       this.loading = true
       const favorites = []
       for (const i of this.favorites) {
         favorites.push({ name: i })
       }
-      const res = await this.$axios.$post('/api/favorite', favorites)
-      if (res.code === 200) this.$message.info('收藏成功')
+      // const res = await this.$axios.$post('/api/collection', favorites)
+      // if (res.code === 200) this.$message.info('收藏成功')
       this.loading = false
       this.visible = false
     },

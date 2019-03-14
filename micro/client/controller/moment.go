@@ -33,6 +33,7 @@ type Moment struct {
 	BrowseCount  uint      `json:"browse_count"`                                       //浏览
 	CommentCount uint      `json:"comment_count"`                                      //评论
 	CollectCount uint      `json:"collect_count"`                                      //收藏
+	ApproveCount uint      `gorm:"default:0" json:"approve_count"`                     //点赞
 	LikeCount    uint      `json:"like_count"`                                         //点赞
 	Permission   uint8     `gorm:"type:smallint unsigned;default:0" json:"permission"` //查看权限
 	//Index        int       `json:"index"`                                                //redis列表中排序
