@@ -194,9 +194,11 @@ export default {
     this.user = this.$store.state.user
   },
   mounted: function() {
-    this.startIds = localStorage
+    for (const v of localStorage
       .getItem('moment_start_' + this.user.id)
-      .split(',')
+      .split(',')) {
+      this.startIds.push(parseInt(v))
+    }
   },
   methods: {
     async onShowSizeChange(current, pageSize) {
@@ -252,7 +254,9 @@ export default {
         this.$message.info('收藏成功')
         localStorage.setItem(
           'moment_star_' + this.user.id,
-          this.startIds + ',' + this.ref_id
+          localStorage.getItem('moment_start_' + this.user.id)
+            ? localStorage.getItem('moment_start_' + this.user.id)
+            : '' + ',' + this.ref_id
         )
       } else this.$message.error(res.msg)
       this.momentList[this.tmpIdx].collect_count += 1
