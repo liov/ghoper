@@ -10,6 +10,7 @@ type Favorites struct {
 	Name        string       `gorm:"type:varchar(20)" json:"name"`
 	User        User         `json:"user"`
 	UserID      uint         `json:"user_id"`
+	FollowUsers []User       `json:"follow_users"`
 	Count       uint         `json:"count"`
 	Collections []Collection `gorm:"many2many:collection_favorites" json:"collections"`
 	UpdatedAt   *time.Time   `json:"updated_at"`
