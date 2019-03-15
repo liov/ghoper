@@ -234,8 +234,8 @@ func AddArticle(c iris.Context) {
 	if limitErr := common.Limit(model.ArticleMinuteLimit,
 		model.ArticleMinuteLimitCount,
 		model.ArticleDayLimit,
-		model.ArticleMinuteLimitCount, user.ID); limitErr != "" {
-		common.Response(c, limitErr, e.TimeTooMuch)
+		model.ArticleMinuteLimitCount, user.ID); limitErr != nil {
+		common.Response(c, limitErr.Error(), e.TimeTooMuch)
 		return
 	}
 

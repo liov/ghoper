@@ -61,8 +61,8 @@ func AddComment(c iris.Context) {
 	if limitErr := common.Limit(model.CommentMinuteLimit,
 		model.CommentMinuteLimitCount,
 		model.CommentDayLimit,
-		model.CommentMinuteLimitCount, user.ID); limitErr != "" {
-		common.Response(c, limitErr)
+		model.CommentMinuteLimitCount, user.ID); limitErr != nil {
+		common.Response(c, limitErr.Error())
 		return
 	}
 	classify := c.GetViewData()["classify"].(string)

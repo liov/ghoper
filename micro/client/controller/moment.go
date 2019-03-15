@@ -208,16 +208,15 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) (*
 func setRedisMoments(topKey string, normalKey string, moments Moments, count int) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
+	conn.Send("MULTI")
 
 	if len(moments.TopMoments) > 0 {
 		for _, mv := range moments.TopMoments {
 			mv.BrowseCount = mv.BrowseCount + 1
 			//mv.Index = mi
 			value, _ := utils.Json.MarshalToString(mv)
-			_, err := conn.Do("RPUSH", topKey, value)
-			if err != nil {
-				return err
-			}
+			conn.Send("RPUSH", topKey, value)
+
 		}
 	}
 
@@ -225,11 +224,13 @@ func setRedisMoments(topKey string, normalKey string, moments Moments, count int
 		mv.BrowseCount = mv.BrowseCount + 1
 		//mv.Index = mi
 		value, _ := utils.Json.MarshalToString(mv)
-		_, err := conn.Do("RPUSH", normalKey, value)
-		if err != nil {
-			return err
-		}
+		conn.Send("RPUSH", normalKey, value)
 	}
+	_, err := conn.Do("EXEC")
+	if err != nil {
+		return err
+	}
+
 	conn.Do("SET", "Moment_List_Count", strconv.Itoa(count))
 	/*	_, err := conn.Do("EXPIRE", topKey, time)
 		if err != nil {
@@ -353,8 +354,8 @@ func AddMoment(c iris.Context) {
 	if limitErr := common.Limit(model.MomentMinuteLimit,
 		model.MomentMinuteLimitCount,
 		model.MomentDayLimit,
-		model.MomentMinuteLimitCount, user.ID); limitErr != "" {
-		common.Response(c, limitErr)
+		model.MomentMinuteLimitCount, user.ID); limitErr != nil {
+		common.Response(c, limitErr.Error(), e.TimeTooMuch)
 		return
 	}
 

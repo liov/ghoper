@@ -7,7 +7,6 @@ import (
 	"hoper/client/controller/common/e"
 	"hoper/initialize"
 	"hoper/model"
-	"strconv"
 	"time"
 )
 
@@ -72,7 +71,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	userId := ctx.Values().Get("userId").(int)
+	userId := ctx.Values().Get("userId").(uint)
 	var count int
 	initialize.DB.Model(&model.Favorites{}).Where("user_id =? AND id in (?)", userId, fc.FavoritesIDs).Count(&count)
 	if count != len(fc.FavoritesIDs) {
@@ -96,9 +95,8 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	conn := initialize.RedisPool.Get()
-	defer conn.Close()
-	conn.Do("SADD", "user"+strconv.Itoa(userId))
+	common.CountToRedis(userId, fc.RefID, fc.Kind, "collect")
+
 	common.Response(ctx, "收藏成功", e.SUCCESS)
 }
 

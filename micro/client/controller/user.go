@@ -310,14 +310,14 @@ func Login(c iris.Context) {
 	type Login struct {
 		//Email string `json:"email" binding:"email"`
 		//Phone	string `json:"phone"`
-		Input       string `json:"input" binding:"required"`
-		Password    string `json:"password" binding:"required,min=6,max=20"`
-		LuosimaoRes string `json:"luosimaoRes"`
+		Input    string `json:"input" binding:"required"`
+		Password string `json:"password" binding:"required,min=6,max=20"`
+		Luosimao string `json:"luosimao"`
 	}
 
 	var login Login
 
-	var loginInput, password, luosimaoRes, sql string
+	var loginInput, password, luosimao, sql string
 
 	if err := c.ReadJSON(&login); err != nil {
 		common.Response(c, "账号或密码错误")
@@ -339,9 +339,9 @@ func Login(c iris.Context) {
 
 	loginInput = login.Input
 	password = login.Password
-	luosimaoRes = login.LuosimaoRes
+	luosimao = login.Luosimao
 
-	verifyErr := utils.LuosimaoVerify(initialize.Config.Server.LuosimaoVerifyURL, initialize.Config.Server.LuosimaoAPIKey, luosimaoRes)
+	verifyErr := utils.LuosimaoVerify(initialize.Config.Server.LuosimaoVerifyURL, initialize.Config.Server.LuosimaoAPIKey, luosimao)
 
 	if verifyErr != nil {
 		common.Response(c, verifyErr.Error())

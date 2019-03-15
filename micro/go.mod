@@ -5,6 +5,8 @@ require (
 	github.com/DataDog/zstd v1.3.5 // indirect
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/Shopify/sarama v1.20.1 // indirect
+	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc // indirect
+	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/antchfx/htmlquery v1.0.0 // indirect
 	github.com/antchfx/xmlquery v1.0.0 // indirect
 	github.com/antchfx/xpath v0.0.0-20190129040759-c8489ed3251e // indirect
@@ -79,6 +81,7 @@ require (
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_golang v0.9.2 // indirect
+	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275
 	github.com/r3labs/sse v0.0.0-20181217150409-243b7807c4c4
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967
@@ -98,6 +101,7 @@ require (
 	google.golang.org/appengine v1.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20190108161440-ae2f86662275 // indirect
 	google.golang.org/grpc v1.17.0
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/ini.v1 v1.42.0 // indirect

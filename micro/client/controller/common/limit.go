@@ -1,12 +1,14 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"github.com/prometheus/common/log"
 	"hoper/initialize"
 )
 
-func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimitCount int64, userID uint) string {
+func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimitCount int64, userID uint) error {
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -15,7 +17,7 @@ func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimit
 	minuteCount, minuteErr := redis.Int64(RedisConn.Do("GET", minuteKey))
 
 	if minuteErr == nil && minuteCount >= minuteLimitCount {
-		return "您的操作过于频繁，请先休息一会儿。"
+		return errors.New("您的操作过于频繁，请先休息一会儿。")
 	}
 
 	minuteRemainingTime, _ := redis.Int64(RedisConn.Do("TTL", minuteKey))
@@ -24,14 +26,14 @@ func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimit
 	}
 
 	if _, err := RedisConn.Do("SET", minuteKey, minuteCount+1, "EX", minuteRemainingTime); err != nil {
-		fmt.Println("redis set failed:", err)
-		return "内部错误"
+		log.Error("redis set failed:", err)
+		return errors.New("内部错误")
 	}
 
 	dayKey := dayLimit + fmt.Sprintf("%d", userID)
 	dayCount, dayErr := redis.Int64(RedisConn.Do("GET", dayKey))
 	if dayErr == nil && dayCount >= dayLimitCount {
-		return "您今天的操作过于频繁，请先休息一会儿。"
+		return errors.New("您今天的操作过于频繁，请先休息一会儿。")
 	}
 
 	dayRemainingTime, _ := redis.Int64(RedisConn.Do("TTL", dayKey))
@@ -41,8 +43,8 @@ func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimit
 	}
 
 	if _, err := RedisConn.Do("SET", dayKey, dayCount+1, "EX", dayRemainingTime); err != nil {
-		fmt.Println("redis set failed:", err)
-		return "内部错误"
+		log.Error("redis set failed:", err)
+		return errors.New("内部错误")
 	}
-	return ""
+	return nil
 }
