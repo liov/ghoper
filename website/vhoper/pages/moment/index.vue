@@ -169,7 +169,7 @@ export default {
       favorite: '',
       ref_id: 0,
       tmpIdx: 0,
-      startIds: []
+      starIds: []
     }
   },
   computed: {},
@@ -194,10 +194,11 @@ export default {
     this.user = this.$store.state.user
   },
   mounted: function() {
-    for (const v of localStorage
-      .getItem('moment_start_' + this.user.id)
-      .split(',')) {
-      this.startIds.push(parseInt(v))
+    const starIds = localStorage.getItem('moment_start_' + this.user.id)
+      ? localStorage.getItem('moment_start_' + this.user.id)
+      : ''
+    for (const v of starIds.split(',')) {
+      this.starIds.push(parseInt(v))
     }
   },
   methods: {

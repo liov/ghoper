@@ -2,12 +2,11 @@ package main
 
 import (
 	"hoper/initialize"
-	"hoper/model"
 )
 
+//单独建个文件夹的目的很简单，测试的时候引用utils不会引用到这里
 func main() {
 
-	db := initialize.DB
 	/*
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&model.User{},
 		&model.Tag{},&model.Diary{},&model.DiaryBook{},&model.School{},&model.Article{},
@@ -21,8 +20,19 @@ func main() {
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(
 			&model.Tag{}, &model.Moment{},&model.Mood{},&model.MomentHistory{})*/
 
-	db.DropTable(&model.User{})
-
+	//initialize.DB.DropTable(&model.User{})
+	initialize.DB.Exec(`CREATE OR REPLACE FUNCTION del_tabs(username IN VARCHAR) RETURNS void AS $$
+DECLARE
+statements CURSOR FOR
+SELECT tablename FROM pg_tables
+WHERE tableowner = username AND schemaname = 'public';
+BEGIN
+FOR stmt IN statements LOOP
+EXECUTE 'DROP TABLE ' || quote_ident(stmt.tablename) || ' CASCADE;';
+END LOOP;
+END;
+$$ LANGUAGE plpgsql`)
+	initialize.DB.Exec(`SELECT del_tabs('postgres')`)
 }
 
 /*

@@ -30,14 +30,12 @@ type Article struct {
 	Tags          []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	User          User             `json:"user"`
 	UserID        uint             `json:"user_id"`
-	Comments      []ArticleComment `json:"comments"`                       //评论
-	BrowseCount   uint             `json:"browse_count"`                   //浏览
-	CommentCount  uint             `gorm:"default:0" json:"comment_count"` //评论
-	CollectCount  uint             `gorm:"default:0" json:"collect_count"` //收藏
-	ApproveCount  uint             `gorm:"default:0" json:"approve_count"` //点赞
-	CollectUsers  []User           `gorm:"-" json:"collect_users"`
-	LikeCount     uint             `gorm:"default:0" json:"like_count"` //点赞
-	LikeUsers     []User           `gorm:"many2many:article_like" json:"like_users"`
+	Comments      []ArticleComment `json:"comments"`                                  //评论
+	BrowseCount   uint             `json:"browse_count"`                              //浏览
+	CommentCount  uint             `gorm:"default:0" json:"comment_count"`            //评论
+	CollectCount  uint             `gorm:"default:0" json:"collect_count"`            //收藏
+	ApproveCount  uint             `gorm:"default:0" json:"approve_count"`            //点赞
+	LikeCount     uint             `gorm:"default:0" json:"like_count"`               //喜欢
 	Permission    int8             `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      int8             `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`

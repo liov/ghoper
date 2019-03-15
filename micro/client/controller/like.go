@@ -7,6 +7,7 @@ import (
 	"hoper/client/controller/common/e"
 	"hoper/initialize"
 	"hoper/model"
+	"strconv"
 	"time"
 )
 
@@ -14,7 +15,7 @@ type Favorites struct {
 	ID        uint       `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
 	Name      string     `gorm:"type:varchar(20)" json:"name"`
-	User      *User      `json:"user"`
+	User      User       `json:"user"`
 	UserID    uint       `json:"user_id"`
 	Count     uint       `json:"count"`
 	UpdatedAt *time.Time `json:"updated_at"`
@@ -39,16 +40,17 @@ type Collection struct {
 type Like struct {
 	ID        uint       `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
-	User      *User      `json:"user"`
+	RefID     uint       `json:"ref_id"`
+	Kind      string     `gorm:"type:varchar(10)" json:"kind"`
+	User      User       `json:"user"`
 	UserID    uint       `json:"user_id"`
 	Count     uint       `json:"count"`
-	Articles  []Article  `gorm:"many2many:article_like" json:"articles"`
-	Moments   []Moment   `gorm:"many2many:moment_like" json:"moments"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
+//数据量大，每个用户维护一张喜欢表
 func AddLike(ctx iris.Context) {
 
 }
@@ -69,7 +71,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	userId := ctx.Values().Get("userId").(uint)
+	userId := ctx.Values().Get("userId").(int)
 	var count int
 	initialize.DB.Model(&model.Favorites{}).Where("user_id =? AND id in (?)", userId, fc.FavoritesIDs).Count(&count)
 	if count != len(fc.FavoritesIDs) {
@@ -92,6 +94,10 @@ func AddCollection(ctx iris.Context) {
 		common.Response(ctx, "收藏失败", e.ERROR)
 		return
 	}
+
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	conn.Do("SADD", "user"+strconv.Itoa(userId))
 	common.Response(ctx, "收藏成功", e.SUCCESS)
 }
 

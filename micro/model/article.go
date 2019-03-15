@@ -23,9 +23,10 @@ type Article struct {
 	CommentCount  uint             `gorm:"default:0" json:"comment_count"`       //评论
 	CollectCount  uint             `gorm:"default:0" json:"collect_count"`       //收藏
 	ApproveCount  uint             `gorm:"default:0" json:"approve_count"`       //点赞
-	CollectUsers  []User           `gorm:"-" json:"collect_users"`
+	ApproveUsers  []User           `gorm:"many2many:article_approve_user" json:"approve_users"`
+	CollectUsers  []User           `gorm:"many2many:article_collect_user" json:"collect_users"`
 	LikeCount     uint             `gorm:"default:0" json:"like_count"` //喜欢
-	LikeUsers     []User           `gorm:"many2many:article_like" json:"like_users"`
+	LikeUsers     []User           `gorm:"many2many:article_like_user" json:"like_users"`
 	Permission    uint8            `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      uint8            `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`

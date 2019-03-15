@@ -24,9 +24,10 @@ type Diary struct {
 	CommentCount uint           `gorm:"default:0" json:"comment_count"` //评论数
 	CollectCount uint           `gorm:"default:0" json:"collect_count"` //收藏
 	ApproveCount uint           `gorm:"default:0" json:"approve_count"` //点赞
-	CollectUsers []User         `gorm:"-" json:"collect_users"`
-	LikeCount    uint           `gorm:"default:0" json:"like_count"` //点赞
-	LikeUsers    []User         `gorm:"many2many:diary_like" json:"like_users"`
+	ApproveUsers []User         `gorm:"many2many:diary_approve_user" json:"approve_users"`
+	CollectUsers []User         `gorm:"many2many:diary_collect_user" json:"collect_users"`
+	LikeCount    uint           `gorm:"default:0" json:"like_count"` //喜欢
+	LikeUsers    []User         `gorm:"many2many:diary_like_user" json:"like_users"`
 	Permission   uint8          `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence     uint8          `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	Status       uint8          `gorm:"type:smallint;default:0" json:"status"`     //状态
@@ -76,10 +77,10 @@ type DiaryBook struct {
 	CommentCount uint               `gorm:"default:0" json:"comment_count"`     //评论数
 	CollectCount uint               `gorm:"default:0" json:"collect_count"`     //收藏
 	ApproveCount uint               `gorm:"default:0" json:"approve_count"`     //点赞
-	Collections  []Collection       `gorm:"many2many:diary_book_collection" json:"collections"`
-	CollectUsers []User             `gorm:"-" json:"collect_users"`
-	LikeCount    uint               `gorm:"default:0" json:"like_count"` //点赞
-	LikeUsers    []User             `gorm:"many2many:diary_book_like" json:"like_users"`
+	ApproveUsers []User             `gorm:"many2many:diary_book_approve_user" json:"approve_users"`
+	CollectUsers []User             `gorm:"many2many:diary_book_collect_user" json:"collect_users"`
+	LikeCount    uint               `gorm:"default:0" json:"like_count"` //喜欢
+	LikeUsers    []User             `gorm:"many2many:diary_book_like_user" json:"like_users"`
 	Permission   uint8              `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence     uint8              `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	Status       uint8              `gorm:"type:smallint;default:0" json:"status"`     //状态
