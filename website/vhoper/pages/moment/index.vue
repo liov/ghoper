@@ -73,7 +73,14 @@
             <p slot="content">
               {{ item.content }}
             </p>
-            <img v-if="item.user.avatar_url!==''" slot="content" height="120" alt="logo" :src="item.user.avatar_url">
+            <img
+              v-for="(subitem,subindex) in image_url[index]"
+              :key="subindex"
+              slot="content"
+              height="120"
+              alt="logo"
+              :src="subitem"
+            >
             <a-tooltip slot="datetime" :title="item.created_at">
               <span>{{ item.created_at|dateFormat }}</span>
               <a-divider type="vertical" />
@@ -167,6 +174,7 @@ export default {
       favorites: [],
       existFavorites: [],
       favorite: '',
+      image_url: [],
       ref_id: 0,
       tmpIdx: 0,
       starIds: []
@@ -192,6 +200,13 @@ export default {
   },
   created: function() {
     this.user = this.$store.state.user
+    for (const i in this.momentList) {
+      this.image_url.push(
+        this.momentList[i].image_url === ''
+          ? []
+          : this.momentList[i].image_url.split(',')
+      )
+    }
   },
   mounted: function() {
     const starIds = localStorage.getItem('moment_start_' + this.user.id)
@@ -247,7 +262,7 @@ export default {
       this.loading = true
       const params = {
         ref_id: this.ref_id,
-        kind: 'moment',
+        kind: 'Moment',
         favorites_ids: this.favorites
       }
       const res = await this.$axios.$post('/api/collection', params)

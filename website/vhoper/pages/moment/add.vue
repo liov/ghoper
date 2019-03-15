@@ -1,40 +1,5 @@
 <template>
   <div>
-    <a-row>
-      <a-col :span="12">
-        <a-form-item
-          label="封面"
-          :label-col="{span: 6}"
-          :wrapper-col="{span:15}"
-        >
-          <a-row>
-            <a-col :span="12">
-              <a-upload
-                name="file"
-                action="/api/upload/moment"
-                :before-upload="beforeUpload"
-                @change="uploadChange"
-              >
-                <a-button>
-                  <a-icon type="upload" />
-                  上传封面
-                </a-button>
-              </a-upload>
-            </a-col>
-            <a-col :span="8">
-              <a-button class="formbuttion" @click="showImage=!showImage">
-                <span v-if="!showImage">显示封面</span>
-                <span v-if="showImage">不显示封面</span>
-              </a-button>
-            </a-col>
-          </a-row>
-        </a-form-item>
-      </a-col>
-    </a-row>
-
-    <div align="center">
-      <img v-if="showImage" :src="imageUrl">
-    </div>
     <div id="tag">
       <a-row>
         <a-col :span="6">
@@ -58,11 +23,10 @@
               v-model="tags"
               mode="multiple"
               placeholder="请选择标签"
-              :default-value="[]"
               style="width: 200px"
             >
-              <a-select-option v-for="item in existTags" :key="item">
-                {{ item }}
+              <a-select-option v-for="item in existTags" :key="item.name">
+                {{ item.name }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -116,6 +80,26 @@
       <a-form-item style="width: 80%">
         <a-textarea v-model="moment.content" placeholder="请输入" autosize style="margin: 0 10%" />
       </a-form-item>
+
+      <a-upload
+        action="/api/upload/moment"
+        list-type="picture-card"
+        :multiple="true"
+        :file-list="imgList"
+        @preview="handlePreview"
+        @change="uploadChange"
+      >
+        <div v-if="imgList.length < 9">
+          <a-icon type="plus" />
+          <div class="ant-upload-text">
+            Upload
+          </div>
+        </div>
+      </a-upload>
+      <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+        <img alt="example" style="width: 100%" :src="previewImage">
+      </a-modal>
+
       <a-button icon="save" @click="commit">
         保存
       </a-button>
@@ -129,33 +113,60 @@ export default {
   data() {
     return {
       moment: {
+        image_url: '',
         mood_name: '',
         tags: [],
         permission: 0
       },
-      showImage: false,
-      imageUrl: '',
-      existCategories: ['小说', '散文', '戏剧', '诗歌'],
-      existTags: ['韩雪', '徐峥', '胡歌', '张卫健'],
+      imgList: [],
+      existTags: [],
       tag: '',
       categories: [],
-      tags: []
+      tags: [],
+      previewVisible: false,
+      previewImage: ''
+    }
+  },
+  async asyncData({ $axios }) {
+    const params = { pageNO: 0, pageSize: 10 }
+    const tres = await $axios.$get(`/api/tag`, { params })
+    return {
+      existTags: tres.data
     }
   },
   methods: {
-    uploadChange(info) {
-      if (info.file.status === 'uploading') {
-        this.loading = true
+    uploadChange({ fileList }) {
+      // 果然如我所料，双向绑定的锅
+      if (!fileList[fileList.length - 1].response) {
+        this.imgList = fileList
         return
       }
-      if (info.file.status === 'done') {
-        this.article.image_url = info.file.response.data.url
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj, imageUrl => {
-          this.imageUrl = imageUrl
-          this.loading = false
-        })
-      }
+      // 2. read from response and show file link
+      fileList = fileList.map(file => {
+        if (file.response) {
+          // Component will show file.url as link
+          file.url = file.response.data.url
+          this.moment.image_url =
+            this.moment.image_url + file.response.data.url + ','
+        }
+        return file
+      })
+      // 3. filter successfully uploaded files according to response from server
+      /*      fileList = fileList.filter(file => {
+        if (file.response) {
+          return file.response.data.code === 200
+        }
+        return false
+      }) */
+      this.imgList = fileList
+      this.loading = false
+    },
+    handleCancel() {
+      this.previewVisible = false
+    },
+    handlePreview(file) {
+      this.previewImage = file.url || file.thumbUrl
+      this.previewVisible = true
     },
     beforeUpload(file) {
       const isImg = /image\//.test(file.type)
@@ -169,16 +180,26 @@ export default {
       return isImg && isLt2M
     },
     addTag: function() {
-      if (this.tag !== '' && this.existTags.indexOf(this.tag) === -1) {
-        this.existTags.push(this.tag)
-        this.article.tags.push(this.tag)
-        this.tag = ''
-      } else if (this.tag === '') this.$message.error('标签为空')
-      else this.$message.error('标签重复')
+      const vm = this
+      if (this.tag === '') {
+        this.$message.error('标签为空')
+        return
+      }
+      for (const v of this.existTags) {
+        if (v.name === vm.tag) {
+          vm.$message.error('标签重复')
+          return
+        }
+      }
+      this.existTags.push({ name: this.tag })
+      this.tags.push(this.tag)
+      this.tag = ''
     },
     commit: function() {
       const vm = this
       this.moment.permission = parseInt(this.moment.permission)
+      if (this.moment.image_url !== '')
+        this.moment.image_url.substring(0, this.moment.image_url.length - 1)
       this.moment.tags = []
       for (const i of this.tags) {
         this.moment.tags.push({ name: i })

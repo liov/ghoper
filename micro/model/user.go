@@ -121,31 +121,31 @@ const (
 
 const (
 	// ActiveTime 生成激活账号的链接
-	ActiveTime = "activeTime_"
+	ActiveTime = "ActiveTime_"
 
 	// ResetTime 生成重置密码的链接
-	ResetTime = "resetTime_"
+	ResetTime = "ResetTime_"
 
 	// LoginUser 用户信息
-	LoginUser = "loginUser_"
+	LoginUser = "LoginUser_"
 
 	// ArticleMinuteLimit 用户每分钟最多能发表的文章数
-	MomentMinuteLimit = "momentMinuteLimit"
+	MomentMinuteLimit = "MomentMinuteLimit_"
 
 	// ArticleDayLimit 用户每天最多能发表的文章数
-	MomentDayLimit = "momentDayLimit_"
+	MomentDayLimit = "MomentDayLimit_"
 
 	// ArticleMinuteLimit 用户每分钟最多能发表的文章数
-	ArticleMinuteLimit = "articleMinuteLimit_"
+	ArticleMinuteLimit = "ArticleMinuteLimit_"
 
 	// ArticleDayLimit 用户每天最多能发表的文章数
-	ArticleDayLimit = "articleDayLimit_"
+	ArticleDayLimit = "ArticleDayLimit_"
 
 	// CommentMinuteLimit 用户每分钟最多能发表的评论数
-	CommentMinuteLimit = "commentMinuteLimit_"
+	CommentMinuteLimit = "CommentMinuteLimit_"
 
 	// CommentDayLimit 用户每天最多能发表的评论数
-	CommentDayLimit = "commentDayLimit_"
+	CommentDayLimit = "CommentDayLimit_"
 )
 
 // 积分相关常量

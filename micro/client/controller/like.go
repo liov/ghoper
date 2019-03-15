@@ -87,7 +87,7 @@ func AddCollection(ctx iris.Context) {
 
 	var err error
 	for _, v := range fc.FavoritesIDs {
-		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, FavoritesID: v, Status: 1}).Error
+		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, UserID: userId, FavoritesID: v, Status: 1}).Error
 	}
 	if err != nil {
 		golog.Error(err)
@@ -95,7 +95,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	common.CountToRedis(userId, fc.RefID, fc.Kind, "collect")
+	common.CountToRedis(userId, fc.RefID, fc.Kind, "Collect")
 
 	common.Response(ctx, "收藏成功", e.SUCCESS)
 }

@@ -451,7 +451,8 @@ func AddMoment(c iris.Context) {
 		}*/
 
 	value, _ := utils.Json.MarshalToString(moment)
-	_, err := conn.Do("LPUSH", gredis.Moments, value)
+	_, err := conn.Do("LPUSH", gredis.Moments+"_V2", value)
+	_, err = conn.Do("INCR", gredis.Moments+"_Count")
 	if err != nil {
 		return
 	}

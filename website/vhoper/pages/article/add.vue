@@ -102,7 +102,6 @@
               v-model="tags"
               mode="multiple"
               placeholder="请选择标签"
-              :default-value="[]"
               style="width: 200px"
             >
               <a-select-option v-for="item in existTags" :key="item.name">
