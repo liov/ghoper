@@ -67,7 +67,6 @@
               </a-tag>
             </div>
             <template slot="actions">
-              <span>回复</span>
               <span v-if="item.user.id=user.id">编辑</span>
             </template>
             <p slot="content">
