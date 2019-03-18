@@ -45,7 +45,6 @@ func GenerateUploadedInfo(ext string) model.FileUploadInfo {
 	fileUpload.FileName = filename
 	fileUpload.File.URL = fileURL
 	fileUpload.UUID = uuidName
-	fileUpload.UploadDir = uploadDir
 	fileUpload.UploadFilePath = uploadFilePath
 
 	/*	fileUpload = model.FileUploadInfo{
@@ -135,8 +134,28 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 
 // Upload 文件上传
 func Upload(ctx iris.Context) *model.FileUploadInfo {
+	userId := ctx.Values().Get("userId").(uint)
 	classify := ctx.Params().GetString("classify")
 	file, info, err := ctx.FormFile("file")
+	md5 := ctx.FormValue("md5")
+	var upI model.FileUploadInfo
+	var count int
+	initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
+	if count != 0 {
+		upI.ID = 0
+		upI.UploadUserID = userId
+		upI.UUID = uuid.NewV4().String()
+		upI.UploadAt = time.Now()
+		if err := initialize.DB.Create(&upI).Error; err != nil {
+			common.Response(ctx, err.Error())
+			return nil
+		}
+		common.Response(ctx, &upI)
+		return &upI
+	}
+	/*	md5 := md5.New()
+		io.Copy(md5,file)
+		MD5Str := hex.EncodeToString(md5.Sum(nil))*/
 
 	if err != nil {
 		common.Response(ctx, "参数无效")
@@ -159,9 +178,9 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 	}
 
 	upInfo.File.Size = uint(info.Size)
-	userId := ctx.Values().Get("userId").(uint)
 	upInfo.UploadUserID = userId
-
+	upInfo.Status = 1
+	upInfo.MD5 = md5
 	if err := initialize.DB.Create(upInfo).Error; err != nil {
 		common.Response(ctx, err.Error())
 		return nil
@@ -204,14 +223,11 @@ func UploadMultiple(ctx iris.Context) {
 			urls = append(urls, upInfo.URL)
 		}
 	}
-	if classify == "article" {
-		common.Res(ctx, iris.Map{
-			"errno": 0,
-			"data":  urls,
-		})
-		return
-	}
-	common.Response(ctx, len(form.File)-failures)
+
+	common.Res(ctx, iris.Map{
+		"errno": 0,
+		"data":  urls,
+	})
 }
 
 func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*model.FileUploadInfo, error) {

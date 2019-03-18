@@ -10,7 +10,6 @@ import (
 	"hoper/client/controller"
 	"hoper/client/controller/common/logging"
 	"hoper/client/controller/hnsq"
-	"hoper/client/controller/upload"
 	"hoper/client/middleware"
 	"hoper/client/router/other"
 	"os"
@@ -98,12 +97,7 @@ func IrisRouter() *iris.Application {
 	//自己做还是第三方库刷新writer都没用
 	//other.Sse(app)
 
-	app.Post("/api/upload/{classify:string}", middleware.JWT, iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
-		upload.Upload(ctx)
-	})
-	app.Post("/api/upload_multiple/{classify:string}", middleware.JWT, iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
-		upload.UploadMultiple(ctx)
-	})
+	Upload(app)
 
 	//获取标签
 	app.Get("/api/tag", controller.GetTags)

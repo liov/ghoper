@@ -224,7 +224,7 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 			defer resp.Body.Close()
 
 			imgUploadedInfo := upload.GenerateUploadedInfo(ext)
-			if err := os.MkdirAll(imgUploadedInfo.UploadDir, 0777); err != nil {
+			if err := os.MkdirAll(initialize.Config.Server.UploadDir, 0777); err != nil {
 				fmt.Println(err.Error())
 				return
 			}
@@ -240,7 +240,7 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 				fmt.Println(err.Error())
 				return
 			}
-			img.SetAttr("src", imgUploadedInfo.UploadDir)
+			img.SetAttr("src", initialize.Config.Server.UploadDir)
 		})
 	}
 	contentDOM.Find("a").Each(func(j int, a *goquery.Selection) {
