@@ -86,6 +86,8 @@
         list-type="picture-card"
         :multiple="true"
         :file-list="imgList"
+        :before-upload="beforeUpload"
+        :custom-request="customUpload"
         @preview="handlePreview"
         @change="uploadChange"
       >
@@ -108,6 +110,8 @@
 </template>
 
 <script>
+import { upload } from '../../plugins/utils/upload'
+
 export default {
   middleware: 'auth',
   data() {
@@ -156,11 +160,11 @@ export default {
       })
       // 3. filter successfully uploaded files according to response from server
       /*      fileList = fileList.filter(file => {
-        if (file.response) {
-          return file.response.data.code === 200
-        }
-        return false
-      }) */
+          if (file.response) {
+            return file.response.data.code === 200
+          }
+          return false
+        }) */
       this.imgList = fileList
       this.loading = false
     },
@@ -217,6 +221,21 @@ export default {
         .catch(function(err) {
           vm.$message.error(err)
         })
+    },
+    customUpload: async function({
+      action,
+      data,
+      file,
+      filename,
+      headers,
+      onError,
+      onProgress,
+      onSuccess,
+      withCredentials
+    }) {
+      const res = await upload('moment', file)
+      onSuccess({ data: res, status: 200 }, file)
+      file.status = 'done'
     }
   }
 }

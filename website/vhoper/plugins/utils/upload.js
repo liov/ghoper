@@ -13,7 +13,7 @@ const upload = async function(classify, $file) {
     data: formdata,
     headers: { 'Content-Type': 'multipart/form-data' }
   })
-  return res.data.data.url
+  return res.data.data
 }
 
 const getBase64 = function(img, callback) {
@@ -62,4 +62,4 @@ const getMD5 = function(file) {
   })
 }
 
-export { upload, getBase64 }
+export { upload, getBase64, getMD5 }
