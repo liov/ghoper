@@ -8,8 +8,8 @@ import (
 	"path"
 )
 
-func GetSize(f multipart.File) int {
-	content, err := ioutil.ReadAll(f)
+func GetSize(f *multipart.File) int {
+	content, err := ioutil.ReadAll(*f)
 	if err != nil {
 		return 0
 	}

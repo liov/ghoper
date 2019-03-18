@@ -158,7 +158,9 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 		return nil
 	}
 
-	upInfo.File.Size = (uint)(utils.GetSize(file))
+	upInfo.File.Size = uint(info.Size)
+	userId := ctx.Values().Get("userId").(uint)
+	upInfo.UploadUserID = userId
 
 	if err := initialize.DB.Create(upInfo).Error; err != nil {
 		common.Response(ctx, err.Error())
@@ -193,6 +195,9 @@ func UploadMultiple(ctx iris.Context) {
 			failures++
 			common.Response(ctx, file[0].Filename+"上传失败")
 		} else {
+			upInfo.File.Size = uint(file[0].Size)
+			userId := ctx.Values().Get("userId").(uint)
+			upInfo.UploadUserID = userId
 			if err := initialize.DB.Create(&upInfo).Error; err != nil {
 				common.Response(ctx, err.Error())
 			}

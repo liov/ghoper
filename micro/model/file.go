@@ -7,6 +7,7 @@ type File struct {
 	FileName     string `gorm:"type:varchar(100);not null" json:"file_name"`
 	OriginalName string `gorm:"type:varchar(100);not null" json:"original_name"`
 	URL          string `json:"url"`
+	MD5          string `gorm:"type:varchar(20)" json:"md_5"`
 	Mime         string `json:"mime"`
 	Size         uint   `json:"size"`
 }
@@ -14,6 +15,8 @@ type File struct {
 type FileUploadInfo struct {
 	File
 	UUID           string    `gorm:"type:varchar(100);unique;not null" json:"uuid"`
+	UploadUser     User      `json:"upload_user"`
+	UploadUserID   uint      `json:"upload_user_id"`
 	UploadAt       time.Time `json:"upload_at"`
 	UploadDir      string    `gorm:"type:varchar(100);not null" json:"upload_dir"`
 	UploadFilePath string    `gorm:"type:varchar(100);not null" json:"upload_file_path"`
