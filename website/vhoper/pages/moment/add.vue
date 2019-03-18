@@ -146,8 +146,9 @@ export default {
         if (file.response) {
           // Component will show file.url as link
           file.url = file.response.data.url
-          this.moment.image_url =
-            this.moment.image_url + file.response.data.url + ','
+          if(this.moment.image_url==='') this.moment.image_url = file.response.data.url
+          else this.moment.image_url =
+            this.moment.image_url + ','+ file.response.data.url
         }
         return file
       })
