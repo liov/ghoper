@@ -34,6 +34,7 @@
     "nuxt-ts": "^2.4.5",
     "spark-md5": "^3.0.0",
     "tinymce": "^5.0.1",
+    "vditor": "^1.1.11",
     "vue-property-decorator": "^8.0.0"
   },
   "devDependencies": {

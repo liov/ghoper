@@ -143,9 +143,12 @@ export default {
       existTags: tres.data
     }
   },
+  created() {},
   mounted() {
-    const vditor = new Vditor('vditor')
-    vditor.focus()
+    this.$nextTick(function() {
+      const vditor = new Vditor('vditor')
+      vditor.focus()
+    })
   },
   methods: {
     uploadChange({ fileList }) {
