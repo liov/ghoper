@@ -85,6 +85,7 @@
         </a-col>
       </a-row>
       <a-form-item style="width: 80%">
+        <div id="vditor" />
         <a-textarea v-model="moment.content" placeholder="请输入" autosize style="margin: 0 10%" />
       </a-form-item>
 
@@ -113,8 +114,9 @@
 </template>
 
 <script>
+import Vditor from 'vditor'
 import { upload } from '../../plugins/utils/upload'
-
+import 'vditor/dist/index.classic.css'
 export default {
   middleware: 'auth',
   data() {
@@ -140,6 +142,10 @@ export default {
     return {
       existTags: tres.data
     }
+  },
+  mounted() {
+    const vditor = new Vditor('vditor')
+    vditor.focus()
   },
   methods: {
     uploadChange({ fileList }) {
