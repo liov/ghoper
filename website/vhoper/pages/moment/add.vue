@@ -2,10 +2,10 @@
   <div>
     <div id="tag">
       <a-row>
-        <a-col :span="6">
+        <a-col :span="5">
           <a-form-item
             label="心情"
-            :label-col="{span:6,offset:6}"
+            :label-col="{span:5,offset:6}"
             :wrapper-col="{span: 9}"
           >
             <a-input
@@ -13,7 +13,7 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :span="9">
+        <a-col :span="5">
           <a-form-item
             label="标签"
             :label-col="{span: 4}"
@@ -31,7 +31,7 @@
             </a-select>
           </a-form-item>
         </a-col>
-        <a-col :span="6">
+        <a-col :span="5">
           <a-form-item
             label="新标签"
             :label-col="{span:6}"
@@ -51,32 +51,39 @@
             </a-row>
           </a-form-item>
         </a-col>
+        <a-col :span="5">
+          <a-form-item
+            label="权限"
+            :label-col="{span: 4}"
+            :wrapper-col="{span:6}"
+          >
+            <a-select
+              v-model="moment.permission"
+              placeholder="请选择权限"
+              :default-value="[0]"
+              style="width: 200px"
+            >
+              <a-select-option :key="0">
+                全部可见
+              </a-select-option>
+              <a-select-option :key="1">
+                自己可见
+              </a-select-option>
+              <a-select-option :key="2" disabled>
+                部分可见
+              </a-select-option>
+              <a-select-option :key="3" disabled>
+                陌生人可见
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="2">
+          <a-button icon="save" style="margin-top: 3px" @click="commit">
+            保存
+          </a-button>
+        </a-col>
       </a-row>
-      <a-form-item
-        label="权限"
-        :label-col="{span: 4}"
-        :wrapper-col="{span:6}"
-      >
-        <a-select
-          v-model="moment.permission"
-          placeholder="请选择权限"
-          :default-value="[0]"
-          style="width: 200px"
-        >
-          <a-select-option :key="0">
-            全部可见
-          </a-select-option>
-          <a-select-option :key="1">
-            自己可见
-          </a-select-option>
-          <a-select-option :key="2" disabled>
-            部分可见
-          </a-select-option>
-          <a-select-option :key="3" disabled>
-            陌生人可见
-          </a-select-option>
-        </a-select>
-      </a-form-item>
       <a-form-item style="width: 80%">
         <a-textarea v-model="moment.content" placeholder="请输入" autosize style="margin: 0 10%" />
       </a-form-item>
@@ -94,17 +101,13 @@
         <div v-if="imgList.length < 9">
           <a-icon type="plus" />
           <div class="ant-upload-text">
-            Upload
+            图片
           </div>
         </div>
       </a-upload>
       <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
         <img alt="example" style="width: 100%" :src="previewImage">
       </a-modal>
-
-      <a-button icon="save" @click="commit">
-        保存
-      </a-button>
     </div>
   </div>
 </template>
@@ -150,11 +153,13 @@ export default {
         if (file.response) {
           // Component will show file.url as link
           file.url = file.response.data.url
-          if (this.moment.image_url === '')
-            this.moment.image_url = file.response.data.url
-          else
-            this.moment.image_url =
-              this.moment.image_url + ',' + file.response.data.url
+          /* if (this.moment.image_url.indexOf(file.response.data.url) === -1) {
+            if (this.moment.image_url === '')
+              this.moment.image_url = file.response.data.url
+            else
+              this.moment.image_url =
+                this.moment.image_url + ',' + file.response.data.url
+          } */
         }
         return file
       })
@@ -234,6 +239,8 @@ export default {
       withCredentials
     }) {
       const res = await upload('moment', file)
+      if (this.moment.image_url === '') this.moment.image_url = res.url
+      else this.moment.image_url = this.moment.image_url + ',' + res.url
       onSuccess({ data: res, status: 200 }, file)
       file.status = 'done'
     }

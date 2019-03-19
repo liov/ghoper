@@ -38,7 +38,8 @@
             <a-menu-item key="user">
               <nuxt-link to="/user/login">
                 <a-icon type="user" />
-                登录
+                <span v-if="$store.state.user">注销</span>
+                <span v-else>登录</span>
               </nuxt-link>
             </a-menu-item>
             <!--<a-menu-item key="book">

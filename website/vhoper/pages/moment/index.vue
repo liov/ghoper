@@ -58,7 +58,7 @@
             </span>
             <span slot="actions" style="margin-right: 10px" @click="comment(item.id,index)">
               <a-icon type="message" />
-              回复：{{ item.comment_count }}
+              评论：{{ item.comment_count }}
             </span>
 
             <div slot="actions" style="margin:0 10px">
@@ -232,7 +232,7 @@ export default {
       // 这里可以这么写，async，await函数，或者 return axios().then((res)=>{})返回Promise
       const res = await this.$axios.$get(`/api/moment`, { params })
 
-      this.momentList = momentList
+      this.momentList = res.data
     },
     showDrawer() {
       this.visible = true

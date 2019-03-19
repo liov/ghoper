@@ -15,10 +15,10 @@
       >
         <a-icon type="right-circle" />
       </div>
-      <div><h3>1</h3></div>
-      <div><h3>2</h3></div>
-      <div><h3>3</h3></div>
-      <div><h3>4</h3></div>
+      <div><h3>建设中，我觉得你看瞬间比较好</h3></div>
+      <div><h3>建设中，我觉得你去聊天比较好</h3></div>
+      <div><h3>建设中，我觉得你写博客比较好</h3></div>
+      <div><h3>建设中，我觉得你比较好看</h3></div>
     </a-carousel>
     <a-row>
       <a-col :span="6">
