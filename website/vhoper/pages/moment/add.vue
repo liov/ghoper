@@ -84,39 +84,40 @@
           </a-button>
         </a-col>
       </a-row>
-      <a-form-item style="width: 80%">
-        <div id="vditor" />
-        <a-textarea v-model="moment.content" placeholder="请输入" autosize style="margin: 0 10%" />
-      </a-form-item>
 
-      <a-upload
-        action="/api/upload/moment"
-        list-type="picture-card"
-        :multiple="true"
-        :file-list="imgList"
-        :before-upload="beforeUpload"
-        :custom-request="customUpload"
-        @preview="handlePreview"
-        @change="uploadChange"
-      >
-        <div v-if="imgList.length < 9">
-          <a-icon type="plus" />
-          <div class="ant-upload-text">
-            图片
+      <a-form-item style="width: 80%">
+        <div id="vditor" style="margin: 0 10%" />
+      </a-form-item>
+      <a-form-item style="margin-left: 10%;">
+        <a-upload
+          action="/api/upload/moment"
+          list-type="picture-card"
+          :multiple="true"
+          :file-list="imgList"
+          :before-upload="beforeUpload"
+          :custom-request="customUpload"
+          @preview="handlePreview"
+          @change="uploadChange"
+        >
+          <div v-if="imgList.length < 9">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">
+              图片
+            </div>
           </div>
-        </div>
-      </a-upload>
-      <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-        <img alt="example" style="width: 100%" :src="previewImage">
-      </a-modal>
+        </a-upload>
+        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+          <img alt="example" style="width: 100%" :src="previewImage">
+        </a-modal>
+      </a-form-item>
     </div>
   </div>
 </template>
 
 <script>
-import Vditor from 'vditor'
 import { upload } from '../../plugins/utils/upload'
 import 'vditor/dist/index.classic.css'
+let vditor
 export default {
   middleware: 'auth',
   data() {
@@ -144,9 +145,14 @@ export default {
     }
   },
   created() {},
-  mounted() {
+  mounted: function() {
     this.$nextTick(function() {
-      const vditor = new Vditor('vditor')
+      const Vditor = require('vditor')
+      vditor = new Vditor('vditor', {
+        width: '100%',
+        preview: { delay: 0 },
+        upload: { url: '/api/upload/moment' }
+      })
       vditor.focus()
     })
   },
@@ -219,6 +225,7 @@ export default {
     commit: function() {
       const vm = this
       this.moment.permission = parseInt(this.moment.permission)
+      this.moment.content = vditor.getValue()
       if (this.moment.image_url !== '')
         this.moment.image_url.substring(0, this.moment.image_url.length - 1)
       this.moment.tags = []
@@ -229,8 +236,10 @@ export default {
         .$post(`/api/moment`, this.moment)
         .then(function(res) {
           // success
-          if (res.code === 200) vm.$router.push({ path: '/moment' })
-          else vm.$message.error(res.msg)
+          if (res.code === 200) {
+            vm.$router.push({ path: '/moment' })
+            vditor.clearCache()
+          } else vm.$message.error(res.msg)
         })
         .catch(function(err) {
           vm.$message.error(err)

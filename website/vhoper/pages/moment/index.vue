@@ -69,9 +69,7 @@
             <template slot="actions">
               <span v-if="item.user.id=user.id">编辑</span>
             </template>
-            <p slot="content">
-              {{ item.content }}
-            </p>
+            <span slot="content" v-html="md.render(item.content)" />
             <img
               v-for="(subitem,subindex) in image_url[index]"
               :key="subindex"
@@ -176,7 +174,8 @@ export default {
       image_url: [],
       ref_id: 0,
       tmpIdx: 0,
-      starIds: []
+      starIds: [],
+      md: undefined
     }
   },
   computed: {},
@@ -198,6 +197,7 @@ export default {
     }
   },
   created: function() {
+    this.md = require('markdown-it')()
     this.user = this.$store.state.user
     for (const i in this.momentList) {
       this.image_url.push(
