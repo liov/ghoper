@@ -17,6 +17,19 @@ func (v V) GetJ() {
 	fmt.Printf("j=%d\n", v.j)
 }
 
+type V2 struct {
+	b byte
+	i int32
+	j int64
+}
+
+func (v V2) GetI() {
+	fmt.Printf("i=%d\n", v.i)
+}
+func (v V2) GetJ() {
+	fmt.Printf("j=%d\n", v.j)
+}
+
 func main() {
 	// 定义指针类型变量
 	var v *V = &V{199, 299}
@@ -24,7 +37,9 @@ func main() {
 	// 取得v的指针并转为*int32的值，对应结构体的i。
 	var i *int32 = (*int32)(unsafe.Pointer(v))
 
-	fmt.Println("指针地址：", i)
+	//var ii *int32 = 100 *int后边应该跟的是地址值，因为*是取地址存储的值
+
+	fmt.Println("指针地址：", i, &i)
 	fmt.Println("指针uintptr值:", uintptr(unsafe.Pointer(i)))
 	*i = int32(98)
 
@@ -35,6 +50,28 @@ func main() {
 
 	v.GetI()
 	v.GetJ()
+
+	// 定义指针类型变量
+	var v2 *V2 = new(V2)
+
+	// v的长度
+	fmt.Printf("size=%d\n", unsafe.Sizeof(*v2))
+	// 取得v的指针考虑对齐值计算偏移量，然后转为*int32的值，对应结构体的i。
+	var i2 *int32 = (*int32)(unsafe.Pointer(uintptr(unsafe.Pointer(v2)) + uintptr(4*unsafe.Sizeof(byte(0)))))
+
+	fmt.Println("指针地址：", i2)
+	fmt.Println("指针uintptr值:", uintptr(unsafe.Pointer(i2)))
+	*i2 = int32(98)
+
+	// 根据v的基准地址加上偏移量进行指针运算，运算后的值为j的地址，使用unsafe.Pointer转为指针
+	var j2 *int64 = (*int64)(unsafe.Pointer(uintptr(unsafe.Pointer(v2)) + uintptr(unsafe.Sizeof(int64(0)))))
+
+	*j2 = int64(763)
+	fmt.Println("指针uintptr值:", uintptr(unsafe.Pointer(&v2.b)))
+	fmt.Println("指针uintptr值:", uintptr(unsafe.Pointer(&v2.i)))
+	fmt.Println("指针uintptr值:", uintptr(unsafe.Pointer(&v2.j)))
+	v2.GetI()
+	v2.GetJ()
 }
 
 /*
