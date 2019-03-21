@@ -17,10 +17,6 @@ import (
 	"time"
 )
 
-func init() {
-	//raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
-}
-
 var Ch = make(chan os.Signal, 1)
 
 func IrisRouter() *iris.Application {
@@ -89,6 +85,7 @@ func IrisRouter() *iris.Application {
 	Category(app)
 	Like(app)
 	MomentRouter(app)
+	Upload(app)
 
 	//试验性
 	other.GraphqlRouter(app)
@@ -96,11 +93,7 @@ func IrisRouter() *iris.Application {
 	other.Smart(app)
 	//自己做还是第三方库刷新writer都没用
 	//other.Sse(app)
-
-	Upload(app)
-
-	//获取标签
-	app.Get("/api/tag", controller.GetTags)
+	other.PProf(app)
 
 	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment)
 

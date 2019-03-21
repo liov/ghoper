@@ -37,7 +37,8 @@ func TPLRouter(app *iris.Application) {
 	//缓存10s
 	tplRouter := app.Party("/tpl")
 	{
-		tplRouter.Any("/tpl/pprof/{action:path}", authentication, pprof.New())
+		//这里的pprof有问题，访问profile返回的是文件
+		tplRouter.Any("/pprof/{action:path}", authentication, pprof.New())
 		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
 		tplRouter.Get("/markdown", markdown.MarkdownTest)

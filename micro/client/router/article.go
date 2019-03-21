@@ -8,6 +8,9 @@ import (
 
 func ArticleRouter(app *iris.Application) {
 
+	//获取标签
+	app.Get("/api/tag", controller.GetTags)
+
 	articleRouter := app.Party("/api/article")
 	{
 		//获取文章列表

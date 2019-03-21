@@ -37,7 +37,9 @@ func main() {
 	// 取得v的指针并转为*int32的值，对应结构体的i。
 	var i *int32 = (*int32)(unsafe.Pointer(v))
 
-	//var ii *int32 = 100 *int后边应该跟的是地址值，因为*是取地址存储的值
+	/*	var ii *int32
+	*ii = int32(98) //*int后边应该跟的是地址值，因为*是取地址存储的值
+	panic: runtime error: invalid memory address or nil pointer dereference*/
 
 	fmt.Println("指针地址：", i, &i)
 	fmt.Println("指针uintptr值:", uintptr(unsafe.Pointer(i)))

@@ -31,7 +31,7 @@ func GraphqlRouter(app *iris.Application) {
 
 	graphqlRouter := app.Party("/api/graphql")
 	{
-		graphqlRouter.Post("/", iris.FromStd(&relay.Handler{Schema: schema}))
+		graphqlRouter.Post("", iris.FromStd(&relay.Handler{Schema: schema}))
 	}
 }
 
