@@ -93,7 +93,7 @@ func IrisRouter() *iris.Application {
 	other.Smart(app)
 	//自己做还是第三方库刷新writer都没用
 	//other.Sse(app)
-	other.PProf(app)
+	//other.PProf(app)
 
 	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment)
 
