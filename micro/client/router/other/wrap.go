@@ -13,7 +13,7 @@ import (
 
 func init() {
 	//raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
-	go http.ListenAndServe("localhost:8080", nil)
+	//go http.ListenAndServe("localhost:8080", nil)
 }
 
 func Wrap(app *iris.Application) {
@@ -45,5 +45,15 @@ func PProf(app *iris.Application) {
 		})
 	*/
 	//这个的底层实现就是上面，为啥无效
-	//app.Get("/debug/pprof", iris.FromStd(http.DefaultServeMux))
+	pprofRouter := app.Party("/debug/pprof")
+	{
+		//Any方法写/不写/是有区别的，现在看来是必须有/，具体的http方法不需要，至少Get实测不需要
+		// 这里之所以这么写，是因为pprof的坑
+		//http.HandleFunc("/debug/pprof/", Index)
+		pprofRouter.Any("", func(c iris.Context) {
+			c.Request().URL.Path = c.Request().URL.Path + "/"
+			http.DefaultServeMux.ServeHTTP(c.ResponseWriter(), c.Request())
+		})
+		pprofRouter.Any("/{action:string}", iris.FromStd(http.DefaultServeMux))
+	}
 }
