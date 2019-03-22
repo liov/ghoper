@@ -45,6 +45,7 @@ func PProf(app *iris.Application) {
 		})
 	*/
 	//这个的底层实现就是上面，为啥无效
+	//app.Get("/debug/pprof/", iris.FromStd(http.DefaultServeMux))
 	pprofRouter := app.Party("/debug/pprof")
 	{
 		//Any方法写/不写/是有区别的，现在看来是必须有/，具体的http方法不需要，至少Get实测不需要
