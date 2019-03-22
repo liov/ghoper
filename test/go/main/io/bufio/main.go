@@ -75,7 +75,7 @@ func main() {
 	b := make([]byte, 10)
 
 	fmt.Println("==", buf.Buffered()) // 0
-	S, _ := buf.Peek(5)
+	s, _ := buf.Peek(5)
 	fmt.Printf("%d ==  %q\n", buf.Buffered(), s) //
 	nn, er := buf.Discard(3)
 	fmt.Println(nn, er)
