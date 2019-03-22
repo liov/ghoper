@@ -13,6 +13,7 @@ import (
 
 func init() {
 	//raven.SetDSN("https://<key>:<secret>@sentry.io/<project>")
+	go http.ListenAndServe("localhost:8080", nil)
 }
 
 func Wrap(app *iris.Application) {
@@ -44,6 +45,5 @@ func PProf(app *iris.Application) {
 		})
 	*/
 	//这个的底层实现就是上面，为啥无效
-	app.Get("/debug/pprof/", iris.FromStd(http.DefaultServeMux))
-
+	//app.Get("/debug/pprof", iris.FromStd(http.DefaultServeMux))
 }
