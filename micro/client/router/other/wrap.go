@@ -48,12 +48,14 @@ func PProf(app *iris.Application) {
 	pprofRouter := app.Party("/debug/pprof")
 	{
 		//Any方法写/不写/是有区别的，现在看来是必须有/，具体的http方法不需要，至少Get实测不需要
+		//Any的方法中有个路径处理方法，返回的是路径数组，如果路径是""，返回的是nil，无法添加Handler
+		//具体的http方法及时加了末尾/也会在处理中去掉
 		// 这里之所以这么写，是因为pprof的坑
 		//http.HandleFunc("/debug/pprof/", Index)
-		pprofRouter.Any("", func(c iris.Context) {
+		pprofRouter.Get("/", func(c iris.Context) {
 			c.Request().URL.Path = c.Request().URL.Path + "/"
 			http.DefaultServeMux.ServeHTTP(c.ResponseWriter(), c.Request())
 		})
-		pprofRouter.Any("/{action:string}", iris.FromStd(http.DefaultServeMux))
+		pprofRouter.Get("/{action:string}", iris.FromStd(http.DefaultServeMux))
 	}
 }
