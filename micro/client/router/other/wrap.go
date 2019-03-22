@@ -52,10 +52,11 @@ func PProf(app *iris.Application) {
 		//具体的http方法及时加了末尾/也会在处理中去掉
 		// 这里之所以这么写，是因为pprof的坑
 		//http.HandleFunc("/debug/pprof/", Index)
-		pprofRouter.Get("/index", func(c iris.Context) {
-			c.Request().URL.Path = c.Request().URL.Path[:len(c.Request().URL.Path)-5]
-			http.DefaultServeMux.ServeHTTP(c.ResponseWriter(), c.Request())
-		})
-		pprofRouter.Get("/{action:string}", iris.FromStd(http.DefaultServeMux))
+		pprofRouter.Get("/{action:string}", func(c iris.Context) {
+			if c.Params().Get("action") == "index" {
+				c.Request().URL.Path = c.Request().URL.Path[:len(c.Request().URL.Path)-5]
+			}
+			c.Next()
+		}, iris.FromStd(http.DefaultServeMux))
 	}
 }
