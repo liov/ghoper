@@ -16,4 +16,19 @@ func main() {
 	}(message)
 
 	message = "消息2"
+
+	var i int = 1
+
+	defer fmt.Println("result =>", func() int { return i * 2 }())
+	i++
+
+	defer fmt.Println(" !!! ")
+	defer fmt.Print(" world ")
+	fmt.Print(" hello ")
 }
+
+/*
+规则一 当defer被声明时，其参数就会被实时解析
+规则二 defer执行顺序为先进后出
+规则三 defer可以读取有名返回值，也就是可以改变有名返回参数的值
+*/
