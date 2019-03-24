@@ -72,6 +72,11 @@ func (f *F) Ex() {
 	ff(1)
 }
 
+type ReaderWriter struct {
+	io.Reader
+	io.Writer
+}
+
 func main() {
 
 	my := new(My)
