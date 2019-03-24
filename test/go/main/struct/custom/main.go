@@ -2,8 +2,11 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
+	"sync"
+	"unsafe"
 )
 
 type A struct {
@@ -20,12 +23,21 @@ func (b *B) MB() {
 	b.J = 1
 }
 
+type noCopy struct{}
+
+func (*noCopy) Lock()   {}
+func (*noCopy) Unlock() {}
+
 type My struct {
+	_ int
 	a A
 	B
 	int
 	f  func(int) int
 	SS string
+	io.Writer
+	L sync.Mutex
+	noCopy
 }
 
 func (m My) print() { // 值方法
@@ -80,6 +92,24 @@ type ReaderWriter struct {
 func main() {
 
 	my := new(My)
+	my.int = 1
+	//my._=noCopy{} cannot refer to blank field or method
+	//noinspection ALL
+	smy, _ := json.Marshal(My{
+		a: A{1, "a"},
+		//J:2,S:"b",cannot use promoted field B.J in struct literal of type My
+		B:   B{2, "b"},
+		int: 1,
+		/*	f:func(a int){
+			return a
+		},cannot use func literal (type func(int)) as type func(int) int in field value*/
+		//_:B{3,"c"},invalid field name _ in struct initializer
+	})
+	fmt.Println(string(smy))
+	fmt.Println(unsafe.Sizeof(My{})) //有_120，没有_112，noCopy112
+	my.f = func(i int) int {
+		return i
+	}
 	fmt.Println(my)
 	my.MV()
 	fmt.Println(my)
