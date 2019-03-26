@@ -1,10 +1,15 @@
-package _go
+package mian
 
 import (
 	"io/ioutil"
 	"net/http"
 )
 
+/**
+ * @author     ：lbyi
+ * @date       ：Created in 2019/3/26
+ * @description：
+ */
 func httpGetBody(url string) (interface{}, error) {
 	resp, err := http.Get(url)
 	if err != nil {
