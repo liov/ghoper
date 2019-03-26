@@ -16,6 +16,8 @@ import java.lang.reflect.Method;
  */
 public class ShenMeCaoZuo {
 
+    boolean override;
+
     private static final Objenesis OBJENESIS = new ObjenesisStd();
 
     public static void main(String[] args) throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException, InvocationTargetException, IllegalAccessException {
@@ -23,8 +25,12 @@ public class ShenMeCaoZuo {
         Object unsafe = OBJENESIS.newInstance(unsafeClass);
         Unsafe sunMiscUnsafe = OBJENESIS.newInstance(sun.misc.Unsafe.class);
         Method unalignedAccess = unsafeClass.getDeclaredMethod("unalignedAccess");
-        //jdk11正常,12报错Exception in thread "main" java.lang.NoSuchFieldException: override
-        long overrideOffset = sunMiscUnsafe.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
+        /**
+         * jdk11正常,12报错Exception in thread "main" java.lang.NoSuchFieldException: override
+         * long overrideOffset = sunMiscUnsafe.objectFieldOffset(AccessibleObject.class.getDeclaredField("override"));
+         * NOTE: for security purposes, this field must not be visible outside this package.
+         */
+        long overrideOffset = sunMiscUnsafe.objectFieldOffset(ShenMeCaoZuo.class.getDeclaredField("override"));
         sunMiscUnsafe.putBoolean(
                 unsafeClass,
                 overrideOffset,
