@@ -11,12 +11,8 @@ import java.lang.reflect.Field;
  * @modified By：
  */
 public class IObj {
-    int objField = 10;
-    static Unsafe U;
-
-    static {
-        U = Unsafe.getUnsafe();
-    }
+    private int objField = 10;
+    private static Unsafe U = Unsafe.getUnsafe();
 
     //java.exe --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED IObj.java
     //IDEA中VM options：--add-exports=java.base/jdk.internal.misc=test
