@@ -1,3 +1,5 @@
+package test;
+
 public class A {
 
 	public A() {
@@ -8,6 +10,6 @@ public class A {
 	int i = 10;
 
 	public void method() {
-		System.out.println("A 的 method i = " + i);
+		System.out.println("test.A 的 method i = " + i);
 	}
 }

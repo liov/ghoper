@@ -7,5 +7,16 @@ package unsafe;
  * @modified By：
  */
 public class MyObjChild extends MyObj {
-    int anthor;
+    static int f1=1;
+    int f2=1;
+    final static int f3 =1;
+    static {
+        f1=2;
+        System.out.println("MyObjChild init");
+    }
+
+    public MyObjChild(){
+        f2=2;
+        System.out.println("run construct");
+    }
 }

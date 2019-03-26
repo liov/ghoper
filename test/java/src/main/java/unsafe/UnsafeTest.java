@@ -12,8 +12,14 @@ public class UnsafeTest {
 
         try {
             MyObj.getObjFieldVal();
+            MyObj.getClsFieldVal();
+            MyObj.getArrayVal(2,30);
+            MyObj.setObjFieldVal(15);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+
+        MyObj.memory();
     }
+
 }

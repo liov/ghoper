@@ -1,3 +1,5 @@
+package test;
+
 public class B extends A {
 
 	public B() {
@@ -7,7 +9,7 @@ public class B extends A {
 	int i = 1000;
 
 	public void method() {
-		System.out.println("B 的 method i = " + i);
+		System.out.println("test.B 的 method i = " + i);
 	}
 
 	public static void main(String[] args) {
