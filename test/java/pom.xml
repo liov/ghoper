@@ -28,7 +28,7 @@
                 <configuration>
                     <release>12</release>
                     <compilerArgs>
-                        <arg>-J--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED,test</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
