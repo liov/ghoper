@@ -1,0 +1,21 @@
+[package]
+name = "rhoper"
+version = "0.1.0"
+authors = ["贾一饼 <lby.i@qq.com>"]
+edition = "2018"
+
+[dependencies]
+hoper = { path = "./hoper" }
+#rand = "0.6.0-pre.1"
+#actix-web = { git = "https://github.com/actix/actix-web" }
+mio = "0.6.16"
+crossbeam-channel = "0.3.2"
+failure = "0.1.3"
+slab = "0.4.1"
+log = "0.4"
+env_logger = "0.6.0"
+
+[workspace]
+members = [
+    "hoper",
+]
