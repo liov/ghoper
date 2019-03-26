@@ -9,11 +9,7 @@ package unsafe;
 public class UnsafeTest {
 
     public static void main(String[] args){
-        try {
-            MyObj.init();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+
         try {
             MyObj.getObjFieldVal();
         } catch (NoSuchFieldException e) {
