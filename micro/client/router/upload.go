@@ -9,7 +9,6 @@ import (
 func Upload(app *iris.Application) {
 
 	app.Post("/api/upload/exist/{md5:string}", middleware.JWT, upload.MD5)
-	app.Post("/api/upload/vditor", middleware.JWT, upload.Vditor)
 	app.Post("/api/upload/{classify:string}", middleware.JWT, iris.LimitRequestBodySize(10<<20), func(ctx iris.Context) {
 		upload.Upload(ctx)
 	})

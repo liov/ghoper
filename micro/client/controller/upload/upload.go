@@ -281,7 +281,3 @@ func MD5(ctx iris.Context) {
 	}
 	common.Response(ctx, "不存在", e.ERROR)
 }
-
-func Vditor(ctx iris.Context) {
-	common.Response(ctx, "成功", e.SUCCESS)
-}
