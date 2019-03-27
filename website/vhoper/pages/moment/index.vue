@@ -67,9 +67,9 @@
               </a-tag>
             </div>
             <template slot="actions">
-              <span v-if="item.user.id=user.id">编辑</span>
+              <span v-if="item.user.id===user.id">编辑</span>
             </template>
-            <span slot="content" v-html="md.render(item.content)" />
+            <div slot="content" v-html="md.render(item.content)" />
             <img
               v-for="(subitem,subindex) in image_url[index]"
               :key="subindex"
@@ -198,7 +198,7 @@ export default {
   },
   created: function() {
     this.md = require('markdown-it')()
-    this.user = this.$store.state.user
+    this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     for (const i in this.momentList) {
       this.image_url.push(
         this.momentList[i].image_url === ''
@@ -267,6 +267,7 @@ export default {
       const res = await this.$axios.$post('/api/collection', params)
       if (res.code === 200) {
         this.$message.info('收藏成功')
+        this.momentList[this.tmpIdx].collect_count += 1
         localStorage.setItem(
           'moment_star_' + this.user.id,
           localStorage.getItem('moment_start_' + this.user.id)
@@ -274,7 +275,6 @@ export default {
             : '' + ',' + this.ref_id
         )
       } else this.$message.error(res.msg)
-      this.momentList[this.tmpIdx].collect_count += 1
       this.loading = false
       this.collectVisible = false
     },

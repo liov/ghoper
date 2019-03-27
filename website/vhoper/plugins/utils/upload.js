@@ -3,6 +3,10 @@ import SparkMD5 from 'spark-md5'
 
 const upload = async function(classify, $file) {
   const md5 = await getMD5($file)
+  const existFile = await exist(md5)
+
+  if (existFile !== null) return existFile
+
   // 第一步.将图片上传到服务器.
   const formdata = new FormData()
   formdata.append('file', $file)
@@ -13,7 +17,21 @@ const upload = async function(classify, $file) {
     data: formdata,
     headers: { 'Content-Type': 'multipart/form-data' }
   })
-  return res.data.data
+  if (res.data.code === 200) return res.data.data
+  else return null
+}
+
+const isExist = async function(file) {
+  const md5 = await getMD5(file)
+  const existUrl = await exist(md5)
+  if (existUrl) return existUrl
+  else return null
+}
+
+const exist = async function(md5) {
+  const res = await axios.post('/api/upload/exist/' + md5)
+  if (res.data.code === 200) return res.data.data
+  else return null
 }
 
 const getBase64 = function(img, callback) {
@@ -62,4 +80,4 @@ const getMD5 = function(file) {
   })
 }
 
-export { upload, getBase64, getMD5 }
+export { upload, getBase64, getMD5, isExist }

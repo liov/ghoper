@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/satori/go.uuid"
 	"hoper/client/controller/common"
+	"hoper/client/controller/common/e"
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/utils"
@@ -138,21 +139,21 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 	classify := ctx.Params().GetString("classify")
 	file, info, err := ctx.FormFile("file")
 	md5 := ctx.FormValue("md5")
-	var upI model.FileUploadInfo
-	var count int
-	initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
-	if count != 0 {
-		upI.ID = 0
-		upI.UploadUserID = userId
-		upI.UUID = uuid.NewV4().String()
-		upI.UploadAt = time.Now()
-		if err := initialize.DB.Create(&upI).Error; err != nil {
-			common.Response(ctx, err.Error())
-			return nil
-		}
-		common.Response(ctx, &upI)
-		return &upI
-	}
+	/*	var upI model.FileUploadInfo
+		var count int
+		initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
+		if count != 0 {
+			upI.ID = 0
+			upI.UploadUserID = userId
+			upI.UUID = uuid.NewV4().String()
+			upI.UploadAt = time.Now()
+			if err := initialize.DB.Create(&upI).Error; err != nil {
+				common.Response(ctx, err.Error())
+				return nil
+			}
+			common.Response(ctx, &upI)
+			return &upI
+		}*/
 	/*	md5 := md5.New()
 		io.Copy(md5,file)
 		MD5Str := hex.EncodeToString(md5.Sum(nil))*/
@@ -259,4 +260,28 @@ func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*mode
 	}
 	io.Copy(out, src)
 	return &fileUpload, nil
+}
+
+func MD5(ctx iris.Context) {
+	userId := ctx.Values().Get("userId").(uint)
+	md5 := ctx.Params().Get("md5")
+	var upI model.FileUploadInfo
+	var count int
+	initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
+	if count != 0 {
+		upI.ID = 0
+		upI.UploadUserID = userId
+		upI.UUID = uuid.NewV4().String()
+		upI.UploadAt = time.Now()
+		if err := initialize.DB.Create(&upI).Error; err != nil {
+			common.Response(ctx, err.Error())
+		}
+		common.Response(ctx, &upI)
+		return
+	}
+	common.Response(ctx, "不存在", e.ERROR)
+}
+
+func Vditor(ctx iris.Context) {
+	common.Response(ctx, "成功", e.SUCCESS)
 }

@@ -94,7 +94,7 @@
           </a-button>
         </template>
         <a-form-item
-          label="标 签"
+          label="收藏夹"
           required
           :label-col="{span: 4}"
           :wrapper-col="{span: 6}"
@@ -114,7 +114,7 @@
         <a-row>
           <a-col :span="16">
             <a-form-item
-              label="新标签"
+              label="新收藏夹"
               :label-col="{span:6}"
               :wrapper-col="{span: 16}"
             >
@@ -202,20 +202,21 @@ export default {
       if (this.existFavorites.length > 0) {
         return
       }
-      const res = await this.$axios.$get(`/api/favorite`)
+      const res = await this.$axios.$get(`/api/favorites`)
       if (res !== undefined) {
         this.existFavorites = res.data
         this.favorites.push(this.existFavorites[0].id)
       } else this.$message.error('无法获取收藏夹')
     },
-    handleOk(e) {
+    async handleOk(e) {
       this.loading = true
-      const favorites = []
-      for (const i of this.favorites) {
-        favorites.push({ name: i })
+      const params = {
+        ref_id: this.ref_id,
+        kind: 'Moment',
+        favorites_ids: this.favorites
       }
-      // const res = await this.$axios.$post('/api/collection', favorites)
-      // if (res.code === 200) this.$message.info('收藏成功')
+      const res = await this.$axios.$post('/api/collection', params)
+      if (res.code === 200) this.$message.info('收藏成功')
       this.loading = false
       this.visible = false
     },

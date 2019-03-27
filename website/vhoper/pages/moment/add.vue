@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import { upload } from '../../plugins/utils/upload'
+import { upload, isExist } from '../../plugins/utils/upload'
 import 'vditor/dist/index.classic.css'
 let vditor
 export default {
@@ -134,7 +134,8 @@ export default {
       categories: [],
       tags: [],
       previewVisible: false,
-      previewImage: ''
+      previewImage: '',
+      tmpFile: { name: '1', url: '2' }
     }
   },
   async asyncData({ $axios }) {
@@ -146,12 +147,34 @@ export default {
   },
   created() {},
   mounted: function() {
+    const vm = this
     this.$nextTick(function() {
       const Vditor = require('vditor')
       vditor = new Vditor('vditor', {
         width: '100%',
+        height: '600',
         preview: { delay: 0 },
-        upload: { url: '/api/upload/moment' }
+        upload: {
+          url: '/api/upload/vditor',
+          async validate(fileList) {
+            const res = await upload('moment', fileList[0])
+            if (res) {
+              vm.tmpFile = { name: res.original_name, url: res.url }
+              return true
+            }
+            return 'error'
+          },
+          success(textarea, res) {
+            const response = JSON.parse(res)
+            if (response.code === 200)
+              Vditor.insertText(
+                textarea,
+                `[${vm.tmpFile.name}](${vm.tmpFile.url})`,
+                '',
+                true
+              )
+          }
+        }
       })
       vditor.focus()
     })
