@@ -294,10 +294,18 @@ export default {
       this.collectVisible = false
     },
     approve(id, index) {},
-    like(id, index) {},
+    async like(id, index) {
+      const params = {
+        ref_id: id,
+        kind: 'Moment'
+      }
+      const res = await this.$axios.$post('/api/like', params)
+      if (res.code === 200) {
+        this.momentList[index].like_count += 1
+      }
+    },
     comment(id, index) {},
     async addFavorite() {
-      const vm = this
       if (this.favorite === '') {
         this.$message.error('标签为空')
         return

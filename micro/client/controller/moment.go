@@ -773,6 +773,7 @@ func setRedisMomentsV2(key string, moments []Moment, count int64, topCount int64
 		}
 	}
 	conn.Send("SET", "Moment_List_Count", strconv.FormatInt(count, 10))
-	conn.Do("SET", "Moment_List_Top_Count", strconv.FormatInt(topCount, 10))
+	conn.Send("SET", "Moment_List_Top_Count", strconv.FormatInt(topCount, 10))
+	conn.Do("SELECT", 0)
 	return nil
 }

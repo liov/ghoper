@@ -19,9 +19,11 @@ func RedisToDB() {
 			if mv != "" {
 				var moment controller.Moment
 				utils.Json.UnmarshalFromString(mv, &moment)
-				initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
-					BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
-					LikeCount: moment.LikeCount,
+				initialize.DB.Model(&moment).UpdateColumns(controller.Moment{
+					ActionCount: controller.ActionCount{
+						CollectCount: moment.CollectCount,
+						BrowseCount:  moment.BrowseCount, CommentCount: moment.CommentCount,
+						LikeCount: moment.LikeCount},
 				})
 			}
 		}
@@ -31,9 +33,11 @@ func RedisToDB() {
 		if mv != "" {
 			var moment controller.Moment
 			utils.Json.UnmarshalFromString(mv, &moment)
-			initialize.DB.Model(&moment).UpdateColumns(controller.Moment{CollectCount: moment.CollectCount,
-				BrowseCount: moment.BrowseCount, CommentCount: moment.CommentCount,
-				LikeCount: moment.LikeCount,
+			initialize.DB.Model(&moment).UpdateColumns(controller.Moment{
+				ActionCount: controller.ActionCount{
+					CollectCount: moment.CollectCount,
+					BrowseCount:  moment.BrowseCount, CommentCount: moment.CommentCount,
+					LikeCount: moment.LikeCount},
 			})
 		}
 	}
