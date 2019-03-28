@@ -185,10 +185,11 @@ func AddLike(ctx iris.Context) {
 	}
 	userId := ctx.Values().Get("userId").(uint64)
 	var count int
-	initialize.DB.Model(&model.Collection{}).Where("ref_id =? AND kind = ?", like.RefID, like.Kind).Count(&count)
+	initialize.DB.Model(&model.Like{}).Where("ref_id =? AND kind = ?", like.RefID, like.Kind).Count(&count)
 	if count > 0 {
 		initialize.DB.Delete(&like)
 		setCountToRedis(userId, like.RefID, KindIndex[like.Kind], actionLike, -1)
+		common.Response(ctx, "成功", e.SUCCESS)
 		return
 	}
 
