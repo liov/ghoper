@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+	"github.com/gomodule/redigo/redis"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
@@ -13,13 +15,13 @@ import (
 )
 
 type Favorites struct {
-	ID          uint       `gorm:"primary_key" json:"id"`
+	ID          uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt   time.Time  `json:"created_at"`
 	Name        string     `gorm:"type:varchar(20)" json:"name"`
 	User        User       `json:"user"`
-	UserID      uint       `json:"user_id"`
+	UserID      uint64     `json:"user_id"`
 	FollowUsers []User     `json:"follow_users"`
-	Count       uint       `json:"count"`
+	Count       uint64     `json:"count"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `sql:"index" json:"deleted_at"`
 	Status      uint8      `gorm:"type:smallint;default:0" json:"status"`
@@ -27,35 +29,35 @@ type Favorites struct {
 
 //收藏夹？像网易云一样可以收藏别人的歌单
 type Collection struct {
-	ID          uint        `gorm:"primary_key" json:"id"`
+	ID          uint64      `gorm:"primary_key" json:"id"`
 	CreatedAt   time.Time   `json:"created_at"`
-	RefID       uint        `json:"ref_id"`
+	RefID       uint64      `json:"ref_id"`
 	Kind        string      `gorm:"type:varchar(10)" json:"kind"`
 	Favorites   []Favorites `json:"favorites"`
-	FavoritesID uint        `json:"favorites_id"`
-	UserID      uint        `json:"user_id"`
+	FavoritesID uint64      `json:"favorites_id"`
+	UserID      uint64      `json:"user_id"`
 	UpdatedAt   *time.Time  `json:"updated_at"`
 	DeletedAt   *time.Time  `sql:"index" json:"deleted_at"`
 	Status      uint8       `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type Like struct {
-	ID        uint       `gorm:"primary_key" json:"id"`
+	ID        uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
-	RefID     uint       `json:"ref_id"`
+	RefID     uint64     `json:"ref_id"`
 	Kind      string     `gorm:"type:varchar(10)" json:"kind"`
 	User      User       `json:"user"`
-	UserID    uint       `json:"user_id"`
-	Count     uint       `json:"count"`
+	UserID    uint64     `json:"user_id"`
+	Count     uint64     `json:"count"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type IsLike struct {
-	Collection []uint
-	Like       []uint
-	Approve    []uint
+	Collection []uint64
+	Like       []uint64
+	Approve    []uint64
 }
 
 var kindIndex = map[string]int{
@@ -64,19 +66,38 @@ var kindIndex = map[string]int{
 	"Diary":   3,
 }
 
-func CountToRedis(userId uint, refId uint, kind string, operation string) error {
+func CountToRedis(userId uint64, refId uint64, kind string, operation string) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 	conn.Send("MULTI")
 	conn.Send("SELECT", kindIndex[kind])
-	conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(uint64(userId), 10), kind, operation}, "_"), refId)
-	conn.Send("INCR", strings.Join([]string{kind, strconv.FormatUint(uint64(refId), 10), operation, "Count"}, "_"))
+	conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userId, 10), kind, operation}, "_"), refId)
+	conn.Send("INCR", strings.Join([]string{kind, strconv.FormatUint(refId, 10), operation, "Count"}, "_"))
 	conn.Send("SELECT", 0)
 	_, err := conn.Do("EXEC")
 	if err != nil {
 		golog.Error("缓存失败", err)
 	}
 	return nil
+}
+
+func getRedisLike(userId string, kind string) {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	key := strings.Join([]string{"User", userId, kind}, "_")
+	conn.Send("SELECT", kindIndex[kind])
+	conn.Send("SMEMBERS", key+"_Collect")
+	conn.Send("SMEMBERS", key+"_Like")
+	conn.Send("SMEMBERS", key+"_Approve")
+	conn.Send("SELECT", 0)
+	conn.Flush()
+	conn.Receive()
+	data, _ := redis.Int64s(conn.Receive())
+	fmt.Println(data)
+	fmt.Println(conn.Receive())
+	fmt.Println(conn.Receive())
+	conn.Receive()
 }
 
 //数据量大，每个用户维护一张喜欢表
@@ -89,9 +110,9 @@ func DelLike(ctx iris.Context) {
 
 func AddCollection(ctx iris.Context) {
 	type FavoritesCollection struct {
-		RefID        uint   `json:"ref_id"`
-		Kind         string `json:"kind"`
-		FavoritesIDs []uint `json:"favorites_ids"`
+		RefID        uint64   `json:"ref_id"`
+		Kind         string   `json:"kind"`
+		FavoritesIDs []uint64 `json:"favorites_ids"`
 	}
 
 	var fc FavoritesCollection
@@ -100,7 +121,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	userId := ctx.Values().Get("userId").(uint)
+	userId := ctx.Values().Get("userId").(uint64)
 	var count int
 	initialize.DB.Model(&model.Favorites{}).Where("user_id =? AND id in (?)", userId, fc.FavoritesIDs).Count(&count)
 	if count != len(fc.FavoritesIDs) {
@@ -134,14 +155,14 @@ func DelCollection(ctx iris.Context) {
 }
 
 func GetFavorite(ctx iris.Context) {
-	id := ctx.Values().Get("userId").(uint)
+	id := ctx.Values().Get("userId").(uint64)
 	var favorites []Favorites
 	initialize.DB.Where("user_id=?", id).Find(&favorites)
 	common.Response(ctx, favorites)
 }
 
 func AddFavorite(ctx iris.Context) {
-	userId := ctx.Values().Get("userId").(uint)
+	userId := ctx.Values().Get("userId").(uint64)
 
 	var f Favorites
 	if err := ctx.ReadJSON(&f); err != nil {

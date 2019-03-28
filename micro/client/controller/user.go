@@ -32,7 +32,7 @@ const (
 )
 
 type User struct {
-	ID              uint        `gorm:"primary_key" json:"id"`
+	ID              uint64      `gorm:"primary_key" json:"id"`
 	ActivatedAt     *time.Time  `json:"activated_at"` //激活时间
 	Name            string      `gorm:"type:varchar(10);not null" json:"name"`
 	Password        string      `gorm:"type:varchar(100)" json:"-"`
@@ -41,7 +41,7 @@ type User struct {
 	Sex             string      `gorm:"type:varchar(1);not null" json:"sex"`
 	Birthday        *time.Time  `json:"birthday"`
 	Introduction    string      `gorm:"type:varchar(500)" json:"introduction"` //简介
-	Score           uint        `gorm:default:0" json:"score"`                 //积分
+	Score           uint64      `gorm:default:0" json:"score"`                 //积分
 	Signature       string      `gorm:"type:varchar(100)" json:"signature"`    //个人签名
 	Role            uint8       `gorm:"type:smallint;default:0" json:"-"`      //管理员or用户
 	AvatarURL       string      `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
@@ -59,13 +59,13 @@ type User struct {
 	//Like            Like         `json:"like"`                                  //和Collection挺像的，不过一个User可以对应多个C，只能对应一个L
 	Follows        []*User `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
 	Followeds      []*User `gorm:"-" json:"followeds"`              //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
-	FollowCount    uint    `gorm:"default:0" json:"follow_count"`   //关注数量
-	FollowedCount  uint    `gorm:"default:0" json:"followed_count"` //被关注数量
-	ArticleCount   uint    `gorm:"default:0" json:"article_count"`  //文章数量
-	MomentCount    uint    `gorm:"default:0" json:"moment_count"`
-	DiaryBookCount uint    `gorm:"default:0" json:"diary_book_count"`
-	DiaryCount     uint    `gorm:"default:0" json:"diary_count"`
-	CommentCount   uint    `gorm:"default:0" json:"comment_count"` //评论数量
+	FollowCount    uint64  `gorm:"default:0" json:"follow_count"`   //关注数量
+	FollowedCount  uint64  `gorm:"default:0" json:"followed_count"` //被关注数量
+	ArticleCount   uint64  `gorm:"default:0" json:"article_count"`  //文章数量
+	MomentCount    uint64  `gorm:"default:0" json:"moment_count"`
+	DiaryBookCount uint64  `gorm:"default:0" json:"diary_book_count"`
+	DiaryCount     uint64  `gorm:"default:0" json:"diary_count"`
+	CommentCount   uint64  `gorm:"default:0" json:"comment_count"` //评论数量
 	//Collections     []Collection `gorm:"many2many:user_collection" json:"collections"` //收藏夹？
 	Articles []Article `json:"articles"`
 	Moments  []Moment  `json:"moments"`
@@ -80,7 +80,7 @@ func sendMail(action string, title string, curTime int64, user User) {
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/"
 
-	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + "/" + secretStr
+	actionURL = actionURL + strconv.FormatUint(user.ID, 10) + "/" + secretStr
 	fmt.Println(actionURL)
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
@@ -165,7 +165,7 @@ func ActiveSendMail(c iris.Context) {
 	}
 
 	curTime := time.Now().Unix()
-	activeUser := model.ActiveTime + strconv.FormatUint((uint64)(user.ID), 10)
+	activeUser := model.ActiveTime + strconv.FormatUint(user.ID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -205,7 +205,7 @@ func ActiveAccount(c iris.Context) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
+	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint(user.ID, 10)); err != nil {
 		logging.Info(err)
 	}
 	common.Response(c, user.Email, "激活成功", e.SUCCESS)
@@ -238,7 +238,7 @@ func ResetPasswordMail(c iris.Context) {
 	}
 
 	curTime := time.Now().Unix()
-	resetUser := model.ResetTime + strconv.FormatUint((uint64)(user.ID), 10)
+	resetUser := model.ResetTime + strconv.FormatUint(user.ID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -298,7 +298,7 @@ func ResetPassword(c iris.Context) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL", model.ResetTime+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
+	if _, err := RedisConn.Do("DEL", model.ResetTime+strconv.FormatUint(user.ID, 10)); err != nil {
 		fmt.Println("redis delelte failed:", err)
 	}
 }
@@ -479,7 +479,7 @@ func Signup(c iris.Context) {
 	}
 
 	curTime := nowTime.Unix()
-	activeUser := model.ActiveTime + strconv.FormatUint((uint64)(newUser.ID), 10)
+	activeUser := model.ActiveTime + strconv.FormatUint(newUser.ID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -502,7 +502,7 @@ func Logout(c iris.Context) {
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint((uint64)(user.ID), 10)); err != nil {
+	if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint(user.ID, 10)); err != nil {
 	}
 
 	c.SetCookie(&http.Cookie{
@@ -1061,7 +1061,7 @@ func UserToRedis(user User) error {
 	if err != nil {
 		return errors.New("error")
 	}
-	loginUserKey := model.LoginUser + strconv.FormatUint((uint64)(user.ID), 10)
+	loginUserKey := model.LoginUser + strconv.FormatUint(user.ID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()

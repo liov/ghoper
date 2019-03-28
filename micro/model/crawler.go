@@ -4,7 +4,7 @@ import "time"
 
 // CrawlerArticle 爬虫抓取的文章
 type CrawlerArticle struct {
-	ID        uint       `gorm:"primary_key" json:"id"`
+	ID        uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
 	URL       string     `gorm:"type:varchar(100)" json:"url"`
 	Title     string     `gorm:"type:varchar(100)" json:"title"`

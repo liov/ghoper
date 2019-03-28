@@ -59,7 +59,7 @@ func (u *UserHandler) Signup(ctx context.Context, signupReq *protobuf.SignupReq,
 		return errors.New("error")
 	}
 
-	activeUser := model.ActiveTime + strconv.FormatUint((uint64)(newUser.ID), 10)
+	activeUser := model.ActiveTime + strconv.FormatUint(newUser.ID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -182,7 +182,7 @@ func sendMail(action string, title string, curTime int64, user protobuf.User) {
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/"
 
-	actionURL = actionURL + strconv.FormatUint((uint64)(user.ID), 10) + "/" + secretStr
+	actionURL = actionURL + strconv.FormatUint(user.ID, 10) + "/" + secretStr
 	fmt.Println(actionURL)
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
@@ -230,7 +230,7 @@ func UserToRedis(user protobuf.User) error {
 	if err != nil {
 		return errors.New("error")
 	}
-	loginUserKey := model.LoginUser + strconv.FormatUint((uint64)(user.ID), 10)
+	loginUserKey := model.LoginUser + strconv.FormatUint(user.ID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
@@ -22,7 +21,7 @@ import (
 
 //DTO
 type Moment struct {
-	ID           uint      `gorm:"primary_key" json:"id"`
+	ID           uint64    `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	Content      string    `gorm:"type:varchar(500)" json:"content"`
 	ImageUrl     string    `gorm:"type:varchar(100)" json:"image_url"` //图片
@@ -30,12 +29,12 @@ type Moment struct {
 	MoodName     string    `gorm:"type:varchar(20)" json:"mood_name"`
 	Tags         []Tag     `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	User         User      `json:"user"`
-	UserID       uint      `json:"user_id"`
-	BrowseCount  uint      `json:"browse_count"`                                       //浏览
-	CommentCount uint      `json:"comment_count"`                                      //评论
-	CollectCount uint      `json:"collect_count"`                                      //收藏
-	ApproveCount uint      `gorm:"default:0" json:"approve_count"`                     //点赞
-	LikeCount    uint      `json:"like_count"`                                         //点赞
+	UserID       uint64    `json:"user_id"`
+	BrowseCount  uint64    `json:"browse_count"`                                       //浏览
+	CommentCount uint64    `json:"comment_count"`                                      //评论
+	CollectCount uint64    `json:"collect_count"`                                      //收藏
+	ApproveCount uint64    `gorm:"default:0" json:"approve_count"`                     //点赞
+	LikeCount    uint64    `json:"like_count"`                                         //点赞
 	Permission   uint8     `gorm:"type:smallint unsigned;default:0" json:"permission"` //查看权限
 	//Index        int       `json:"index"`                                                //redis列表中排序
 }
@@ -114,7 +113,7 @@ func GetMoments(c iris.Context) {
 		initialize.DB.Raw(momentSql,pageSize,pageNo).Scan(&moments)
 		tagsSql :="SELECT name FROM tag INNER JOIN moment_tag ON moment_tag.tag_name = tag.name WHERE (moment_tag.moment_id IN ('7','6','5','4','3','2','1')) AND status=0"
 		type MomentTag struct {
-			MomentID uint `json:"moment_id"`
+			MomentID uint64 `json:"moment_id"`
 			TagName string `json:"tag_name"`
 		}
 		var tags []MomentTag
@@ -370,6 +369,10 @@ func AddMoment(c iris.Context) {
 		return
 	}
 
+	if utf8.RuneCountInString(moment.Content) > 500 {
+		common.Response(c, "文章内容不能小于20个字")
+		return
+	}
 	/*	moodName := moment.MoodName
 
 		var mood model.Mood
@@ -651,7 +654,7 @@ func DeleteMoment(c iris.Context) {
 	id := c.Params().GetUint64Default("id", 0)
 
 	nowTime := time.Now()
-	initialize.DB.Model(&model.Moment{ID: uint(id)}).Updates(&model.Moment{DeletedAt: &nowTime})
+	initialize.DB.Model(&model.Moment{ID: id}).Updates(&model.Moment{DeletedAt: &nowTime})
 
 	topNum := c.URLParam("t")
 	index := c.URLParam("index")
@@ -682,14 +685,14 @@ func GetMomentsV2(c iris.Context) {
 	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 	//l := list.New()
-	userId := c.Values().Get("userId").(uint)
+	userId := c.Values().Get("userId").(uint64)
 	key := cachekey.Moments + "_V2"
 
 	var moments []Moment
 
 	if moments, count, topCount := getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
 		if userId > 0 {
-			getRedisLike(strconv.FormatUint(uint64(userId), 10), "Moment")
+			getRedisLike(strconv.FormatUint(userId, 10), "Moment")
 		}
 		common.Res(c, iris.Map{"data": moments,
 			"count":     count,
@@ -722,21 +725,6 @@ func GetMomentsV2(c iris.Context) {
 
 	setRedisMomentsV2(key, moments, count, topCount)
 
-}
-
-func getRedisLike(userId string, classfiy string) {
-	conn := initialize.RedisPool.Get()
-	defer conn.Close()
-
-	key := strings.Join([]string{"User", userId, classfiy}, "_")
-
-	conn.Send("LRANGE", key+"_Collect")
-	conn.Send("LRANGE", key+"_Like")
-	conn.Send("LRANGE", key+"_Approve")
-	conn.Flush()
-	fmt.Println(conn.Receive())
-	fmt.Println(conn.Receive())
-	fmt.Println(conn.Receive())
 }
 
 func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]Moment, int, int) {

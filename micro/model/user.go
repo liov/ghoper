@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	ID              uint        `gorm:"primary_key" json:"id"`
+	ID              uint64      `gorm:"primary_key" json:"id"`
 	ActivatedAt     *time.Time  `json:"activated_at"` //激活时间
 	Name            string      `gorm:"type:varchar(10);not null" json:"name"`
 	Password        string      `gorm:"type:varchar(100)" json:"-"`
@@ -14,7 +14,7 @@ type User struct {
 	Sex             string      `gorm:"type:varchar(1);not null" json:"sex"`
 	Birthday        *time.Time  `json:"birthday"`
 	Introduction    string      `gorm:"type:varchar(500)" json:"introduction"` //简介
-	Score           uint        `gorm:default:0" json:"score"`                 //积分
+	Score           uint64      `gorm:default:0" json:"score"`                 //积分
 	Signature       string      `gorm:"type:varchar(100)" json:"signature"`    //个人签名
 	Role            uint8       `gorm:"type:smallint;default:0" json:"role"`   //管理员or用户
 	AvatarURL       string      `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
@@ -34,13 +34,13 @@ type User struct {
 	Collections    []Collection `json:"collections"`
 	Follows        []*User      `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
 	Followeds      []*User      `gorm:"-" json:"followeds"`              //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
-	FollowCount    uint         `gorm:"default:0" json:"follow_count"`   //关注数量
-	FollowedCount  uint         `gorm:"default:0" json:"followed_count"` //被关注数量
-	ArticleCount   uint         `gorm:"default:0" json:"article_count"`  //文章数量
-	MomentCount    uint         `gorm:"default:0" json:"moment_count"`
-	DiaryBookCount uint         `gorm:"default:0" json:"diary_book_count"`
-	DiaryCount     uint         `gorm:"default:0" json:"diary_count"`
-	CommentCount   uint         `gorm:"default:0" json:"comment_count"` //评论数量
+	FollowCount    uint64       `gorm:"default:0" json:"follow_count"`   //关注数量
+	FollowedCount  uint64       `gorm:"default:0" json:"followed_count"` //被关注数量
+	ArticleCount   uint64       `gorm:"default:0" json:"article_count"`  //文章数量
+	MomentCount    uint64       `gorm:"default:0" json:"moment_count"`
+	DiaryBookCount uint64       `gorm:"default:0" json:"diary_book_count"`
+	DiaryCount     uint64       `gorm:"default:0" json:"diary_count"`
+	CommentCount   uint64       `gorm:"default:0" json:"comment_count"` //评论数量
 	Favorites      []Favorites  `json:"favorites"`                      //收藏夹？
 	Articles       []Article    `json:"articles"`
 	Moments        []Moment     `json:"moments"`
@@ -50,9 +50,9 @@ type User struct {
 
 type Follow struct {
 	User         User       `json:"user"`
-	UserID       uint       `gorm:"primary_key" json:"user_id"` //一个关注另一个，ID小的做UserID
+	UserID       uint64     `gorm:"primary_key" json:"user_id"` //一个关注另一个，ID小的做UserID
 	FollowUser   User       `json:"follow_user"`
-	FollowID     uint       `gorm:"primary_key" json:"follow_id"`
+	FollowID     uint64     `gorm:"primary_key" json:"follow_id"`
 	FollowUserAt *time.Time //FollowUser关注User时间
 	UserFollowAt *time.Time //User关注FollowUser时间                                                 //互相关注时间
 	Status       uint8      `gorm:"type:smallint;default:0" json:"status"` //0 都生效，1前面生效，2后面生效，3都不生效

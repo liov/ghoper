@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Dictionary struct {
-	ID        uint       `gorm:"primary_key" json:"id"`
+	ID        uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
 	Type      string     `gorm:"type:varchar(128)" json:"type"`
 	Key       string     `gorm:"type:varchar(128)" json:"key"`
@@ -14,9 +14,9 @@ type Dictionary struct {
 }
 
 type Logger struct {
-	ID        uint       `gorm:"primary_key" json:"id"`
+	ID        uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
-	RefID     uint       `json:"ref_id"`
+	RefID     uint64     `json:"ref_id"`
 	RefKind   string     `gorm:"type:varchar(128)" json:"ref_kind"`
 	Operation string     `gorm:"type:varchar(128)" json:"key"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶

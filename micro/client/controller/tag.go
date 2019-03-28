@@ -16,8 +16,8 @@ type Tag struct {
 	Description string     `gorm:"type:varchar(100)" json:"description"`
 	DeletedAt   *time.Time `sql:"index"`
 	CreatedBy   User       `gorm:"-" json:"created_by"`
-	UserID      uint       `json:"user_id"`
-	Count       uint       `gorm:"default:0" json:"count"`
+	UserID      uint64     `json:"user_id"`
+	Count       uint64     `gorm:"default:0" json:"count"`
 	Sequence    uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`

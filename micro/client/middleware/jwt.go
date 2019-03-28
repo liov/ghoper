@@ -86,7 +86,7 @@ func GetUser() iris.Handler {
 		ctx.Next()
 	}
 }
-func GetUserId(ctx iris.Context) uint {
+func GetUserId(ctx iris.Context) uint64 {
 	if user, _ := getUser(ctx); user != nil {
 		return user.ID
 	}

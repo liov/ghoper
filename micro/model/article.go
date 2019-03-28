@@ -5,7 +5,7 @@ import (
 )
 
 type Article struct {
-	ID            uint             `gorm:"primary_key" json:"id"`
+	ID            uint64           `gorm:"primary_key" json:"id"`
 	CreatedAt     time.Time        `json:"created_at"`
 	Title         string           `gorm:"type:varchar(100)" json:"title"`
 	Intro         string           `gorm:"type:varchar(100)" json:"intro"`
@@ -17,25 +17,25 @@ type Article struct {
 	Categories    []Category       `gorm:"many2many:article_category" json:"categories"` //分类
 	Tags          []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	User          User             `json:"user"`
-	UserID        uint             `json:"user_id"`
+	UserID        uint64           `json:"user_id"`
 	Comments      []ArticleComment `gorm:"ForeignKey:ArticleID" json:"comments"` //评论
-	BrowseCount   uint             `json:"browse_count"`                         //浏览
-	CommentCount  uint             `gorm:"default:0" json:"comment_count"`       //评论
-	CollectCount  uint             `gorm:"default:0" json:"collect_count"`       //收藏
-	ApproveCount  uint             `gorm:"default:0" json:"approve_count"`       //点赞
+	BrowseCount   uint64           `json:"browse_count"`                         //浏览
+	CommentCount  uint64           `gorm:"default:0" json:"comment_count"`       //评论
+	CollectCount  uint64           `gorm:"default:0" json:"collect_count"`       //收藏
+	ApproveCount  uint64           `gorm:"default:0" json:"approve_count"`       //点赞
 	ApproveUsers  []User           `gorm:"many2many:article_approve_user" json:"approve_users"`
 	CollectUsers  []User           `gorm:"many2many:article_collect_user" json:"collect_users"`
-	LikeCount     uint             `gorm:"default:0" json:"like_count"` //喜欢
+	LikeCount     uint64           `gorm:"default:0" json:"like_count"` //喜欢
 	LikeUsers     []User           `gorm:"many2many:article_like_user" json:"like_users"`
 	Permission    uint8            `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      uint8            `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time       `json:"updated_at"`
 	DeletedAt     *time.Time       `sql:"index" json:"deleted_at"`
-	Status        uint             `json:"status"`                        //状态
-	ModifyTimes   uint             `gorm:"default:0" json:"modify_times"` //修改次数
-	ParentID      uint             `json:"parent_id"`                     //父ID
+	Status        uint64           `json:"status"`                        //状态
+	ModifyTimes   uint64           `gorm:"default:0" json:"modify_times"` //修改次数
+	ParentID      uint64           `json:"parent_id"`                     //父ID
 	LastUser      User             `json:"last_user"`
-	LastUserID    uint             `json:"last_user_id"` //最后一个回复话题的人
+	LastUserID    uint64           `json:"last_user_id"` //最后一个回复话题的人
 	LastCommentAt *time.Time       `json:"last_comment_at"`
 }
 
@@ -69,7 +69,7 @@ const (
 )
 
 type ArticleHistory struct {
-	ID           uint             `gorm:"primary_key" json:"id"`
+	ID           uint64           `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time        `json:"created_at"`
 	Title        string           `json:"title"`
 	Content      string           `json:"content"`
@@ -78,31 +78,31 @@ type ArticleHistory struct {
 	Categories   []Category       `gorm:"many2many:article_history_category" json:"categories"` //分类
 	Tags         []Tag            `gorm:"many2many:article_history_tag" json:"tags"`
 	User         User             `json:"user"`
-	UserID       uint             `json:"user_id"`
+	UserID       uint64           `json:"user_id"`
 	Comments     []ArticleComment `gorm:"foreignkey:ArticleID" json:"comments"`   //评论
-	BrowseCount  uint             `json:"browse_count"`                           //浏览
-	CommentCount uint             `json:"comment_count"`                          //评论
-	CollectCount uint             `json:"collect_count"`                          //收藏
-	LikeCount    uint             `json:"like_count"`                             //点赞
+	BrowseCount  uint64           `json:"browse_count"`                           //浏览
+	CommentCount uint64           `json:"comment_count"`                          //评论
+	CollectCount uint64           `json:"collect_count"`                          //收藏
+	LikeCount    uint64           `json:"like_count"`                             //点赞
 	ImageUrl     string           `json:"image_url"`                              //图片
-	ArticleID    uint             `json:"article_id"`                             //根结点
-	ParentID     uint             `json:"parent_id"`                              //父节点
-	ModifyTimes  uint             `json:"modify_times"`                           //修改次数
-	DeleteFlag   uint             `json:"delete_flag"`                            //是否删除
+	ArticleID    uint64           `json:"article_id"`                             //根结点
+	ParentID     uint64           `json:"parent_id"`                              //父节点
+	ModifyTimes  uint64           `json:"modify_times"`                           //修改次数
+	DeleteFlag   uint8            `json:"delete_flag"`                            //是否删除
 	Status       uint8            `gorm:"type:smallint ;default:0" json:"status"` //状态
 }
 
 type ArticleTag struct {
-	ArticleID uint   `gorm:"primary_key" json:"article_id"`
+	ArticleID uint64 `gorm:"primary_key" json:"article_id"`
 	TagName   string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
 }
 
 type ArticleHistoryTag struct {
-	ArticletHistoryID uint   `gorm:"primary_key" json:"articlet_history_id"`
+	ArticletHistoryID uint64 `gorm:"primary_key" json:"articlet_history_id"`
 	TagName           string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
 }
 
 type ArticleCategory struct {
-	ArticleID  uint `gorm:"primary_key" json:"article_id"`
-	CategoryID uint `gorm:"primary_key" json:"category_id"`
+	ArticleID  uint64 `gorm:"primary_key" json:"article_id"`
+	CategoryID uint64 `gorm:"primary_key" json:"category_id"`
 }

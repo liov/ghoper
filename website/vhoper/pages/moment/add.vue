@@ -152,17 +152,18 @@ export default {
         preview: { delay: 0 },
         upload: {
           url: '/api/upload/vditor',
-          async validate(fileList) {
+          async handler(fileList) {
             const res = await upload('moment', fileList[0])
             if (res) {
-              const original = `[${res.original_name}](上传中...)`
+              /* const original = `[${res.original_name}](上传中...)`
               const editorElement = document.querySelector('.vditor-textarea')
               const start = editorElement.value.split(original)[0].length
               const end = start + original.length
               editorElement.value =
                 editorElement.value.substring(0, start) +
                 `[${res.original_name}](${res.url})` +
-                editorElement.value.substring(end, editorElement.value.length)
+                editorElement.value.substring(end, editorElement.value.length) */
+              vditor.insertValue(`![${res.original_name}](${res.url})`)
               return true
             }
             return 'error'

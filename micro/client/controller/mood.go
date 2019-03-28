@@ -9,7 +9,7 @@ type Mood struct {
 	Name          string    `gorm:"type:varchar(20);primary_key" json:"name"`
 	Description   string    `gorm:"type:varchar(100)" json:"description"`
 	ExpressionURL string    `gorm:"type:varchar(100)" json:"expression_url"`
-	Count         uint      `gorm:"default:0" json:"count"`
+	Count         uint64    `gorm:"default:0" json:"count"`
 	CreatedAt     time.Time `json:"created_at"`
 }
 

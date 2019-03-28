@@ -19,7 +19,7 @@ func TestMap(t *testing.T) {
 
 type UU struct {
 	Name string
-	ID   uint
+	ID   uint64
 	Sex  string
 }
 

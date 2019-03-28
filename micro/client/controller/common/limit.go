@@ -8,7 +8,7 @@ import (
 	"hoper/initialize"
 )
 
-func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimitCount int64, userID uint) error {
+func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimitCount int64, userID uint64) error {
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()

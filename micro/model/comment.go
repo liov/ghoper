@@ -5,16 +5,16 @@ import (
 )
 
 type ArticleComment struct {
-	ID           uint      `gorm:"primary_key" json:"id"`
+	ID           uint64    `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	User         User      `json:"user"`
-	UserID       uint      `json:"user_id"`
+	UserID       uint64    `json:"user_id"`
 	Content      string    `gorm:"type:varchar(500)" json:"content"`
-	ApproveCount uint      `gorm:"default:0" json:"approve_count"` //点赞
+	ApproveCount uint64    `gorm:"default:0" json:"approve_count"` //点赞
 	ApproveUsers []User    `gorm:"many2many:moment_approve_user" json:"approve_users"`
 	ContentType  int       `json:"content_type"`
-	ArticleID    uint      `json:"article_id"` //话题或投票的ID
-	ParentID     uint      `json:"parent_id"`  //直接父评论的ID
+	ArticleID    uint64    `json:"article_id"` //话题或投票的ID
+	ParentID     uint64    `json:"parent_id"`  //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
@@ -22,15 +22,15 @@ type ArticleComment struct {
 }
 
 type MomentComment struct {
-	ID           uint      `gorm:"primary_key" json:"id"`
+	ID           uint64    `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	User         User      `json:"user"`
-	UserID       uint      `json:"user_id"`
+	UserID       uint64    `json:"user_id"`
 	Content      string    `gorm:"type:varchar(500)" json:"content"`
-	ApproveCount uint      `gorm:"default:0" json:"approve_count"` //点赞
+	ApproveCount uint64    `gorm:"default:0" json:"approve_count"` //点赞
 	ApproveUsers []User    `gorm:"many2many:moment_approve_user" json:"approve_users"`
-	MomentID     uint      `json:"moment_id"` //瞬间ID
-	ParentID     uint      `json:"parent_id"` //直接父评论的ID
+	MomentID     uint64    `json:"moment_id"` //瞬间ID
+	ParentID     uint64    `json:"parent_id"` //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
@@ -38,15 +38,15 @@ type MomentComment struct {
 }
 
 type DiaryComment struct {
-	ID           uint      `gorm:"primary_key" json:"id"`
+	ID           uint64    `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	User         User      `json:"user"`
-	UserID       uint      `json:"user_id"`
+	UserID       uint64    `json:"user_id"`
 	Content      string    `gorm:"type:varchar(500)" json:"content"`
-	ApproveCount uint      `gorm:"default:0" json:"approve_count"` //点赞
+	ApproveCount uint64    `gorm:"default:0" json:"approve_count"` //点赞
 	ApproveUsers []User    `gorm:"many2many:moment_approve_user" json:"approve_users"`
-	DiaryID      uint      `json:"diary_id"`  //瞬间ID
-	ParentID     uint      `json:"parent_id"` //直接父评论的ID
+	DiaryID      uint64    `json:"diary_id"`  //瞬间ID
+	ParentID     uint64    `json:"parent_id"` //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
@@ -54,15 +54,15 @@ type DiaryComment struct {
 }
 
 type DiaryBookComment struct {
-	ID           uint      `gorm:"primary_key" json:"id"`
+	ID           uint64    `gorm:"primary_key" json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	User         User      `json:"user"`
-	UserID       uint      `json:"user_id"`
+	UserID       uint64    `json:"user_id"`
 	Content      string    `gorm:"type:varchar(500)" json:"content"`
-	ApproveCount uint      `gorm:"default:0" json:"approve_count"` //点赞
+	ApproveCount uint64    `gorm:"default:0" json:"approve_count"` //点赞
 	ApproveUsers []User    `gorm:"many2many:moment_approve_user" json:"approve_users"`
-	DiaryBookID  uint      `json:"diary_book_id"` //瞬间ID
-	ParentID     uint      `json:"parent_id"`     //直接父评论的ID
+	DiaryBookID  uint64    `json:"diary_book_id"` //瞬间ID
+	ParentID     uint64    `json:"parent_id"`     //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
