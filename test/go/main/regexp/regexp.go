@@ -115,7 +115,7 @@ func main() {
 	// ["Hello" "Go"]
 
 	// 查找 Hello 或 Go，替换为 Hellooo、Gooo
-	reg = regexp.MustCompile(`(?PHell|G)o`)
+	reg = regexp.MustCompile(`(?P<n>Hell|G)o`)
 	fmt.Printf("%q\n", reg.ReplaceAllString(text, "${n}ooo"))
 	// "Hellooo 世界！123 Gooo."
 
