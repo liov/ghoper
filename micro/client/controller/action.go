@@ -97,17 +97,17 @@ var IndexAction = map[int8]string{
 	actionComment: "Comment",
 }
 
-func setCountToRedis(userId uint64, refId uint64, kind int8, action int8, num int8) error {
+func setCountToRedis(userId uint64, refId uint64, kind string, action int8, num int8) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 	conn.Send("MULTI")
-	conn.Send("SELECT", kind)
+	conn.Send("SELECT", KindIndex[kind])
 	if num > 0 {
-		conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userId, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
+		conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userId, 10), kind, IndexAction[action]}, "_"), refId)
 	} else {
-		conn.Send("SREM", strings.Join([]string{"User", strconv.FormatUint(userId, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
+		conn.Send("SREM", strings.Join([]string{"User", strconv.FormatUint(userId, 10), kind, IndexAction[action]}, "_"), refId)
 	}
-	conn.Send("HINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), "Action", "Count"}, "_"), IndexAction[action], num)
+	conn.Send("HINCRBY", strings.Join([]string{kind, strconv.FormatUint(refId, 10), "Action", "Count"}, "_"), IndexAction[action], num)
 	conn.Send("SELECT", 0)
 	_, err := conn.Do("EXEC")
 	if err != nil {
@@ -116,12 +116,12 @@ func setCountToRedis(userId uint64, refId uint64, kind int8, action int8, num in
 	return nil
 }
 
-func getRedisAction(userId string, kind int8) *UserAction {
+func getRedisAction(userId string, kind string) *UserAction {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	key := strings.Join([]string{"User", userId, IndexKind[kind]}, "_")
-	conn.Send("SELECT", kind)
+	key := strings.Join([]string{"User", userId, kind}, "_")
+	conn.Send("SELECT", KindIndex[kind])
 	conn.Send("SMEMBERS", key+"_Collect")
 	conn.Send("SMEMBERS", key+"Comment")
 	conn.Send("SMEMBERS", key+"_Like")
@@ -131,12 +131,16 @@ func getRedisAction(userId string, kind int8) *UserAction {
 	conn.Flush()
 	conn.Receive()
 	userAction := new(UserAction)
-	collection, err := redis.Int64s(conn.Receive())
-	userAction.Collect = collection
+	collect, err := redis.Int64s(conn.Receive())
+	userAction.Collect = collect
+	comment, err := redis.Int64s(conn.Receive())
+	userAction.Collect = comment
 	like, err := redis.Int64s(conn.Receive())
 	userAction.Like = like
 	approve, err := redis.Int64s(conn.Receive())
 	userAction.Approve = approve
+	browse, err := redis.Int64s(conn.Receive())
+	userAction.Approve = browse
 	conn.Receive()
 	if err != nil {
 		golog.Error(err)
@@ -188,7 +192,7 @@ func AddLike(ctx iris.Context) {
 	initialize.DB.Model(&model.Like{}).Where("ref_id =? AND kind = ?", like.RefID, like.Kind).Count(&count)
 	if count > 0 {
 		initialize.DB.Delete(&like)
-		setCountToRedis(userId, like.RefID, KindIndex[like.Kind], actionLike, -1)
+		setCountToRedis(userId, like.RefID, like.Kind, actionLike, -1)
 		common.Response(ctx, "成功", e.SUCCESS)
 		return
 	}
@@ -202,7 +206,7 @@ func AddLike(ctx iris.Context) {
 		return
 	}
 
-	setCountToRedis(userId, like.RefID, KindIndex[like.Kind], actionLike, 1)
+	setCountToRedis(userId, like.RefID, like.Kind, actionLike, 1)
 
 	common.Response(ctx, "成功", e.SUCCESS)
 }
@@ -248,7 +252,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	setCountToRedis(userId, fc.RefID, KindIndex[fc.Kind], actionCollect, 1)
+	setCountToRedis(userId, fc.RefID, fc.Kind, actionCollect, 1)
 
 	common.Response(ctx, "收藏成功", e.SUCCESS)
 }
