@@ -3,7 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"github.com/kataras/golog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -24,7 +24,7 @@ func LuosimaoVerify(reqURL, apiKey, response string) error {
 
 	res, err := http.PostForm(reqURL, reqData)
 	if err != nil {
-		fmt.Println(err.Error())
+		golog.Error(err)
 		return errors.New("人机识别验证失败")
 	}
 
@@ -33,7 +33,7 @@ func LuosimaoVerify(reqURL, apiKey, response string) error {
 	resBody, readErr := ioutil.ReadAll(res.Body)
 
 	if readErr != nil {
-		fmt.Println(readErr.Error())
+		golog.Error(err)
 		return errors.New("人机识别验证失败")
 	}
 
@@ -44,11 +44,11 @@ func LuosimaoVerify(reqURL, apiKey, response string) error {
 	}
 	var luosimaoResult LuosimaoResult
 	if err := json.Unmarshal(resBody, &luosimaoResult); err != nil {
-		fmt.Println(err)
+		golog.Error(err)
 		return errors.New("人机识别验证失败")
 	}
 	if luosimaoResult.Res != "success" {
-		fmt.Println("luosimaoResult.Res", luosimaoResult.Res)
+		golog.Info("luosimaoResult.Res", luosimaoResult.Res)
 		return errors.New("人机识别验证失败")
 	}
 	return nil

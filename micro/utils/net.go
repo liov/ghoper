@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fmt"
+	"github.com/kataras/golog"
 	"net/url"
 )
 
@@ -9,12 +9,12 @@ import (
 func RelativeURLToAbsoluteURL(curURL string, baseURL string) (string, error) {
 	curURLData, err := url.Parse(curURL)
 	if err != nil {
-		fmt.Println(err.Error())
+		golog.Error(err)
 		return "", err
 	}
 	baseURLData, err := url.Parse(baseURL)
 	if err != nil {
-		fmt.Println(err.Error())
+		golog.Error(err)
 		return "", err
 	}
 	curURLData = baseURLData.ResolveReference(curURLData)

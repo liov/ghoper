@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
+	"github.com/kataras/golog"
 	"hoper/client/controller/mail"
 	"hoper/initialize"
 	"hoper/model"
@@ -183,7 +184,7 @@ func sendMail(action string, title string, curTime int64, user protobuf.User) {
 	actionURL := siteURL + "/user" + action + "/"
 
 	actionURL = actionURL + strconv.FormatUint(user.ID, 10) + "/" + secretStr
-	fmt.Println(actionURL)
+	golog.Info(actionURL)
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
 		"<a href=\"" + actionURL + "\">" + actionURL + "</a>" +
@@ -198,7 +199,6 @@ func sendMail(action string, title string, curTime int64, user protobuf.User) {
 			"<p>(这是一封自动产生的email，请勿回复。)</p>"
 	}
 	//content += "<p><img src=\"" + siteURL + "/images/logo.png\" style=\"height: 42px;\"/></p>"
-	//fmt.Println(content)
 
 	mail.SendMail(user.Email, title, content)
 }
@@ -212,13 +212,13 @@ func UserFromRedis(userID int) (protobuf.User, error) {
 
 	userBytes, err := redis.String(RedisConn.Do("GET", loginUser))
 	if err != nil {
-		fmt.Println(err)
+		golog.Error(err)
 		return protobuf.User{}, errors.New("未登录")
 	}
 	var user protobuf.User
 	bytesErr := utils.Json.UnmarshalFromString(userBytes, &user)
 	if bytesErr != nil {
-		fmt.Println(bytesErr)
+		golog.Error(bytesErr)
 		return user, errors.New("未登录")
 	}
 	return user, nil

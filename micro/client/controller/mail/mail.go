@@ -3,6 +3,7 @@ package mail
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/kataras/golog"
 	"hoper/initialize"
 	"log"
 	"net"
@@ -49,7 +50,7 @@ func sendMailUsingTLS(addr string, auth smtp.Auth, from string,
 
 	client, err := createSMTPClient(addr)
 	if err != nil {
-		fmt.Println(err.Error())
+		golog.Error(err)
 		return err
 	}
 	defer client.Close()
@@ -95,7 +96,7 @@ func sendMailUsingTLS(addr string, auth smtp.Auth, from string,
 func createSMTPClient(addr string) (*smtp.Client, error) {
 	conn, err := tls.Dial("tcp", addr, nil)
 	if err != nil {
-		fmt.Println(err.Error())
+		golog.Error(err)
 		return nil, err
 	}
 	host, _, _ := net.SplitHostPort(addr)

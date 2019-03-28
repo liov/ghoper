@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
@@ -54,10 +53,10 @@ type Like struct {
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
-type IsLike struct {
-	Collection []uint64
-	Like       []uint64
-	Approve    []uint64
+type UserLike struct {
+	collection []int64 `json:"collection"`
+	like       []int64 `json:"like"`
+	approve    []int64 `json:"approve"`
 }
 
 var kindIndex = map[string]int{
@@ -81,7 +80,7 @@ func CountToRedis(userId uint64, refId uint64, kind string, operation string) er
 	return nil
 }
 
-func getRedisLike(userId string, kind string) {
+func getRedisLike(userId string, kind string) *UserLike {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
@@ -93,11 +92,50 @@ func getRedisLike(userId string, kind string) {
 	conn.Send("SELECT", 0)
 	conn.Flush()
 	conn.Receive()
-	data, _ := redis.Int64s(conn.Receive())
-	fmt.Println(data)
-	fmt.Println(conn.Receive())
-	fmt.Println(conn.Receive())
+	userLike := new(UserLike)
+	collection, err := redis.Int64s(conn.Receive())
+	userLike.collection = collection
+	like, err := redis.Int64s(conn.Receive())
+	userLike.like = like
+	approve, err := redis.Int64s(conn.Receive())
+	userLike.approve = approve
 	conn.Receive()
+	if err != nil {
+		golog.Error(err)
+	}
+	return userLike
+}
+
+type LikeCount struct {
+	collection int64 `json:"collection"`
+	like       int64 `json:"like"`
+	approve    int64 `json:"approve"`
+}
+
+func getLikeCount(refId string, kind string) *LikeCount {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	key := strings.Join([]string{kind, refId}, "_")
+	conn.Send("SELECT", kindIndex[kind])
+	conn.Send("GET", key+"_Collect_Count")
+	conn.Send("GET", key+"_Like_Count")
+	conn.Send("GET", key+"_Approve_Count")
+	conn.Send("SELECT", 0)
+	conn.Flush()
+	conn.Receive()
+	likeCount := new(LikeCount)
+	collection, err := redis.Int64(conn.Receive())
+	likeCount.collection = collection
+	like, err := redis.Int64(conn.Receive())
+	likeCount.like = like
+	approve, err := redis.Int64(conn.Receive())
+	likeCount.approve = approve
+	conn.Receive()
+	if err != nil {
+		golog.Error(err)
+	}
+	return likeCount
 }
 
 //数据量大，每个用户维护一张喜欢表

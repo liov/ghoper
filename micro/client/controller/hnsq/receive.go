@@ -3,6 +3,7 @@ package hnsq
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kataras/golog"
 	"github.com/nsqio/go-nsq"
 	"hoper/utils/reflectinvoke"
 	"log"
@@ -15,7 +16,7 @@ type Consumer struct{}
 
 //处理消息
 func (*Consumer) HandleMessage(msg *nsq.Message) error {
-	fmt.Println("receive", msg.NSQDAddress, "message:", string(msg.Body))
+	golog.Info("receive", msg.NSQDAddress, "message:", string(msg.Body))
 	return nil
 }
 
@@ -49,7 +50,7 @@ func NewConsumer(topic string, channel string, handle nsq.HandlerFunc) {
 
 func handleStringMessage(message *nsq.Message) error {
 
-	fmt.Printf("handleStringMessage get a message  %v\n\n", string(message.Body))
+	golog.Info("handleStringMessage get a message  %v\n\n", string(message.Body))
 	return nil
 }
 
@@ -70,7 +71,7 @@ func handleJsonMessage(message *nsq.Message) error {
 	info += fmt.Sprintf("error: %d,%s\n\n", result.ErrorCode,
 		reflectinvoke.ErrorMsg(result.ErrorCode))
 
-	fmt.Println(info)
+	golog.Info(info)
 
 	return nil
 }

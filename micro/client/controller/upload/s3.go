@@ -3,10 +3,10 @@ package upload
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/kataras/golog"
 	"os"
 	"time"
 )
@@ -22,7 +22,7 @@ func News3() *s3.S3 {
 	svc := s3.New(sess)
 	resp, _ := svc.ListBuckets(&s3.ListBucketsInput{})
 	for _, bucket := range resp.Buckets {
-		fmt.Println(*bucket.Name)
+		golog.Info(*bucket.Name)
 	}
 	return svc
 }
@@ -55,7 +55,7 @@ func download(service *s3.S3) {
 	defer out.Body.Close()
 	scanner := bufio.NewScanner(out.Body)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		golog.Info(scanner.Text())
 	}
 }
 
@@ -75,5 +75,5 @@ func ListObjectsPages(service *s3.S3) {
 		}
 		return true
 	})
-	fmt.Println(objkeys)
+	golog.Info(objkeys)
 }

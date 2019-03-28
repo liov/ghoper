@@ -1,11 +1,10 @@
 package crawler
 
 import (
-	"fmt"
 	"github.com/gocolly/colly"
+	"github.com/kataras/golog"
 	"hoper/utils"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -65,7 +64,7 @@ element1~element2	p~ul	选择前面有 <p> 元素的每个 <ul> 元素。	3
 //写起来是真没python方便，用了框架都不如
 func MM131() {
 
-	fmt.Println("mm131")
+	golog.Info("mm131")
 	c1 := colly.NewCollector(
 		colly.DetectCharset(),
 		colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"),
@@ -79,15 +78,15 @@ func MM131() {
 	)
 
 	c2.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
+		golog.Info("Visiting", r.URL)
 	})
 
 	c2.OnError(func(_ *colly.Response, err error) {
-		log.Println("Something went wrong:", err)
+		golog.Error("Something went wrong:", err)
 	})
 
 	c2.OnResponse(func(r *colly.Response) {
-		fmt.Println("Visited", r.Request.URL)
+		golog.Info("Visited", r.Request.URL)
 	})
 
 	aVisited := false
@@ -106,7 +105,7 @@ func MM131() {
 		}
 
 		for max != 0 {
-			fmt.Println(max)
+			golog.Info(max)
 			page := strconv.Itoa(max)
 			url := "http://www.mm131.com/xinggan/" + page + ".html"
 			c2.Visit(url)
@@ -129,10 +128,10 @@ func MM131() {
 
 		if len(pattern) > 0 {
 			dir = dir + pattern[0] + "P"
-			fmt.Println(dir)
+			golog.Info(dir)
 			if utils.CheckNotExist(dir) == true {
 				if err := utils.Mkdir(dir); err != nil {
-					fmt.Println(err)
+					golog.Error(err)
 				}
 			} else {
 				max = 0
@@ -149,7 +148,7 @@ func MM131() {
 	})
 
 	c2.OnScraped(func(r *colly.Response) {
-		fmt.Println("Finished", r.Request.URL)
+		golog.Info("Finished", r.Request.URL)
 	})
 
 }

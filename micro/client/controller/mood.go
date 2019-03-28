@@ -14,6 +14,9 @@ type Mood struct {
 }
 
 func ExistMoodByName(name string) *Mood {
+	if name == "" {
+		return nil
+	}
 	var mood Mood
 	initialize.DB.Select("name,count").Where("name = ?", name).First(&mood)
 	if mood.Name != "" {

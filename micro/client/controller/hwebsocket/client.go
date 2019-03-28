@@ -2,8 +2,8 @@ package hwebsocket
 
 import (
 	"flag"
-	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/kataras/golog"
 	"net/url"
 	"time"
 )
@@ -16,7 +16,7 @@ func ClientStart() {
 
 	conn, _, err := dialer.Dial(u.String(), nil)
 	if err != nil {
-		fmt.Println(err)
+		golog.Error(err)
 		return
 	}
 
@@ -25,11 +25,11 @@ func ClientStart() {
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("read:", err)
+			golog.Error("read:", err)
 			return
 		}
 
-		fmt.Printf("received: %s\n", message)
+		golog.Info("received: %s\n", message)
 	}
 }
 

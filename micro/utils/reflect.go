@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/kataras/golog"
 	"reflect"
 )
 
@@ -35,7 +36,7 @@ func setField(obj interface{}, name string, value interface{}) error {
 func SetStructByJSON(obj interface{}, mapData map[string]interface{}) error {
 	for key, value := range mapData {
 		if err := setField(obj, key, value); err != nil {
-			fmt.Println(err.Error())
+			golog.Error(err)
 			return err
 		}
 	}

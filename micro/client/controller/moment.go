@@ -689,14 +689,16 @@ func GetMomentsV2(c iris.Context) {
 	key := cachekey.Moments + "_V2"
 
 	var moments []Moment
-
+	var userLike *UserLike
 	if moments, count, topCount := getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
+		getLikeCount("1", "Moment")
 		if userId > 0 {
-			getRedisLike(strconv.FormatUint(userId, 10), "Moment")
+			userLike = getRedisLike(strconv.FormatUint(userId, 10), "Moment")
 		}
 		common.Res(c, iris.Map{"data": moments,
 			"count":     count,
 			"top_count": topCount,
+			"user_like": userLike,
 			"msg":       e.GetMsg(e.SUCCESS),
 			"code":      e.SUCCESS})
 		return
@@ -720,6 +722,7 @@ func GetMomentsV2(c iris.Context) {
 	common.Res(c, iris.Map{"data": moments,
 		"count":     count,
 		"top_count": topCount,
+		"user_like": userLike,
 		"msg":       e.GetMsg(e.SUCCESS),
 		"code":      e.SUCCESS})
 

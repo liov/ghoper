@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/kataras/golog"
 	"golang.org/x/net/html/charset"
 	"hoper/utils"
 	"io/ioutil"
@@ -38,10 +39,10 @@ func M131() {
 			pattern := regexp.MustCompile(`\d+`).FindAllString(s, -1)
 			if len(pattern) > 0 {
 				dir = dir + pattern[0] + "P"
-				fmt.Println(dir)
+				golog.Info(dir)
 				if utils.CheckNotExist(dir) == true {
 					if err := utils.Mkdir(dir); err != nil {
-						fmt.Println(err)
+						golog.Info(err)
 					}
 				} else {
 					return

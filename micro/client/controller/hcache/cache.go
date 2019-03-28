@@ -1,9 +1,9 @@
 package hcache
 
 import (
-	"fmt"
 	"github.com/golang/groupcache"
 	pb "github.com/golang/groupcache/groupcachepb"
+	"github.com/kataras/golog"
 	"net/http"
 )
 
@@ -39,7 +39,7 @@ func GetFromPeer(groupName, key string, peers *groupcache.HTTPPool) (value []byt
 
 	peer, ok := peers.PickPeer(key)
 	if ok == false {
-		fmt.Println("peers PickPeer failed: ", key)
+		golog.Info("peers PickPeer failed: ", key)
 		return
 	}
 

@@ -47,6 +47,9 @@ func GetTagTotal(maps interface{}) (count int) {
 }
 
 func ExistTagByName(name string) *Tag {
+	if name == "" {
+		return nil
+	}
 	var tag Tag
 	initialize.DB.Select("name,count").Where("name = ?", name).First(&tag)
 	if tag.Name != "" {

@@ -2,8 +2,8 @@ package say
 
 import (
 	"context"
+	"hoper/test/_examples/_ex/protobuf"
 	"io"
-	"micro/protobuf"
 )
 
 type Say struct{}

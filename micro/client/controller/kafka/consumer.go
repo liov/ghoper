@@ -1,8 +1,8 @@
 package kafka
 
 import (
-	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/kataras/golog"
 	"log"
 	"os"
 	"os/signal"
@@ -11,7 +11,7 @@ import (
 
 func SaramaConsumer() {
 
-	fmt.Println("start consume")
+	golog.Info("start consume")
 	config := sarama.NewConfig()
 
 	//提交offset的间隔时间，每秒提交一次给kafka
@@ -47,7 +47,7 @@ func SaramaConsumer() {
 	}
 	defer partitionOffsetManager.Close()
 
-	fmt.Println("consumer init success")
+	golog.Info("consumer init success")
 
 	defer func() {
 		if err := consumer.Close(); err != nil {
@@ -57,13 +57,13 @@ func SaramaConsumer() {
 
 	//sarama提供了一些额外的方法，以便我们获取broker那边的情况
 	topics, _ := consumer.Topics()
-	fmt.Println(topics)
+	golog.Info(topics)
 	partitions, _ := consumer.Partitions("0606_test")
-	fmt.Println(partitions)
+	golog.Info(partitions)
 
 	//第一次的offset从kafka获取(发送OffsetFetchRequest)，之后从本地获取，由MarkOffset()得来
 	nextOffset, _ := partitionOffsetManager.NextOffset()
-	fmt.Println(nextOffset)
+	golog.Info(nextOffset)
 
 	//创建一个分区consumer，从上次提交的offset开始进行消费
 	partitionConsumer, err := consumer.ConsumePartition("0606_test", 2, nextOffset+1)
@@ -81,7 +81,7 @@ func SaramaConsumer() {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 
-	fmt.Println("start consume really")
+	golog.Info("start consume really")
 
 ConsumerLoop:
 	for {
@@ -90,7 +90,7 @@ ConsumerLoop:
 			log.Printf("Consumed message offset %d\n message:%s", msg.Offset, string(msg.Value))
 			//拿到下一个offset
 			nextOffset, offsetString := partitionOffsetManager.NextOffset()
-			fmt.Println(nextOffset+1, "...", offsetString)
+			golog.Info(nextOffset+1, "...", offsetString)
 			//提交offset，默认提交到本地缓存，每秒钟往broker提交一次（可以设置）
 			partitionOffsetManager.MarkOffset(nextOffset+1, "modified metadata")
 

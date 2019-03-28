@@ -3,7 +3,7 @@ package reflectinvoke
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"github.com/kataras/golog"
 	"reflect"
 	"unicode"
 	"unicode/utf8"
@@ -133,7 +133,7 @@ func convertParamType(v interface{}, targetType reflect.Type) (
 	defer func() {
 		if re := recover(); re != nil {
 			ok = false
-			fmt.Println(re)
+			golog.Error(re)
 		}
 	}()
 

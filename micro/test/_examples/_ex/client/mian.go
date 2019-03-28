@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
+	"hoper/test/_examples/_ex/protobuf"
 	"log"
-	"micro/protobuf"
 	"net/http"
 	"sync"
 	"time"
@@ -37,7 +38,7 @@ func main() {
 			// Call the greeter
 			rsp, err := greeter.SayHello(context.TODO(), &protobuf.HelloRequest{Name: msg})
 			if err != nil {
-				fmt.Println(err)
+				golog.Error(err)
 			}
 
 			ctx.JSON(iris.Map{
