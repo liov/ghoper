@@ -21,21 +21,17 @@ import (
 
 //DTO
 type Moment struct {
-	ID           uint64    `gorm:"primary_key" json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
-	Content      string    `gorm:"type:varchar(500)" json:"content"`
-	ImageUrl     string    `gorm:"type:varchar(100)" json:"image_url"` //图片
-	Mood         Mood      `gorm:"foreignkey:MoodName;association_foreignkey:Name" json:"mood"`
-	MoodName     string    `gorm:"type:varchar(20)" json:"mood_name"`
-	Tags         []Tag     `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
-	User         User      `json:"user"`
-	UserID       uint64    `json:"user_id"`
-	BrowseCount  uint64    `json:"browse_count"`                                       //浏览
-	CommentCount uint64    `json:"comment_count"`                                      //评论
-	CollectCount uint64    `json:"collect_count"`                                      //收藏
-	ApproveCount uint64    `gorm:"default:0" json:"approve_count"`                     //点赞
-	LikeCount    uint64    `json:"like_count"`                                         //点赞
-	Permission   uint8     `gorm:"type:smallint unsigned;default:0" json:"permission"` //查看权限
+	ID        uint64    `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	Content   string    `gorm:"type:varchar(500)" json:"content"`
+	ImageUrl  string    `json:"image_url"` //图片
+	Mood      Mood      `gorm:"foreignkey:MoodName;association_foreignkey:Name" json:"mood"`
+	MoodName  string    `gorm:"type:varchar(20)" json:"mood_name"`
+	Tags      []Tag     `gorm:"many2many:moment_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
+	User      User      `json:"user"`
+	UserID    uint64    `json:"user_id"`
+	ActionCount
+	Permission uint8 `gorm:"type:smallint unsigned;default:0" json:"permission"` //查看权限
 	//Index        int       `json:"index"`                                                //redis列表中排序
 }
 
@@ -532,7 +528,7 @@ func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 func EditMoment(c iris.Context) {
 
 	moment, _ := historyMoment(c, 0)
-
+	user := c.Values().Get("user").(User)
 	var newMoment model.Moment
 	if err := c.ReadJSON(&newMoment); err != nil {
 		common.Response(c, "参数无效")
@@ -610,20 +606,22 @@ func EditMoment(c iris.Context) {
 	defer conn.Close()
 
 	redisMoment := Moment{
-		ID:           moment.ID,
-		CreatedAt:    moment.CreatedAt,
-		Content:      moment.Content,
-		ImageUrl:     moment.ImageUrl,
-		Mood:         Mood{Name: moment.MoodName},
-		MoodName:     moment.MoodName,
-		Tags:         tmpTags,
-		User:         User{},
-		UserID:       moment.UserID,
-		BrowseCount:  moment.BrowseCount,
-		CommentCount: moment.CommentCount,
-		CollectCount: moment.CollectCount,
-		LikeCount:    moment.LikeCount,
-		Permission:   moment.Permission,
+		ID:        moment.ID,
+		CreatedAt: moment.CreatedAt,
+		Content:   moment.Content,
+		ImageUrl:  moment.ImageUrl,
+		Mood:      Mood{Name: moment.MoodName},
+		MoodName:  moment.MoodName,
+		Tags:      tmpTags,
+		User:      user,
+		UserID:    moment.UserID,
+		ActionCount: ActionCount{
+			BrowseCount:  moment.BrowseCount,
+			CommentCount: moment.CommentCount,
+			CollectCount: moment.CollectCount,
+			LikeCount:    moment.LikeCount,
+		},
+		Permission: moment.Permission,
 	}
 	//topNum
 	if topNum != "0" {
@@ -689,19 +687,19 @@ func GetMomentsV2(c iris.Context) {
 	key := cachekey.Moments + "_V2"
 
 	var moments []Moment
-	var userLike *UserLike
-	var count, topCount int
+	var userAction *UserAction
+	var count, topCount int64
 	if moments, count, topCount = getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
 
 		if userId > 0 {
-			userLike = getRedisLike(strconv.FormatUint(userId, 10), "Moment")
+			userAction = getRedisAction(strconv.FormatUint(userId, 10), kindMoment)
 		}
 		common.Res(c, iris.Map{"data": moments,
-			"count":     count,
-			"top_count": topCount,
-			"user_like": userLike,
-			"msg":       e.GetMsg(e.SUCCESS),
-			"code":      e.SUCCESS})
+			"count":       count,
+			"top_count":   topCount,
+			"user_action": userAction,
+			"msg":         e.GetMsg(e.SUCCESS),
+			"code":        e.SUCCESS})
 		return
 	}
 
@@ -716,56 +714,65 @@ func GetMomentsV2(c iris.Context) {
 	}
 
 	if userId > 0 {
-		getRedisLike(strconv.FormatUint(uint64(userId), 10), "Moment")
+		getRedisAction(strconv.FormatUint(uint64(userId), 10), kindMoment)
 	}
 
 	common.Res(c, iris.Map{"data": moments,
-		"count":     count,
-		"top_count": topCount,
-		"user_like": userLike,
-		"msg":       e.GetMsg(e.SUCCESS),
-		"code":      e.SUCCESS})
+		"count":       count,
+		"top_count":   topCount,
+		"user_action": userAction,
+		"msg":         e.GetMsg(e.SUCCESS),
+		"code":        e.SUCCESS})
 
 	setRedisMomentsV2(key, moments, count, topCount)
 
 }
 
-func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]Moment, int, int) {
+func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]Moment, int64, int64) {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 	var moments []Moment
+	conn.Send("SELECT", kindMoment)
 	if exist, err := redis.Bool(conn.Do("EXISTS", key)); !exist || err != nil {
 		return nil, 0, 0
 	}
 	start := pageNo * PageSize
 
 	data, _ := redis.Strings(conn.Do("LRANGE", key, start, start+PageSize-1))
-	for mi, mv := range data {
+	for _, mv := range data {
 		var moment Moment
 		utils.Json.UnmarshalFromString(mv, &moment)
-		moment.BrowseCount = moment.BrowseCount + 1
+		conn.Send("HINCRBY", strings.Join([]string{IndexKind[kindMoment], strconv.FormatUint(moment.ID, 10), "Action", "Count"}, "_"), IndexAction[actionBrowse], 1)
+		actionCount := getActionCount(moment.ID, kindMoment)
+		actionCount.BrowseCount = actionCount.BrowseCount + 1
+		moment.ActionCount = *actionCount
 		moments = append(moments, moment)
-		data, _ := utils.Json.MarshalToString(&moment)
-		conn.Do("LSET", key, start+mi, data)
 	}
-	count, _ := redis.Int(conn.Do("GET", "Moment_List_Count"))
-	topCount, _ := redis.Int(conn.Do("GET", "Moment_List_Top_Count"))
+	conn.Do("")
+	conn.Send("GET", "Moment_List_Count")
+	conn.Send("GET", "Moment_List_Top_Count")
+	conn.Send("SELECT", 0)
+	conn.Flush()
+	count, _ := redis.Int64(conn.Receive())
+	topCount, _ := redis.Int64(conn.Receive())
+	conn.Receive()
 	return moments, count, topCount
 }
 
-func setRedisMomentsV2(key string, moments []Moment, count int, topCount int) error {
+func setRedisMomentsV2(key string, moments []Moment, count int64, topCount int64) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
+	conn.Send("SELECT", kindMoment)
 	for _, mv := range moments {
 		mv.BrowseCount = mv.BrowseCount + 1
 		//mv.Index = mi
 		value, _ := utils.Json.MarshalToString(mv)
-		_, err := conn.Do("RPUSH", key, value)
+		err := conn.Send("RPUSH", key, value)
 		if err != nil {
 			return err
 		}
 	}
-	conn.Do("SET", "Moment_List_Count", strconv.Itoa(count))
-	conn.Do("SET", "Moment_List_Top_Count", strconv.Itoa(topCount))
+	conn.Send("SET", "Moment_List_Count", strconv.FormatInt(count, 10))
+	conn.Do("SET", "Moment_List_Top_Count", strconv.FormatInt(topCount, 10))
 	return nil
 }

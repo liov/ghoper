@@ -36,7 +36,7 @@
         item-layout="horizontal"
         :data-source="momentList"
       >
-        <a-list-item slot="renderItem" slot-scope="item,index">
+        <a-list-item slot="renderItem" slot-scope="item,index" style="padding-bottom:0 ">
           <a-comment>
             <nuxt-link slot="author" :to="'/user/'+item.user.id">
               <span>{{ item.user.name }}</span>
@@ -45,19 +45,19 @@
               <a-avatar :src="item.user.avatar_url" alt="头像" />
             </nuxt-link>
             <span slot="actions" style="margin-right: 10px" @click="star(item.id,index)">
-              <a-icon type="star" :theme="user_like.collection.indexOf(item.id)>0?'twoTone':'outlined'" two-tone-color="#eb2f96" />
+              <a-icon type="star" :theme="user_action.collect.indexOf(item.id)>-1?'twoTone':'outlined'" two-tone-color="#eb2f96" />
               收藏：{{ item.collect_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="like(item.id,index)">
-              <a-icon type="heart" :theme="user_like.like.indexOf(item.id)>0?'twoTone':'outlined'" two-tone-color="#eb2f96" />
+              <a-icon type="heart" :theme="user_action.like.indexOf(item.id)>-1?'twoTone':'outlined'" two-tone-color="#eb2f96" />
               喜欢：{{ item.like_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="approve(item.id,index)">
-              <a-icon type="like" :theme="user_like.approve.indexOf(item.id)>0?'twoTone':'outlined'" />
+              <a-icon type="like" :theme="user_action.approve.indexOf(item.id)>-1?'twoTone':'outlined'" />
               点赞：{{ item.approve_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="comment(item.id,index)">
-              <a-icon type="message" />
+              <a-icon type="message" :theme="item.id>0?'twoTone':'outlined'" />
               评论：{{ item.comment_count }}
             </span>
             <span slot="actions" style="margin-right: 10px">
@@ -204,7 +204,7 @@ export default {
       momentList: res.data,
       total: res.count,
       topCount: res.top_count,
-      user_like: res.user_like
+      user_action: res.user_action
     }
   },
   created: function() {
