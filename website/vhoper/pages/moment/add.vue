@@ -158,22 +158,18 @@ export default {
             if (res) {
               const original = `[${res.original_name}](上传中...)`
               const editorElement = document.querySelector('.vditor-textarea')
-              editorElement.selectionStart = editorElement.value.split(
-                original
-              )[0].length
-              editorElement.selectionEnd =
-                editorElement.selectionStart + original.length
-              insertText(
-                editorElement,
-                `[${res.original_name}](${res.url})`,
-                '',
-                true
-              )
+              const start = editorElement.value.split(original)[0].length
+              const end = start + original.length
+              editorElement.value =
+                editorElement.value.substring(0, start) +
+                `[${res.original_name}](${res.url})` +
+                editorElement.value.substring(end, editorElement.value.length)
               return true
             }
             return 'error'
           },
-          success(textarea, resText) {}
+          success(textarea, resText) {},
+          error(resText) {}
         }
       })
       vditor.focus()
