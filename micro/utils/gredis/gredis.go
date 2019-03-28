@@ -3,8 +3,8 @@ package gredis
 import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
-	"hoper/client/controller/common/logging"
 	"hoper/initialize"
+	"hoper/utils/logging"
 )
 
 func Set(key string, data interface{}, time int) error {

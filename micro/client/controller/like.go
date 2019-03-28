@@ -4,9 +4,11 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/e"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -48,6 +50,33 @@ type Like struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
+}
+
+type IsLike struct {
+	Collection []uint
+	Like       []uint
+	Approve    []uint
+}
+
+var kindIndex = map[string]int{
+	"Moment":  1,
+	"Article": 2,
+	"Diary":   3,
+}
+
+func CountToRedis(userId uint, refId uint, kind string, operation string) error {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	conn.Send("MULTI")
+	conn.Send("SELECT", kindIndex[kind])
+	conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(uint64(userId), 10), kind, operation}, "_"), refId)
+	conn.Send("INCR", strings.Join([]string{kind, strconv.FormatUint(uint64(refId), 10), operation, "Count"}, "_"))
+	conn.Send("SELECT", 0)
+	_, err := conn.Do("EXEC")
+	if err != nil {
+		golog.Error("缓存失败", err)
+	}
+	return nil
 }
 
 //数据量大，每个用户维护一张喜欢表
@@ -95,7 +124,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	common.CountToRedis(userId, fc.RefID, fc.Kind, "Collect")
+	CountToRedis(userId, fc.RefID, fc.Kind, "Collect")
 
 	common.Response(ctx, "收藏成功", e.SUCCESS)
 }

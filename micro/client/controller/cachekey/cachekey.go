@@ -1,4 +1,4 @@
-package gredis
+package cachekey
 
 const (
 	CacheArticle = "ARTICLE"

@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
 	"hoper/client/controller/upload"
-
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/e"
 	"hoper/utils"
 	"io"
 	"net/http"

@@ -3,7 +3,7 @@ package common
 import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
-	"hoper/client/controller/common/e"
+	"hoper/model/e"
 )
 
 type H map[string]interface{}

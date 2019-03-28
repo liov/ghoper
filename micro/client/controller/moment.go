@@ -1,18 +1,19 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
+	"hoper/client/controller/cachekey"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
-	"hoper/client/controller/common/gredis"
-	"hoper/client/controller/common/logging"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/e"
 	"hoper/utils"
-
+	"hoper/utils/gredis"
+	"hoper/utils/logging"
 	"strconv"
 	"strings"
 	"time"
@@ -50,8 +51,8 @@ func GetMoments(c iris.Context) {
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 	topNum, _ := strconv.Atoi(c.URLParam("t"))
 	//l := list.New()
-	topKey := gredis.TopMoments
-	normalKey := gredis.Moments
+	topKey := cachekey.TopMoments
+	normalKey := cachekey.Moments
 
 	/*	var moments []Moment
 
@@ -303,8 +304,8 @@ func getRedisMoment(top string, index string) *Moment {
 
 	//1代表是置顶，0代表不是
 	if top != "0" {
-		if gredis.Exists(gredis.TopMoments) {
-			data, err := conn.Do("LINDEX", gredis.TopMoments, index)
+		if gredis.Exists(cachekey.TopMoments) {
+			data, err := conn.Do("LINDEX", cachekey.TopMoments, index)
 			if err != nil {
 				logging.Error(err)
 			}
@@ -313,7 +314,7 @@ func getRedisMoment(top string, index string) *Moment {
 				utils.Json.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				data, err = utils.Json.MarshalToString(moment)
-				_, err = conn.Do("LSET", gredis.TopMoments, index, data)
+				_, err = conn.Do("LSET", cachekey.TopMoments, index, data)
 				if err != nil {
 					logging.Error(err)
 				}
@@ -323,8 +324,8 @@ func getRedisMoment(top string, index string) *Moment {
 			}
 		}
 	} else {
-		if gredis.Exists(gredis.Moments) {
-			data, err := conn.Do("LINDEX", gredis.Moments, index)
+		if gredis.Exists(cachekey.Moments) {
+			data, err := conn.Do("LINDEX", cachekey.Moments, index)
 			if err != nil {
 				logging.Info(err)
 			}
@@ -333,7 +334,7 @@ func getRedisMoment(top string, index string) *Moment {
 				utils.Json.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				data, err = utils.Json.MarshalToString(moment)
-				_, err = conn.Do("LSET", gredis.Moments, index, data)
+				_, err = conn.Do("LSET", cachekey.Moments, index, data)
 				if err != nil {
 					logging.Error(err)
 				}
@@ -451,8 +452,8 @@ func AddMoment(c iris.Context) {
 		}*/
 
 	value, _ := utils.Json.MarshalToString(moment)
-	_, err := conn.Do("LPUSH", gredis.Moments+"_V2", value)
-	_, err = conn.Do("INCR", gredis.Moments+"_Count")
+	_, err := conn.Do("LPUSH", cachekey.Moments+"_V2", value)
+	_, err = conn.Do("INCR", cachekey.Moments+"_Count")
 	if err != nil {
 		return
 	}
@@ -623,17 +624,17 @@ func EditMoment(c iris.Context) {
 	}
 	//topNum
 	if topNum != "0" {
-		if gredis.Exists(gredis.TopMoments) {
+		if gredis.Exists(cachekey.TopMoments) {
 			data, err := utils.Json.MarshalToString(redisMoment)
-			_, err = conn.Do("LSET", gredis.TopMoments, index, data)
+			_, err = conn.Do("LSET", cachekey.TopMoments, index, data)
 			if err != nil {
 				logging.Error(err)
 			}
 		}
 	} else {
-		if gredis.Exists(gredis.Moments) {
+		if gredis.Exists(cachekey.Moments) {
 			data, err := utils.Json.MarshalToString(redisMoment)
-			_, err = conn.Do("LSET", gredis.Moments, index, data)
+			_, err = conn.Do("LSET", cachekey.Moments, index, data)
 			if err != nil {
 				logging.Error(err)
 			}
@@ -659,15 +660,15 @@ func DeleteMoment(c iris.Context) {
 	defer conn.Close()
 
 	if topNum != "0" {
-		if gredis.Exists(gredis.TopMoments) {
-			_, err := conn.Do("LSET", gredis.TopMoments, index, "")
+		if gredis.Exists(cachekey.TopMoments) {
+			_, err := conn.Do("LSET", cachekey.TopMoments, index, "")
 			if err != nil {
 				logging.Error(err)
 			}
 		}
 	} else {
-		if gredis.Exists(gredis.Moments) {
-			_, err := conn.Do("LSET", gredis.Moments, index, "")
+		if gredis.Exists(cachekey.Moments) {
+			_, err := conn.Do("LSET", cachekey.Moments, index, "")
 			if err != nil {
 				logging.Error(err)
 			}
@@ -681,12 +682,15 @@ func GetMomentsV2(c iris.Context) {
 	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 	//l := list.New()
-
-	key := gredis.Moments + "_V2"
+	userId := c.Values().Get("userId").(uint)
+	key := cachekey.Moments + "_V2"
 
 	var moments []Moment
 
 	if moments, count, topCount := getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
+		if userId > 0 {
+			getRedisLike(strconv.FormatUint(uint64(userId), 10), "Moment")
+		}
 		common.Res(c, iris.Map{"data": moments,
 			"count":     count,
 			"top_count": topCount,
@@ -706,6 +710,10 @@ func GetMomentsV2(c iris.Context) {
 		return
 	}
 
+	if userId > 0 {
+		getRedisLike(strconv.FormatUint(uint64(userId), 10), "Moment")
+	}
+
 	common.Res(c, iris.Map{"data": moments,
 		"count":     count,
 		"top_count": topCount,
@@ -714,6 +722,21 @@ func GetMomentsV2(c iris.Context) {
 
 	setRedisMomentsV2(key, moments, count, topCount)
 
+}
+
+func getRedisLike(userId string, classfiy string) {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	key := strings.Join([]string{"User", userId, classfiy}, "_")
+
+	conn.Send("LRANGE", key+"_Collect")
+	conn.Send("LRANGE", key+"_Like")
+	conn.Send("LRANGE", key+"_Approve")
+	conn.Flush()
+	fmt.Println(conn.Receive())
+	fmt.Println(conn.Receive())
+	fmt.Println(conn.Receive())
 }
 
 func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]Moment, int, int) {

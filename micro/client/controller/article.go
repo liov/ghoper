@@ -4,15 +4,13 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
-	"hoper/client/controller/common/logging"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/e"
 	"hoper/utils"
-	"time"
-
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 

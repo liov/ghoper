@@ -69,6 +69,7 @@
             <template slot="actions">
               <span v-if="item.user.id===user.id">编辑</span>
             </template>
+
             <div slot="content" v-html="md.render(item.content)" />
             <img
               v-for="(subitem,subindex) in image_url[index]"

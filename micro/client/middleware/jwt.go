@@ -7,9 +7,9 @@ import (
 	"github.com/kataras/iris"
 	"hoper/client/controller"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/e"
 	"net/http"
 	"time"
 )
@@ -76,14 +76,21 @@ func Login(ctx iris.Context) {
 //中间件的两种方式
 func GetUser() iris.Handler {
 	return func(ctx iris.Context) {
-		user, err := getUser(ctx)
-		if err != nil {
-			common.Response(ctx, "请重新登录", 401)
-			return
+		user, _ := getUser(ctx)
+		if user != nil {
+			ctx.Values().Set("userId", user.ID)
+		} else {
+			ctx.Values().Set("userId", 0)
 		}
 		ctx.Values().Set("user", user) //坑哦，这里存的是指针哦，虽然这个函数没用过
 		ctx.Next()
 	}
+}
+func GetUserId(ctx iris.Context) uint {
+	if user, _ := getUser(ctx); user != nil {
+		return user.ID
+	}
+	return 0
 }
 
 func getUser(ctx iris.Context) (*controller.User, error) {

@@ -5,7 +5,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
+	"hoper/model/e"
 	"hoper/protobuf"
 )
 

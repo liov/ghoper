@@ -4,10 +4,10 @@ import (
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/server"
-	"hoper/client/controller/common/logging"
 	"hoper/protobuf"
 	"hoper/server/handler/sub"
 	"hoper/server/handler/user"
+	"hoper/utils/logging"
 )
 
 func Service() {

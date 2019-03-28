@@ -3,8 +3,8 @@ package controller
 import (
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
 	"hoper/initialize"
+	"hoper/model/e"
 	"time"
 )
 

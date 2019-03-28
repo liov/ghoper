@@ -3,17 +3,18 @@ package cron
 import (
 	"github.com/gomodule/redigo/redis"
 	"hoper/client/controller"
-	"hoper/client/controller/common/gredis"
+	"hoper/client/controller/cachekey"
 	"hoper/initialize"
 	"hoper/utils"
+	"hoper/utils/gredis"
 )
 
 func RedisToDB() {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	if gredis.Exists(gredis.TopMoments) {
-		topData, _ := redis.Strings(conn.Do("LRANGE", gredis.TopMoments, 0, -1))
+	if gredis.Exists(cachekey.TopMoments) {
+		topData, _ := redis.Strings(conn.Do("LRANGE", cachekey.TopMoments, 0, -1))
 		for _, mv := range topData {
 			if mv != "" {
 				var moment controller.Moment
@@ -25,7 +26,7 @@ func RedisToDB() {
 			}
 		}
 	}
-	data, _ := redis.Strings(conn.Do("LRANGE", gredis.Moments, 0, -1))
+	data, _ := redis.Strings(conn.Do("LRANGE", cachekey.Moments, 0, -1))
 	for _, mv := range data {
 		if mv != "" {
 			var moment controller.Moment
