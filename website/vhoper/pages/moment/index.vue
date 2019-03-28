@@ -45,32 +45,34 @@
               <a-avatar :src="item.user.avatar_url" alt="头像" />
             </nuxt-link>
             <span slot="actions" style="margin-right: 10px" @click="star(item.id,index)">
-              <a-icon type="star" theme="outlined" two-tone-color="#eb2f96" />
+              <a-icon type="star" :theme="user_like.collection.indexOf(item.id)>0?'twoTone':'outlined'" two-tone-color="#eb2f96" />
               收藏：{{ item.collect_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="like(item.id,index)">
-              <a-icon type="heart" theme="twoTone" two-tone-color="#eb2f96" />
+              <a-icon type="heart" :theme="user_like.like.indexOf(item.id)>0?'twoTone':'outlined'" two-tone-color="#eb2f96" />
               喜欢：{{ item.like_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="approve(item.id,index)">
-              <a-icon type="like" />
+              <a-icon type="like" :theme="user_like.approve.indexOf(item.id)>0?'twoTone':'outlined'" />
               点赞：{{ item.approve_count }}
             </span>
             <span slot="actions" style="margin-right: 10px" @click="comment(item.id,index)">
               <a-icon type="message" />
               评论：{{ item.comment_count }}
             </span>
+            <span slot="actions" style="margin-right: 10px">
+              浏览：{{ item.browse_count }}
+            </span>
 
-            <div slot="actions" style="margin:0 10px">
+            <template slot="actions" style="margin:0 10px">
               <a-tag v-for="(subitem,subindex) in item.tags" :key="subindex" :color="color[subindex]">
                 {{ subitem.name }}
               </a-tag>
-            </div>
-            <template slot="actions">
-              <span v-if="item.user.id===user.id">编辑</span>
             </template>
 
-            <div slot="content" v-html="md.render(item.content)" />
+            <template slot="content">
+              <div style="margin: 1rem 1rem 0 1rem" v-html="md.render(item.content)" />
+            </template>
             <img
               v-for="(subitem,subindex) in image_url[index]"
               :key="subindex"
@@ -79,11 +81,18 @@
               alt="logo"
               :src="subitem"
             >
-            <a-tooltip slot="datetime" :title="item.created_at">
+            <a-tooltip slot="datetime" :title="item.created_at|dateFormat">
               <span>{{ item.created_at|dateFormat }}</span>
               <a-divider type="vertical" />
+            </a-tooltip>
+            <a-tooltip slot="datetime">
               <span>{{ $s2date(item.created_at).fromNow() }}</span>
             </a-tooltip>
+            <nuxt-link slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
+              <a-divider type="vertical" />
+              <a-icon type="edit" />
+              <span v-if="item.user.id===user.id">编辑</span>
+            </nuxt-link>
           </a-comment>
         </a-list-item>
       </a-list>
@@ -194,7 +203,8 @@ export default {
     return {
       momentList: res.data,
       total: res.count,
-      topCount: res.top_count
+      topCount: res.top_count,
+      user_like: res.user_like
     }
   },
   created: function() {
@@ -215,6 +225,7 @@ export default {
     for (const v of starIds.split(',')) {
       this.starIds.push(parseInt(v))
     }
+    console.log(this.user_like)
   },
   methods: {
     async onShowSizeChange(current, pageSize) {

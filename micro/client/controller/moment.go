@@ -690,8 +690,9 @@ func GetMomentsV2(c iris.Context) {
 
 	var moments []Moment
 	var userLike *UserLike
-	if moments, count, topCount := getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
-		getLikeCount("1", "Moment")
+	var count, topCount int
+	if moments, count, topCount = getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
+
 		if userId > 0 {
 			userLike = getRedisLike(strconv.FormatUint(userId, 10), "Moment")
 		}
@@ -704,7 +705,6 @@ func GetMomentsV2(c iris.Context) {
 		return
 	}
 
-	var count, topCount int
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
@@ -746,8 +746,7 @@ func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]Moment, int, int
 		moment.BrowseCount = moment.BrowseCount + 1
 		moments = append(moments, moment)
 		data, _ := utils.Json.MarshalToString(&moment)
-		conn.Do("LSET", key, mi, data)
-
+		conn.Do("LSET", key, start+mi, data)
 	}
 	count, _ := redis.Int(conn.Do("GET", "Moment_List_Count"))
 	topCount, _ := redis.Int(conn.Do("GET", "Moment_List_Top_Count"))

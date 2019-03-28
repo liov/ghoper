@@ -53,10 +53,11 @@ type Like struct {
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
+//私有都不会传过去，why？iris传的时候用反射？
 type UserLike struct {
-	collection []int64 `json:"collection"`
-	like       []int64 `json:"like"`
-	approve    []int64 `json:"approve"`
+	Collection []int64 `json:"collection"`
+	Like       []int64 `json:"like"`
+	Approve    []int64 `json:"approve"`
 }
 
 var kindIndex = map[string]int{
@@ -94,11 +95,11 @@ func getRedisLike(userId string, kind string) *UserLike {
 	conn.Receive()
 	userLike := new(UserLike)
 	collection, err := redis.Int64s(conn.Receive())
-	userLike.collection = collection
+	userLike.Collection = collection
 	like, err := redis.Int64s(conn.Receive())
-	userLike.like = like
+	userLike.Like = like
 	approve, err := redis.Int64s(conn.Receive())
-	userLike.approve = approve
+	userLike.Approve = approve
 	conn.Receive()
 	if err != nil {
 		golog.Error(err)

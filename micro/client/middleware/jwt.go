@@ -115,7 +115,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID := int(claims["id"].(float64))
+		userID := uint64(claims["id"].(float64))
 		user, err := controller.UserFromRedis(userID)
 		if err != nil {
 			return nil, errors.New("登录超时")

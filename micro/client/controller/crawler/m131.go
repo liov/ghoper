@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kataras/golog"
 	"golang.org/x/net/html/charset"
@@ -11,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-
 	"strconv"
 )
 

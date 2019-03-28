@@ -1032,19 +1032,19 @@ func CheckAuth(username, password string) (bool, error) {
 }
 
 // UserFromRedis 从redis中取出用户信息
-func UserFromRedis(userID int) (User, error) {
-	loginUser := model.LoginUser + strconv.Itoa(userID)
+func UserFromRedis(userID uint64) (User, error) {
+	loginUser := model.LoginUser + strconv.FormatUint(userID, 10)
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	userBytes, err := redis.String(RedisConn.Do("GET", loginUser))
+	userString, err := redis.String(RedisConn.Do("GET", loginUser))
 	if err != nil {
 		golog.Error(err)
 		return User{}, errors.New("未登录")
 	}
 	var user User
-	bytesErr := utils.Json.UnmarshalFromString(userBytes, &user)
+	bytesErr := utils.Json.UnmarshalFromString(userString, &user)
 	if bytesErr != nil {
 		return user, errors.New("未登录")
 	}
