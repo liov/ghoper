@@ -114,7 +114,6 @@
 
 <script>
 import { upload } from '../../plugins/utils/upload'
-import { insertText } from '../../plugins/utils/html'
 import 'vditor/dist/index.classic.css'
 let vditor
 export default {
