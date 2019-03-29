@@ -451,8 +451,10 @@ func AddMoment(c iris.Context) {
 		}*/
 
 	value, _ := utils.Json.MarshalToString(moment)
-	_, err := conn.Do("LPUSH", cachekey.Moments+"_V2", value)
-	_, err = conn.Do("INCR", cachekey.Moments+"_Count")
+	conn.Send("SELECT", kindMoment)
+	conn.Send("LPUSH", cachekey.Moments+"_V2", value)
+	conn.Send("INCR", cachekey.Moments+"_Count")
+	_, err := conn.Do("SELECT", 0)
 	if err != nil {
 		return
 	}
@@ -683,7 +685,7 @@ func GetMomentsV2(c iris.Context) {
 	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 	//l := list.New()
-	userId := c.Values().Get("userId").(uint64)
+	userID := c.Values().Get("userID").(uint64)
 	key := cachekey.Moments + "_V2"
 
 	var moments []Moment
@@ -691,8 +693,8 @@ func GetMomentsV2(c iris.Context) {
 	var count, topCount int64
 	if moments, count, topCount = getRedisMomentsV2(key, pageNo, pageSize); moments != nil {
 
-		if userId > 0 {
-			userAction = getRedisAction(strconv.FormatUint(userId, 10), IndexKind[kindMoment])
+		if userID > 0 {
+			userAction = getRedisAction(strconv.FormatUint(userID, 10), kindMoment)
 		}
 		common.Res(c, iris.Map{"data": moments,
 			"count":       count,
@@ -713,8 +715,8 @@ func GetMomentsV2(c iris.Context) {
 		return
 	}
 
-	if userId > 0 {
-		getRedisAction(strconv.FormatUint(uint64(userId), 10), IndexKind[kindMoment])
+	if userID > 0 {
+		getRedisAction(strconv.FormatUint(uint64(userID), 10), kindMoment)
 	}
 
 	common.Res(c, iris.Map{"data": moments,

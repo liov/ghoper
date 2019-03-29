@@ -39,7 +39,7 @@ func JWT(ctx iris.Context) {
 		common.Response(ctx, err.Error(), code)
 		return
 	}
-	ctx.Values().Set("userId", user.ID)
+	ctx.Values().Set("userID", user.ID)
 	ctx.Values().Set("user", *user)
 	ctx.Next()
 }
@@ -68,7 +68,7 @@ func Login(ctx iris.Context) {
 		common.Response(ctx, err.Error(), code)
 		return
 	}
-	ctx.Values().Set("userId", user.ID)
+	ctx.Values().Set("userID", user.ID)
 	ctx.Values().Set("user", *user)
 	ctx.Next()
 }
@@ -78,9 +78,9 @@ func GetUser() iris.Handler {
 	return func(ctx iris.Context) {
 		user, _ := getUser(ctx)
 		if user != nil {
-			ctx.Values().Set("userId", user.ID)
+			ctx.Values().Set("userID", user.ID)
 		} else {
-			ctx.Values().Set("userId", 0)
+			ctx.Values().Set("userID", 0)
 		}
 		ctx.Values().Set("user", user) //坑哦，这里存的是指针哦，虽然这个函数没用过
 		ctx.Next()

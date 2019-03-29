@@ -8,10 +8,18 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
 )
+
+type Action interface {
+	GETUserID() uint64
+	GETRefID() uint64
+	GETKind() int8
+	GETStatus() uint8
+}
 
 type Favorites struct {
 	ID          uint64     `gorm:"primary_key" json:"id"`
@@ -40,6 +48,22 @@ type Collection struct {
 	Status      uint8       `gorm:"type:smallint;default:0" json:"status"`
 }
 
+func (c *Collection) GETUserID() uint64 {
+	return c.UserID
+}
+
+func (c *Collection) GETRefID() uint64 {
+	return c.RefID
+}
+
+func (c *Collection) GETKind() int8 {
+	return KindIndex[c.Kind]
+}
+
+func (c *Collection) GETStatus() uint8 {
+	return c.Status
+}
+
 type Like struct {
 	ID        uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
@@ -52,12 +76,29 @@ type Like struct {
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
+func (l *Like) GETUserID() uint64 {
+	return l.UserID
+}
+
+func (l *Like) GETRefID() uint64 {
+	return l.RefID
+}
+
+func (l *Like) GETKind() int8 {
+	return KindIndex[l.Kind]
+}
+
+func (l *Like) GETStatus() uint8 {
+	return l.Status
+}
+
 //私有都不会传过去，why？iris传的时候用反射？
 type UserAction struct {
 	Collect []int64 `json:"collect"`
 	Like    []int64 `json:"like"`
 	Approve []int64 `json:"approve"`
 	Comment []int64 `json:"comment"`
+	Browse  []int64 `json:"browse"`
 }
 
 var IndexKind = map[int8]string{
@@ -85,29 +126,29 @@ const (
 	actionCollect = iota
 	actionLike
 	actionApprove
-	actionBrowse
 	actionComment
+	actionBrowse
 )
 
 var IndexAction = map[int8]string{
 	actionCollect: "Collect",
 	actionLike:    "Like",
 	actionApprove: "Approve",
-	actionBrowse:  "Browse",
 	actionComment: "Comment",
+	actionBrowse:  "Browse",
 }
 
-func setCountToRedis(userId uint64, refId uint64, kind string, action int8, num int8) error {
+func setCountToRedis(userID uint64, refId uint64, kind int8, action int8, num int8) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 	conn.Send("MULTI")
-	conn.Send("SELECT", KindIndex[kind])
+	conn.Send("SELECT", kind)
 	if num > 0 {
-		conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userId, 10), kind, IndexAction[action]}, "_"), refId)
+		conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userID, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
 	} else {
-		conn.Send("SREM", strings.Join([]string{"User", strconv.FormatUint(userId, 10), kind, IndexAction[action]}, "_"), refId)
+		conn.Send("SREM", strings.Join([]string{"User", strconv.FormatUint(userID, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
 	}
-	conn.Send("HINCRBY", strings.Join([]string{kind, strconv.FormatUint(refId, 10), "Action", "Count"}, "_"), IndexAction[action], num)
+	conn.Send("HINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), "Action", "Count"}, "_"), IndexAction[action], num)
 	conn.Send("SELECT", 0)
 	_, err := conn.Do("EXEC")
 	if err != nil {
@@ -116,12 +157,12 @@ func setCountToRedis(userId uint64, refId uint64, kind string, action int8, num 
 	return nil
 }
 
-func getRedisAction(userId string, kind string) *UserAction {
+func getRedisAction(userID string, kind int8) *UserAction {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	key := strings.Join([]string{"User", userId, kind}, "_")
-	conn.Send("SELECT", KindIndex[kind])
+	key := strings.Join([]string{"User", userID, IndexKind[kind]}, "_")
+	conn.Send("SELECT", kind)
 	conn.Send("SMEMBERS", key+"_Collect")
 	conn.Send("SMEMBERS", key+"Comment")
 	conn.Send("SMEMBERS", key+"_Like")
@@ -134,13 +175,13 @@ func getRedisAction(userId string, kind string) *UserAction {
 	collect, err := redis.Int64s(conn.Receive())
 	userAction.Collect = collect
 	comment, err := redis.Int64s(conn.Receive())
-	userAction.Collect = comment
+	userAction.Comment = comment
 	like, err := redis.Int64s(conn.Receive())
 	userAction.Like = like
 	approve, err := redis.Int64s(conn.Receive())
 	userAction.Approve = approve
 	browse, err := redis.Int64s(conn.Receive())
-	userAction.Approve = browse
+	userAction.Browse = browse
 	conn.Receive()
 	if err != nil {
 		golog.Error(err)
@@ -187,17 +228,30 @@ func AddLike(ctx iris.Context) {
 		common.Response(ctx, "参数无效")
 		return
 	}
-	userId := ctx.Values().Get("userId").(uint64)
-	var count int
-	initialize.DB.Model(&model.Like{}).Where("ref_id =? AND kind = ?", like.RefID, like.Kind).Count(&count)
-	if count > 0 {
-		initialize.DB.Delete(&like)
-		setCountToRedis(userId, like.RefID, like.Kind, actionLike, -1)
-		common.Response(ctx, "成功", e.SUCCESS)
+	like.UserID = ctx.Values().Get("userID").(uint64)
+
+	/*	var count int
+		err := initialize.DB.Where(&like).First(&like).Count(&count).Error
+		if count > 0 {
+			if like.GETStatus()==0{
+				err =initialize.DB.Model(&like).Update("status",1).Error
+				setCountToRedis(like.UserID, like.RefID, KindIndex[like.Kind], actionLike, 1)
+				common.Response(ctx, "成功", e.SUCCESS)
+				return
+			}else {
+				err =initialize.DB.Model(&like).Update("status",0).Error
+				setCountToRedis(like.UserID, like.RefID, KindIndex[like.Kind], actionLike, -1)
+				common.Response(ctx, "成功取消", e.Sub)
+				return
+			}
+
+		}*/
+
+	if res, err := reUpdateStatus(&like, actionLike); err == nil {
+		common.Response(ctx, "成功", res)
 		return
 	}
 
-	like.UserID = userId
 	like.Status = 1
 	err := initialize.DB.Create(&like).Error
 	if err != nil {
@@ -206,13 +260,81 @@ func AddLike(ctx iris.Context) {
 		return
 	}
 
-	setCountToRedis(userId, like.RefID, like.Kind, actionLike, 1)
+	setCountToRedis(like.UserID, like.RefID, KindIndex[like.Kind], actionLike, 1)
 
 	common.Response(ctx, "成功", e.SUCCESS)
 }
 
-func DelLike(ctx iris.Context) {
+func updateStatus(kind Action, action int8) (int, error) {
+	var count int
 
+	err := initialize.DB.Where(kind).First(kind).Count(&count).Error
+	if count > 0 {
+		if kind.GETStatus() == 0 {
+			err = initialize.DB.Model(kind).Update("status", 1).Error
+			setCountToRedis(kind.GETUserID(), kind.GETRefID(), kind.GETKind(), action, 1)
+			return e.SUCCESS, err
+		} else {
+			err = initialize.DB.Model(kind).Update("status", 0).Error
+			setCountToRedis(kind.GETUserID(), kind.GETRefID(), kind.GETKind(), action, -1)
+			return e.Sub, err
+		}
+
+	}
+	return 0, err
+}
+
+func reUpdateStatus(kind interface{}, action int8) (int, error) {
+	var count int
+	err := initialize.DB.Where(kind).First(kind).Count(&count).Error
+	v := reflect.ValueOf(kind).Elem()
+	status := v.FieldByName("Status").Interface().(uint8)
+	userID := v.FieldByName("UserID").Uint()
+	refID := v.FieldByName("RefID").Uint()
+	Kind := v.FieldByName("Kind").String()
+	if count > 0 {
+		if status == 0 {
+			err = initialize.DB.Model(kind).Update("status", 1).Error
+			setCountToRedis(userID, refID, KindIndex[Kind], action, 1)
+			return e.SUCCESS, err
+		} else {
+			err = initialize.DB.Model(kind).Update("status", 0).Error
+			setCountToRedis(userID, refID, KindIndex[Kind], action, -1)
+			return e.Sub, err
+		}
+
+	}
+	return 0, err
+}
+
+func Approve(ctx iris.Context) {
+	var like Like
+	if err := ctx.ReadJSON(&like); err != nil {
+		common.Response(ctx, "参数无效")
+		return
+	}
+	userID := ctx.Values().Get("userID").(uint64)
+	var count int
+	initialize.DB.Model(&model.Like{}).Where("ref_id =? AND kind = ? AND status = ?", like.RefID, like.Kind, 1).Count(&count)
+	if count > 0 {
+		initialize.DB.Model(like).UpdateColumns(&like)
+		setCountToRedis(userID, like.RefID, KindIndex[like.Kind], actionLike, -1)
+		common.Response(ctx, "成功", e.SUCCESS)
+		return
+	}
+
+	like.UserID = userID
+	like.Status = 1
+	err := initialize.DB.Create(&like).Error
+	if err != nil {
+		golog.Error(err)
+		common.Response(ctx, "喜欢失败", e.ERROR)
+		return
+	}
+
+	setCountToRedis(userID, like.RefID, KindIndex[like.Kind], actionLike, 1)
+
+	common.Response(ctx, "成功", e.SUCCESS)
 }
 
 func AddCollection(ctx iris.Context) {
@@ -228,9 +350,9 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	userId := ctx.Values().Get("userId").(uint64)
+	userID := ctx.Values().Get("userID").(uint64)
 	var count int
-	initialize.DB.Model(&model.Favorites{}).Where("user_id =? AND id in (?)", userId, fc.FavoritesIDs).Count(&count)
+	initialize.DB.Model(&model.Favorites{}).Where("user_id =? AND id in (?)", userID, fc.FavoritesIDs).Count(&count)
 	if count != len(fc.FavoritesIDs) {
 		common.Response(ctx, "收藏夹无效")
 		return
@@ -244,7 +366,7 @@ func AddCollection(ctx iris.Context) {
 
 	var err error
 	for _, v := range fc.FavoritesIDs {
-		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, UserID: userId, FavoritesID: v, Status: 1}).Error
+		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, UserID: userID, FavoritesID: v, Status: 1}).Error
 	}
 	if err != nil {
 		golog.Error(err)
@@ -252,7 +374,7 @@ func AddCollection(ctx iris.Context) {
 		return
 	}
 
-	setCountToRedis(userId, fc.RefID, fc.Kind, actionCollect, 1)
+	setCountToRedis(userID, fc.RefID, KindIndex[fc.Kind], actionCollect, 1)
 
 	common.Response(ctx, "收藏成功", e.SUCCESS)
 }
@@ -262,21 +384,21 @@ func DelCollection(ctx iris.Context) {
 }
 
 func GetFavorite(ctx iris.Context) {
-	id := ctx.Values().Get("userId").(uint64)
+	id := ctx.Values().Get("userID").(uint64)
 	var favorites []Favorites
 	initialize.DB.Where("user_id=?", id).Find(&favorites)
 	common.Response(ctx, favorites)
 }
 
 func AddFavorite(ctx iris.Context) {
-	userId := ctx.Values().Get("userId").(uint64)
+	userID := ctx.Values().Get("userID").(uint64)
 
 	var f Favorites
 	if err := ctx.ReadJSON(&f); err != nil {
 		common.Response(ctx, "参数无效")
 		return
 	}
-	f.UserID = userId
+	f.UserID = userID
 	var count int
 	initialize.DB.Model(&model.Favorites{}).Where(&f).Count(&count)
 	if count > 0 {

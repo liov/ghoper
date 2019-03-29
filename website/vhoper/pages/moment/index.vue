@@ -218,15 +218,7 @@ export default {
       )
     }
   },
-  mounted: function() {
-    const starIds = localStorage.getItem('moment_start_' + this.user.id)
-      ? localStorage.getItem('moment_start_' + this.user.id)
-      : ''
-    for (const v of starIds.split(',')) {
-      this.starIds.push(parseInt(v))
-    }
-    console.log(this.user_like)
-  },
+  mounted: function() {},
   methods: {
     async onShowSizeChange(current, pageSize) {
       this.pageSize = pageSize
@@ -280,12 +272,8 @@ export default {
       if (res.code === 200) {
         this.$message.info('收藏成功')
         this.momentList[this.tmpIdx].collect_count += 1
-        localStorage.setItem(
-          'moment_star_' + this.user.id,
-          localStorage.getItem('moment_start_' + this.user.id)
-            ? localStorage.getItem('moment_start_' + this.user.id)
-            : '' + ',' + this.ref_id
-        )
+        this.user_action.collect.push(this.ref_id)
+        // this.setLocalAction('moment', this.ref_id)
       } else this.$message.error(res.msg)
       this.loading = false
       this.collectVisible = false
@@ -293,8 +281,28 @@ export default {
     collectCancel(e) {
       this.collectVisible = false
     },
-    approve(id, index) {},
+    async approve(id, index) {
+      const idx = this.user_action.approve.indexOf(id)
+      if (idx > -1) {
+        this.user_action.approve.splice(idx, 1)
+        this.momentList[index].approve_count -= 1
+      }
+      const params = {
+        ref_id: id,
+        kind: 'Moment'
+      }
+      const res = await this.$axios.$post('/api/approve', params)
+      if (res.code === 200) {
+        this.momentList[index].approve_count += 1
+        this.user_action.approve.push(id)
+      }
+    },
     async like(id, index) {
+      const idx = this.user_action.like.indexOf(id)
+      if (idx > -1) {
+        this.user_action.like.splice(idx, 1)
+        this.momentList[index].like_count -= 1
+      }
       const params = {
         ref_id: id,
         kind: 'Moment'
@@ -302,9 +310,13 @@ export default {
       const res = await this.$axios.$post('/api/like', params)
       if (res.code === 200) {
         this.momentList[index].like_count += 1
+        // this.setLocalAction('like', id)
+        this.user_action.like.push(id)
       }
     },
-    comment(id, index) {},
+    comment(id, index) {
+      this.user_action.comment.push(id)
+    },
     async addFavorite() {
       if (this.favorite === '') {
         this.$message.error('标签为空')
@@ -323,6 +335,20 @@ export default {
       this.existFavorites.push(res.data)
       this.favorites.push(res.data.id)
       this.favorite = ''
+    },
+    setLocalAction(action, id) {
+      const key = 'moment_' + action + '_' + this.user.id
+      localStorage.setItem(
+        key,
+        localStorage.getItem(key) ? localStorage.getItem(key) + ',' + id : id
+      )
+    },
+    getLocalAction() {
+      for (const v of localStorage
+        .getItem('moment_collect_' + this.user.id)
+        .split(',')) {
+        this.user_action.collect.push(parseInt(v))
+      }
     }
   }
 }

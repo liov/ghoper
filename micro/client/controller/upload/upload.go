@@ -135,7 +135,7 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 
 // Upload 文件上传
 func Upload(ctx iris.Context) *model.FileUploadInfo {
-	userId := ctx.Values().Get("userId").(uint64)
+	userID := ctx.Values().Get("userID").(uint64)
 	classify := ctx.Params().GetString("classify")
 	file, info, err := ctx.FormFile("file")
 	md5 := ctx.FormValue("md5")
@@ -144,7 +144,7 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 		initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
 		if count != 0 {
 			upI.ID = 0
-			upI.UploadUserID = userId
+			upI.UploadUserID = userID
 			upI.UUID = uuid.NewV4().String()
 			upI.UploadAt = time.Now()
 			if err := initialize.DB.Create(&upI).Error; err != nil {
@@ -179,7 +179,7 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 	}
 
 	upInfo.File.Size = uint64(info.Size)
-	upInfo.UploadUserID = userId
+	upInfo.UploadUserID = userID
 	upInfo.Status = 1
 	upInfo.MD5 = md5
 	if err := initialize.DB.Create(upInfo).Error; err != nil {
@@ -216,8 +216,8 @@ func UploadMultiple(ctx iris.Context) {
 			common.Response(ctx, file[0].Filename+"上传失败")
 		} else {
 			upInfo.File.Size = uint64(file[0].Size)
-			userId := ctx.Values().Get("userId").(uint64)
-			upInfo.UploadUserID = userId
+			userID := ctx.Values().Get("userID").(uint64)
+			upInfo.UploadUserID = userID
 			if err := initialize.DB.Create(&upInfo).Error; err != nil {
 				common.Response(ctx, err.Error())
 			}
@@ -263,14 +263,14 @@ func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*mode
 }
 
 func MD5(ctx iris.Context) {
-	userId := ctx.Values().Get("userId").(uint64)
+	userID := ctx.Values().Get("userID").(uint64)
 	md5 := ctx.Params().Get("md5")
 	var upI model.FileUploadInfo
 	var count int
 	initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
 	if count != 0 {
 		upI.ID = 0
-		upI.UploadUserID = userId
+		upI.UploadUserID = userID
 		upI.UUID = uuid.NewV4().String()
 		upI.UploadAt = time.Now()
 		if err := initialize.DB.Create(&upI).Error; err != nil {

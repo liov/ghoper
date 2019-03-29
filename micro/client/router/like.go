@@ -8,7 +8,8 @@ import (
 
 func Like(app *iris.Application) {
 	app.Post("/api/like", middleware.JWT, controller.AddLike)
-	app.Delete("/api/delete", middleware.JWT, controller.DelLike)
+	app.Post("/api/approve", middleware.JWT, controller.Approve)
+
 	app.Get("/api/favorites", middleware.JWT, controller.GetFavorite)
 	app.Put("/api/favorites", middleware.JWT, controller.AddCollection)
 	app.Post("/api/favorites", middleware.JWT, controller.AddFavorite)
@@ -17,4 +18,5 @@ func Like(app *iris.Application) {
 	app.Put("/api/collection", middleware.JWT, controller.AddCollection)
 	app.Post("/api/collection", middleware.JWT, controller.AddCollection)
 	app.Delete("/api/collection", middleware.JWT, controller.DelCollection)
+
 }

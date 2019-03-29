@@ -48,6 +48,11 @@ var MsgFlags = map[int]string{
 	InActive:                    "未激活账号",
 }
 
+const (
+	Add = iota + 6000
+	Sub
+)
+
 func GetMsg(code int) string {
 	msg, ok := MsgFlags[code]
 	if ok {
