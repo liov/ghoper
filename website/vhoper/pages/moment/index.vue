@@ -130,7 +130,7 @@
         <a-row>
           <a-col :span="16">
             <a-form-item
-              label="新标签"
+              label="新建收藏夹"
               :label-col="{span:6}"
               :wrapper-col="{span: 16}"
             >
@@ -315,7 +315,9 @@ export default {
       }
     },
     comment(id, index) {
-      this.user_action.comment.push(id)
+      this.$router.push(
+        `/moment/${id}?index=${(this.current - 1) * this.pageSize + index}`
+      )
     },
     async addFavorite() {
       if (this.favorite === '') {

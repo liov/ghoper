@@ -26,7 +26,7 @@ func Limit(minuteLimit string, minuteLimitCount int64, dayLimit string, dayLimit
 	}
 
 	if _, err := RedisConn.Do("SET", minuteKey, minuteCount+1, "EX", minuteRemainingTime); err != nil {
-		log.Error("redis set failed:", err)
+		log.Error(err)
 		return errors.New("内部错误")
 	}
 

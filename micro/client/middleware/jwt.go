@@ -120,7 +120,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 		if err != nil {
 			return nil, errors.New("登录超时")
 		}
-		return &user, nil
+		return user, nil
 	}
 	return nil, errors.New("未登录")
 }

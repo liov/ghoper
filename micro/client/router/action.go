@@ -19,4 +19,6 @@ func Like(app *iris.Application) {
 	app.Post("/api/collection", middleware.JWT, controller.AddCollection)
 	app.Delete("/api/collection", middleware.JWT, controller.DelCollection)
 
+	app.Post("/api/comment/{kind}/{id}", middleware.JWT, controller.AddComment)
+	app.Get("/api/comment/{kind}/{id}", middleware.GetUser(), controller.GetComment)
 }

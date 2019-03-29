@@ -9,7 +9,6 @@ import (
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/controller/hnsq"
-	"hoper/client/middleware"
 	"hoper/client/router/other"
 	"hoper/utils/logging"
 	"os"
@@ -94,8 +93,6 @@ func IrisRouter() *iris.Application {
 	//自己做还是第三方库刷新writer都没用
 	//other.Sse(app)
 	other.PProf(app)
-
-	app.Post("/api/comment/:classify", middleware.JWT, controller.AddComment)
 
 	app.Get("/api/push", controller.Push)
 

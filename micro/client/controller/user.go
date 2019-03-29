@@ -373,7 +373,7 @@ func Login(c iris.Context) {
 
 		initialize.DB.Model(&user).UpdateColumn("last_activated_at", time.Now())
 
-		if err := UserToRedis(user); err != nil {
+		if err := UserToRedis(&user); err != nil {
 			common.Response(c, "内部错误.")
 			return
 		}
@@ -881,7 +881,7 @@ func UploadAvatar(c iris.Context) {
 	}
 	user.AvatarURL = avatarURL
 
-	if UserToRedis(user) != nil {
+	if UserToRedis(&user) != nil {
 		return
 	}
 
@@ -1032,37 +1032,37 @@ func CheckAuth(username, password string) (bool, error) {
 }
 
 // UserFromRedis 从redis中取出用户信息
-func UserFromRedis(userID uint64) (User, error) {
+func UserFromRedis(userID uint64) (*User, error) {
 	loginUser := model.LoginUser + strconv.FormatUint(userID, 10)
 
-	RedisConn := initialize.RedisPool.Get()
-	defer RedisConn.Close()
-
-	userString, err := redis.String(RedisConn.Do("GET", loginUser))
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	conn.Send("SELECT", 0)
+	userString, err := redis.String(conn.Do("GET", loginUser))
 	if err != nil {
 		golog.Error(err)
-		return User{}, errors.New("未登录")
+		return nil, err
 	}
 	var user User
-	bytesErr := utils.Json.UnmarshalFromString(userString, &user)
-	if bytesErr != nil {
-		return user, errors.New("未登录")
+	err = utils.Json.UnmarshalFromString(userString, &user)
+	if err != nil {
+		return &user, err
 	}
-	return user, nil
+	return &user, nil
 }
 
 // UserToRedis 将用户信息存到redis
-func UserToRedis(user User) error {
+func UserToRedis(user *User) error {
 	UserString, err := utils.Json.MarshalToString(user)
 	if err != nil {
 		return errors.New("error")
 	}
 	loginUserKey := model.LoginUser + strconv.FormatUint(user.ID, 10)
 
-	RedisConn := initialize.RedisPool.Get()
-	defer RedisConn.Close()
-
-	if _, redisErr := RedisConn.Do("SET", loginUserKey, UserString, "EX", initialize.Config.Server.TokenMaxAge); redisErr != nil {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	conn.Send("SELECT", 0)
+	if _, redisErr := conn.Do("SET", loginUserKey, UserString, "EX", initialize.Config.Server.TokenMaxAge); redisErr != nil {
 		return errors.New("error")
 	}
 	return nil

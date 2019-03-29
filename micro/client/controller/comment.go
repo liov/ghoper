@@ -57,7 +57,7 @@ type Comment interface {
 }
 
 func AddComment(c iris.Context) {
-	user := c.GetViewData()["user"].(User)
+	user := c.Values().Get("user").(User)
 	if limitErr := common.Limit(model.CommentMinuteLimit,
 		model.CommentMinuteLimitCount,
 		model.CommentDayLimit,
@@ -65,10 +65,10 @@ func AddComment(c iris.Context) {
 		common.Response(c, limitErr.Error())
 		return
 	}
-	classify := c.GetViewData()["classify"].(string)
+	kind := c.Params().Get("kind")
 	nowTime := time.Now()
-	switch classify {
-	case "articleComment":
+	switch KindIndex[kind] {
+	case kindArticle:
 		var comment ArticleComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
@@ -76,7 +76,7 @@ func AddComment(c iris.Context) {
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}
-	case "momentComment":
+	case kindMoment:
 		var comment MomentComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
@@ -84,7 +84,7 @@ func AddComment(c iris.Context) {
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}
-	case "diaryComment":
+	case kindDiary:
 		var comment DiaryComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
@@ -92,7 +92,7 @@ func AddComment(c iris.Context) {
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}
-	case "diaryBookComment":
+	case kindDiaryBook:
 		var comment DiaryBookComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
@@ -113,5 +113,45 @@ func commentBind(comment interface{}, c iris.Context) {
 		}).Info(err.Error())
 		common.Response(c, "参数无效")
 		return
+	}
+}
+
+func GetComment(ctx iris.Context) {
+	userID := ctx.Values().Get("userID").(uint64)
+	kind := ctx.Params().Get("kind")
+	nowTime := time.Now()
+	switch KindIndex[kind] {
+	case kindArticle:
+		var comment ArticleComment
+		commentBind(&comment, ctx)
+		comment.CreatedAt = nowTime
+		comment.UserID = userID
+		if err := initialize.DB.Create(&comment).Error; err != nil {
+			logrus.Info(err.Error())
+		}
+	case kindMoment:
+		var comment MomentComment
+		commentBind(&comment, ctx)
+		comment.CreatedAt = nowTime
+		comment.UserID = userID
+		if err := initialize.DB.Create(&comment).Error; err != nil {
+			logrus.Info(err.Error())
+		}
+	case kindDiary:
+		var comment DiaryComment
+		commentBind(&comment, ctx)
+		comment.CreatedAt = nowTime
+		comment.UserID = userID
+		if err := initialize.DB.Create(&comment).Error; err != nil {
+			logrus.Info(err.Error())
+		}
+	case kindDiaryBook:
+		var comment DiaryBookComment
+		commentBind(&comment, ctx)
+		comment.CreatedAt = nowTime
+		comment.UserID = userID
+		if err := initialize.DB.Create(&comment).Error; err != nil {
+			logrus.Info(err.Error())
+		}
 	}
 }

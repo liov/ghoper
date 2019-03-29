@@ -143,16 +143,17 @@ func setCountToRedis(userID uint64, refId uint64, kind int8, action int8, num in
 	defer conn.Close()
 	conn.Send("MULTI")
 	conn.Send("SELECT", kind)
+
 	if num > 0 {
 		conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userID, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
 	} else {
 		conn.Send("SREM", strings.Join([]string{"User", strconv.FormatUint(userID, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
 	}
 	conn.Send("HINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), "Action", "Count"}, "_"), IndexAction[action], num)
-	conn.Send("SELECT", 0)
+	conn.Send("ZINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), IndexAction[action], "Sorted"}, "_"), num, refId)
 	_, err := conn.Do("EXEC")
 	if err != nil {
-		golog.Error("缓存失败", err)
+		golog.Error("缓存失败:", err)
 	}
 	return nil
 }
@@ -168,7 +169,6 @@ func getRedisAction(userID string, kind int8) *UserAction {
 	conn.Send("SMEMBERS", key+"_Like")
 	conn.Send("SMEMBERS", key+"_Approve")
 	conn.Send("SMEMBERS", key+"_Browse")
-	conn.Send("SELECT", 0)
 	conn.Flush()
 	conn.Receive()
 	userAction := new(UserAction)
@@ -182,7 +182,6 @@ func getRedisAction(userID string, kind int8) *UserAction {
 	userAction.Approve = approve
 	browse, err := redis.Int64s(conn.Receive())
 	userAction.Browse = browse
-	conn.Receive()
 	if err != nil {
 		golog.Error(err)
 	}
@@ -205,7 +204,6 @@ func getActionCount(refId uint64, kind int8) *ActionCount {
 	key := strings.Join([]string{IndexKind[kind], id, "Action", "Count"}, "_")
 	conn.Send("SELECT", kind)
 	conn.Send("HGETALL", key)
-	conn.Send("SELECT", 0)
 	conn.Flush()
 	conn.Receive()
 	actionCount := new(ActionCount)
@@ -214,7 +212,6 @@ func getActionCount(refId uint64, kind int8) *ActionCount {
 	actionCount.LikeCount = action["Like"]
 	actionCount.ApproveCount = action["Approve"]
 	actionCount.BrowseCount = action["Browse"]
-	conn.Receive()
 	if err != nil {
 		golog.Error(err)
 	}

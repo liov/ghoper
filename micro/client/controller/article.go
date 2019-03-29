@@ -49,18 +49,6 @@ func GetArticle(c iris.Context) {
 
 	id := c.Params().GetUint64Default("id", 0)
 
-	/*	key := "Article_" + id
-		if gredis.Exists(key) {
-			data, err := gredis.Get(key)
-			if err != nil {
-				logging.Info(err)
-			} else {
-				json.Unmarshal(data, &articleCache)
-				common.Response(c, articleCache)
-				return
-			}
-		}*/
-
 	if err := initialize.DB.First(&article, id).Error; err != nil {
 		common.Response(c, "无效的文章id")
 		return
