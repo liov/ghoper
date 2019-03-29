@@ -109,10 +109,10 @@ var IndexKind = map[int8]string{
 }
 
 var KindIndex = map[string]int8{
-	"Moment":    kindMoment,
-	"Article":   kindArticle,
-	"Diary":     kindDiary,
-	"DiaryBook": kindDiaryBook,
+	"moment":    kindMoment,
+	"article":   kindArticle,
+	"diary":     kindDiary,
+	"diaryBook": kindDiaryBook,
 }
 
 const (
@@ -308,31 +308,35 @@ func reUpdateStatus(kind interface{}, action int8) (int, error) {
 }
 
 func Approve(ctx iris.Context) {
-	var like Like
-	if err := ctx.ReadJSON(&like); err != nil {
+	type Approve struct {
+		RefID uint64 `json:"ref_id"`
+		Kind  string `json:"kind"`
+	}
+	var approve Approve
+	if err := ctx.ReadJSON(&approve); err != nil {
 		common.Response(ctx, "参数无效")
 		return
 	}
 	userID := ctx.Values().Get("userID").(uint64)
 	var count int
-	initialize.DB.Model(&model.Like{}).Where("ref_id =? AND kind = ? AND status = ?", like.RefID, like.Kind, 1).Count(&count)
+	initialize.DB.Table(approve.Kind+"_approve_user").Where(approve.Kind+"_id = ? AND user_id = ?", approve.RefID, userID).Count(&count)
 	if count > 0 {
-		initialize.DB.Model(like).UpdateColumns(&like)
-		setCountToRedis(userID, like.RefID, KindIndex[like.Kind], actionLike, -1)
-		common.Response(ctx, "成功", e.SUCCESS)
+		initialize.DB.Exec("DELETE FROM " + approve.Kind + "_approve_user WHERE " + approve.Kind + "_id =" +
+			strconv.FormatUint(approve.RefID, 10) + " AND user_id = " + strconv.FormatUint(userID, 10))
+		setCountToRedis(userID, approve.RefID, KindIndex[approve.Kind], actionApprove, -1)
+		common.Response(ctx, "成功", e.Sub)
 		return
 	}
 
-	like.UserID = userID
-	like.Status = 1
-	err := initialize.DB.Create(&like).Error
+	err := initialize.DB.Exec("INSERT INTO " + approve.Kind + "_approve_user VALUES (" +
+		strconv.FormatUint(approve.RefID, 10) + "," + strconv.FormatUint(userID, 10) + ")").Error
 	if err != nil {
 		golog.Error(err)
-		common.Response(ctx, "喜欢失败", e.ERROR)
+		common.Response(ctx, "点赞失败", e.ERROR)
 		return
 	}
 
-	setCountToRedis(userID, like.RefID, KindIndex[like.Kind], actionLike, 1)
+	setCountToRedis(userID, approve.RefID, KindIndex[approve.Kind], actionApprove, 1)
 
 	common.Response(ctx, "成功", e.SUCCESS)
 }

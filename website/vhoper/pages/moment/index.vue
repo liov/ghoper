@@ -265,7 +265,7 @@ export default {
       this.loading = true
       const params = {
         ref_id: this.ref_id,
-        kind: 'Moment',
+        kind: 'moment',
         favorites_ids: this.favorites
       }
       const res = await this.$axios.$post('/api/collection', params)
@@ -289,7 +289,7 @@ export default {
       }
       const params = {
         ref_id: id,
-        kind: 'Moment'
+        kind: 'moment'
       }
       const res = await this.$axios.$post('/api/approve', params)
       if (res.code === 200) {
@@ -305,7 +305,7 @@ export default {
       }
       const params = {
         ref_id: id,
-        kind: 'Moment'
+        kind: 'moment'
       }
       const res = await this.$axios.$post('/api/like', params)
       if (res.code === 200) {
