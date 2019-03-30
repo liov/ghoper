@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/gob"
 	"github.com/gorilla/securecookie"
 	"github.com/kataras/iris/sessions"
 	"github.com/sirupsen/logrus"
@@ -12,7 +11,7 @@ import (
 func init() {
 	//github.com/gin-contrib/sessions 获取User必须gob注册
 	//必须encoding/gob编码解码进行注册
-	gob.Register(&User{})
+	//gob.Register(&User{})
 	// Log as JSON instead of the default ASCII formatter.
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
@@ -38,4 +37,6 @@ func init() {
 	})
 
 	//Sess.UseDatabase(initialize.BoltDB)
+
+	//Gsess = memstore.NewMemStore(hashKey, blockKey)
 }

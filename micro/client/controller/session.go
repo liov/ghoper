@@ -3,17 +3,13 @@ package controller
 import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/sessions"
-	"github.com/quasoft/memstore"
 )
 
 var Sess *sessions.Sessions
 
 //废的，所有东西存在cookie里，随便存个什么都太长了
 //var Gsess  = gss.NewCookieStore([]byte("the-big-and-secret-fash-key-here"))
-var Gsess = memstore.NewMemStore(
-	[]byte("authkey123"),
-	[]byte("enckey12341234567890123456789012"),
-)
+//var Gsess *memstore.MemStore
 
 func SessSet(ctx iris.Context) {
 	s := Sess.Start(ctx)
@@ -66,7 +62,7 @@ func SessUpdate(ctx iris.Context) {
 }
 
 //gob: type not registered for interface: controller.User
-func GsessSet(ctx iris.Context) {
+/*func GsessSet(ctx iris.Context) {
 	session, _ := Gsess.Get(ctx.Request(), "hopergsid")
 	// Set some session values.
 	session.Values["user"] = User{Name: "贾一饼"} //the value is too long
@@ -81,4 +77,4 @@ func GsessGet(ctx iris.Context) {
 	// Set some session values.
 	user := session.Values["user"].(*User)
 	ctx.Writef("Hello %s %d", user.Name, session.Values[1])
-}
+}*/

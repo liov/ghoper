@@ -26,7 +26,7 @@ func Session(app *iris.Application) {
 
 	app.Get("/update", controller.SessUpdate)
 
-	app.Get("/gset", controller.GsessSet)
+	//app.Get("/gset", controller.GsessSet)
 
-	app.Get("/gget", controller.GsessGet)
+	//app.Get("/gget", controller.GsessGet)
 }
