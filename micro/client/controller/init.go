@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"encoding/gob"
 	"github.com/gorilla/securecookie"
 	"github.com/kataras/iris/sessions"
 	"github.com/sirupsen/logrus"
-	"hoper/initialize"
 	"os"
 	"time"
 )
@@ -12,7 +12,7 @@ import (
 func init() {
 	//github.com/gin-contrib/sessions 获取User必须gob注册
 	//必须encoding/gob编码解码进行注册
-	//gob.Register(&User{})
+	gob.Register(&User{})
 	// Log as JSON instead of the default ASCII formatter.
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
@@ -30,12 +30,12 @@ func init() {
 	secureCookie = securecookie.New(hashKey, blockKey)
 
 	Sess = sessions.New(sessions.Config{
-		Cookie:       "hopersid",
-		Encode:       secureCookie.Encode,
-		Decode:       secureCookie.Decode,
+		Cookie: "hopersid",
+		//Encode:       secureCookie.Encode,
+		//Decode:       secureCookie.Decode,
 		Expires:      45 * time.Minute, // <=0 means unlimited life. Defaults to 0.
 		AllowReclaim: true,
 	})
 
-	Sess.UseDatabase(initialize.BoltDB)
+	//Sess.UseDatabase(initialize.BoltDB)
 }
