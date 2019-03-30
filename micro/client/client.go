@@ -22,6 +22,7 @@ import (
 
 func Client() {
 	defer initialize.DB.Close()
+	defer initialize.BoltDB.Close()
 	//crawler.M131()
 	//go crawler.MM131()
 

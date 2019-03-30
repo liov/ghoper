@@ -1,6 +1,7 @@
 module test
 
 require (
+	fyne.io/fyne v1.0.0 // indirect
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
 	github.com/Shopify/sarama v1.19.0 // indirect
 	github.com/Unknwon/com v0.0.0-20180617003950-da59b551951d
@@ -15,9 +16,12 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/fasthttp/websocket v1.4.0
 	github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb
+	github.com/go-gl/gl v0.0.0-20190320180904-bf2b1f2f34d7 // indirect
+	github.com/go-gl/glfw v0.0.0-20190217072633-93b30450e032 // indirect
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.1.0 // indirect
+	github.com/goki/freetype v0.0.0-20181231101311-fa8a33aabaff // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
@@ -47,6 +51,8 @@ require (
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.2.0
+	github.com/srwiley/oksvg v0.0.0-20190105194046-ccbc7673cdf3 // indirect
+	github.com/srwiley/rasterx v0.0.0-20181219215540-696f7edb7a7e // indirect
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/tidwall/gjson v1.1.3 // indirect
 	github.com/tidwall/match v1.0.0 // indirect

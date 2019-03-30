@@ -6,6 +6,8 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/kataras/golog"
+	"github.com/kataras/iris/sessions/sessiondb/boltdb"
 	"log"
 
 	"os"
@@ -16,6 +18,8 @@ import (
 
 // DB 数据库连接
 var DB *gorm.DB
+
+var BoltDB *boltdb.Database
 
 // RedisPool Redis连接池
 var RedisPool *redis.Pool
@@ -65,6 +69,14 @@ func initializeDB() {
 	//db.Callback().Create().Replace("gorm:save_after_associations", saveAfterAssociationsCallback)
 	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
 	DB = db
+}
+
+func initializeBoltDB() {
+	var err error
+	BoltDB, err = boltdb.New("./sessions.db", os.FileMode(0750))
+	if err != nil {
+		golog.Error(err)
+	}
 }
 
 func initializeRedis() {

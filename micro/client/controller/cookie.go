@@ -8,13 +8,7 @@ import (
 	"time"
 )
 
-var (
-	// AES仅支持16,24或32字节的密钥大小。
-	//您需要准确提供该密钥字节大小，或者从您键入的内容中获取密钥。
-	hashKey  = []byte("the-big-and-secret-fash-key-here")
-	blockKey = []byte("lot-secret-of-characters-big-too")
-	sc       = securecookie.New(hashKey, blockKey)
-)
+var secureCookie *securecookie.SecureCookie
 
 func SetCookie(c iris.Context, key, value string) {
 	c.SetCookie(&http.Cookie{
@@ -26,11 +20,11 @@ func SetCookie(c iris.Context, key, value string) {
 		MaxAge:   int(time.Duration(initialize.Config.Server.TokenMaxAge) * time.Second),
 		Secure:   false,
 		HttpOnly: true,
-	}, iris.CookieEncode(sc.Encode))
+	}, iris.CookieEncode(secureCookie.Encode))
 }
 
 func GetCookie(c iris.Context, name string) {
-	c.GetCookie(name, iris.CookieDecode(sc.Decode))
+	c.GetCookie(name, iris.CookieDecode(secureCookie.Decode))
 }
 
 func DeleteCookie(c iris.Context, key string) {

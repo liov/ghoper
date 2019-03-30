@@ -3,7 +3,8 @@ package initialize
 func init() {
 	Setup()
 	initializeDB()
-	initializeMongo()
+	initializeBoltDB()
 	initializeRedis()
+	initializeMongo()
 	CacheInit()
 }

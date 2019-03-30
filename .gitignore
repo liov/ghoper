@@ -89,3 +89,5 @@ dist
 sw.*
 
 upload
+
+*.db

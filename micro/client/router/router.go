@@ -85,6 +85,7 @@ func IrisRouter() *iris.Application {
 	Like(app)
 	MomentRouter(app)
 	Upload(app)
+	Session(app)
 
 	//试验性
 	other.GraphqlRouter(app)

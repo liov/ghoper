@@ -2,9 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"github.com/gorilla/securecookie"
 	"github.com/kataras/iris"
-	"github.com/kataras/iris/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/amazon"
 	"github.com/markbates/goth/providers/auth0"
@@ -51,26 +49,11 @@ import (
 	"github.com/markbates/goth/providers/yahoo"
 	"github.com/markbates/goth/providers/yammer"
 	"github.com/markbates/goth/providers/yandex"
+	"hoper/client/controller"
 	"os"
 )
 
-var sessionsManager *sessions.Sessions
-
-func init() {
-	// attach a session manager
-	cookieName := "mycustomsessionid"
-	// AES only supports key sizes of 16, 24 or 32 bytes.
-	// You either need to provide exactly that amount or you derive the key from what you type in.
-	hashKey := []byte("the-big-and-secret-fash-key-here")
-	blockKey := []byte("lot-secret-of-characters-big-too")
-	secureCookie := securecookie.New(hashKey, blockKey)
-
-	sessionsManager = sessions.New(sessions.Config{
-		Cookie: cookieName,
-		Encode: secureCookie.Encode,
-		Decode: secureCookie.Decode,
-	})
-}
+var sessionsManager = controller.Sess
 
 // These are some function helpers that you may use if you want
 
