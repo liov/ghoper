@@ -707,6 +707,39 @@ func SecretInfo(c iris.Context) {
 	}
 }
 
+// InfoDetail 返回用户详情信息(教育经历、职业经历等)，包含一些私密字段
+func InfoDetail(c iris.Context) {
+
+	userInter := c.Values().Get("user")
+	user := userInter.(model.User)
+
+	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
+		common.Response(c, "error")
+		return
+	}
+
+	if err := initialize.DB.Model(&user).Related(&user.EduExps).Error; err != nil {
+		common.Response(c, "error")
+		return
+	}
+
+	if err := initialize.DB.Model(&user).Related(&user.WorkExps).Error; err != nil {
+		common.Response(c, "error")
+		return
+	}
+
+	if user.Sex == model.UserSexFemale {
+		user.CoverURL = "https://www.golang123.com/upload/img/2017/09/13/d20f62c6-bd11-4739-b79b-48c9fcbce392.jpg"
+	} else {
+		user.CoverURL = "https://www.golang123.com/upload/img/2017/09/13/e672995e-7a39-4a05-9673-8802b1865c46.jpg"
+	}
+
+	common.Response(c,
+		iris.Map{
+			"user": user,
+		})
+}
+
 // AllList 查询用户列表，只有管理员才能调此接口
 func AllList(c iris.Context) {
 
@@ -819,6 +852,16 @@ func topN(c iris.Context, n int) {
 				"users": users,
 			})
 	}
+}
+
+// Top10 返回积分排名前10的用户
+func Top10(c iris.Context) {
+	topN(c, 10)
+}
+
+// Top100 返回积分排名前100的用户
+func Top100(c iris.Context) {
+	topN(c, 100)
 }
 
 // UploadAvatar 上传用户头像
