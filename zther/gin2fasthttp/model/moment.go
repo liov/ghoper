@@ -26,7 +26,7 @@ type Moment struct {
 	DescFlag       uint8           `gorm:"type:smallint;default:0" json:"desc_flag"`  //排序，置顶
 	Permission     uint8           `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Status         uint8           `gorm:"type:smallint;default:0" json:"status"`     //状态
-	ModifyTimes    uint            `gorm:"default:0" json:"modify_times"`             //修改次数
+	ModifyTimes    uint8           `gorm:"default:0" json:"modify_times"`             //修改次数
 	MomentHistorys []MomentHistory `json:"moment_historys"`
 }
 
@@ -48,7 +48,7 @@ type MomentHistory struct {
 	LoveCount    uint            `json:"love_count"`    //点赞
 	MomentID     uint            `json:"moment_id"`     //根结点
 	//ParentID     uint            `json:"parent_id"`                                          //父节点
-	ModifyTimes uint  `gorm:"type:smallint" json:"modify_times"`          //修改次数
+	ModifyTimes uint8 `gorm:"type:smallint" json:"modify_times"`          //修改次数
 	DeleteFlag  uint8 `gorm:"type:smallint;default:0" json:"delete_flag"` //是否删除
 	Status      uint8 `gorm:"type:smallint;default:0" json:"status"`      //状态
 }

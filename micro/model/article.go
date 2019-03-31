@@ -27,9 +27,9 @@ type Article struct {
 	Sequence      uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time `json:"updated_at"`
 	DeletedAt     *time.Time `sql:"index" json:"deleted_at"`
-	Status        uint64     `json:"status"`                        //状态
-	ModifyTimes   uint64     `gorm:"default:0" json:"modify_times"` //修改次数
-	ParentID      uint64     `json:"parent_id"`                     //父ID
+	Status        uint8      `json:"status"`                        //状态
+	ModifyTimes   uint8      `gorm:"default:0" json:"modify_times"` //修改次数
+	ParentID      uint64     `json:"parent_id"`                     //修改的根节点
 	LastUser      User       `json:"last_user"`
 	LastUserID    uint64     `json:"last_user_id"` //最后一个回复话题的人
 	LastCommentAt *time.Time `json:"last_comment_at"`
@@ -80,7 +80,7 @@ type ArticleHistory struct {
 	ImageUrl    string `json:"image_url"`                              //图片
 	ArticleID   uint64 `json:"article_id"`                             //根结点
 	ParentID    uint64 `json:"parent_id"`                              //父节点
-	ModifyTimes uint64 `json:"modify_times"`                           //修改次数
+	ModifyTimes uint8  `json:"modify_times"`                           //修改次数
 	DeleteFlag  uint8  `json:"delete_flag"`                            //是否删除
 	Status      uint8  `gorm:"type:smallint ;default:0" json:"status"` //状态
 }

@@ -27,7 +27,7 @@ type Diary struct {
 	Permission   uint8  `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence     uint8  `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	Status       uint8  `gorm:"type:smallint;default:0" json:"status"`     //状态
-	ModifyTimes  uint64 `gorm:"default:0" json:"modify_times"`             //修改次数
+	ModifyTimes  uint8  `gorm:"default:0" json:"modify_times"`             //修改次数
 	ParentID     uint64 `json:"parent_id"`                                 //父节点
 }
 
@@ -48,7 +48,7 @@ type DiaryHistory struct {
 	ActionCount
 	DiaryID     uint64 `json:"diary_id"`
 	ParentID    uint64 `json:"parent_id"`                                  //父节点
-	ModifyTimes uint64 `json:"modify_times"`                               //修改次数
+	ModifyTimes uint8  `json:"modify_times"`                               //修改次数
 	DeleteFlag  uint8  `gorm:"type:smallint;default:0" json:"delete_flag"` //是否删除
 	Status      uint8  `gorm:"type:smallint;default:0" json:"status"`      //状态
 }
@@ -73,7 +73,7 @@ type DiaryBook struct {
 	Permission   uint8  `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence     uint8  `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	Status       uint8  `gorm:"type:smallint;default:0" json:"status"`     //状态
-	ModifyTimes  uint64 `gorm:"default:0" json:"modify_times"`             //修改次数
+	ModifyTimes  uint8  `gorm:"default:0" json:"modify_times"`             //修改次数
 	ParentID     uint64 `json:"parent_id"`                                 //父节点
 }
 
@@ -91,7 +91,7 @@ type DiaryBookHistory struct {
 	ActionCount
 	DiaryBookID uint64 `json:"diary_book_id"`
 	ParentID    uint64 `json:"parent_id"`                                  //父节点
-	ModifyTimes uint64 `json:"modify_times"`                               //修改次数
+	ModifyTimes uint8  `json:"modify_times"`                               //修改次数
 	DeleteFlag  uint8  `gorm:"type:smallint;default:0" json:"delete_flag"` //是否删除
 	Status      uint8  `gorm:"type:smallint;default:0" json:"status"`      //状态
 }

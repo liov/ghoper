@@ -9,7 +9,6 @@ type Education struct {
 	Speciality string     `gorm:"type:varchar(100)" json:"speciality"` //专业
 	StartTime  time.Time  `json:"start_time"`
 	EndTime    time.Time  `json:"end_time"`
-	User       *User      `json:"user"`
 	UserID     uint64     `json:"user_id"`
 	CreatedAt  time.Time  `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
@@ -20,12 +19,12 @@ type Education struct {
 // Work 职业生涯
 type Work struct {
 	ID        uint64     `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time  `json:"created_at"`
-	StartTime time.Time  `json:"start_time"`
-	EndTime   time.Time  `json:"end_time"`
 	Company   string     `json:"company"` //公司或组织
 	Title     string     `json:"title"`   //职位
+	StartTime time.Time  `json:"start_time"`
+	EndTime   time.Time  `json:"end_time"`
 	UserID    uint64     `json:"user_id"`
+	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`

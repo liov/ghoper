@@ -35,8 +35,8 @@ type Article struct {
 	Sequence      int8       `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time `json:"updated_at"`
 	DeletedAt     *time.Time `sql:"index" json:"deleted_at"`
-	Status        uint64     `json:"status"`                        //状态
-	ModifyTimes   uint64     `gorm:"default:0" json:"modify_times"` //修改次数
+	Status        uint8      `json:"status"`                        //状态
+	ModifyTimes   uint8      `gorm:"default:0" json:"modify_times"` //修改次数
 	ParentID      uint64     `json:"parent_id"`                     //父ID
 	LastUser      User       `json:"last_user"`
 	LastUserID    uint64     `json:"last_user_id"` //最后一个回复话题的人
