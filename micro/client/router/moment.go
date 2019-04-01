@@ -11,9 +11,9 @@ func MomentRouter(app *iris.Application) {
 	momentRouter := app.Party("/api/moment")
 	{
 		//获取文章列表
-		momentRouter.Get("/", middleware.GetUser(), controller.GetMomentsV2)
+		momentRouter.Get("/", middleware.GetUserId, controller.GetMomentsV2)
 		//获取文章列表
-		momentRouter.Get("/{id:uint64}", middleware.GetUser(), controller.GetMomentV2)
+		momentRouter.Get("/{id:uint64}", middleware.GetUserId, controller.GetMomentV2)
 		//新建文章
 		momentRouter.Post("", middleware.GetUser(), controller.AddMoment)
 		//更新指定文章

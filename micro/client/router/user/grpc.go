@@ -29,17 +29,17 @@ func Signup(ctx iris.Context) {
 
 	var user protobuf.SignupReq
 	if err := ctx.ReadJSON(&user); err != nil {
-		common.Response(ctx, "参数错误")
+		common.Response(ctx, nil, "参数错误", e.ERROR)
 		return
 	}
 
 	rsp, err := Service.Signup(context.TODO(), &user)
 
 	if err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return
 	}
-	common.Response(ctx, rsp.GetUser(), rsp.GetMsg())
+	common.Response(ctx, rsp.GetUser(), rsp.GetMsg(), e.SUCCESS)
 }
 
 func Login(ctx iris.Context) {
@@ -47,17 +47,17 @@ func Login(ctx iris.Context) {
 	var loginReq protobuf.LoginReq
 
 	if err := ctx.ReadJSON(&loginReq); err != nil {
-		common.Response(ctx, "账号或密码错误")
+		common.Response(ctx, nil, "账号或密码错误", e.ERROR)
 		return
 	}
 
 	rsp, err := Service.Login(context.TODO(), &loginReq)
 
 	if err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return
 	}
-	common.Response(ctx, rsp.GetUser(), rsp.GetMsg())
+	common.Response(ctx, rsp.GetUser(), rsp.GetMsg(), e.SUCCESS)
 }
 
 func Logout(ctx iris.Context) {
@@ -68,10 +68,10 @@ func Logout(ctx iris.Context) {
 	rsp, err := Service.Logout(context.TODO(), &logoutReq)
 
 	if err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return
 	}
-	common.Response(ctx, rsp.GetMsg())
+	common.Response(ctx, nil, rsp.GetMsg(), e.SUCCESS)
 }
 
 func GetUser(ctx iris.Context) {
@@ -79,7 +79,7 @@ func GetUser(ctx iris.Context) {
 	getReq := protobuf.GetReq{ID: id}
 	user, err := Service.GetUser(context.TODO(), &getReq)
 	if err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return
 	}
 	common.Response(ctx, user, e.GetMsg(e.SUCCESS), e.SUCCESS)

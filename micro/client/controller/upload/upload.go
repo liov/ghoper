@@ -159,14 +159,14 @@ func Upload(ctx iris.Context) *crm.FileUploadInfo {
 		MD5Str := hex.EncodeToString(md5.Sum(nil))*/
 
 	if err != nil {
-		common.Response(ctx, "参数无效")
+		common.Response(ctx, nil, "参数无效", e.ERROR)
 		return nil
 	}
 	defer file.Close()
 
 	ext, err := GetExt(info)
 	if ext == "" || err != nil {
-		common.Response(ctx, "无效的图片类型")
+		common.Response(ctx, nil, "无效的图片类型", e.ERROR)
 		return nil
 	}
 
@@ -174,7 +174,7 @@ func Upload(ctx iris.Context) *crm.FileUploadInfo {
 
 	upInfo, err := SaveUploadedFile(info, dir, url)
 	if err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return nil
 	}
 
@@ -183,10 +183,10 @@ func Upload(ctx iris.Context) *crm.FileUploadInfo {
 	upInfo.Status = 1
 	upInfo.MD5 = md5
 	if err := initialize.DB.Create(upInfo).Error; err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return nil
 	}
-	common.Response(ctx, upInfo)
+	common.Response(ctx, upInfo, "", e.SUCCESS)
 	return upInfo
 }
 
@@ -214,12 +214,12 @@ func UploadMultiple(ctx iris.Context) {
 		upInfo, err := SaveUploadedFile(file[0], dir, url)
 		if err != nil {
 			failures++
-			common.Response(ctx, file[0].Filename+"上传失败")
+			common.Response(ctx, nil, file[0].Filename+"上传失败", e.ERROR)
 		} else {
 			upInfo.File.Size = uint64(file[0].Size)
 			upInfo.UploadUserID = userID
 			if err := initialize.DB.Create(&upInfo).Error; err != nil {
-				common.Response(ctx, err.Error())
+				common.Response(ctx, nil, err.Error(), e.ERROR)
 			}
 			urls = append(urls, upInfo.URL)
 		}
@@ -274,10 +274,10 @@ func MD5(ctx iris.Context) {
 		upI.UUID = uuid.NewV4().String()
 		upI.UploadAt = time.Now()
 		if err := initialize.DB.Create(&upI).Error; err != nil {
-			common.Response(ctx, err.Error())
+			common.Response(ctx, err, "", e.ERROR)
 		}
-		common.Response(ctx, &upI)
+		common.Response(ctx, &upI, "", e.SUCCESS)
 		return
 	}
-	common.Response(ctx, "不存在", e.ERROR)
+	common.Response(ctx, nil, "不存在", e.ERROR)
 }

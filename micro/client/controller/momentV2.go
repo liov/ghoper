@@ -28,7 +28,7 @@ import (
 
 func AddMoment(c iris.Context) {
 
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	//Limit这个函数的封装呢，费了点功夫，之前的返回值想到用err，不过在sendErr这出了点问题，决定返回值改用string，这样是不规范的
 	if limitErr := common.Limit(model.MomentMinuteLimit,
@@ -87,9 +87,9 @@ func AddMoment(c iris.Context) {
 			return
 		}*/
 	moment.Content = strings.TrimSpace(moment.Content)
-	var mood *ov.Mood
-	if mood = ExistMoodByName(moment.MoodName); mood != nil {
-		moment.Mood = ov.Mood{Name: moment.MoodName}
+
+	if mood := ExistMoodByName(moment.MoodName); mood != nil {
+		moment.Mood = *mood
 		setFlagCountToRedis(flagTag, moment.MoodName, 1)
 	}
 
@@ -110,7 +110,7 @@ func AddMoment(c iris.Context) {
 
 	//var moments []model.Moment
 	moment.User = user.User
-	moment.Mood = *mood
+
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 

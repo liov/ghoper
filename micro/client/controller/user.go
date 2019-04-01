@@ -340,9 +340,13 @@ func Login(c iris.Context) {
 
 		if err := UserToRedis(&User{
 			User: ov.User{
-				ID:     user.ID,
-				Name:   user.Name,
-				Status: user.Status,
+				ID:        user.ID,
+				Name:      user.Name,
+				Sex:       user.Sex,
+				Score:     user.Score,
+				Signature: user.Signature,
+				AvatarURL: user.AvatarURL,
+				Status:    user.Status,
 			},
 			Role: user.Role,
 		}); err != nil {
@@ -483,6 +487,11 @@ func GetUserSelf(c iris.Context) {
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
 
+func LoginFlag(c iris.Context) {
+	user := c.Values().Get("user").(*User)
+	common.Response(c, user)
+}
+
 func GetUser(c iris.Context) {
 	id := c.Params().GetUint64Default("id", 0)
 	var user ov.User
@@ -538,7 +547,7 @@ func UpdateInfo(c iris.Context) {
 		common.Response(c, "参数无效")
 		return
 	}
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	field := c.FormValue("field")
 	resData := make(map[string]interface{})
@@ -704,7 +713,7 @@ func InfoDetail(c iris.Context) {
 // AllList 查询用户列表，只有管理员才能调此接口
 func AllList(c iris.Context) {
 
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	allUserRole := []uint8{
 		model.UserRoleNormal,
@@ -833,7 +842,7 @@ func UploadAvatar(c iris.Context) {
 	}
 
 	avatarURL := data.URL
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	if err := initialize.DB.Model(&user).Update("avatar_url", avatarURL).Error; err != nil {
 		return
@@ -876,7 +885,7 @@ func AddCareer(c iris.Context) {
 		return
 	}
 
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	work.UserID = user.ID
 
@@ -922,7 +931,7 @@ func AddSchool(c iris.Context) {
 		return
 	}
 
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	edu.UserID = user.ID
 

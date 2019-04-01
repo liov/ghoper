@@ -185,7 +185,7 @@ func articleValidation(c iris.Context, article *model.Article) (err error) {
 // Create 创建文章
 func AddArticle(c iris.Context) {
 
-	user := c.Values().Get("user").(User)
+	user := c.Values().Get("user").(*User)
 
 	if limitErr := common.Limit(model.ArticleMinuteLimit,
 		model.ArticleMinuteLimitCount,

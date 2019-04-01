@@ -16,6 +16,7 @@ func UserRouter(app *iris.Application) {
 		userRouter.Post("/login", controller.Login)
 		userRouter.Get("/logout", middleware.Login, controller.Logout)
 		userRouter.Post("/active", controller.ActiveSendMail)
+		userRouter.Get("/get", middleware.GetUser(), controller.LoginFlag)
 		userRouter.Post("/rpc/login", user.Login)
 		userRouter.Get("/rpc/logout", user.Logout)
 		userRouter.Post("/rpc/signup", user.Signup)

@@ -39,7 +39,7 @@ func GetUser() iris.Handler {
 				Secure:   false,
 				HttpOnly: true,
 			})
-			common.Response(ctx, err.Error(), code)
+			common.Response(ctx, nil, err.Error(), code)
 			return
 		}
 		ctx.Values().Set("userID", user.ID)
@@ -69,7 +69,7 @@ func Login(ctx iris.Context) {
 			Secure:   false,
 			HttpOnly: true,
 		})
-		common.Response(ctx, err.Error(), code)
+		common.Response(ctx, nil, err.Error(), code)
 		return
 	}
 	ctx.Values().Set("userID", userID)

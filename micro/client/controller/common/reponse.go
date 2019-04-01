@@ -55,6 +55,18 @@ func Response(ctx iris.Context, res ...interface{}) {
 	}
 }
 
+/*func Response(ctx iris.Context,data interface{},msg string,code int){
+	num, err := ctx.JSON(iris.Map{
+		"code": code,
+		"msg":  msg,
+		"data": data,
+	})
+
+	if err != nil {
+		golog.Error(num, err)
+	}
+}*/
+
 func Res(c iris.Context, h iris.Map) {
 	num, err := c.JSON(h)
 	if err != nil {
