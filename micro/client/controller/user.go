@@ -166,7 +166,7 @@ func ActiveAccount(c iris.Context) {
 		return
 	}
 
-	initialize.DB.Create(&model.Favorites{Name: "默认收藏夹", UserID: user.ID, Status: 1, Count: 0})
+	initialize.DB.Create(&model.Favorites{Name: "默认收藏夹", UserID: user.ID, Status: 1, Count: 0, CreatedAt: time.Now()})
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -860,8 +860,7 @@ func AddCareer(c iris.Context) {
 		return
 	}
 
-	work.Company = utils.AvoidXSS(work.Company)
-	work.Company = strings.TrimSpace(work.Company)
+	work.Company = strings.TrimSpace(utils.AvoidXSS(work.Company))
 	work.Title = utils.AvoidXSS(work.Title)
 	work.Title = strings.TrimSpace(work.Title)
 
@@ -888,6 +887,7 @@ func AddCareer(c iris.Context) {
 	user := c.Values().Get("user").(*User)
 
 	work.UserID = user.ID
+	work.CreatedAt = time.Now()
 
 	if err := initialize.DB.Create(&work).Error; err != nil {
 		common.Response(c, "error")
@@ -906,8 +906,7 @@ func AddSchool(c iris.Context) {
 		return
 	}
 
-	edu.School = utils.AvoidXSS(edu.School)
-	edu.School = strings.TrimSpace(edu.School)
+	edu.School = strings.TrimSpace(utils.AvoidXSS(edu.School))
 	edu.Speciality = utils.AvoidXSS(edu.Speciality)
 	edu.Speciality = strings.TrimSpace(edu.Speciality)
 
@@ -934,6 +933,7 @@ func AddSchool(c iris.Context) {
 	user := c.Values().Get("user").(*User)
 
 	edu.UserID = user.ID
+	edu.CreatedAt = time.Now()
 
 	if err := initialize.DB.Create(&edu).Error; err != nil {
 		common.Response(c, "error")
@@ -1018,7 +1018,7 @@ func UserFromRedis(userID uint64) (*User, error) {
 func UserToRedis(user *User) error {
 	UserString, err := utils.Json.MarshalToString(user)
 	if err != nil {
-		return errors.New("error")
+		return err
 	}
 	loginUserKey := model.LoginUser + strconv.FormatUint(user.ID, 10)
 
@@ -1026,6 +1026,22 @@ func UserToRedis(user *User) error {
 	defer conn.Close()
 	conn.Send("SELECT", 0)
 	if _, redisErr := conn.Do("SET", loginUserKey, UserString, "EX", initialize.Config.Server.TokenMaxAge); redisErr != nil {
+		return errors.New("error")
+	}
+	return nil
+}
+
+func EditUserRedis(user *User) error {
+	UserString, err := utils.Json.MarshalToString(user)
+	if err != nil {
+		return err
+	}
+	loginUserKey := model.LoginUser + strconv.FormatUint(user.ID, 10)
+
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	conn.Send("SELECT", 0)
+	if _, redisErr := conn.Do("SET", loginUserKey, UserString); redisErr != nil {
 		return errors.New("error")
 	}
 	return nil

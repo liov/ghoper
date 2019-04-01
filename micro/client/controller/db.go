@@ -5,6 +5,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/crm"
+	"time"
 )
 
 func DBInit(c iris.Context) {
@@ -27,7 +28,7 @@ $$ LANGUAGE plpgsql`)
 		&model.DiaryBookComment{}, &model.MomentComment{}, &crm.FileUploadInfo{}, &model.DiaryComment{},
 		&model.Moment{}, &model.Mood{}, &crm.DiaryBookHistory{}, &crm.DiaryHistory{}, &crm.ArticleHistory{},
 		&crm.MomentHistory{})
-	initialize.DB.Create(&model.Category{Name: "未分类"})
+	initialize.DB.Create(&model.Category{Name: "未分类", CreatedAt: time.Now()})
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 	RedisConn.Do("flushall")

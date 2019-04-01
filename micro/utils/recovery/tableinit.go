@@ -22,8 +22,8 @@ func main() {
 		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(
 			&model.Tag{}, &model.Moment{},&model.Mood{},&model.MomentHistory{})*/
 
-	initialize.DB.DropTable(&model.User{})
-	initialize.DB.CreateTable(&po.User{})
+	//initialize.DB.DropTable(&model.User{})
+
 	/*	initialize.DB.Exec(`CREATE OR REPLACE FUNCTION del_tabs(username IN VARCHAR) RETURNS void AS $$
 	DECLARE
 	statements CURSOR FOR

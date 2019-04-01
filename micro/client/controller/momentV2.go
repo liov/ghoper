@@ -39,7 +39,7 @@ func AddMoment(c iris.Context) {
 		return
 	}
 
-	var moment ov.Moment
+	var moment model.Moment
 
 	if err := c.ReadJSON(&moment); err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -53,19 +53,6 @@ func AddMoment(c iris.Context) {
 		common.Response(c, "文章内容不能小于20个字")
 		return
 	}
-	/*	moodName := moment.MoodName
-
-		var mood model.Mood
-
-		moodErr :=initialize.DB.Where("name = ?", moodName).Find(&mood).Error
-
-		if moodErr != nil{
-			mood.Name = moodName
-			initialize.DB.Create(&mood)
-			moment.Mood = mood
-		} else {
-			moment.Mood = mood
-		}*/
 
 	nowTime := time.Now()
 	moment.CreatedAt = nowTime
@@ -76,16 +63,15 @@ func AddMoment(c iris.Context) {
 	}
 	moment.UserID = user.ID
 	moment.BrowseCount = 1
-	/*	moment.Status = model.ArticleVerifying
-		moment.ModifyTimes = 0
-		moment.ParentID = 0 */
-	/*	user.Score = user.Score + model.ArticleScore
-		user.ArticleCount = user.ArticleCount + 1
+	moment.Status = model.ArticleVerifying
+	moment.ModifyTimes = 0
+	moment.ParentID = 0
+	user.Score = user.Score + model.ArticleScore
+	user.ArticleCount = user.ArticleCount + 1
 
-		if model.UserToRedis(user) != nil {
-			common.SendErr(c,"error")
-			return
-		}*/
+	if err := EditUserRedis(user); err != nil {
+		golog.Error(err)
+	}
 	moment.Content = strings.TrimSpace(moment.Content)
 
 	if mood := ExistMoodByName(moment.MoodName); mood != nil {
@@ -188,7 +174,7 @@ func GetMomentsV2(c iris.Context) {
 
 }
 
-func validationMoment(c iris.Context, moment *ov.Moment) (err error) {
+func validationMoment(c iris.Context, moment *model.Moment) (err error) {
 
 	err = &e.ValidtionError{Msg: "参数无效"}
 

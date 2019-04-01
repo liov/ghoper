@@ -88,10 +88,14 @@
             <a-tooltip slot="datetime">
               <span>{{ $s2date(item.created_at).fromNow() }}</span>
             </a-tooltip>
-            <nuxt-link slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
+            <a-tooltip v-if="item.mood.name!==''" slot="datetime">
+              <a-divider type="vertical" />
+              <span>心情：{{ item.mood.name }}</span>
+            </a-tooltip>
+            <nuxt-link v-if="item.user.id===user.id" slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
               <a-divider type="vertical" />
               <a-icon type="edit" />
-              <span v-if="item.user.id===user.id">编辑</span>
+              <span>编辑</span>
             </nuxt-link>
           </a-comment>
         </a-list-item>

@@ -244,6 +244,7 @@ func AddLike(ctx iris.Context) {
 	}
 
 	like.Status = 1
+	like.CreatedAt = time.Now()
 	err := initialize.DB.Create(&like).Error
 	if err != nil {
 		golog.Error(err)
@@ -361,7 +362,7 @@ func AddCollection(ctx iris.Context) {
 
 	var err error
 	for _, v := range fc.FavoritesIDs {
-		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, UserID: userID, FavoritesID: v, Status: 1}).Error
+		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, UserID: userID, FavoritesID: v, Status: 1, CreatedAt: time.Now()}).Error
 	}
 	if err != nil {
 		golog.Error(err)
@@ -400,6 +401,7 @@ func AddFavorite(ctx iris.Context) {
 		common.Response(ctx, "收藏夹已存在")
 		return
 	}
+	f.CreatedAt = time.Now()
 	initialize.DB.Create(&f)
 	common.Response(ctx, f, "添加成功", e.SUCCESS)
 }

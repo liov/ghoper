@@ -10,6 +10,7 @@ import (
 	"hoper/model"
 	"hoper/model/ov"
 	"strconv"
+	"time"
 )
 
 func GetTags(c iris.Context) {
@@ -43,7 +44,7 @@ func ExistTagByName(tag *ov.Tag, userID uint64) bool {
 	if nTag.Count > 0 {
 		return true
 	} else {
-		newTag := model.Tag{Name: tag.Name, UserID: userID}
+		newTag := model.Tag{Name: tag.Name, UserID: userID, CreatedAt: time.Now()}
 		initialize.DB.Create(&newTag)
 	}
 	return true
@@ -53,7 +54,7 @@ func CreatCategory(category *ov.Category, userID uint64) uint64 {
 	if category.Name == "" {
 		return 0
 	}
-	newCategory := model.Category{Name: category.Name, Count: 1, UserID: userID}
+	newCategory := model.Category{Name: category.Name, Count: 1, UserID: userID, CreatedAt: time.Now()}
 	initialize.DB.Create(&newCategory)
 	return newCategory.ID
 }
@@ -62,23 +63,23 @@ func CreatSerial(title *string, userID uint64) uint64 {
 	if *title == "" {
 		return 0
 	}
-	var newCategory model.Serial
-	initialize.DB.Select("title,count").Where("title = ?", title).First(&newCategory)
-	if newCategory.Title != "" {
-		initialize.DB.Model(&newCategory).UpdateColumn("count", newCategory.Count+1)
+	var newSerial model.Serial
+	initialize.DB.Select("title,count").Where("title = ?", title).First(&newSerial)
+	if newSerial.Title != "" {
+		initialize.DB.Model(&newSerial).UpdateColumn("count", newSerial.Count+1)
 	} else {
-		newCategory = model.Serial{Title: *title, Count: 1, UserID: userID}
-		initialize.DB.Create(&newCategory)
+		newSerial = model.Serial{Title: *title, Count: 1, UserID: userID, CreatedAt: time.Now()}
+		initialize.DB.Create(&newSerial)
 	}
 
-	return newCategory.ID
+	return newSerial.ID
 }
 
 func ExistMoodByName(name string) *ov.Mood {
 	if name == "" {
 		return nil
 	}
-	newMood := model.Mood{Name: name, Count: 1}
+	newMood := model.Mood{Name: name, Count: 1, CreatedAt: time.Now()}
 	initialize.DB.Create(&newMood)
 	return &ov.Mood{Name: newMood.Name, Description: newMood.Description, ExpressionURL: newMood.ExpressionURL}
 }
@@ -88,8 +89,9 @@ func AddTag(c iris.Context) bool {
 	name := c.URLParam("name")
 	userID := c.Values().Get("userID").(uint64)
 	initialize.DB.Create(&model.Tag{
-		Name:   name,
-		UserID: userID,
+		Name:      name,
+		UserID:    userID,
+		CreatedAt: time.Now(),
 	})
 
 	return true

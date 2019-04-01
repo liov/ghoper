@@ -326,11 +326,9 @@ func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 		return nil, err
 	}
 
-	nowTime := time.Now()
-
 	momentHistory := crm.MomentHistory{
 		//EverCreatedAt : moment.CreatedAt,
-		CreatedAt:   nowTime,
+		CreatedAt:   time.Now(),
 		MomentID:    moment.ID,
 		ModifyTimes: moment.ModifyTimes + 1,
 		DeleteFlag:  isDel,
@@ -376,10 +374,6 @@ func EditMoment(c iris.Context) {
 	if newMoment.MoodName != "" {
 		if mood := ExistMoodByName(newMoment.MoodName); mood != nil {
 			setFlagCountToRedis(flagMood, newMoment.MoodName, 1)
-			setFlagCountToRedis(flagMood, moment.MoodName, -1)
-		} else {
-			newMood := model.Mood{CreatedAt: nowTime, Name: newMoment.MoodName, Count: 1}
-			initialize.DB.Create(&newMood)
 		}
 	}
 
@@ -399,9 +393,6 @@ func EditMoment(c iris.Context) {
 			if !strings.Contains(tagString, v.Name) {
 				if ExistTagByName(&v, moment.UserID) {
 					setFlagCountToRedis(flagTag, v.Name, 1)
-				} else {
-					newTag := model.Tag{CreatedAt: nowTime, Name: v.Name, Count: 1}
-					initialize.DB.Create(&newTag)
 				}
 			}
 			momentTag := model.MomentTag{MomentID: moment.ID, TagName: v.Name}

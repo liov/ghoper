@@ -13,6 +13,7 @@ import (
 	"hoper/utils/logging"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -248,8 +249,8 @@ func AddArticle(c iris.Context) {
 	}
 
 	if serialID := CreatSerial(&article.SerialTitle, user.ID); serialID > 0 {
-		articleCategory := model.ArticleSerial{ArticleID: article.ID, SerialID: serialID}
-		initialize.DB.Create(&articleCategory)
+		articleSerial := model.ArticleSerial{ArticleID: article.ID, SerialID: serialID}
+		initialize.DB.Create(&articleSerial)
 
 	}
 
@@ -283,6 +284,7 @@ func historyArticle(c iris.Context, isDel uint8) (*crm.ArticleHistory, *model.Ar
 
 	articleHistory := crm.ArticleHistory{
 		Title:       article.Title,
+		CreatedAt:   time.Now(),
 		ParentID:    article.ParentID,
 		ArticleID:   article.ID,
 		ModifyTimes: article.ModifyTimes + 1,
