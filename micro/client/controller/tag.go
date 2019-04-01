@@ -8,7 +8,7 @@ import (
 	"hoper/client/controller/common"
 	"hoper/initialize"
 	"hoper/model"
-	"hoper/model/vo"
+	"hoper/model/ov"
 	"strconv"
 )
 
@@ -17,7 +17,7 @@ func GetTags(c iris.Context) {
 	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 
-	var tags []vo.Tag
+	var tags []ov.Tag
 
 	err := initialize.DB.Select("name").
 		Order("count desc").Limit(pageSize).Offset(pageNo).Find(&tags).Error
@@ -34,30 +34,53 @@ func GetTagTotal(maps interface{}) (count int) {
 	return
 }
 
-func ExistTagByName(name string) *vo.Tag {
-	if name == "" {
-		return nil
+func ExistTagByName(tag *ov.Tag, userID uint64) bool {
+	if tag.Name == "" {
+		return false
 	}
-	var tag vo.Tag
-	initialize.DB.Select("name,count").Where("name = ?", name).First(&tag)
-	if tag.Name != "" {
-		return &tag
+	var nTag model.Tag
+	initialize.DB.Select("name,count").Where("name = ?", tag.Name).First(&nTag)
+	if nTag.Count > 0 {
+		return true
+	} else {
+		newTag := model.Tag{Name: tag.Name, UserID: userID}
+		initialize.DB.Create(&newTag)
 	}
-
-	return nil
+	return true
 }
 
-func ExistMoodByName(name string) *vo.Mood {
+func CreatCategory(category *ov.Category, userID uint64) uint64 {
+	if category.Name == "" {
+		return 0
+	}
+	newCategory := model.Category{Name: category.Name, Count: 1, UserID: userID}
+	initialize.DB.Create(&newCategory)
+	return newCategory.ID
+}
+
+func CreatSerial(title *string, userID uint64) uint64 {
+	if *title == "" {
+		return 0
+	}
+	var newCategory model.Serial
+	initialize.DB.Select("title,count").Where("title = ?", title).First(&newCategory)
+	if newCategory.Title != "" {
+		initialize.DB.Model(&newCategory).UpdateColumn("count", newCategory.Count+1)
+	} else {
+		newCategory = model.Serial{Title: *title, Count: 1, UserID: userID}
+		initialize.DB.Create(&newCategory)
+	}
+
+	return newCategory.ID
+}
+
+func ExistMoodByName(name string) *ov.Mood {
 	if name == "" {
 		return nil
 	}
-	var mood vo.Mood
-	initialize.DB.Select("name,count").Where("name = ?", name).First(&mood)
-	if mood.Name != "" {
-		return &mood
-	}
-
-	return nil
+	newMood := model.Mood{Name: name, Count: 1}
+	initialize.DB.Create(&newMood)
+	return &ov.Mood{Name: newMood.Name, Description: newMood.Description, ExpressionURL: newMood.ExpressionURL}
 }
 
 func AddTag(c iris.Context) bool {

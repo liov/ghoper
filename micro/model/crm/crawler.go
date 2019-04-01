@@ -1,4 +1,4 @@
-package model
+package crm
 
 import "time"
 
@@ -10,9 +10,9 @@ type CrawlerArticle struct {
 	Title     string     `gorm:"type:varchar(100)" json:"title"`
 	Content   string     `gorm:"type:text" json:"content"`
 	From      int        `gorm:"type:varchar(100)" json:"from"`
-	UpdatedAt *time.Time `json:"-"`
-	DeletedAt *time.Time `sql:"index" json:"-"`
-	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 const (

@@ -6,43 +6,15 @@ import (
 	"hoper/client/controller/common"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/crm"
 	"hoper/model/e"
-	"hoper/model/vo"
+	"hoper/model/ov"
 	"hoper/utils"
 	"hoper/utils/logging"
 	"strconv"
 	"strings"
-	"time"
 	"unicode/utf8"
 )
-
-type Article struct {
-	ID          uint64           `gorm:"primary_key" json:"id"`
-	CreatedAt   time.Time        `json:"created_at"`
-	Title       string           `gorm:"type:varchar(100)" json:"title"`
-	Intro       string           `gorm:"type:varchar(100)" json:"intro"`
-	Abstract    string           `gorm:"type:varchar(200)" json:"abstract"`
-	Content     string           `gorm:"type:text" json:"content"`
-	HTMLContent string           `gorm:"type:text" json:"html_content"`
-	ContentType int              `json:"content_type"`                                 //文本类型
-	ImageUrl    string           `gorm:"type:varchar(100)" json:"image_url"`           //封面
-	Categories  []Category       `gorm:"many2many:article_category" json:"categories"` //分类
-	Tags        []vo.Tag         `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
-	User        User             `json:"user"`
-	UserID      uint64           `json:"user_id"`
-	Comments    []ArticleComment `json:"comments"` //评论
-	vo.ActionCount
-	Permission    int8       `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	Sequence      int8       `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
-	UpdatedAt     *time.Time `json:"updated_at"`
-	DeletedAt     *time.Time `sql:"index" json:"deleted_at"`
-	Status        uint8      `json:"status"`                        //状态
-	ModifyTimes   uint8      `gorm:"default:0" json:"modify_times"` //修改次数
-	ParentID      uint64     `json:"parent_id"`                     //父ID
-	LastUser      User       `json:"last_user"`
-	LastUserID    uint64     `json:"last_user_id"` //最后一个回复话题的人
-	LastCommentAt *time.Time `json:"last_comment_at"`
-}
 
 func GetArticle(c iris.Context) {
 
@@ -54,8 +26,8 @@ func GetArticle(c iris.Context) {
 		common.Response(c, "无效的文章id")
 		return
 	}
-	var tags []model.Tag
-	var categories []model.Category
+	var tags []ov.Tag
+	var categories []ov.Category
 	initialize.DB.Model(&article).Related(&tags, "Tags").Related(&categories, "Categories")
 	article.Tags = tags
 	article.Categories = categories
@@ -132,8 +104,8 @@ func GetArticles(c iris.Context) {
 		return
 	}
 	for i, a := range articles {
-		var tags []model.Tag
-		var categories []model.Category
+		var tags []ov.Tag
+		var categories []ov.Category
 		initialize.DB.Model(&a).Related(&tags, "Tags").Related(&categories, "Categories")
 		articles[i].Tags = tags
 		articles[i].Categories = categories
@@ -153,7 +125,7 @@ func GetArticles(c iris.Context) {
 	})
 }
 
-func articleValidation(c iris.Context, article *Article) (err error) {
+func articleValidation(c iris.Context, article *model.Article) (err error) {
 
 	err = &e.ValidtionError{Msg: "参数无效"}
 
@@ -223,7 +195,7 @@ func AddArticle(c iris.Context) {
 		return
 	}
 
-	var article Article
+	var article model.Article
 
 	if err := c.ReadJSON(&article); err != nil {
 		common.Response(c, "参数无效", e.ERROR)
@@ -260,21 +232,25 @@ func AddArticle(c iris.Context) {
 	}
 
 	saveErr := initialize.DB.Set("gorm:association_autocreate", false).Create(&article).Error
-	nowTime := time.Now()
+
 	for _, v := range article.Tags {
-		if tag := ExistTagByName(v.Name); tag != nil {
-			initialize.DB.Model(tag).Update("count", tag.Count+1)
-		} else {
-			newTag := vo.Tag{CreatedAt: nowTime, Name: v.Name, Count: 1, UserID: user.ID}
-			initialize.DB.Create(&newTag)
+		if ExistTagByName(&v, user.ID) {
+			setFlagCountToRedis(flagTag, v.Name, 1)
 		}
-		momentTag := model.ArticleTag{ArticleID: article.ID, TagName: v.Name}
-		initialize.DB.Create(&momentTag)
+		articleTag := model.ArticleTag{ArticleID: article.ID, TagName: v.Name}
+		initialize.DB.Create(&articleTag)
 	}
 
 	for _, v := range article.Categories {
 		articleCategory := model.ArticleCategory{ArticleID: article.ID, CategoryID: v.ID}
 		initialize.DB.Create(&articleCategory)
+		setFlagCountToRedis(flagCategory, v.Name, 1)
+	}
+
+	if serialID := CreatSerial(&article.SerialTitle, user.ID); serialID > 0 {
+		articleCategory := model.ArticleSerial{ArticleID: article.ID, SerialID: serialID}
+		initialize.DB.Create(&articleCategory)
+
 	}
 
 	if saveErr == nil {
@@ -294,7 +270,7 @@ func AddArticle(c iris.Context) {
 	common.Response(c, "保存成功", e.SUCCESS)
 }
 
-func historyArticle(c iris.Context, isDel uint8) (model.ArticleHistory, model.Article, error) {
+func historyArticle(c iris.Context, isDel uint8) (*crm.ArticleHistory, *model.Article, error) {
 
 	var article model.Article
 	//获取文章ID
@@ -302,10 +278,10 @@ func historyArticle(c iris.Context, isDel uint8) (model.ArticleHistory, model.Ar
 
 	if err := initialize.DB.First(&article, id).Error; err != nil {
 		common.Response(c, "无效的版块id")
-		return model.ArticleHistory{}, model.Article{}, err
+		return nil, nil, err
 	}
 
-	articleHistory := model.ArticleHistory{
+	articleHistory := crm.ArticleHistory{
 		Title:       article.Title,
 		ParentID:    article.ParentID,
 		ArticleID:   article.ID,
@@ -327,7 +303,7 @@ func historyArticle(c iris.Context, isDel uint8) (model.ArticleHistory, model.Ar
 		logging.Info("保存历史失败")
 	}
 
-	return articleHistory, article, nil
+	return &articleHistory, &article, nil
 }
 
 //修改文章

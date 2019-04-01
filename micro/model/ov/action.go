@@ -1,4 +1,4 @@
-package vo
+package ov
 
 type Like struct {
 	ID     uint64 `gorm:"primary_key" json:"id"`
@@ -24,7 +24,10 @@ type Favorites struct {
 	FollowUsersCount uint64 `json:"follow_users_count"`
 }
 
-type FavoritesOwn struct {
-	FollowUsers []User       `json:"follow_users"`
-	Collections []Collection `gorm:"many2many:collection_favorites" json:"collections"`
+type ActionCount struct {
+	CollectCount int64 `gorm:"default:0" json:"collect_count"` //收藏
+	LikeCount    int64 `gorm:"default:0" json:"like_count"`    //喜欢
+	ApproveCount int64 `gorm:"default:0" json:"approve_count"` //点赞
+	CommentCount int64 `gorm:"default:0" json:"comment_count"` //评论
+	BrowseCount  int64 `gorm:"default:0" json:"browse_count"`  //浏览
 }

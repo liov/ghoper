@@ -9,6 +9,7 @@ import (
 	"hoper/client/controller"
 	"hoper/client/controller/common"
 	"hoper/initialize"
+	"hoper/model/ov"
 	"hoper/utils"
 	"io/ioutil"
 	"net/http"
@@ -42,13 +43,13 @@ type Message struct {
 }
 
 type SendMessage struct {
-	ID            uint            `gorm:"primary_key" json:"id"`
-	CreatedAt     time.Time       `json:"created_at"`
-	SendUser      controller.User `gorm:"ForeignKey:SenderUserID" json:"send_user"`
-	RecipientUser controller.User `gorm:"ForeignKey:RecipientUserID" json:"recipient_user"`
-	Content       string          `json:"content"`
-	Remarks       string          `json:"remarks"`
-	Device        string          `json:"device"`
+	ID            uint      `gorm:"primary_key" json:"id"`
+	CreatedAt     time.Time `json:"created_at"`
+	SendUser      ov.User   `gorm:"ForeignKey:SenderUserID" json:"send_user"`
+	RecipientUser ov.User   `gorm:"ForeignKey:RecipientUserID" json:"recipient_user"`
+	Content       string    `json:"content"`
+	Remarks       string    `json:"remarks"`
+	Device        string    `json:"device"`
 }
 
 type ReceiveMessage struct {
@@ -126,7 +127,7 @@ func (c *Client) read() {
 		sendMessage := SendMessage{
 			ID:        receiveMessage.ID,
 			CreatedAt: receiveMessage.CreatedAt,
-			SendUser:  c.context.Values().Get("user").(controller.User),
+			SendUser:  c.context.Values().Get("user").(controller.User).User,
 			//RecipientUser:nil,
 			Content: receiveMessage.Content,
 			Remarks: receiveMessage.Remarks,

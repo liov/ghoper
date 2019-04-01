@@ -17,8 +17,8 @@ type ArticleComment struct {
 	ParentID     uint64    `json:"parent_id"`  //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
-	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
 }
 
 type MomentComment struct {
@@ -33,8 +33,8 @@ type MomentComment struct {
 	ParentID     uint64    `json:"parent_id"` //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
-	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
 }
 
 type DiaryComment struct {
@@ -49,8 +49,8 @@ type DiaryComment struct {
 	ParentID     uint64    `json:"parent_id"` //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
-	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
 }
 
 type DiaryBookComment struct {
@@ -65,8 +65,8 @@ type DiaryBookComment struct {
 	ParentID     uint64    `json:"parent_id"`     //直接父评论的ID
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
-	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
-	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
 }
 
 const (

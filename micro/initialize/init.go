@@ -6,5 +6,5 @@ func init() {
 	initializeBoltDB()
 	initializeRedis()
 	initializeMongo()
-	CacheInit()
+	//CacheInit()
 }

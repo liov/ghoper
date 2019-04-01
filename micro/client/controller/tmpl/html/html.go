@@ -2,8 +2,8 @@ package html
 
 import (
 	"github.com/kataras/iris"
-	"hoper/client/controller"
 	"hoper/initialize"
+	"hoper/model/ov"
 	"time"
 )
 
@@ -28,7 +28,7 @@ func Auth(ctx iris.Context) {
 }
 
 func Values(ctx iris.Context) {
-	user := controller.User{Name: ctx.URLParam("name")}
+	user := ov.User{Name: ctx.URLParam("name")}
 	ctx.Values().Set("a", user)
 
 	initialize.Cache.Set(ctx.URLParam("key"), user)

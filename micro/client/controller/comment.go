@@ -80,7 +80,7 @@ func AddComment(c iris.Context) {
 		var comment MomentComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
-		comment.UserID = user.ID
+		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}
@@ -88,7 +88,7 @@ func AddComment(c iris.Context) {
 		var comment DiaryComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
-		comment.UserID = user.ID
+		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}
@@ -96,7 +96,7 @@ func AddComment(c iris.Context) {
 		var comment DiaryBookComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
-		comment.UserID = user.ID
+		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}

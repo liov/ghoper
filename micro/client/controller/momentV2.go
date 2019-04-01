@@ -11,7 +11,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
-	"hoper/model/vo"
+	"hoper/model/ov"
 	"hoper/utils"
 	"strconv"
 	"strings"
@@ -28,7 +28,7 @@ import (
 
 func AddMoment(c iris.Context) {
 
-	user := c.Values().Get("user").(vo.User)
+	user := c.Values().Get("user").(User)
 
 	//Limit这个函数的封装呢，费了点功夫，之前的返回值想到用err，不过在sendErr这出了点问题，决定返回值改用string，这样是不规范的
 	if limitErr := common.Limit(model.MomentMinuteLimit,
@@ -39,7 +39,7 @@ func AddMoment(c iris.Context) {
 		return
 	}
 
-	var moment vo.Moment
+	var moment ov.Moment
 
 	if err := c.ReadJSON(&moment); err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -87,24 +87,17 @@ func AddMoment(c iris.Context) {
 			return
 		}*/
 	moment.Content = strings.TrimSpace(moment.Content)
-	var mood *vo.Mood
+	var mood *ov.Mood
 	if mood = ExistMoodByName(moment.MoodName); mood != nil {
+		moment.Mood = ov.Mood{Name: moment.MoodName}
 		setFlagCountToRedis(flagTag, moment.MoodName, 1)
-	} else if mood.Name != "" {
-		newMood := model.Mood{CreatedAt: nowTime, Name: moment.MoodName, Count: 1}
-		initialize.DB.Create(&newMood)
-		moment.Mood = vo.Mood{Name: newMood.Name, Description: newMood.Description, ExpressionURL: newMood.ExpressionURL}
 	}
 
 	saveErr := initialize.DB.Create(&moment).Error
 
 	for _, v := range moment.Tags {
-		var tag *vo.Tag
-		if tag = ExistTagByName(v.Name); tag != nil {
+		if ExistTagByName(&v, user.ID) {
 			setFlagCountToRedis(flagTag, v.Name, 1)
-		} else if tag.Name != "" {
-			newTag := model.Tag{CreatedAt: nowTime, Name: v.Name, Count: 1}
-			initialize.DB.Create(&newTag)
 		}
 		momentTag := model.MomentTag{MomentID: moment.ID, TagName: v.Name}
 		initialize.DB.Create(&momentTag)
@@ -116,7 +109,7 @@ func AddMoment(c iris.Context) {
 	}
 
 	//var moments []model.Moment
-	moment.User = user
+	moment.User = user.User
 	moment.Mood = *mood
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
@@ -153,7 +146,7 @@ func GetMomentsV2(c iris.Context) {
 	userID := c.Values().Get("userID").(uint64)
 	key := cachekey.Moments + "_V2"
 
-	var moments []vo.Moment
+	var moments []ov.Moment
 	var userAction *UserAction
 	if userID > 0 {
 		userAction = getRedisAction(strconv.FormatUint(userID, 10), kindMoment)
@@ -175,7 +168,7 @@ func GetMomentsV2(c iris.Context) {
 	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
 		Order("sequence desc,id desc").Limit(pageSize).
 		Offset(pageNo * pageSize).Find(&moments).Count(&count).Error
-	err = initialize.DB.Model(vo.Moment{}).Where("sequence = ?", 9).Count(&topCount).Error
+	err = initialize.DB.Model(ov.Moment{}).Where("sequence = ?", 9).Count(&topCount).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
@@ -195,7 +188,7 @@ func GetMomentsV2(c iris.Context) {
 
 }
 
-func validationMoment(c iris.Context, moment *vo.Moment) (err error) {
+func validationMoment(c iris.Context, moment *ov.Moment) (err error) {
 
 	err = &e.ValidtionError{Msg: "参数无效"}
 
@@ -218,10 +211,10 @@ func validationMoment(c iris.Context, moment *vo.Moment) (err error) {
 	return nil
 }
 
-func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]vo.Moment, int64, int64) {
+func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]ov.Moment, int64, int64) {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
-	var moments []vo.Moment
+	var moments []ov.Moment
 	conn.Send("SELECT", kindMoment)
 	if exist, err := redis.Bool(conn.Do("EXISTS", key)); !exist || err != nil {
 		return nil, 0, 0
@@ -230,7 +223,7 @@ func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]vo.Moment, int64
 
 	data, _ := redis.Strings(conn.Do("LRANGE", key, start, start+PageSize-1))
 	for _, mv := range data {
-		var moment vo.Moment
+		var moment ov.Moment
 		utils.Json.UnmarshalFromString(mv, &moment)
 		conn.Send("HINCRBY", strings.Join([]string{IndexKind[kindMoment], strconv.FormatUint(moment.ID, 10), "Action", "Count"}, "_"), IndexAction[actionBrowse], 1)
 		actionCount := getActionCount(moment.ID, kindMoment)
@@ -247,7 +240,7 @@ func getRedisMomentsV2(key string, pageNo int, PageSize int) ([]vo.Moment, int64
 	return moments, count, topCount
 }
 
-func setRedisMomentsV2(key string, moments []vo.Moment, count int64, topCount int64) error {
+func setRedisMomentsV2(key string, moments []ov.Moment, count int64, topCount int64) error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 	conn.Send("SELECT", kindMoment)
@@ -283,7 +276,7 @@ func GetMomentV2(c iris.Context) {
 	}
 
 	id, err := c.Params().GetUint64("id")
-	var moment vo.Moment
+	var moment ov.Moment
 	err = initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count,permission").
@@ -298,7 +291,7 @@ func GetMomentV2(c iris.Context) {
 		"code":        e.SUCCESS})
 }
 
-func getRedisMomentV2(index string) *vo.Moment {
+func getRedisMomentV2(index string) *ov.Moment {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
@@ -306,7 +299,7 @@ func getRedisMomentV2(index string) *vo.Moment {
 	conn.Send("SELECT", kindMoment)
 
 	data, err := redis.String(conn.Do("LINDEX", key, index))
-	var moment vo.Moment
+	var moment ov.Moment
 	err = utils.Json.UnmarshalFromString(data, &moment)
 	conn.Do("HINCRBY", strings.Join([]string{IndexKind[kindMoment], strconv.FormatUint(moment.ID, 10), "Action", "Count"}, "_"), IndexAction[actionBrowse], 1)
 	actionCount := getActionCount(moment.ID, kindMoment)

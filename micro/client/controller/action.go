@@ -8,7 +8,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
-	"hoper/model/vo"
+	"hoper/model/ov"
 	"reflect"
 	"strconv"
 	"strings"
@@ -189,7 +189,7 @@ func getRedisAction(userID string, kind int8) *UserAction {
 	return userAction
 }
 
-func getActionCount(refId uint64, kind int8) *vo.ActionCount {
+func getActionCount(refId uint64, kind int8) *ov.ActionCount {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
@@ -199,7 +199,7 @@ func getActionCount(refId uint64, kind int8) *vo.ActionCount {
 	conn.Send("HGETALL", key)
 	conn.Flush()
 	conn.Receive()
-	actionCount := new(vo.ActionCount)
+	actionCount := new(ov.ActionCount)
 	action, err := redis.Int64Map(conn.Receive())
 	actionCount.CollectCount = action[IndexAction[actionCollect]]
 	actionCount.LikeCount = action[IndexAction[actionLike]]

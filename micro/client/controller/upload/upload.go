@@ -6,7 +6,7 @@ import (
 	"github.com/satori/go.uuid"
 	"hoper/client/controller/common"
 	"hoper/initialize"
-	"hoper/model"
+	"hoper/model/crm"
 	"hoper/model/e"
 	"hoper/utils"
 	"io"
@@ -18,7 +18,7 @@ import (
 	"unicode/utf8"
 )
 
-func GenerateUploadedInfo(ext string) model.FileUploadInfo {
+func GenerateUploadedInfo(ext string) crm.FileUploadInfo {
 
 	sep := string(os.PathSeparator)
 	uploadImgDir := initialize.Config.Server.UploadDir
@@ -41,14 +41,14 @@ func GenerateUploadedInfo(ext string) model.FileUploadInfo {
 		ymStr,
 		filename,
 	}, "/")
-	var fileUpload model.FileUploadInfo
+	var fileUpload crm.FileUploadInfo
 
 	fileUpload.FileName = filename
 	fileUpload.File.URL = fileURL
 	fileUpload.UUID = uuidName
 	fileUpload.UploadFilePath = uploadFilePath
 
-	/*	fileUpload = model.FileUploadInfo{
+	/*	fileUpload = crm.FileUploadInfo{
 		File:       model.File{FileName:filename,},
 		FileURL:        fileURL,
 		UUIDName:       uuidName,
@@ -134,12 +134,12 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 }
 
 // Upload 文件上传
-func Upload(ctx iris.Context) *model.FileUploadInfo {
+func Upload(ctx iris.Context) *crm.FileUploadInfo {
 	userID := ctx.Values().Get("userID").(uint64)
 	classify := ctx.Params().GetString("classify")
 	file, info, err := ctx.FormFile("file")
 	md5 := ctx.FormValue("md5")
-	/*	var upI model.FileUploadInfo
+	/*	var upI crm.FileUploadInfo
 		var count int
 		initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
 		if count != 0 {
@@ -231,7 +231,7 @@ func UploadMultiple(ctx iris.Context) {
 	})
 }
 
-func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*model.FileUploadInfo, error) {
+func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*crm.FileUploadInfo, error) {
 	uuidName := uuid.NewV4().String()
 	ext, err := GetExt(file)
 	filename := uuidName + ext
@@ -247,8 +247,8 @@ func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*mode
 	}
 	defer out.Close()
 
-	fileUpload := model.FileUploadInfo{
-		File: model.File{
+	fileUpload := crm.FileUploadInfo{
+		File: crm.File{
 			FileName:     filename,
 			OriginalName: file.Filename,
 			URL:          url + filename,
@@ -265,7 +265,7 @@ func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*mode
 func MD5(ctx iris.Context) {
 	userID := ctx.Values().Get("userID").(uint64)
 	md5 := ctx.Params().Get("md5")
-	var upI model.FileUploadInfo
+	var upI crm.FileUploadInfo
 	var count int
 	initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
 	if count != 0 {

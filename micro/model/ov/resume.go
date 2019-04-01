@@ -1,4 +1,4 @@
-package vo
+package ov
 
 import "time"
 
@@ -10,10 +10,7 @@ type Resume struct {
 	StartTime  time.Time `json:"start_time"`
 	EndTime    time.Time `json:"end_time"`
 	UserID     uint64    `json:"user_id"`
-}
-
-type ResumeOwn struct {
-	Remark string `json:"remark"`
+	Status     uint8     `gorm:"type:smallint;default:0" json:"-"`
 }
 
 type Education struct {
@@ -23,6 +20,7 @@ type Education struct {
 	StartTime  time.Time `json:"start_time"`
 	EndTime    time.Time `json:"end_time"`
 	UserID     uint64    `json:"user_id"`
+	Status     uint8     `gorm:"type:smallint;default:0" json:"-"`
 }
 
 type Work struct {
@@ -32,4 +30,11 @@ type Work struct {
 	StartTime time.Time `json:"start_time"`
 	EndTime   time.Time `json:"end_time"`
 	UserID    uint64    `json:"user_id"`
+	Status    uint8     `gorm:"type:smallint;default:0" json:"-"`
+}
+
+type District struct {
+	ID       uint64 `gorm:"primary_key" json:"id"`
+	Name     string `gorm:"type:varchar(20)" json:"name"`
+	FatherID uint64 `json:"father_id"`
 }

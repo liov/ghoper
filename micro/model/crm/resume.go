@@ -1,4 +1,4 @@
-package model
+package crm
 
 import (
 	"hoper/model/ov"
@@ -45,7 +45,7 @@ type District struct {
 	FatherID  uint64    `json:"father_id"`
 	Users     []ov.User `json:"users"`
 	CreatedAt time.Time `json:"created_at"`
-	Status    uint8     `gorm:"type:smallint;default:0" json:"-"`
+	Status    uint8     `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type Address struct {
@@ -53,9 +53,9 @@ type Address struct {
 	Name      string        `gorm:"type:varchar(100)" json:"name"`
 	Districts []ov.District `json:"districts"`
 	CreatedAt time.Time     `json:"created_at"`
-	UpdatedAt *time.Time    `json:"-"`
-	DeletedAt *time.Time    `sql:"index" json:"-"`
-	Status    uint8         `gorm:"type:smallint;default:0" json:"-"`
+	UpdatedAt *time.Time    `json:"updated_at"`
+	DeletedAt *time.Time    `sql:"index" json:"deleted_at"`
+	Status    uint8         `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type School struct {
@@ -63,9 +63,9 @@ type School struct {
 	Name        string     `gorm:"type:varchar(20)" json:"name"`
 	CreatedTime time.Time  `json:"start_time"`
 	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   *time.Time `json:"-"`
-	DeletedAt   *time.Time `sql:"index" json:"-"`
-	Status      uint8      `gorm:"type:smallint;default:0" json:"-"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	DeletedAt   *time.Time `sql:"index" json:"deleted_at"`
+	Status      uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 // MaxSchoolNameLen 学校或教育机构名的最大长度

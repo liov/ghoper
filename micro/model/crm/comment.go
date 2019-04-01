@@ -1,4 +1,4 @@
-package vo
+package crm
 
 import (
 	"time"
@@ -68,25 +68,3 @@ type DiaryBookComment struct {
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
-
-const (
-	// CommentSourceArticle 对话题进行评论
-	CommentSourceArticle = "article"
-
-	// CommentSourceVote 对投票进行评论
-	CommentSourceVote = "vote"
-)
-
-const (
-	// CommentVerifying 审核中
-	CommentVerifying = 1
-
-	// CommentVerifySuccess 审核通过
-	CommentVerifySuccess = 2
-
-	// CommentVerifyFail 审核未通过
-	CommentVerifyFail = 3
-)
-
-// MaxCommentLen 最大的评论长度
-const MaxCommentLen = 5000

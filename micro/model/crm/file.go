@@ -1,6 +1,9 @@
-package model
+package crm
 
-import "time"
+import (
+	"hoper/model/ov"
+	"time"
+)
 
 type File struct {
 	ID           uint64 `gorm:"primary_key" json:"id"`
@@ -15,7 +18,7 @@ type File struct {
 type FileUploadInfo struct {
 	File
 	UUID           string    `gorm:"type:varchar(100);unique;not null" json:"uuid"`
-	UploadUser     User      `json:"upload_user"`
+	UploadUser     ov.User   `json:"upload_user"`
 	UploadUserID   uint64    `json:"upload_user_id"`
 	UploadAt       time.Time `json:"upload_at"`
 	UploadFilePath string    `gorm:"type:varchar(100);not null" json:"upload_file_path"`

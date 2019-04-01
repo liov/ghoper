@@ -10,13 +10,13 @@ func WS(app *iris.Application) {
 
 	app.Get("/api/chat/getChat", middleware.Login, hwebsocket.GetChat)
 
-	app.Get("/ws/chat", middleware.GetUser, hwebsocket.Chat)
+	app.Get("/ws/chat", middleware.Login, hwebsocket.Chat)
 
 	ws := hwebsocket.GetWebsocket()
 
 	// register the server on an endpoint.
 	// see the inline javascript code in the websockets.html, this endpoint is used to connect to the server.
-	app.Get("/ws/echo", middleware.GetUser, ws.Handler())
+	app.Get("/ws/echo", middleware.Login, ws.Handler())
 
 	// serve the javascript built'n client-side library,
 	// see websockets.html script tags, this path is used.

@@ -1,4 +1,4 @@
-package model
+package crm
 
 import (
 	"hoper/model/ov"
@@ -27,11 +27,11 @@ type Article struct {
 	LikeUsers     []ov.User  `gorm:"many2many:article_like_user" json:"like_users"`
 	Permission    uint8      `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
-	UpdatedAt     *time.Time `json:"-"`
-	DeletedAt     *time.Time `sql:"index" json:"-"`
-	Status        uint8      `json:"-"`                  //状态
-	ModifyTimes   uint8      `gorm:"default:0" json:"-"` //修改次数
-	ParentID      uint64     `json:"-"`                  //修改的根节点
+	UpdatedAt     *time.Time `json:"updated_at"`
+	DeletedAt     *time.Time `sql:"index" json:"deleted_at"`
+	Status        uint8      `json:"status"`                        //状态
+	ModifyTimes   uint8      `gorm:"default:0" json:"modify_times"` //修改次数
+	ParentID      uint64     `json:"parent_id"`                     //修改的根节点
 	LastUser      ov.User    `json:"last_user"`
 	LastUserID    uint64     `json:"last_user_id"` //最后一个回复话题的人
 	LastCommentAt *time.Time `json:"last_comment_at"`
@@ -51,52 +51,34 @@ type Serial struct {
 	Sequence     uint8        `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	CreatedAt    time.Time    `json:"created_at"`
 	UpdatedAt    *time.Time   `json:"updated_at"`
-	DeletedAt    *time.Time   `sql:"index" json:"-"`
-	Status       uint8        `gorm:"type:smallint;default:0" json:"-"` //状态
-	ModifyTimes  uint8        `gorm:"default:0" json:"-"`               //修改次数
-	ParentID     uint64       `json:"-"`                                //父节点
+	DeletedAt    *time.Time   `sql:"index" json:"deleted_at"`
+	Status       uint8        `gorm:"type:smallint;default:0" json:"status"` //状态
+	ModifyTimes  uint8        `gorm:"default:0" json:"modify_times"`         //修改次数
+	ParentID     uint64       `json:"parent_id"`                             //父节点
 }
 
-const (
-	// ArticleVerifying 审核中
-	ArticleVerifying = iota
-
-	// ArticleVerifySuccess 审核通过
-	ArticleVerifySuccess
-
-	// ArticleVerifyFail 审核未通过
-	ArticleVerifyFail
-)
-
-const (
-	//已删除
-	ArticleDelete = iota
-
-	ArticleNotDelete
-)
-
-// MaxTopArticleCount 最多能置顶的文章数
-const MaxTopArticleCount = 4
-
-const (
-	// ContentTypeMarkdown markdown
-	ContentTypeMarkdown = iota
-
-	// ContentTypeHTML html
-	ContentTypeHTML
-)
-
-type ArticleTag struct {
-	ArticleID uint64 `gorm:"primary_key" json:"article_id"`
-	TagName   string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
+type ArticleHistory struct {
+	ID          uint64              `gorm:"primary_key" json:"id"`
+	CreatedAt   time.Time           `json:"created_at"`
+	Title       string              `json:"title"`
+	Content     string              `json:"content"`
+	HTMLContent string              `json:"html_content"`
+	ContentType int                 `json:"content_type"`
+	Categories  []ov.Category       `gorm:"many2many:article_history_category" json:"categories"` //分类
+	Tags        []ov.Tag            `gorm:"many2many:article_history_tag" json:"tags"`
+	User        ov.User             `json:"user"`
+	UserID      uint64              `json:"user_id"`
+	Comments    []ov.ArticleComment `gorm:"foreignkey:ArticleID" json:"comments"` //评论
+	ActionCount
+	ImageUrl    string `json:"image_url"`                              //图片
+	ArticleID   uint64 `json:"article_id"`                             //根结点
+	ParentID    uint64 `json:"parent_id"`                              //父节点
+	ModifyTimes uint8  `json:"modify_times"`                           //修改次数
+	DeleteFlag  uint8  `json:"delete_flag"`                            //是否删除
+	Status      uint8  `gorm:"type:smallint ;default:0" json:"status"` //状态
 }
 
-type ArticleCategory struct {
-	ArticleID  uint64 `gorm:"primary_key" json:"article_id"`
-	CategoryID uint64 `gorm:"primary_key" json:"category_id"`
-}
-
-type ArticleSerial struct {
-	ArticleID uint64 `gorm:"primary_key" json:"article_id"`
-	SerialID  uint64 `gorm:"primary_key" json:"serial_id"`
+type ArticleHistoryTag struct {
+	ArticleHistoryID uint64 `gorm:"primary_key" json:"article_history_id"`
+	TagName          string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
 }

@@ -16,7 +16,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
-	"hoper/model/vo"
+	"hoper/model/ov"
 	"hoper/utils"
 	"hoper/utils/logging"
 	"net/http"
@@ -34,12 +34,9 @@ const (
 )
 
 type User struct {
-	ID     uint64 `gorm:"primary_key" json:"id"`
-	Name   string `gorm:"type:varchar(10);not null" json:"name"`
-	Role   uint8  `gorm:"type:smallint;default:0" json:"role"`   //管理员or用户
-	Score  uint64 `gorm:"default:0" json:"score"`                //积分
-	Status uint8  `gorm:"type:smallint;default:0" json:"status"` //状态
-	vo.KindOwnCount
+	ov.User
+	ov.KindOwnCount
+	Role uint8 `gorm:"type:smallint;default:0" json:"-"` //管理员or用户
 }
 
 func sendMail(action string, title string, curTime int64, user model.User) {
@@ -342,10 +339,12 @@ func Login(c iris.Context) {
 		initialize.DB.Model(&user).UpdateColumn("last_activated_at", time.Now())
 
 		if err := UserToRedis(&User{
-			ID:     user.ID,
-			Name:   user.Name,
-			Role:   user.Role,
-			Status: user.Status,
+			User: ov.User{
+				ID:     user.ID,
+				Name:   user.Name,
+				Status: user.Status,
+			},
+			Role: user.Role,
 		}); err != nil {
 			common.Response(c, "内部错误.")
 			return
@@ -452,7 +451,7 @@ func Signup(c iris.Context) {
 // Logout 退出登录
 func Logout(c iris.Context) {
 	userID := c.Values().Get("userID").(uint64)
-	initialize.DB.Model(&User{ID: userID}).UpdateColumn("last_activated_at", time.Now())
+	initialize.DB.Model(&User{User: ov.User{ID: userID}}).UpdateColumn("last_activated_at", time.Now())
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
@@ -486,7 +485,7 @@ func GetUserSelf(c iris.Context) {
 
 func GetUser(c iris.Context) {
 	id := c.Params().GetUint64Default("id", 0)
-	var user vo.User
+	var user ov.User
 	initialize.DB.Where("id=?", id).First(&user)
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
@@ -1001,7 +1000,7 @@ func UserFromRedis(userID uint64) (*User, error) {
 	var user User
 	err = utils.Json.UnmarshalFromString(userString, &user)
 	if err != nil {
-		return &user, err
+		return nil, err
 	}
 	return &user, nil
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/crm"
 )
 
 func DBInit(c iris.Context) {
@@ -22,10 +23,10 @@ $$ LANGUAGE plpgsql`)
 	initialize.DB.CreateTable(&model.User{},
 		&model.Tag{}, &model.Diary{}, &model.DiaryBook{}, &model.Education{}, &model.Article{},
 		&model.Work{}, &model.Category{}, &model.Collection{}, &model.Like{}, &model.CrawlerArticle{},
-		&model.ArticleComment{}, &model.Favorites{}, &model.Dictionary{}, &model.Follow{}, model.ArticleSet{},
-		&model.DiaryBookComment{}, &model.MomentComment{}, &model.FileUploadInfo{}, &model.DiaryComment{},
-		&model.Moment{}, &model.Mood{}, &model.DiaryBookHistory{}, &model.DiaryHistory{}, &model.ArticleHistory{},
-		&model.MomentHistory{})
+		&model.ArticleComment{}, &model.Favorites{}, &crm.Dictionary{}, &model.Follow{}, model.ArticleSerial{},
+		&model.DiaryBookComment{}, &model.MomentComment{}, &crm.FileUploadInfo{}, &model.DiaryComment{},
+		&model.Moment{}, &model.Mood{}, &crm.DiaryBookHistory{}, &crm.DiaryHistory{}, &crm.ArticleHistory{},
+		&crm.MomentHistory{})
 	initialize.DB.Create(&model.Category{Name: "未分类"})
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()

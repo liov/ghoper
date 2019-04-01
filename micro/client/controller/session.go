@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/sessions"
+	"hoper/model/ov"
 )
 
 var Sess *sessions.Sessions
@@ -13,7 +14,7 @@ var Sess *sessions.Sessions
 
 func SessSet(ctx iris.Context) {
 	s := Sess.Start(ctx)
-	s.SetFlash("user", User{Name: "贾一饼"})
+	s.SetFlash("user", ov.User{Name: "贾一饼"})
 	ctx.Writef("Message setted, is available for the next request")
 }
 

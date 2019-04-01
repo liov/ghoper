@@ -1,4 +1,4 @@
-package model
+package crm
 
 import (
 	"hoper/model/ov"
@@ -18,7 +18,8 @@ type Tag struct {
 	UserID         uint64     `json:"user_id"`
 	CreatedAt      time.Time  `json:"created_at"`
 	UpdatedAt      *time.Time `json:"updated_at"`
-	Status         uint8      `gorm:"type:smallint;default:0" json:"-"`
+	DeletedAt      *time.Time `sql:"index"`
+	Status         uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type Category struct {
@@ -36,7 +37,8 @@ type Category struct {
 	CreatedBy      ov.User    `json:"created_by"`
 	UserID         uint64     `json:"user_id"`
 	UpdatedAt      *time.Time `json:"updated_at"`
-	Status         uint8      `gorm:"type:smallint;default:0" json:"-"`
+	DeletedAt      *time.Time `sql:"index" json:"deleted_at"`
+	Status         uint8      `gorm:"type:smallint;default:0" json:"status"`
 }
 
 type Mood struct {
@@ -54,6 +56,6 @@ type Mood struct {
 	Count      uint64     `gorm:"default:0" json:"count"`
 	Sequence   uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  *time.Time `json:"-"`
-	Status     uint8      `gorm:"type:smallint;default:0" json:"-"`
+	UpdatedAt  *time.Time `json:"updated_at"`
+	Status     uint8      `gorm:"type:smallint;default:0" json:"status"`
 }

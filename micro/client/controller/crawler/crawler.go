@@ -9,6 +9,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"hoper/model/ov"
 	"hoper/utils"
 	"io"
 	"net/http"
@@ -112,7 +113,7 @@ func createSourceHTML(from int) string {
 	return strings.Join(htmlArr, "")
 }
 
-func createArticle(user model.User, category model.Category, from int, data map[string]string) {
+func createArticle(user model.User, category ov.Category, from int, data map[string]string) {
 	var article model.Article
 	article.Title = data["Title"]
 	article.HTMLContent = data["Content"]
@@ -273,7 +274,7 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 	}
 }
 
-func crawlList(listURL string, user model.User, category model.Category, crawlSelector crawlSelector, siteInfo map[string]string, crawlExist bool, wg *sync.WaitGroup) {
+func crawlList(listURL string, user model.User, category ov.Category, crawlSelector crawlSelector, siteInfo map[string]string, crawlExist bool, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	if _, err := url.Parse(listURL); err != nil {
@@ -340,7 +341,7 @@ func Crawl(c iris.Context) {
 		return
 	}
 
-	var category model.Category
+	var category ov.Category
 	if err := initialize.DB.First(&category, jsonData.CategoryID).Error; err != nil {
 		golog.Error(err)
 		common.Response(c, "错误的categoryID")
@@ -406,7 +407,7 @@ func CustomCrawl(c iris.Context) {
 		return
 	}
 
-	var category model.Category
+	var category ov.Category
 	if err := initialize.DB.First(&category, jsonData.CategoryID).Error; err != nil {
 		golog.Error(err)
 		common.Response(c, "错误的categoryID")
