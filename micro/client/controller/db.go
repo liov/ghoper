@@ -1,4 +1,4 @@
-package router
+package controller
 
 import (
 	"github.com/kataras/iris"
@@ -22,7 +22,7 @@ $$ LANGUAGE plpgsql`)
 	initialize.DB.CreateTable(&model.User{},
 		&model.Tag{}, &model.Diary{}, &model.DiaryBook{}, &model.Education{}, &model.Article{},
 		&model.Work{}, &model.Category{}, &model.Collection{}, &model.Like{}, &model.CrawlerArticle{},
-		&model.ArticleComment{}, &model.Favorites{}, &model.Dictionary{}, &model.Follow{},
+		&model.ArticleComment{}, &model.Favorites{}, &model.Dictionary{}, &model.Follow{}, model.ArticleSet{},
 		&model.DiaryBookComment{}, &model.MomentComment{}, &model.FileUploadInfo{}, &model.DiaryComment{},
 		&model.Moment{}, &model.Mood{}, &model.DiaryBookHistory{}, &model.DiaryHistory{}, &model.ArticleHistory{},
 		&model.MomentHistory{})

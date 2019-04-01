@@ -1,35 +1,23 @@
 package controller
 
 import (
+	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
+	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/initialize"
 	"hoper/model"
-
+	"hoper/model/vo"
 	"strconv"
-	"time"
 )
-
-type Tag struct {
-	Name        string     `gorm:"type:varchar(10);primary_key" json:"name"`
-	Description string     `gorm:"type:varchar(100)" json:"description"`
-	DeletedAt   *time.Time `sql:"index"`
-	CreatedBy   User       `gorm:"-" json:"created_by"`
-	UserID      uint64     `json:"user_id"`
-	Count       uint64     `gorm:"default:0" json:"count"`
-	Sequence    uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	Status      uint8      `gorm:"type:smallint;default:0" json:"status"`
-}
 
 func GetTags(c iris.Context) {
 
 	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 
-	var tags []Tag
+	var tags []vo.Tag
 
 	err := initialize.DB.Select("name").
 		Order("count desc").Limit(pageSize).Offset(pageNo).Find(&tags).Error
@@ -46,11 +34,11 @@ func GetTagTotal(maps interface{}) (count int) {
 	return
 }
 
-func ExistTagByName(name string) *Tag {
+func ExistTagByName(name string) *vo.Tag {
 	if name == "" {
 		return nil
 	}
-	var tag Tag
+	var tag vo.Tag
 	initialize.DB.Select("name,count").Where("name = ?", name).First(&tag)
 	if tag.Name != "" {
 		return &tag
@@ -59,13 +47,26 @@ func ExistTagByName(name string) *Tag {
 	return nil
 }
 
+func ExistMoodByName(name string) *vo.Mood {
+	if name == "" {
+		return nil
+	}
+	var mood vo.Mood
+	initialize.DB.Select("name,count").Where("name = ?", name).First(&mood)
+	if mood.Name != "" {
+		return &mood
+	}
+
+	return nil
+}
+
 func AddTag(c iris.Context) bool {
 
 	name := c.URLParam("name")
-	user := c.GetViewData()["user"].(User)
-	initialize.DB.Create(&Tag{
+	userID := c.Values().Get("userID").(uint64)
+	initialize.DB.Create(&model.Tag{
 		Name:   name,
-		UserID: user.ID,
+		UserID: userID,
 	})
 
 	return true
@@ -97,4 +98,46 @@ func CleanAllTag() bool {
 	initialize.DB.Unscoped().Where("deleted_on != ? ", 0).Delete(&model.Tag{})
 
 	return true
+}
+
+const (
+	flagTag = iota
+	flagMood
+	flagCategory
+)
+
+var IndexFlag = map[int8]string{
+	flagTag:      "Tag",
+	flagMood:     "Mood",
+	flagCategory: "Category",
+}
+
+func setFlagCountToRedis(flag int8, name string, num int8) error {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	err := conn.Send("SELECT", 11)
+	_, err = conn.Do("HINCRBY", IndexFlag[flag]+"_Count", name, num)
+	if err != nil {
+		golog.Error("缓存失败:", err)
+	}
+	return nil
+}
+
+func getFlagCountToRedis(flag int8) int64 {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	conn.Send("SELECT", 11)
+	conn.Send("HGETALL", "Flag_Count")
+	conn.Flush()
+	conn.Receive()
+
+	data, err := redis.Int64Map(conn.Receive())
+	count := data[IndexFlag[flag]]
+
+	if err != nil {
+		golog.Error("缓存失败:", err)
+	}
+	return count
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/cache"
 	"github.com/kataras/iris/middleware/basicauth"
 	"github.com/kataras/iris/middleware/pprof"
+	"hoper/client/controller"
 	"hoper/client/controller/tmpl/html"
 	"hoper/client/controller/tmpl/markdown"
 	"hoper/client/controller/tmpl/pug"
@@ -42,7 +43,7 @@ func TPLRouter(app *iris.Application) {
 		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
 		tplRouter.Get("/markdown", markdown.MarkdownTest)
-		tplRouter.Get("/init", authentication, DBInit)
+		tplRouter.Get("/init", authentication, controller.DBInit)
 		tplRouter.Get("/time", iris.Cache304(10*time.Second), html.Time)
 		tplRouter.Get("/auth", authentication, html.Auth)
 		tplRouter.Get("/values", authentication, html.Values)

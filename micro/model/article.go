@@ -1,28 +1,30 @@
 package model
 
 import (
+	"hoper/model/vo"
 	"time"
 )
 
 type Article struct {
-	ID          uint64           `gorm:"primary_key" json:"id"`
-	CreatedAt   time.Time        `json:"created_at"`
-	Title       string           `gorm:"type:varchar(100)" json:"title"`
-	Intro       string           `gorm:"type:varchar(100)" json:"intro"`
-	Abstract    string           `gorm:"type:varchar(200)" json:"abstract"`
-	Content     string           `gorm:"type:text" json:"content"`
-	HTMLContent string           `gorm:"type:text" json:"html_content"`
-	ContentType int              `json:"content_type"`                                 //文本类型
-	ImageUrl    string           `gorm:"type:varchar(100)" json:"image_url"`           //封面
-	Categories  []Category       `gorm:"many2many:article_category" json:"categories"` //分类
-	Tags        []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
-	User        User             `json:"user"`
-	UserID      uint64           `json:"user_id"`
-	Comments    []ArticleComment `gorm:"ForeignKey:ArticleID" json:"comments"` //评论
+	ID           uint64           `gorm:"primary_key" json:"id"`
+	CreatedAt    time.Time        `json:"created_at"`
+	Title        string           `gorm:"type:varchar(100)" json:"title"`
+	Intro        string           `gorm:"type:varchar(100)" json:"intro"`
+	Abstract     string           `gorm:"type:varchar(200)" json:"abstract"`
+	Content      string           `gorm:"type:text" json:"content"`
+	HTMLContent  string           `gorm:"type:text" json:"html_content"`
+	ContentType  int              `json:"content_type"`                                 //文本类型
+	ImageUrl     string           `gorm:"type:varchar(100)" json:"image_url"`           //封面
+	Categories   []Category       `gorm:"many2many:article_category" json:"categories"` //分类
+	ArticleSetID uint64           `json:"article_set_id"`
+	Tags         []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
+	User         vo.User          `json:"user"`
+	UserID       uint64           `json:"user_id"`
+	Comments     []ArticleComment `gorm:"ForeignKey:ArticleID" json:"comments"` //评论
 	ActionCount
-	ApproveUsers  []User     `gorm:"many2many:article_approve_user" json:"approve_users"`
-	CollectUsers  []User     `gorm:"many2many:article_collect_user" json:"collect_users"`
-	LikeUsers     []User     `gorm:"many2many:article_like_user" json:"like_users"`
+	ApproveUsers  []vo.User  `gorm:"many2many:article_approve_user" json:"approve_users"`
+	CollectUsers  []vo.User  `gorm:"many2many:article_collect_user" json:"collect_users"`
+	LikeUsers     []vo.User  `gorm:"many2many:article_like_user" json:"like_users"`
 	Permission    uint8      `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time `json:"updated_at"`
@@ -30,9 +32,28 @@ type Article struct {
 	Status        uint8      `json:"status"`                        //状态
 	ModifyTimes   uint8      `gorm:"default:0" json:"modify_times"` //修改次数
 	ParentID      uint64     `json:"parent_id"`                     //修改的根节点
-	LastUser      User       `json:"last_user"`
+	LastUser      vo.User    `json:"last_user"`
 	LastUserID    uint64     `json:"last_user_id"` //最后一个回复话题的人
 	LastCommentAt *time.Time `json:"last_comment_at"`
+}
+
+type ArticleSet struct {
+	ID           uint64     `gorm:"primary_key" json:"id"`
+	CreatedAt    time.Time  `json:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at"`
+	DeletedAt    *time.Time `sql:"index" json:"deleted_at"`
+	Title        string     `gorm:"type:varchar(100)" json:"title"`
+	Description  string     `gorm:"type:varchar(500)" json:"description"` //描述
+	Articles     []Article  `json:"articles"`
+	ArticleCount uint64     `json:"article_count"`
+	User         vo.User    `json:"user"`
+	UserID       uint64     `json:"user_id"`
+	ImageUrl     string     `gorm:"type:varchar(100)" json:"image_url"`        //封面
+	Permission   uint8      `gorm:"type:smallint;default:0" json:"permission"` //查看权限
+	Sequence     uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
+	Status       uint8      `gorm:"type:smallint;default:0" json:"status"`     //状态
+	ModifyTimes  uint8      `gorm:"default:0" json:"modify_times"`             //修改次数
+	ParentID     uint64     `json:"parent_id"`                                 //父节点
 }
 
 const (

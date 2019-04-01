@@ -191,6 +191,7 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 }
 
 func UploadMultiple(ctx iris.Context) {
+	userID := ctx.Values().Get("userID").(uint64)
 	classify := ctx.Params().GetString("classify")
 	//获取通过iris.WithPostMaxMemory获取的最大上传值大小。
 	maxSize := ctx.Application().ConfigurationReadOnly().GetPostMaxMemory()
@@ -216,7 +217,6 @@ func UploadMultiple(ctx iris.Context) {
 			common.Response(ctx, file[0].Filename+"上传失败")
 		} else {
 			upInfo.File.Size = uint64(file[0].Size)
-			userID := ctx.Values().Get("userID").(uint64)
 			upInfo.UploadUserID = userID
 			if err := initialize.DB.Create(&upInfo).Error; err != nil {
 				common.Response(ctx, err.Error())

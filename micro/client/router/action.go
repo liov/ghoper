@@ -7,18 +7,18 @@ import (
 )
 
 func Like(app *iris.Application) {
-	app.Post("/api/like", middleware.JWT, controller.AddLike)
-	app.Post("/api/approve", middleware.JWT, controller.Approve)
+	app.Post("/api/like", middleware.Login, controller.AddLike)
+	app.Post("/api/approve", middleware.Login, controller.Approve)
 
-	app.Get("/api/favorites", middleware.JWT, controller.GetFavorite)
-	app.Put("/api/favorites", middleware.JWT, controller.AddCollection)
-	app.Post("/api/favorites", middleware.JWT, controller.AddFavorite)
-	app.Delete("/api/favorites", middleware.JWT, controller.DelCollection)
-	//app.Get("/api/collection", middleware.JWT, controller.GetCollection)
-	app.Put("/api/collection", middleware.JWT, controller.AddCollection)
-	app.Post("/api/collection", middleware.JWT, controller.AddCollection)
-	app.Delete("/api/collection", middleware.JWT, controller.DelCollection)
+	app.Get("/api/favorites", middleware.Login, controller.GetFavorite)
+	app.Put("/api/favorites", middleware.Login, controller.AddCollection)
+	app.Post("/api/favorites", middleware.Login, controller.AddFavorite)
+	app.Delete("/api/favorites", middleware.Login, controller.DelCollection)
+	//app.Get("/api/collection", middleware.GetUser, controller.GetCollection)
+	app.Put("/api/collection", middleware.Login, controller.AddCollection)
+	app.Post("/api/collection", middleware.Login, controller.AddCollection)
+	app.Delete("/api/collection", middleware.Login, controller.DelCollection)
 
-	app.Post("/api/comment/{kind}/{id}", middleware.JWT, controller.AddComment)
-	app.Get("/api/comment/{kind}/{id}", middleware.GetUser(), controller.GetComment)
+	app.Post("/api/comment/{kind}/{id}", middleware.Login, controller.AddComment)
+	app.Get("/api/comment/{kind}/{id}", middleware.Login, controller.GetComment)
 }

@@ -7,6 +7,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"hoper/model/vo"
 	"hoper/utils"
 	"hoper/utils/logging"
 	"strconv"
@@ -26,11 +27,11 @@ type Article struct {
 	ContentType int              `json:"content_type"`                                 //文本类型
 	ImageUrl    string           `gorm:"type:varchar(100)" json:"image_url"`           //封面
 	Categories  []Category       `gorm:"many2many:article_category" json:"categories"` //分类
-	Tags        []Tag            `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
+	Tags        []vo.Tag         `gorm:"many2many:article_tag;foreignkey:ID;association_foreignkey:Name" json:"tags"`
 	User        User             `json:"user"`
 	UserID      uint64           `json:"user_id"`
 	Comments    []ArticleComment `json:"comments"` //评论
-	ActionCount
+	vo.ActionCount
 	Permission    int8       `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      int8       `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time `json:"updated_at"`
@@ -264,7 +265,7 @@ func AddArticle(c iris.Context) {
 		if tag := ExistTagByName(v.Name); tag != nil {
 			initialize.DB.Model(tag).Update("count", tag.Count+1)
 		} else {
-			newTag := Tag{CreatedAt: nowTime, Name: v.Name, Count: 1, UserID: user.ID}
+			newTag := vo.Tag{CreatedAt: nowTime, Name: v.Name, Count: 1, UserID: user.ID}
 			initialize.DB.Create(&newTag)
 		}
 		momentTag := model.ArticleTag{ArticleID: article.ID, TagName: v.Name}
@@ -316,7 +317,6 @@ func historyArticle(c iris.Context, isDel uint8) (model.ArticleHistory, model.Ar
 		Categories:  article.Categories,
 		Tags:        article.Tags,
 		Comments:    article.Comments,
-		User:        article.User,
 		UserID:      article.UserID,
 		ImageUrl:    article.ImageUrl,
 	}

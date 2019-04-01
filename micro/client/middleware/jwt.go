@@ -10,43 +10,47 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"hoper/utils"
 	"net/http"
 	"time"
 )
 
-func JWT(ctx iris.Context) {
-	code := e.SUCCESS
-	user, err := getUser(ctx)
+//中间件的两种方式
+func GetUser() iris.Handler {
+	return func(ctx iris.Context) {
+		code := e.SUCCESS
+		user, err := getUser(ctx)
 
-	if err != nil && err.Error() == "未登录" {
-		code = e.ErrorAuthCheckTokenFail
-	} else if err != nil && err.Error() == "登录超时" {
-		code = e.ErrorAuthCheckTokenTimeout
-	}
+		if err != nil && err.Error() == "未登录" {
+			code = e.ErrorAuthCheckTokenFail
+		} else if err != nil && err.Error() == "登录超时" {
+			code = e.ErrorAuthCheckTokenTimeout
+		}
 
-	if code != e.SUCCESS {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.SetCookie(&http.Cookie{
-			Name:     "token",
-			Value:    "del",
-			Path:     "/",
-			Domain:   "hoper.xyz",
-			Expires:  time.Now().Add(-1),
-			MaxAge:   -1,
-			Secure:   false,
-			HttpOnly: true,
-		})
-		common.Response(ctx, err.Error(), code)
-		return
+		if code != e.SUCCESS {
+			ctx.StatusCode(iris.StatusUnauthorized)
+			ctx.SetCookie(&http.Cookie{
+				Name:     "token",
+				Value:    "del",
+				Path:     "/",
+				Domain:   "hoper.xyz",
+				Expires:  time.Now().Add(-1),
+				MaxAge:   -1,
+				Secure:   false,
+				HttpOnly: true,
+			})
+			common.Response(ctx, err.Error(), code)
+			return
+		}
+		ctx.Values().Set("userID", user.ID)
+		ctx.Values().Set("user", user) //指针
+		ctx.Next()
 	}
-	ctx.Values().Set("userID", user.ID)
-	ctx.Values().Set("user", *user)
-	ctx.Next()
 }
 
 func Login(ctx iris.Context) {
 	code := e.SUCCESS
-	user, err := getUser(ctx)
+	userID, err := getUserID(ctx)
 
 	if err != nil && err.Error() == "未登录" {
 		code = e.ErrorAuthCheckTokenFail
@@ -68,29 +72,17 @@ func Login(ctx iris.Context) {
 		common.Response(ctx, err.Error(), code)
 		return
 	}
-	ctx.Values().Set("userID", user.ID)
-	ctx.Values().Set("user", *user)
+	ctx.Values().Set("userID", userID)
 	ctx.Next()
 }
 
-//中间件的两种方式
-func GetUser() iris.Handler {
-	return func(ctx iris.Context) {
-		user, _ := getUser(ctx)
-		if user != nil {
-			ctx.Values().Set("userID", user.ID)
-		} else {
-			ctx.Values().Set("userID", 0)
-		}
-		ctx.Values().Set("user", user) //坑哦，这里存的是指针哦，虽然这个函数没用过
-		ctx.Next()
+func GetUserId(ctx iris.Context) {
+	if userID, err := getUserID(ctx); err == nil {
+		ctx.Values().Set("userID", userID)
+	} else {
+		ctx.Values().Set("userID", 0)
 	}
-}
-func GetUserId(ctx iris.Context) uint64 {
-	if user, _ := getUser(ctx); user != nil {
-		return user.ID
-	}
-	return 0
+	ctx.Next()
 }
 
 func getUser(ctx iris.Context) (*controller.User, error) {
@@ -105,7 +97,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 
 	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected login method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("意外的登录方法: %v", token.Header["alg"])
 		}
 		return []byte(initialize.Config.Server.TokenSecret), nil
 	})
@@ -123,6 +115,33 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 		return user, nil
 	}
 	return nil, errors.New("未登录")
+}
+
+func getUserID(ctx iris.Context) (uint64, error) {
+	tokenString := ctx.GetCookie("token")
+	if len(tokenString) == 0 {
+		tokenString = ctx.GetHeader("Authorization")
+	}
+	if len(tokenString) == 0 {
+		return 0, errors.New("未登录")
+	}
+	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return 0, fmt.Errorf("意外的登录方法: %v", token.Header["alg"])
+		}
+		return []byte(initialize.Config.Server.TokenSecret), nil
+	})
+
+	if tokenErr != nil {
+		return 0, tokenErr
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID := uint64(claims["id"].(float64))
+		return userID, nil
+	}
+
+	return 0, errors.New("未登录")
 }
 
 // SigninRequired 必须是登录用户
@@ -166,7 +185,8 @@ func AdminRequired(ctx iris.Context) {
 	}
 }
 
-var jwtSecret = []byte(initialize.Config.Server.JwtSecret)
+//Config全局变量太大了
+//var jwtSecret = utils.ToBytes(initialize.Config.Server.JwtSecret))
 
 type Claims struct {
 	Username string `json:"username"`
@@ -188,14 +208,14 @@ func GenerateToken(username, password string) (string, error) {
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
+	token, err := tokenClaims.SignedString(utils.ToBytes(initialize.Config.Server.JwtSecret))
 
 	return token, err
 }
 
 func ParseToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+		return utils.ToBytes(initialize.Config.Server.JwtSecret), nil
 	})
 
 	if tokenClaims != nil {

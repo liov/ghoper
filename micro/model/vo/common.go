@@ -3,7 +3,6 @@ package vo
 import "time"
 
 type CUDTime struct {
-	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 	Status    uint8      `gorm:"type:smallint;default:0" json:"status"` //状态

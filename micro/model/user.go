@@ -1,6 +1,7 @@
 package model
 
 import (
+	"hoper/model/vo"
 	"time"
 )
 
@@ -9,6 +10,7 @@ type User struct {
 	ActivatedAt     *time.Time   `json:"activated_at"` //激活时间
 	Name            string       `gorm:"type:varchar(10);not null" json:"name"`
 	Password        string       `gorm:"type:varchar(100)" json:"-"`
+	Account         string       `gorm:"type:varchar(20);unique_index" json:"account"`
 	Email           string       `gorm:"type:varchar(20);unique_index;not null" json:"email"`
 	Phone           *string      `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
 	Sex             string       `gorm:"type:varchar(1);not null" json:"sex"`
@@ -30,8 +32,8 @@ type User struct {
 	LastName        string       `gorm:"type:varchar(100)" json:"last_name"`    //上个名字
 	Status          uint8        `gorm:"type:smallint;default:0" json:"status"` //状态
 	Collections     []Collection `json:"collections"`
-	Follows         []*User      `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
-	Followeds       []*User      `gorm:"-" json:"followeds"`              //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
+	Follows         []vo.User    `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
+	Followeds       []vo.User    `gorm:"-" json:"followeds"`              //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
 	FollowCount     uint64       `gorm:"default:0" json:"follow_count"`   //关注数量
 	FollowedCount   uint64       `gorm:"default:0" json:"followed_count"` //被关注数量
 	ArticleCount    uint64       `gorm:"default:0" json:"article_count"`  //文章数量
@@ -47,9 +49,9 @@ type User struct {
 }
 
 type Follow struct {
-	User         User       `json:"user"`
+	User         vo.User    `json:"user"`
 	UserID       uint64     `gorm:"primary_key" json:"user_id"` //一个关注另一个，ID小的做UserID
-	FollowUser   User       `json:"follow_user"`
+	FollowUser   vo.User    `json:"follow_user"`
 	FollowID     uint64     `gorm:"primary_key" json:"follow_id"`
 	FollowUserAt *time.Time //FollowUser关注User时间
 	UserFollowAt *time.Time //User关注FollowUser时间                                                 //互相关注时间

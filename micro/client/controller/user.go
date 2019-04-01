@@ -16,6 +16,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"hoper/model/vo"
 	"hoper/utils"
 	"hoper/utils/logging"
 	"net/http"
@@ -33,51 +34,18 @@ const (
 )
 
 type User struct {
-	ID              uint64      `gorm:"primary_key" json:"id"`
-	ActivatedAt     *time.Time  `json:"activated_at"` //激活时间
-	Name            string      `gorm:"type:varchar(10);not null" json:"name"`
-	Password        string      `gorm:"type:varchar(100)" json:"-"`
-	Email           string      `gorm:"type:varchar(20);unique_index;not null" json:"email"`
-	Phone           *string     `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
-	Sex             string      `gorm:"type:varchar(1);not null" json:"sex"`
-	Birthday        *time.Time  `json:"birthday"`
-	Introduction    string      `gorm:"type:varchar(500)" json:"introduction"` //简介
-	Score           uint64      `gorm:default:0" json:"score"`                 //积分
-	Signature       string      `gorm:"type:varchar(100)" json:"signature"`    //个人签名
-	Role            uint8       `gorm:"type:smallint;default:0" json:"-"`      //管理员or用户
-	AvatarURL       string      `gorm:"type:varchar(100)" json:"avatar_url"`   //头像
-	CoverURL        string      `gorm:"type:varchar(100)" json:"cover_url"`    //个人主页背景图片URL
-	Address         string      `gorm:"type:varchar(100)" json:"address"`
-	Location        string      `gorm:"type:varchar(100)" json:"location"`
-	EduExps         []Education `json:"edu_exps"`  //教育经历
-	WorkExps        []Work      `json:"work_exps"` //职业经历
-	UpdatedAt       *time.Time  `json:"updated_at"`
-	BannedAt        *time.Time  `sql:"index" json:"banned_at"`
-	CreatedAt       time.Time   `json:"created_at"`
-	LastActivatedAt *time.Time  `json:"last_activated_at"`                     //激活时间
-	LastName        string      `gorm:"type:varchar(100)" json:"last_name"`    //上个名字
-	Status          uint8       `gorm:"type:smallint;default:0" json:"status"` //状态
-	//Like            Like         `json:"like"`                                  //和Collection挺像的，不过一个User可以对应多个C，只能对应一个L
-	Follows        []*User `gorm:"-" json:"follows"`                //gorm:"foreignkey:FollowID []Follow里的User
-	Followeds      []*User `gorm:"-" json:"followeds"`              //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
-	FollowCount    uint64  `gorm:"default:0" json:"follow_count"`   //关注数量
-	FollowedCount  uint64  `gorm:"default:0" json:"followed_count"` //被关注数量
-	ArticleCount   uint64  `gorm:"default:0" json:"article_count"`  //文章数量
-	MomentCount    uint64  `gorm:"default:0" json:"moment_count"`
-	DiaryBookCount uint64  `gorm:"default:0" json:"diary_book_count"`
-	DiaryCount     uint64  `gorm:"default:0" json:"diary_count"`
-	CommentCount   uint64  `gorm:"default:0" json:"comment_count"` //评论数量
-	//Collections     []Collection `gorm:"many2many:user_collection" json:"collections"` //收藏夹？
-	Articles []Article `json:"articles"`
-	Moments  []Moment  `json:"moments"`
-	//DiaryBooks      []DiaryBook  `json:"diary_books"`
-	//Diaries         []Diary      `json:"diaries"`
+	ID     uint64 `gorm:"primary_key" json:"id"`
+	Name   string `gorm:"type:varchar(10);not null" json:"name"`
+	Role   uint8  `gorm:"type:smallint;default:0" json:"role"`   //管理员or用户
+	Score  uint64 `gorm:"default:0" json:"score"`                //积分
+	Status uint8  `gorm:"type:smallint;default:0" json:"status"` //状态
+	vo.KindOwnCount
 }
 
-func sendMail(action string, title string, curTime int64, user User) {
+func sendMail(action string, title string, curTime int64, user model.User) {
 	siteName := initialize.Config.Server.SiteName
 	siteURL := "http://" + initialize.Config.Server.Host
-	secretStr := strconv.Itoa((int)(curTime)) + user.Email + user.Password
+	secretStr := strconv.FormatInt(curTime, 10) + user.Email + user.Password
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/"
 
@@ -101,8 +69,8 @@ func sendMail(action string, title string, curTime int64, user User) {
 
 	mail.SendMail(user.Email, title, content)
 }
-func verifyLink(cacheKey string, c iris.Context) (User, error) {
-	var user User
+func verifyLink(cacheKey string, c iris.Context) (model.User, error) {
+	var user model.User
 
 	userID, _ := c.Params().GetInt("id")
 	if userID <= 0 {
@@ -149,7 +117,7 @@ func ActiveSendMail(c iris.Context) {
 		return
 	}
 
-	var user User
+	var user model.User
 	user.Email = reqData.Email
 
 	var decodeBytes []byte
@@ -185,7 +153,7 @@ func ActiveSendMail(c iris.Context) {
 // ActiveAccount 激活账号
 func ActiveAccount(c iris.Context) {
 	var err error
-	var user User
+	var user model.User
 	if user, err = verifyLink(model.ActiveTime, c); err != nil {
 		common.Response(c, "激活链接已失效")
 		return
@@ -232,7 +200,7 @@ func ResetPasswordMail(c iris.Context) {
 		return
 	}
 
-	var user User
+	var user model.User
 	if err := initialize.DB.Where("email = ?", userData.Email).Find(&user).Error; err != nil {
 		common.Response(c, "没有邮箱为 "+userData.Email+" 的用户")
 		return
@@ -279,7 +247,7 @@ func ResetPassword(c iris.Context) {
 	}
 
 	var verifErr error
-	var user User
+	var user model.User
 	if user, verifErr = verifyLink(model.ResetTime, c); verifErr != nil {
 		common.Response(c, "重置链接已失效")
 		return
@@ -348,13 +316,13 @@ func Login(c iris.Context) {
 		return
 	}
 
-	var user User
+	var user model.User
 	if err := initialize.DB.Where(sql, loginInput).Find(&user).Error; err != nil {
 		common.Response(c, "账号不存在", e.ERROR)
 		return
 	}
 
-	if checkPassword(password, user) {
+	if checkPassword(password, &user) {
 		if user.Status == model.UserStatusInActive {
 			//没看懂
 			encodedEmail := base64.StdEncoding.EncodeToString(utils.ToBytes(user.Email))
@@ -373,7 +341,12 @@ func Login(c iris.Context) {
 
 		initialize.DB.Model(&user).UpdateColumn("last_activated_at", time.Now())
 
-		if err := UserToRedis(&user); err != nil {
+		if err := UserToRedis(&User{
+			ID:     user.ID,
+			Name:   user.Name,
+			Role:   user.Role,
+			Status: user.Status,
+		}); err != nil {
 			common.Response(c, "内部错误.")
 			return
 		}
@@ -404,20 +377,6 @@ func Login(c iris.Context) {
 		return
 	}
 	common.Response(c, "账号或密码错误")
-}
-
-func LoginFlag(c iris.Context) {
-	user := c.Values().Get("user")
-
-	/*session := sessions.Default(c)
-	user:= session.Get("user")
-	if user == nil {
-		user = User{}
-	} else {
-		user = *user.(*User)
-	}*/
-	//跟前端的store初始化配合
-	common.Response(c, user, "登录成功", e.SUCCESS)
 }
 
 // Signup 用户注册
@@ -457,7 +416,7 @@ func Signup(c iris.Context) {
 		}
 	}
 
-	var newUser User
+	var newUser model.User
 	nowTime := time.Now()
 	newUser.CreatedAt = nowTime
 	newUser.Name = registerUser.Name
@@ -492,13 +451,13 @@ func Signup(c iris.Context) {
 
 // Logout 退出登录
 func Logout(c iris.Context) {
-	user := c.Values().Get("user").(User)
-	initialize.DB.Model(&user).UpdateColumn("last_activated_at", time.Now())
+	userID := c.Values().Get("userID").(uint64)
+	initialize.DB.Model(&User{ID: userID}).UpdateColumn("last_activated_at", time.Now())
 
 	RedisConn := initialize.RedisPool.Get()
 	defer RedisConn.Close()
 
-	if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint(user.ID, 10)); err != nil {
+	if _, err := RedisConn.Do("DEL", model.LoginUser+strconv.FormatUint(userID, 10)); err != nil {
 	}
 
 	c.SetCookie(&http.Cookie{
@@ -515,7 +474,9 @@ func Logout(c iris.Context) {
 }
 
 func GetUserSelf(c iris.Context) {
-	user := c.Values().Get("user").(User)
+	userID := c.Values().Get("userID").(uint64)
+	var user model.User
+	user.ID = userID
 	initialize.DB.Preload("EduExps").Preload("WorkExps").Find(&user)
 	//*string改值的方法
 	phone := (*(user.Phone))[0:3] + "XXXX" + (*(user.Phone))[7:]
@@ -525,23 +486,23 @@ func GetUserSelf(c iris.Context) {
 
 func GetUser(c iris.Context) {
 	id := c.Params().GetUint64Default("id", 0)
-	var user User
+	var user vo.User
 	initialize.DB.Where("id=?", id).First(&user)
 	common.Response(c, user, e.GetMsg(e.SUCCESS), e.SUCCESS)
 }
 
 func UpdateUser(c iris.Context) {
-	var nUser User
+	var user, nUser model.User
 	if err := c.ReadJSON(&nUser); err != nil {
 		common.Response(c, "参数无效")
 		return
 	}
-	user := c.Values().Get("user").(User)
+	userID := c.Values().Get("userID").(uint64)
 
 	tx := initialize.DB.Begin()
 
 	for _, v := range nUser.EduExps {
-		v.UserID = user.ID
+		v.UserID = userID
 		v.Status = 1
 		if v.ID != 0 {
 			tx.Model(&v).Updates(&v)
@@ -551,7 +512,7 @@ func UpdateUser(c iris.Context) {
 	}
 
 	for _, v := range nUser.WorkExps {
-		v.UserID = user.ID
+		v.UserID = userID
 		v.Status = 1
 		if v.ID != 0 {
 			tx.Model(&v).Updates(&v)
@@ -559,8 +520,9 @@ func UpdateUser(c iris.Context) {
 			tx.Create(&v)
 		}
 	}
-
-	if err := tx.Model(&user).Updates(nUser).Error; err != nil {
+	err := tx.First(&user, userID).Error
+	err = tx.Model(&user).Updates(nUser).Error
+	if err != nil {
 		tx.Rollback()
 		common.Response(c, "更新失败")
 		return
@@ -654,15 +616,15 @@ func UpdatePassword(c iris.Context) {
 		return
 	}
 
-	userInter := c.Values().Get("user")
-	user := userInter.(User)
+	userID := c.Values().Get("userID").(uint64)
+	var user model.User
 
-	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
+	if err := initialize.DB.First(&user, userID).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
 
-	if checkPassword(userData.Password, user) {
+	if checkPassword(userData.Password, &user) {
 		user.Password = encryptPassword(userData.NewPwd, userData.NewPwd)
 		if err := initialize.DB.Save(&user).Error; err != nil {
 			common.Response(c, "原密码不正确")
@@ -710,10 +672,10 @@ func SecretInfo(c iris.Context) {
 // InfoDetail 返回用户详情信息(教育经历、职业经历等)，包含一些私密字段
 func InfoDetail(c iris.Context) {
 
-	userInter := c.Values().Get("user")
-	user := userInter.(model.User)
+	userID := c.Values().Get("userID").(uint64)
+	var user model.User
 
-	if err := initialize.DB.First(&user, user.ID).Error; err != nil {
+	if err := initialize.DB.First(&user, userID).Error; err != nil {
 		common.Response(c, "error")
 		return
 	}
@@ -743,8 +705,7 @@ func InfoDetail(c iris.Context) {
 // AllList 查询用户列表，只有管理员才能调此接口
 func AllList(c iris.Context) {
 
-	userInter := c.Values().Get("user")
-	user := userInter.(User)
+	user := c.Values().Get("user").(User)
 
 	allUserRole := []uint8{
 		model.UserRoleNormal,
@@ -873,15 +834,9 @@ func UploadAvatar(c iris.Context) {
 	}
 
 	avatarURL := data.URL
-	userInter := c.Values().Get("user")
-	user := userInter.(User)
+	user := c.Values().Get("user").(User)
 
 	if err := initialize.DB.Model(&user).Update("avatar_url", avatarURL).Error; err != nil {
-		return
-	}
-	user.AvatarURL = avatarURL
-
-	if UserToRedis(&user) != nil {
 		return
 	}
 
@@ -922,8 +877,8 @@ func AddCareer(c iris.Context) {
 		return
 	}
 
-	userInter := c.Values().Get("user")
-	user := userInter.(User)
+	user := c.Values().Get("user").(User)
+
 	work.UserID = user.ID
 
 	if err := initialize.DB.Create(&work).Error; err != nil {
@@ -968,8 +923,8 @@ func AddSchool(c iris.Context) {
 		return
 	}
 
-	userInter := c.Values().Get("user")
-	user := userInter.(User)
+	user := c.Values().Get("user").(User)
+
 	edu.UserID = user.ID
 
 	if err := initialize.DB.Create(&edu).Error; err != nil {
@@ -1069,7 +1024,7 @@ func UserToRedis(user *User) error {
 }
 
 // CheckPassword 验证密码是否正确
-func checkPassword(password string, user User) bool {
+func checkPassword(password string, user *model.User) bool {
 	if password == "" || user.Password == "" {
 		return false
 	}

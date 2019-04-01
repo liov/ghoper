@@ -57,11 +57,11 @@ type Comment interface {
 }
 
 func AddComment(c iris.Context) {
-	user := c.Values().Get("user").(User)
+	userID := c.Values().Get("userID").(uint64)
 	if limitErr := common.Limit(model.CommentMinuteLimit,
 		model.CommentMinuteLimitCount,
 		model.CommentDayLimit,
-		model.CommentMinuteLimitCount, user.ID); limitErr != nil {
+		model.CommentMinuteLimitCount, userID); limitErr != nil {
 		common.Response(c, limitErr.Error())
 		return
 	}
@@ -72,7 +72,7 @@ func AddComment(c iris.Context) {
 		var comment ArticleComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
-		comment.UserID = user.ID
+		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			logrus.Info(err.Error())
 		}

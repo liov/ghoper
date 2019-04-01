@@ -10,6 +10,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"hoper/model/vo"
 	"hoper/utils"
 	"hoper/utils/gredis"
 	"hoper/utils/logging"
@@ -19,8 +20,8 @@ import (
 )
 
 type Moments struct {
-	TopMoments    []Moment `json:"top_moments"`
-	NormalMoments []Moment `json:"normal_moments"`
+	TopMoments    []vo.Moment `json:"top_moments"`
+	NormalMoments []vo.Moment `json:"normal_moments"`
 }
 
 //其实这里就是可插拔的，把redis操作单独放进一个函数
@@ -140,14 +141,14 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) (*
 		topData, _ := redis.Strings(conn.Do("LRANGE", topKey, 0, -1))
 		for mi, mv := range topData {
 			if mv != "" {
-				var moment Moment
+				var moment vo.Moment
 				utils.Json.UnmarshalFromString(mv, &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				moments.TopMoments = append(moments.TopMoments, moment)
 				data, _ := utils.Json.MarshalToString(&moment)
 				conn.Do("LSET", topKey, mi, data)
 			} else {
-				moments.TopMoments = append(moments.TopMoments, Moment{})
+				moments.TopMoments = append(moments.TopMoments, vo.Moment{})
 			}
 		}
 		topNum = len(moments.TopMoments)
@@ -165,14 +166,14 @@ func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) (*
 	data, _ := redis.Strings(conn.Do("LRANGE", normalKey, start, start+model.PageSize-topNum-1))
 	for mi, mv := range data {
 		if mv != "" {
-			var moment Moment
+			var moment vo.Moment
 			utils.Json.UnmarshalFromString(mv, &moment)
 			moment.BrowseCount = moment.BrowseCount + 1
 			moments.NormalMoments = append(moments.NormalMoments, moment)
 			data, _ := utils.Json.MarshalToString(&moment)
 			conn.Do("LSET", normalKey, mi+start, data)
 		} else {
-			moments.NormalMoments = append(moments.NormalMoments, Moment{})
+			moments.NormalMoments = append(moments.NormalMoments, vo.Moment{})
 		}
 	}
 
@@ -222,10 +223,10 @@ func GetMoment(c iris.Context) {
 	top := c.URLParam("t")
 	index := c.URLParam("index")
 
-	user := c.Values().Get("user").(User)
+	userID := c.Values().Get("userID").(uint64)
 
 	if moment := getRedisMoment(top, index); moment != nil {
-		if moment.UserID == user.ID {
+		if moment.UserID == userID {
 			common.Response(c, *moment, "belong")
 		} else {
 			common.Response(c, *moment)
@@ -234,7 +235,7 @@ func GetMoment(c iris.Context) {
 		return
 	}
 
-	var moment Moment
+	var moment vo.Moment
 
 	id, err := c.Params().GetUint64("id")
 
@@ -247,7 +248,7 @@ func GetMoment(c iris.Context) {
 	}
 	moment.BrowseCount = moment.BrowseCount + 1
 
-	if moment.UserID == user.ID {
+	if moment.UserID == userID {
 		common.Response(c, moment, "belong")
 	} else {
 		common.Response(c, moment)
@@ -261,7 +262,7 @@ func GetMoment(c iris.Context) {
 
 }
 
-func getRedisMoment(top string, index string) *Moment {
+func getRedisMoment(top string, index string) *vo.Moment {
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
@@ -274,7 +275,7 @@ func getRedisMoment(top string, index string) *Moment {
 				golog.Error(err)
 			}
 			if data != "" {
-				var moment Moment
+				var moment vo.Moment
 				utils.Json.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				data, err = utils.Json.MarshalToString(moment)
@@ -284,7 +285,7 @@ func getRedisMoment(top string, index string) *Moment {
 				}
 				return &moment
 			} else {
-				return &Moment{}
+				return nil
 			}
 		}
 	} else {
@@ -294,7 +295,7 @@ func getRedisMoment(top string, index string) *Moment {
 				logging.Info(err)
 			}
 			if data != "" {
-				var moment Moment
+				var moment vo.Moment
 				utils.Json.Unmarshal(data.([]byte), &moment)
 				moment.BrowseCount = moment.BrowseCount + 1
 				data, err = utils.Json.MarshalToString(moment)
@@ -304,7 +305,7 @@ func getRedisMoment(top string, index string) *Moment {
 				}
 				return &moment
 			} else {
-				return &Moment{}
+				return nil
 			}
 		}
 	}
@@ -356,7 +357,7 @@ func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 func EditMoment(c iris.Context) {
 
 	moment, _ := historyMoment(c, 0)
-	user := c.Values().Get("user").(User)
+	//userID := c.Values().Get("userID").(uint64)
 	var newMoment model.Moment
 	if err := c.ReadJSON(&newMoment); err != nil {
 		common.Response(c, "参数无效")
@@ -373,32 +374,30 @@ func EditMoment(c iris.Context) {
 
 	if newMoment.MoodName != "" {
 		if mood := ExistMoodByName(newMoment.MoodName); mood != nil {
-			initialize.DB.Model(mood).Update("count", mood.Count+1)
-			oldMood := ExistMoodByName(moment.MoodName)
-			initialize.DB.Model(oldMood).Update("count", oldMood.Count-1)
+			setFlagCountToRedis(flagMood, newMoment.MoodName, 1)
+			setFlagCountToRedis(flagMood, moment.MoodName, -1)
 		} else {
 			newMood := model.Mood{CreatedAt: nowTime, Name: newMoment.MoodName, Count: 1}
 			initialize.DB.Create(&newMood)
 		}
 	}
 
-	var tmpTags []Tag
+	var tmpTags []vo.Tag
 	if len(newMoment.Tags) > 0 {
 
 		initialize.DB.Where("moment_id = ?", moment.ID).Delete(model.MomentTag{})
 		var tagStringSlice []string
 		for _, v := range moment.Tags {
 			//tagStringSlice = append(tagStringSlice, v.Name)
-			tag := ExistTagByName(v.Name)
-			initialize.DB.Model(tag).Update("count", tag.Count-1)
+			setFlagCountToRedis(flagTag, v.Name, -1)
 		}
 
 		tagString := strings.Join(tagStringSlice, ",")
 		for _, v := range newMoment.Tags {
-			tmpTags = append(tmpTags, Tag{Name: v.Name, Description: v.Description})
+			tmpTags = append(tmpTags, vo.Tag{Name: v.Name, Description: v.Description})
 			if !strings.Contains(tagString, v.Name) {
 				if tag := ExistTagByName(v.Name); tag != nil {
-					initialize.DB.Model(tag).Update("count", tag.Count+1)
+					setFlagCountToRedis(flagTag, v.Name, 1)
 				} else {
 					newTag := model.Tag{CreatedAt: nowTime, Name: v.Name, Count: 1}
 					initialize.DB.Create(&newTag)
@@ -410,7 +409,7 @@ func EditMoment(c iris.Context) {
 		newMoment.Tags = nil
 	} else {
 		for _, v := range moment.Tags {
-			tmpTags = append(tmpTags, Tag{Name: v.Name, Description: v.Description})
+			tmpTags = append(tmpTags, vo.Tag{Name: v.Name, Description: v.Description})
 		}
 	}
 	newMoment.UpdatedAt = &nowTime
@@ -433,17 +432,16 @@ func EditMoment(c iris.Context) {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	redisMoment := Moment{
+	redisMoment := vo.Moment{
 		ID:        moment.ID,
 		CreatedAt: moment.CreatedAt,
 		Content:   moment.Content,
 		ImageUrl:  moment.ImageUrl,
-		Mood:      Mood{Name: moment.MoodName},
+		Mood:      vo.Mood{Name: moment.MoodName},
 		MoodName:  moment.MoodName,
 		Tags:      tmpTags,
-		User:      user,
 		UserID:    moment.UserID,
-		ActionCount: ActionCount{
+		ActionCount: vo.ActionCount{
 			BrowseCount:  moment.BrowseCount,
 			CommentCount: moment.CommentCount,
 			CollectCount: moment.CollectCount,

@@ -6,39 +6,42 @@ type User struct {
 	ID        uint64 `gorm:"primary_key" json:"id"`
 	Name      string `gorm:"type:varchar(10);not null" json:"name"`
 	Sex       string `gorm:"type:varchar(1);not null" json:"sex"`
+	Score     uint64 `gorm:"default:0" json:"score"`              //积分
 	Signature string `gorm:"type:varchar(100)" json:"signature"`  //个人签名
 	AvatarURL string `gorm:"type:varchar(100)" json:"avatar_url"` //头像
 }
 
 type UserData struct {
-	Email        string     `gorm:"type:varchar(20);unique_index;not null" json:"email"`
-	Phone        *string    `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
-	Birthday     *time.Time `json:"birthday"`
-	Introduction string     `gorm:"type:varchar(500)" json:"introduction"` //简介
-	Score        uint64     `gorm:"default:0" json:"score"`                //积分
+	Account  string  `gorm:"type:varchar(20);unique_index" json:"account"`
+	Email    string  `gorm:"type:varchar(20);unique_index;not null" json:"email"`
+	Phone    *string `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
+	Password string  `gorm:"type:varchar(100)" json:"-"`
 }
 
 type UserMore struct {
-	Address  string      `gorm:"type:varchar(100)" json:"address"`
-	Location string      `gorm:"type:varchar(100)" json:"location"`
-	EduExps  []Education `json:"edu_exps"`  //教育经历
-	WorkExps []Work      `json:"work_exps"` //职业经历
+	Birthday     *time.Time  `json:"birthday"`
+	Introduction string      `gorm:"type:varchar(500)" json:"introduction"` //简介
+	Address      string      `gorm:"type:varchar(100)" json:"address"`
+	Location     string      `gorm:"type:varchar(100)" json:"location"`
+	EduExps      []Education `json:"edu_exps"`  //教育经历
+	WorkExps     []Work      `json:"work_exps"` //职业经历
 }
 
 type UserNoPub struct {
-	ActivatedAt     *time.Time `json:"activated_at"`                        //激活时间
+	CreatedAt       time.Time  `json:"created_at"`
+	ActivatedAt     *time.Time `gorm:"default:null" json:"activated_at"`    //激活时间
 	Role            uint8      `gorm:"type:smallint;default:0" json:"role"` //管理员or用户
-	BannedAt        *time.Time `sql:"index" json:"banned_at"`
-	LastActivatedAt *time.Time `json:"last_activated_at"`                  //最后活跃时间
-	LastName        string     `gorm:"type:varchar(100)" json:"last_name"` //上个名字
+	BannedAt        *time.Time `gorm:"default:null" sql:"index" json:"banned_at"`
+	LastActivatedAt *time.Time `gorm:"default:null" json:"last_activated_at"`          //最后活跃时间
+	LastName        string     `gorm:"type:varchar(20);default:null" json:"last_name"` //上个名字
 }
 
 type UserOwn struct {
 	//和Collection挺像的，不过一个User可以对应多个C，只能对应一个L
 	//一个Like似乎没用啊，一个人的喜欢可以是多个，收藏也是这样,如果说分表，一个喜欢夹对应多条喜欢，一个索引作用没什么意义，为什么不存一个表里
 	Collections []Collection `json:"collections"`
-	Follows     []*User      `gorm:"-" json:"follows"`   //gorm:"foreignkey:FollowID []Follow里的User
-	Followeds   []*User      `gorm:"-" json:"followeds"` //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
+	Follows     []User       `gorm:"-" json:"follows"`   //gorm:"foreignkey:FollowID []Follow里的User
+	Followeds   []User       `gorm:"-" json:"followeds"` //gorm:"foreignkey:UserID"	[]Follow里的FollowUser
 	Favorites   []Favorites  `json:"favorites"`          //收藏夹？
 }
 

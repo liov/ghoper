@@ -8,6 +8,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
+	"hoper/model/vo"
 	"reflect"
 	"strconv"
 	"strings"
@@ -188,15 +189,7 @@ func getRedisAction(userID string, kind int8) *UserAction {
 	return userAction
 }
 
-type ActionCount struct {
-	CollectCount int64 `gorm:"default:0" json:"collect_count"` //收藏
-	LikeCount    int64 `gorm:"default:0" json:"like_count"`    //喜欢
-	ApproveCount int64 `gorm:"default:0" json:"approve_count"` //点赞
-	CommentCount int64 `gorm:"default:0" json:"comment_count"` //评论
-	BrowseCount  int64 `gorm:"default:0" json:"browse_count"`  //浏览
-}
-
-func getActionCount(refId uint64, kind int8) *ActionCount {
+func getActionCount(refId uint64, kind int8) *vo.ActionCount {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
@@ -206,12 +199,13 @@ func getActionCount(refId uint64, kind int8) *ActionCount {
 	conn.Send("HGETALL", key)
 	conn.Flush()
 	conn.Receive()
-	actionCount := new(ActionCount)
+	actionCount := new(vo.ActionCount)
 	action, err := redis.Int64Map(conn.Receive())
-	actionCount.CollectCount = action["Collect"]
-	actionCount.LikeCount = action["Like"]
-	actionCount.ApproveCount = action["Approve"]
-	actionCount.BrowseCount = action["Browse"]
+	actionCount.CollectCount = action[IndexAction[actionCollect]]
+	actionCount.LikeCount = action[IndexAction[actionLike]]
+	actionCount.ApproveCount = action[IndexAction[actionApprove]]
+	actionCount.BrowseCount = action[IndexAction[actionBrowse]]
+	actionCount.CommentCount = action[IndexAction[actionComment]]
 	if err != nil {
 		golog.Error(err)
 	}
