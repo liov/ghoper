@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/cache"
-	"github.com/kataras/iris/middleware/pprof"
 	"hoper/client/controller/tmpl/html"
 	"hoper/client/controller/tmpl/markdown"
 	"hoper/client/controller/tmpl/pug"
@@ -28,7 +27,6 @@ func TPLRouter(app *iris.Application) {
 	tplRouter := app.Party("/tpl")
 	{
 		//这里的pprof有问题，访问profile返回的是文件
-		tplRouter.Any("/pprof/{action:path}", pprof.New())
 		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
 		tplRouter.Get("/markdown", markdown.MarkdownTest)
