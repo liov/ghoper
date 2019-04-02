@@ -28,25 +28,31 @@ func init() {
 	logrus.SetFormatter(customFormatter)
 	// Only log the warning severity or above.
 	logrus.SetLevel(logrus.InfoLevel)
-	golog.SetTimeFormat("2006-01-02 15:04:05")
+	golog.SetTimeFormat("2006/01/02 15:04:05")
 	golog.Handle(func(l *golog.Log) bool {
-		prefix := golog.GetTextForLevel(l.Level, true)
+		//应该是深度，好烦，不带format是6，带是7，无法确定
 		pc, file, line, _ := runtime.Caller(6)
-		message := fmt.Sprintf("%s [%s] %s %s:%d %s",
-			prefix, pio.Yellow(l.FormatTime()), l.Message, file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
 
-		if l.NewLine {
-			message += "\n"
+		if l.Logger.Printer.IsTerminal {
+			l.Message = fmt.Sprintf("[%s] %s:%d %s",
+				pio.Red(l.Message), file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
+		} else {
+			l.Message = fmt.Sprintf("[%s] %s:%d %s",
+				l.Message, file, line, runtime.FuncForPC(pc).Name())
 		}
 
-		print(message)
+		if l.NewLine {
+			l.Logger.Printer.Println(l)
+		} else {
+			l.Logger.Printer.Print(l)
+		}
 		return true
 	})
 }
 
 func main() {
 
-	golog.Warn("Hey, warning here")
+	golog.Warnf("Hey, warning here")
 	golog.Info("Hey, warning here")
 	golog.Debug("Hey, warning here")
 	golog.Error("Something went wrong!")
@@ -54,4 +60,5 @@ func main() {
 	logrus.Warn("Hey, warning here")
 	logrus.Errorf("Something went wrong!")
 	logrus.Info("Something went wrong!")
+	logrus.Debug("Something went wrong!")
 }

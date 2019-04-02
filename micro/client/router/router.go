@@ -4,11 +4,9 @@ package router
 import (
 	"context"
 	"github.com/kataras/iris"
-	"github.com/kataras/iris/middleware/i18n"
 	"github.com/kataras/iris/middleware/logger"
 	. "github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
-	"hoper/client/controller/hnsq"
 	"hoper/client/router/other"
 	"hoper/utils/hlog"
 	"os"
@@ -52,28 +50,29 @@ func IrisRouter() *iris.Application {
 	/*middleware必须要写ctx.next(),且写在路由前，路由后的midddleware在请求之前的路由时不生效
 	  iris.FromStd()将其他Handler转为iris的Handler
 	*/
-	globalLocale := i18n.New(i18n.Config{
+	//i18n
+	/*	globalLocale := i18n.New(i18n.Config{
 		Default:      "en-US",
 		URLParameter: "lang",
 		Languages: map[string]string{
 			"en-US": "../i18n/locale_en-US.ini",
 			"zh-CN": "../i18n/locale_zh-CN.ini"}})
-	app.Use(globalLocale)
+	app.Use(globalLocale)*/
+	//请求日志
+	/*	logM := logMid()
+		app.Use(logM)
 
-	logM := logMid()
-
-	app.Use(logM)
-	/*
-		app.OnErrorCode(404 ,customLogger, func(ctx iris.Context) {
-		   ctx.Writef("My Custom 404 error page ")
+		app.OnErrorCode(404, logM, func(ctx iris.Context) {
+			ctx.Writef("My Custom 404 error page ")
 		})
-	*/
-	app.OnAnyErrorCode(logM, func(ctx iris.Context) {
-		//这应该被添加到日志中，因为`logger.Config＃MessageContextKey`
-		ctx.Values().Set("logger_message",
-			"a dynamic message passed to the logs")
-		ctx.Writef("My Custom error page")
-	})
+
+		app.OnAnyErrorCode(logM, func(ctx iris.Context) {
+			//这应该被添加到日志中，因为`logger.Config＃MessageContextKey`
+			ctx.Values().Set("logger_message",
+				"a dynamic message passed to the logs")
+			ctx.Writef("My Custom error page")
+		})*/
+
 	app.Logger().Printer.SetOutput(hlog.F)
 
 	UserRouter(app)
@@ -97,21 +96,6 @@ func IrisRouter() *iris.Application {
 
 	app.Get("/api/push", controller.Push)
 
-	app.Post("/api/nsq", hnsq.Start)
-
-	app.Get("/api/restart", func(c iris.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		app.Shutdown(ctx)
-		c.WriteString("重启了")
-	})
-	app.Get("/api/shutdown", func(c iris.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		Ch <- os.Kill
-		app.Shutdown(ctx)
-
-	})
 	return app
 }
 

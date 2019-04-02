@@ -3,9 +3,7 @@ package router
 import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/cache"
-	"github.com/kataras/iris/middleware/basicauth"
 	"github.com/kataras/iris/middleware/pprof"
-	"hoper/client/controller"
 	"hoper/client/controller/tmpl/html"
 	"hoper/client/controller/tmpl/markdown"
 	"hoper/client/controller/tmpl/pug"
@@ -26,27 +24,17 @@ func TPLRouter(app *iris.Application) {
 	app.RegisterView(tmpl)
 	app.RegisterView(tmplPug)
 
-	//auth
-	authConfig := basicauth.Config{
-		Users:   map[string]string{"admin": "lby604"},
-		Realm:   "Authorization Required", // defaults to "Authorization Required"
-		Expires: time.Duration(30) * time.Minute,
-	}
-
-	authentication := basicauth.New(authConfig)
-
 	//缓存10s
 	tplRouter := app.Party("/tpl")
 	{
 		//这里的pprof有问题，访问profile返回的是文件
-		tplRouter.Any("/pprof/{action:path}", authentication, pprof.New())
+		tplRouter.Any("/pprof/{action:path}", pprof.New())
 		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)
 		tplRouter.Get("/pug", pug.PugTest)
 		tplRouter.Get("/markdown", markdown.MarkdownTest)
-		tplRouter.Get("/init", authentication, controller.DBInit)
 		tplRouter.Get("/time", iris.Cache304(10*time.Second), html.Time)
-		tplRouter.Get("/auth", authentication, html.Auth)
-		tplRouter.Get("/values", authentication, html.Values)
+		tplRouter.Get("/auth", html.Auth)
+		tplRouter.Get("/values", html.Values)
 		tplRouter.Get("/logout/{provider}", func(ctx iris.Context) {
 			middleware.Logout(ctx)
 			ctx.Redirect("/", iris.StatusTemporaryRedirect)
