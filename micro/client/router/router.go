@@ -74,7 +74,7 @@ func IrisRouter() *iris.Application {
 			"a dynamic message passed to the logs")
 		ctx.Writef("My Custom error page")
 	})
-	//app.Logger().Printer.SetOutput(logging.F)
+	app.Logger().Printer.SetOutput(hlog.F)
 
 	UserRouter(app)
 
