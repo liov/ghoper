@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"github.com/jinzhu/configor"
-	"log"
+	"github.com/kataras/golog"
 	"time"
 )
 
@@ -99,7 +99,7 @@ func (d *duration) UnmarshalText(text []byte) error {
 	return err
 }
 
-func Setup() {
+func initializeConfig() {
 	/*Cfg, err := ini.Load("../config/config.ini")
 	if err != nil {
 		log.Fatalf("找不到文件 'website/config/config.ini': %v", err)
@@ -125,7 +125,7 @@ func Setup() {
 	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../config/config.toml")
 
 	if err != nil {
-		log.Fatalf("配置错误: %v", err)
+		golog.Error("配置错误: %v", err)
 	}
 
 	Config.Server.FileMaxSize = Config.Server.FileMaxSize * 1024 * 1024

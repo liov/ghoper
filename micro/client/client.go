@@ -11,7 +11,7 @@ import (
 	"hoper/client/router"
 	"hoper/initialize"
 	"hoper/protobuf"
-	"hoper/utils/logging"
+	"hoper/utils/hlog"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +29,7 @@ func Client() {
 	cron.New().Start()
 	defer cron.New().Stop()
 
-	defer logging.F.Close()
+	defer hlog.F.Close()
 
 	go hwebsocket.Start()
 

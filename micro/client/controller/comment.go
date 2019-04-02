@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"github.com/kataras/golog"
 	"github.com/kataras/iris"
-	"github.com/sirupsen/logrus"
 	"hoper/client/controller/common"
 	"hoper/initialize"
 	"hoper/model"
@@ -74,7 +74,7 @@ func AddComment(c iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	case kindMoment:
 		var comment MomentComment
@@ -82,7 +82,7 @@ func AddComment(c iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	case kindDiary:
 		var comment DiaryComment
@@ -90,7 +90,7 @@ func AddComment(c iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	case kindDiaryBook:
 		var comment DiaryBookComment
@@ -98,7 +98,7 @@ func AddComment(c iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	}
 
@@ -108,9 +108,7 @@ func AddComment(c iris.Context) {
 func commentBind(comment interface{}, c iris.Context) {
 	err := c.ReadJSON(comment)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"controller": "moment",
-		}).Info(err.Error())
+		golog.Error(err)
 		common.Response(c, "参数无效")
 		return
 	}
@@ -127,7 +125,7 @@ func GetComment(ctx iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	case kindMoment:
 		var comment MomentComment
@@ -135,7 +133,7 @@ func GetComment(ctx iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	case kindDiary:
 		var comment DiaryComment
@@ -143,7 +141,7 @@ func GetComment(ctx iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	case kindDiaryBook:
 		var comment DiaryBookComment
@@ -151,7 +149,7 @@ func GetComment(ctx iris.Context) {
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			logrus.Info(err.Error())
+			golog.Error(err)
 		}
 	}
 }

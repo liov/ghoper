@@ -18,7 +18,7 @@ import (
 	"hoper/model/e"
 	"hoper/model/ov"
 	"hoper/utils"
-	"hoper/utils/logging"
+	"hoper/utils/hlog"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -172,7 +172,7 @@ func ActiveAccount(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint(user.ID, 10)); err != nil {
-		logging.Info(err)
+		hlog.Info(err)
 	}
 	common.Response(c, user.Email, "激活成功", e.SUCCESS)
 }
@@ -529,6 +529,8 @@ func UpdateUser(c iris.Context) {
 		}
 	}
 	err := tx.First(&user, userID).Error
+	now := time.Now()
+	nUser.UpdatedAt = &now
 	err = tx.Model(&user).Updates(nUser).Error
 	if err != nil {
 		tx.Rollback()

@@ -1,7 +1,8 @@
 package initialize
 
 func init() {
-	Setup()
+	initializeConfig()
+	initializeLog()
 	initializeDB()
 	initializeBoltDB()
 	initializeRedis()

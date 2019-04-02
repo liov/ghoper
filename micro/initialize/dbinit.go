@@ -8,8 +8,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/sessions/sessiondb/boltdb"
-	"log"
-
 	"os"
 	"reflect"
 	"strings"
@@ -43,7 +41,7 @@ func initializeDB() {
 	db, err := gorm.Open(Config.Database.Type, url)
 
 	if err != nil {
-		log.Println(err)
+		golog.Error(err)
 		os.Exit(-1)
 	}
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {

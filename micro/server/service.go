@@ -7,7 +7,7 @@ import (
 	"hoper/protobuf"
 	"hoper/server/handler/sub"
 	"hoper/server/handler/user"
-	"hoper/utils/logging"
+	"hoper/utils/hlog"
 )
 
 func Service() {
@@ -42,6 +42,6 @@ func Service() {
 	micro.RegisterSubscriber("example.topic.pubsub.2", service.Server(), sub.SubEv, server.SubscriberQueue("queue.pubsub"))
 
 	if err := service.Run(); err != nil {
-		logging.Error(err)
+		hlog.Error(err)
 	}
 }

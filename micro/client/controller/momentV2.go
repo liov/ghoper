@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
-	"github.com/sirupsen/logrus"
 	"hoper/client/controller/cachekey"
 	"hoper/client/controller/common"
 	"hoper/initialize"
@@ -42,9 +41,7 @@ func AddMoment(c iris.Context) {
 	var moment model.Moment
 
 	if err := c.ReadJSON(&moment); err != nil {
-		logrus.WithFields(logrus.Fields{
-			"model": "moment",
-		}).Info(err.Error())
+		golog.Error(err)
 		common.Response(c, "参数无效")
 		return
 	}

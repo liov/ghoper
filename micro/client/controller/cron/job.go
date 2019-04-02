@@ -1,10 +1,10 @@
 package cron
 
-import "github.com/sirupsen/logrus"
+import "github.com/kataras/golog"
 
 type RedisTo struct {
 }
 
 func (RedisTo) Run() {
-	logrus.Info("定时任务执行")
+	golog.Info("定时任务执行")
 }

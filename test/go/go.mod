@@ -36,6 +36,7 @@ require (
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/json-iterator/go v1.1.5
 	github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5 // indirect
+	github.com/kataras/golog v0.0.0-20180321173939-03be10146386
 	github.com/kataras/iris v0.0.0-20190116204635-f4f66079a723
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/markbates/goth v1.49.0
@@ -50,7 +51,7 @@ require (
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.2.0
+	github.com/sirupsen/logrus v1.4.0
 	github.com/srwiley/oksvg v0.0.0-20190105194046-ccbc7673cdf3 // indirect
 	github.com/srwiley/rasterx v0.0.0-20181219215540-696f7edb7a7e // indirect
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect

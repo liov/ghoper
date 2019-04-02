@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
 	"hoper/initialize"
-	"hoper/utils/logging"
+	"hoper/utils/hlog"
 )
 
 func Set(key string, data interface{}, time int) error {
@@ -127,7 +127,7 @@ func redisMoments(key string, model interface{}) error {
 	if exist, err := redis.Bool(conn.Do("EXISTS", key)); exist && err == nil {
 		data, err := redis.Bytes(conn.Do("GET", key))
 		if err != nil {
-			logging.Info(err)
+			hlog.Info(err)
 			return err
 		} else {
 			json.Unmarshal(data, model)

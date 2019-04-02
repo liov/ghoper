@@ -59,6 +59,7 @@ require (
 	github.com/json-iterator/go v1.1.5
 	github.com/kataras/golog v0.0.0-20180321173939-03be10146386
 	github.com/kataras/iris v11.1.1+incompatible
+	github.com/kataras/pio v0.0.0-20190103105442-ea782b38602d
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/lni/dragonboat v2.1.0+incompatible // indirect
@@ -92,7 +93,7 @@ require (
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
-	github.com/sirupsen/logrus v1.3.0
+	github.com/sirupsen/logrus v1.4.0
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/ugorji/go/codec v0.0.0-20190204201341-e444a5086c43
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect

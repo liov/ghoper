@@ -14,7 +14,7 @@ import (
 	"hoper/model/ov"
 	"hoper/utils"
 	"hoper/utils/gredis"
-	"hoper/utils/logging"
+	"hoper/utils/hlog"
 	"strconv"
 	"strings"
 	"time"
@@ -258,7 +258,7 @@ func GetMoment(c iris.Context) {
 	saveErr := initialize.DB.Save(&moment).Error
 
 	if saveErr != nil {
-		logging.Info("保存失败")
+		hlog.Info("保存失败")
 	}
 
 }
@@ -293,7 +293,7 @@ func getRedisMoment(top string, index string) *ov.Moment {
 		if gredis.Exists(cachekey.Moments) {
 			data, err := conn.Do("LINDEX", cachekey.Moments, index)
 			if err != nil {
-				logging.Info(err)
+				hlog.Info(err)
 			}
 			if data != "" {
 				var moment ov.Moment
@@ -302,7 +302,7 @@ func getRedisMoment(top string, index string) *ov.Moment {
 				data, err = utils.Json.MarshalToString(moment)
 				_, err = conn.Do("LSET", cachekey.Moments, index, data)
 				if err != nil {
-					logging.Error(err)
+					hlog.Error(err)
 				}
 				return &moment
 			} else {
@@ -347,7 +347,7 @@ func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 	}
 
 	if saveErr != nil {
-		logging.Info("保存历史失败")
+		hlog.Info("保存历史失败")
 	}
 
 	return &moment, nil
@@ -447,7 +447,7 @@ func EditMoment(c iris.Context) {
 			data, err := utils.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", cachekey.TopMoments, index, data)
 			if err != nil {
-				logging.Error(err)
+				hlog.Error(err)
 			}
 		}
 	} else {
@@ -455,7 +455,7 @@ func EditMoment(c iris.Context) {
 			data, err := utils.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", cachekey.Moments, index, data)
 			if err != nil {
-				logging.Error(err)
+				hlog.Error(err)
 			}
 		}
 	}
@@ -482,14 +482,14 @@ func DeleteMoment(c iris.Context) {
 		if gredis.Exists(cachekey.TopMoments) {
 			_, err := conn.Do("LSET", cachekey.TopMoments, index, "")
 			if err != nil {
-				logging.Error(err)
+				hlog.Error(err)
 			}
 		}
 	} else {
 		if gredis.Exists(cachekey.Moments) {
 			_, err := conn.Do("LSET", cachekey.Moments, index, "")
 			if err != nil {
-				logging.Error(err)
+				hlog.Error(err)
 			}
 		}
 	}
