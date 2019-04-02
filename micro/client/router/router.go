@@ -1,11 +1,11 @@
 package router
 
-//go:generate qtc -dir=../template
+//go:generate qtc -dir=../../template
 import (
 	"context"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
-	. "github.com/kataras/iris/middleware/recover"
+	"github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/router/other"
 	"hoper/utils/hlog"
@@ -26,8 +26,8 @@ func IrisRouter() *iris.Application {
 		//关闭所有主机
 		app.Shutdown(ctx)
 	})
-	app.StaticWeb("/api/static", "../static")
-	app.Use(New())
+	app.StaticWeb("/api/static", "../../static")
+	app.Use(recover.New())
 	//other.Wrap(app)
 	//api文档
 	//other.Api(app)
@@ -51,13 +51,13 @@ func IrisRouter() *iris.Application {
 	  iris.FromStd()将其他Handler转为iris的Handler
 	*/
 	//i18n
-	/*	globalLocale := i18n.New(i18n.Config{
-		Default:      "en-US",
-		URLParameter: "lang",
-		Languages: map[string]string{
-			"en-US": "../i18n/locale_en-US.ini",
-			"zh-CN": "../i18n/locale_zh-CN.ini"}})
-	app.Use(globalLocale)*/
+	/*		globalLocale := i18n.New(i18n.Config{
+			Default:      "en-US",
+			URLParameter: "lang",
+			Languages: map[string]string{
+				"en-US": "../../i18n/locale_en-US.ini",
+				"zh-CN": "../../i18n/locale_zh-CN.ini"}})
+		app.Use(globalLocale)*/
 	//请求日志
 	/*	logM := logMid()
 		app.Use(logM)
@@ -73,7 +73,7 @@ func IrisRouter() *iris.Application {
 			ctx.Writef("My Custom error page")
 		})*/
 
-	app.Logger().Printer.SetOutput(hlog.F)
+	app.Logger().Printer.SetOutput(hlog.LogFile)
 
 	UserRouter(app)
 
@@ -128,11 +128,9 @@ func logMid() iris.Handler {
 		MessageHeaderKeys: []string{"User-Agent"},
 	}
 
-	logFile := hlog.F
-
 	c.LogFunc = func(now time.Time, latency time.Duration, status, ip, method, path string, message interface{}, headerMessage interface{}) {
 		output := logger.Columnize(now.Format("2006/01/02 - 15:04:05"), latency, status, ip, method, path, message, headerMessage)
-		logFile.Write([]byte(output))
+		hlog.LogFile.Write([]byte(output))
 	}
 	//我们不想使用记录器，一些静态请求等
 	c.AddSkipper(func(ctx iris.Context) bool {

@@ -2,7 +2,7 @@ package say
 
 import (
 	"context"
-	"hoper/test/_examples/_ex/protobuf"
+	"hoper/_examples/_ex/protobuf"
 	"io"
 )
 

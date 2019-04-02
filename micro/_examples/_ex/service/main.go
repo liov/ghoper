@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/micro/go-micro"
-	"hoper/test/_examples/_ex/protobuf"
-	"hoper/test/_examples/_ex/service/say"
+	"hoper/_examples/_ex/protobuf"
+	"hoper/_examples/_ex/service/say"
 )
 
 func main() {

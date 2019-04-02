@@ -6,6 +6,8 @@ type Dictionary struct {
 	ID        uint64     `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
 	Type      string     `gorm:"type:varchar(128)" json:"type"`
+	ParentID  uint64     `json:"parent_id"`
+	ParentKey string     `json:"parent_key"`
 	Key       string     `gorm:"type:varchar(128)" json:"key"`
 	Value     string     `gorm:"type:varchar(256)" json:"value"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶

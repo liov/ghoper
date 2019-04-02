@@ -16,7 +16,7 @@
  *
  */
 
-//go:generate protoc -I ../helloworld --go_out=plugins=grpc:../helloworld ../helloworld/helloworld.proto
+//go:generate protoc -I ../../helloworld --go_out=plugins=grpc:../../helloworld ../../helloworld/helloworld.proto
 
 package main
 

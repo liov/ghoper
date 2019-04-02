@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"hoper/test/_examples/_ex/protobuf"
+	"hoper/_examples/_ex/protobuf"
 	"io"
 	"log"
 	"time"

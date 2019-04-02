@@ -14,7 +14,7 @@ import (
 type Level int
 
 var (
-	F *os.File
+	LogFile *os.File
 
 	DefaultPrefix      = ""
 	DefaultCallerDepth = 2
@@ -34,11 +34,11 @@ const (
 
 func init() {
 	var err error
-	F, err = openLogFile(getLogFileName(), getLogFilePath())
+	LogFile, err = openLogFile(getLogFileName(time.Now().Format(initialize.Config.Server.TimeFormat)), getLogFilePath())
 	if err != nil {
 		log.Fatalln(err)
 	}
-	logger = log.New(F, DefaultPrefix, log.LstdFlags)
+	logger = log.New(os.Stdout, DefaultPrefix, log.LstdFlags)
 }
 
 func Debug(v ...interface{}) {
@@ -91,10 +91,10 @@ func getLogFilePath() string {
 	return RuntimeRootPath + LogSavePath
 }
 
-func getLogFileName() string {
+func getLogFileName(name string) string {
 	return fmt.Sprintf("%s%s.%s",
 		initialize.Config.Server.LogSaveName,
-		time.Now().Format(initialize.Config.Server.TimeFormat),
+		name,
 		initialize.Config.Server.LogFileExt,
 	)
 }

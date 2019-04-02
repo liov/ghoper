@@ -6,7 +6,7 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
-	"hoper/test/_examples/_ex/protobuf"
+	"hoper/_examples/_ex/protobuf"
 	"log"
 	"net/http"
 	"sync"
