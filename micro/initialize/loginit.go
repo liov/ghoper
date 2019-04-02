@@ -34,8 +34,8 @@ func initializeLog() {
 	golog.Handle(func(l *golog.Log) bool {
 		prefix := golog.GetTextForLevel(l.Level, true)
 		pc, file, line, _ := runtime.Caller(6)
-		message := fmt.Sprintf("%s [%s] %s %s:%d %s",
-			prefix, pio.Yellow(l.FormatTime()), l.Message, file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
+		message := fmt.Sprintf("%s %s %s %s:%d %s",
+			pio.Yellow(l.FormatTime()), prefix, l.Message, file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
 
 		if l.NewLine {
 			message += "\n"
