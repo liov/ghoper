@@ -7,18 +7,18 @@ import (
 )
 
 func Like(app *iris.Application) {
-	app.Post("/api/like", middleware.Login, controller.AddLike)
-	app.Post("/api/approve", middleware.Login, controller.Approve)
+	app.Post("/api/like", middleware.GetUser(false), controller.AddLike)
+	app.Post("/api/approve", middleware.GetUser(false), controller.Approve)
 
-	app.Get("/api/favorites", middleware.Login, controller.GetFavorite)
-	app.Put("/api/favorites", middleware.Login, controller.AddCollection)
-	app.Post("/api/favorites", middleware.Login, controller.AddFavorite)
-	app.Delete("/api/favorites", middleware.Login, controller.DelCollection)
+	app.Get("/api/favorites", middleware.GetUser(false), controller.GetFavorite)
+	app.Put("/api/favorites", middleware.GetUser(false), controller.AddCollection)
+	app.Post("/api/favorites", middleware.GetUser(false), controller.AddFavorite)
+	app.Delete("/api/favorites", middleware.GetUser(false), controller.DelCollection)
 	//app.Get("/api/collection", middleware.GetUser, controller.GetCollection)
-	app.Put("/api/collection", middleware.Login, controller.AddCollection)
-	app.Post("/api/collection", middleware.Login, controller.AddCollection)
-	app.Delete("/api/collection", middleware.Login, controller.DelCollection)
+	app.Put("/api/collection", middleware.GetUser(false), controller.AddCollection)
+	app.Post("/api/collection", middleware.GetUser(false), controller.AddCollection)
+	app.Delete("/api/collection", middleware.GetUser(false), controller.DelCollection)
 
-	app.Post("/api/comment/{kind}/{id}", middleware.Login, controller.AddComment)
-	app.Get("/api/comment/{kind}/{id}", middleware.Login, controller.GetComment)
+	app.Post("/api/comment/{kind}/{id}", middleware.GetUser(false), controller.AddComment)
+	app.Get("/api/comment/{kind}/{id}", middleware.GetUser(false), controller.GetComment)
 }

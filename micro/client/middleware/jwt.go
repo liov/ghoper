@@ -16,10 +16,17 @@ import (
 )
 
 //中间件的两种方式
-func GetUser() iris.Handler {
+func GetUser(fullInfo bool) iris.Handler {
 	return func(ctx iris.Context) {
 		code := e.SUCCESS
-		user, err := getUser(ctx)
+		var user *controller.User
+		var userID uint64
+		var err error
+		if fullInfo {
+			user, err = getUser(ctx)
+		} else {
+			userID, err = getUserID(ctx)
+		}
 
 		if err != nil && err.Error() == "未登录" {
 			code = e.ErrorAuthCheckTokenFail
@@ -28,7 +35,7 @@ func GetUser() iris.Handler {
 		}
 
 		if code != e.SUCCESS {
-			ctx.StatusCode(iris.StatusUnauthorized)
+			//ctx.StatusCode(iris.StatusUnauthorized)
 			ctx.SetCookie(&http.Cookie{
 				Name:     "token",
 				Value:    "del",
@@ -42,45 +49,20 @@ func GetUser() iris.Handler {
 			common.Response(ctx, nil, err.Error(), code)
 			return
 		}
-		ctx.Values().Set("userID", user.ID)
-		ctx.Values().Set("user", user) //指针
+
+		if fullInfo {
+			ctx.Values().Set("user", user) //指针
+		}
+		ctx.Values().Set("userID", userID)
 		ctx.Next()
 	}
-}
-
-func Login(ctx iris.Context) {
-	code := e.SUCCESS
-	userID, err := getUserID(ctx)
-
-	if err != nil && err.Error() == "未登录" {
-		code = e.ErrorAuthCheckTokenFail
-	} else if err != nil && err.Error() == "登录超时" {
-		code = e.ErrorAuthCheckTokenTimeout
-	}
-
-	if code != e.SUCCESS {
-		ctx.SetCookie(&http.Cookie{
-			Name:     "token",
-			Value:    "del",
-			Path:     "/",
-			Domain:   "hoper.xyz",
-			Expires:  time.Now().Add(-1),
-			MaxAge:   -1,
-			Secure:   false,
-			HttpOnly: true,
-		})
-		common.Response(ctx, nil, err.Error(), code)
-		return
-	}
-	ctx.Values().Set("userID", userID)
-	ctx.Next()
 }
 
 func GetUserId(ctx iris.Context) {
 	if userID, err := getUserID(ctx); err == nil {
 		ctx.Values().Set("userID", userID)
 	} else {
-		ctx.Values().Set("userID", 0)
+		ctx.Values().Set("userID", uint64(0))
 	}
 	ctx.Next()
 }
@@ -112,6 +94,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 		if err != nil {
 			return nil, errors.New("登录超时")
 		}
+		controller.UserLastActiveTime(userID)
 		return user, nil
 	}
 	return nil, errors.New("未登录")
@@ -137,8 +120,15 @@ func getUserID(ctx iris.Context) (uint64, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID := uint64(claims["id"].(float64))
-		return userID, nil
+		if claims["id"] != nil && claims["expire"] != nil {
+			userID := uint64(claims["id"].(float64))
+			expire := int64(claims["expire"].(float64))
+			if time.Now().Unix()-expire < 0 {
+				return 0, errors.New("登录超时")
+			}
+			controller.UserLastActiveTime(userID)
+			return userID, nil
+		}
 	}
 
 	return 0, errors.New("未登录")

@@ -5,8 +5,8 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
-	"hoper/client/controller/cachekey"
 	"hoper/client/controller/common"
+	"hoper/client/controller/credis"
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/crm"
@@ -115,8 +115,8 @@ func AddMoment(c iris.Context) {
 
 	value, _ := utils.Json.MarshalToString(moment)
 	conn.Send("SELECT", kindMoment)
-	conn.Send("LPUSH", cachekey.Moments, value)
-	_, err := conn.Do("INCR", cachekey.Moments+"_Count")
+	conn.Send("LPUSH", credis.Moments, value)
+	_, err := conn.Do("INCR", credis.Moments+"_Count")
 	if err != nil {
 		return
 	}
@@ -129,7 +129,7 @@ func GetMoments(c iris.Context) {
 	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
 	//l := list.New()
 	userID := c.Values().Get("userID").(uint64)
-	key := cachekey.Moments
+	key := credis.Moments
 
 	var moments []ov.Moment
 	var userAction *UserAction
@@ -280,7 +280,7 @@ func getRedisMomentV2(index string) *ov.Moment {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	key := cachekey.Moments
+	key := credis.Moments
 	conn.Send("SELECT", kindMoment)
 
 	data, err := redis.String(conn.Do("LINDEX", key, index))
@@ -427,17 +427,17 @@ func EditMoment(c iris.Context) {
 	}
 	//topNum
 	if topNum != "0" {
-		if gredis.Exists(cachekey.TopMoments) {
+		if gredis.Exists(credis.TopMoments) {
 			data, err := utils.Json.MarshalToString(redisMoment)
-			_, err = conn.Do("LSET", cachekey.TopMoments, index, data)
+			_, err = conn.Do("LSET", credis.TopMoments, index, data)
 			if err != nil {
 				golog.Error(err)
 			}
 		}
 	} else {
-		if gredis.Exists(cachekey.Moments) {
+		if gredis.Exists(credis.Moments) {
 			data, err := utils.Json.MarshalToString(redisMoment)
-			_, err = conn.Do("LSET", cachekey.Moments, index, data)
+			_, err = conn.Do("LSET", credis.Moments, index, data)
 			if err != nil {
 				golog.Error(err)
 			}
@@ -463,15 +463,15 @@ func DeleteMoment(c iris.Context) {
 	defer conn.Close()
 
 	if topNum != "0" {
-		if gredis.Exists(cachekey.TopMoments) {
-			_, err := conn.Do("LSET", cachekey.TopMoments, index, "")
+		if gredis.Exists(credis.TopMoments) {
+			_, err := conn.Do("LSET", credis.TopMoments, index, "")
 			if err != nil {
 				golog.Error(err)
 			}
 		}
 	} else {
-		if gredis.Exists(cachekey.Moments) {
-			_, err := conn.Do("LSET", cachekey.Moments, index, "")
+		if gredis.Exists(credis.Moments) {
+			_, err := conn.Do("LSET", credis.Moments, index, "")
 			if err != nil {
 				golog.Error(err)
 			}
@@ -512,4 +512,24 @@ func redisMoments(key string, model interface{}) error {
 		}
 	}
 	return nil
+}
+
+func MomentRedisToDB() {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	conn.Send("SELECT", kindMoment)
+	data, _ := redis.Strings(conn.Do("LRANGE", credis.Moments, 0, -1))
+	for _, mv := range data {
+		if mv != "" {
+			var moment ov.Moment
+			utils.Json.UnmarshalFromString(mv, &moment)
+			initialize.DB.Model(&moment).UpdateColumns(ov.Moment{
+				ActionCount: ov.ActionCount{
+					CollectCount: moment.CollectCount,
+					BrowseCount:  moment.BrowseCount, CommentCount: moment.CommentCount,
+					LikeCount: moment.LikeCount},
+			})
+		}
+	}
 }

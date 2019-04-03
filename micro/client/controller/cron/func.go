@@ -1,44 +1,42 @@
 package cron
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"hoper/client/controller/cachekey"
+	"github.com/kataras/golog"
+	"hoper/client/controller/credis"
 	"hoper/initialize"
-	"hoper/model/ov"
-	"hoper/utils"
-	"hoper/utils/gredis"
+	"hoper/model"
+	"strconv"
+	"sync"
+	"time"
 )
 
-func RedisToDB() {
+//这样设计的话，锁的设计就多余了
+var StartTime = struct {
+	Time int64
+	L    sync.RWMutex
+}{Time: time.Now().Unix()}
+
+func UserRedisToDB() error {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	if gredis.Exists(cachekey.TopMoments) {
-		topData, _ := redis.Strings(conn.Do("LRANGE", cachekey.TopMoments, 0, -1))
-		for _, mv := range topData {
-			if mv != "" {
-				var moment ov.Moment
-				utils.Json.UnmarshalFromString(mv, &moment)
-				initialize.DB.Model(&moment).UpdateColumns(ov.Moment{
-					ActionCount: ov.ActionCount{
-						CollectCount: moment.CollectCount,
-						BrowseCount:  moment.BrowseCount, CommentCount: moment.CommentCount,
-						LikeCount: moment.LikeCount},
-				})
-			}
-		}
+	StartTime.L.Lock()
+	StartTime.Time = time.Now().Unix() - 3600
+	conn.Send("SELECT", credis.CronIndex)
+	ids, err := redis.Int64s(conn.Do("ZRANGEBYSCORE", model.LoginUser+"ActiveTime", "-inf", StartTime.Time))
+	if err != nil {
+		return err
 	}
-	data, _ := redis.Strings(conn.Do("LRANGE", cachekey.Moments, 0, -1))
-	for _, mv := range data {
-		if mv != "" {
-			var moment ov.Moment
-			utils.Json.UnmarshalFromString(mv, &moment)
-			initialize.DB.Model(&moment).UpdateColumns(ov.Moment{
-				ActionCount: ov.ActionCount{
-					CollectCount: moment.CollectCount,
-					BrowseCount:  moment.BrowseCount, CommentCount: moment.CommentCount,
-					LikeCount: moment.LikeCount},
-			})
-		}
+	conn.Do("ZREMRANGEBYSCORE", model.LoginUser+"ActiveTime", "-inf", StartTime.Time)
+	StartTime.L.Unlock()
+
+	for id := range ids {
+		conn.Send("SELECT")
+		err := initialize.DB.Exec("INSERT INTO " + approve.Kind + "_approve_user VALUES (" +
+			strconv.FormatUint(approve.RefID, 10) + "," + strconv.FormatUint(userID, 10) + ")").Error
 	}
+
+	return nil
 }

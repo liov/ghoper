@@ -14,14 +14,14 @@ func UserRouter(app *iris.Application) {
 		userRouter.Get("/active/{id:int}/{secret:string}", controller.ActiveAccount)
 		userRouter.Post("/signup", controller.Signup)
 		userRouter.Post("/login", controller.Login)
-		userRouter.Get("/logout", middleware.Login, controller.Logout)
+		userRouter.Get("/logout", middleware.GetUser(false), controller.Logout)
 		userRouter.Post("/active", controller.ActiveSendMail)
-		userRouter.Get("/get", middleware.GetUser(), controller.LoginFlag)
+		userRouter.Get("/get", middleware.GetUser(true), controller.LoginFlag)
 		userRouter.Post("/rpc/login", user.Login)
 		userRouter.Get("/rpc/logout", user.Logout)
 		userRouter.Post("/rpc/signup", user.Signup)
-		userRouter.Get("/edit", middleware.Login, controller.GetUserSelf)
+		userRouter.Get("/edit", middleware.GetUser(false), controller.GetUserSelf)
 		userRouter.Get("/{id:uint64}", controller.GetUser)
-		userRouter.Put("", middleware.Login, controller.UpdateUser)
+		userRouter.Put("", middleware.GetUser(false), controller.UpdateUser)
 	}
 }

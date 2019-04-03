@@ -11,6 +11,7 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
+	"hoper/client/controller/credis"
 	"hoper/client/controller/upload"
 	"hoper/initialize"
 	"hoper/model"
@@ -327,7 +328,8 @@ func Login(c iris.Context) {
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"id": user.ID,
+			"id":     user.ID,
+			"expire": time.Now().Unix() + initialize.Config.Server.TokenMaxAge,
 		})
 		tokenString, err := token.SignedString(utils.ToBytes(initialize.Config.Server.TokenSecret))
 		if err != nil {
@@ -1001,7 +1003,7 @@ func UserFromRedis(userID uint64) (*User, error) {
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
-	conn.Send("SELECT", 0)
+	conn.Send("SELECT", credis.UserIndex)
 	userString, err := redis.String(conn.Do("GET", loginUser))
 	if err != nil {
 		golog.Error(err)
@@ -1015,6 +1017,20 @@ func UserFromRedis(userID uint64) (*User, error) {
 	return &user, nil
 }
 
+func UserLastActiveTime(userID uint64) error {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	err := conn.Send("SELECT", credis.CronIndex)
+	_, err = conn.Do("ZADD", model.LoginUser+"ActiveTime",
+		time.Now().Unix(), strconv.FormatUint(userID, 10))
+	if err != nil {
+		golog.Error(err)
+		return err
+	}
+	return nil
+}
+
 // UserToRedis 将用户信息存到redis
 func UserToRedis(user *User) error {
 	UserString, err := utils.Json.MarshalToString(user)
@@ -1025,7 +1041,7 @@ func UserToRedis(user *User) error {
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
-	conn.Send("SELECT", 0)
+	conn.Send("SELECT", credis.UserIndex)
 	if _, redisErr := conn.Do("SET", loginUserKey, UserString, "EX", initialize.Config.Server.TokenMaxAge); redisErr != nil {
 		return errors.New("error")
 	}
@@ -1041,7 +1057,7 @@ func EditUserRedis(user *User) error {
 
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
-	conn.Send("SELECT", 0)
+	conn.Send("SELECT", credis.UserIndex)
 	if _, redisErr := conn.Do("SET", loginUserKey, UserString); redisErr != nil {
 		return errors.New("error")
 	}

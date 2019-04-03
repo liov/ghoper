@@ -73,7 +73,7 @@ func IrisRouter() *iris.Application {
 			ctx.Writef("My Custom error page")
 		})*/
 
-	app.Logger().Printer.SetOutput(hlog.LogFile)
+	//app.Logger().Printer.SetOutput(hlog.LogFile)
 
 	UserRouter(app)
 

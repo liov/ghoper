@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
 	"github.com/satori/go.uuid"
@@ -56,7 +57,7 @@ Loop:
 			//if err := irisRouter.Run(iris.TLS(initialize.Config.Server.HttpPort, "../../config/tls/pem.pem", "../../config/tls/key.key"),
 			if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
 				iris.WithConfiguration(iris.YAML("../../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
-				log.Printf("Listen: %s\n", err)
+				golog.Error(err)
 			}
 		}
 

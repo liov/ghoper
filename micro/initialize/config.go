@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/configor"
 	"github.com/kataras/golog"
+	"hoper/client/controller/credis"
 	"hoper/model/crm"
 	"hoper/utils"
 	"reflect"
@@ -17,10 +18,10 @@ type ServerConfig struct {
 	WriteTimeout time.Duration
 
 	PassSalt        string
-	TokenMaxAge     int
+	TokenMaxAge     int64
 	TokenSecret     string
 	JwtSecret       string
-	PageSize        int
+	PageSize        int8
 	RuntimeRootPath string
 
 	ImagePrefixUrl string
@@ -144,7 +145,7 @@ func configToRedis() {
 
 	key := "config"
 	conn.Send("MULTI")
-	conn.Send("SELECT", 12)
+	conn.Send("SELECT", credis.SysIndex)
 	tp := reflect.TypeOf(Config)
 	value := reflect.ValueOf(Config)
 	for i := 0; i < tp.NumField(); i++ {
@@ -166,7 +167,7 @@ func configToRedis2() {
 	conn := RedisPool.Get()
 	defer conn.Close()
 
-	conn.Send("SELECT", 12)
+	conn.Send("SELECT", credis.SysIndex)
 
 	config, err := utils.Json.MarshalToString(Config)
 	conn.Do("SET", "config", config)

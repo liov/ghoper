@@ -208,7 +208,16 @@ export default {
       momentList: res.data,
       total: res.count,
       topCount: res.top_count,
-      user_action: res.user_action
+      user_action:
+        res.user_action != null
+          ? res.user_action
+          : {
+              collect: [],
+              like: [],
+              approve: [],
+              comment: [],
+              browse: []
+            }
     }
   },
   created: function() {
