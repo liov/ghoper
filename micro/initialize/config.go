@@ -1,8 +1,10 @@
 package initialize
 
 import (
+	"fmt"
 	"github.com/jinzhu/configor"
 	"github.com/kataras/golog"
+	"hoper/model/crm"
 	"hoper/utils"
 	"reflect"
 	"time"
@@ -171,5 +173,37 @@ func configToRedis2() {
 
 	if err != nil {
 		golog.Error(err)
+	}
+}
+
+func configToDB() {
+
+	tp := reflect.TypeOf(Config)
+	value := reflect.ValueOf(Config)
+	for i := 0; i < tp.NumField(); i++ {
+		// 获取每个成员的结构体字段类型
+		fieldType := tp.Field(i)
+		d := crm.Dictionary{
+			CreatedAt: time.Now(),
+			Type:      "config",
+			ParentID:  0,
+			ParentKey: "",
+			Key:       fieldType.Name,
+			Value:     fieldType.Name,
+			Sequence:  0,
+			Status:    1,
+		}
+		DB.Create(&d)
+		pid := d.ID
+		for j := 0; j < fieldType.Type.NumField(); j++ {
+			f := tp.FieldByIndex([]int{i, j})
+			v := value.FieldByIndex([]int{i, j}).Interface()
+			d.ParentID = pid
+			d.ParentKey = d.Key
+			d.Key = f.Name
+			d.Value = fmt.Sprintf("%v", v)
+			d.ID = 0
+			DB.Create(&d)
+		}
 	}
 }
