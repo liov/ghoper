@@ -5,7 +5,6 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
-	"hoper/client/controller/credis"
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
@@ -144,13 +143,12 @@ func setCountToRedis(userID uint64, refId uint64, kind int8, action int8, num in
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 	conn.Send("MULTI")
-	conn.Send("SELECT", credis.CronIndex)
+	conn.Send("SELECT", kind)
 	if num > 0 {
 		conn.Send("SADD", strings.Join([]string{"User", strconv.FormatUint(userID, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
 	} else {
 		conn.Send("SREM", strings.Join([]string{"User", strconv.FormatUint(userID, 10), IndexKind[kind], IndexAction[action]}, "_"), refId)
 	}
-	conn.Send("SELECT", kind)
 	conn.Send("HINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), "Action", "Count"}, "_"), IndexAction[action], num)
 	conn.Send("ZINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), IndexAction[action], "Sorted"}, "_"), num, refId)
 	_, err := conn.Do("EXEC")
@@ -160,7 +158,7 @@ func setCountToRedis(userID uint64, refId uint64, kind int8, action int8, num in
 	return nil
 }
 
-func getRedisAction(userID string, kind int8) *UserAction {
+func GetRedisAction(userID string, kind int8) *UserAction {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 

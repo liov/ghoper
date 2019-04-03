@@ -1,9 +1,8 @@
 package cron
 
 import (
-	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"github.com/kataras/golog"
+	"hoper/client/controller"
 	"hoper/client/controller/credis"
 	"hoper/initialize"
 	"hoper/model"
@@ -33,10 +32,33 @@ func UserRedisToDB() error {
 	StartTime.L.Unlock()
 
 	for id := range ids {
-		conn.Send("SELECT")
-		err := initialize.DB.Exec("INSERT INTO " + approve.Kind + "_approve_user VALUES (" +
-			strconv.FormatUint(approve.RefID, 10) + "," + strconv.FormatUint(userID, 10) + ")").Error
+		for i := 0; i <= 4; i++ {
+			ua := controller.GetRedisAction(strconv.Itoa(id), int8(i))
+			for sid := range ua.Approve {
+				err = initialize.DB.Exec("INSERT INTO " + "moment_approve_user VALUES (" +
+					strconv.Itoa(sid) + "," + strconv.Itoa(id) + ")").Error
+			}
+			for sid := range ua.Like {
+				err = initialize.DB.Exec("INSERT INTO " + "moment_like_user VALUES (" +
+					strconv.Itoa(sid) + "," + strconv.Itoa(id) + ")").Error
+			}
+			for sid := range ua.Collect {
+				err = initialize.DB.Exec("INSERT INTO " + "moment_collect_user VALUES (" +
+					strconv.Itoa(sid) + "," + strconv.Itoa(id) + ")").Error
+			}
+			for sid := range ua.Comment {
+				err = initialize.DB.Exec("INSERT INTO " + "moment_comment_user VALUES (" +
+					strconv.Itoa(sid) + "," + strconv.Itoa(id) + ")").Error
+			}
+			/*			for sid:=range ua.Browse{
+						err = initialize.DB.Exec("INSERT INTO " + "moment_browse_user VALUES (" +
+							strconv.Itoa(sid) + "," + strconv.Itoa(id) + ")").Error
+					}*/
+		}
 	}
 
+	if err != nil {
+		return err
+	}
 	return nil
 }

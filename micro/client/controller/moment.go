@@ -134,7 +134,7 @@ func GetMoments(c iris.Context) {
 	var moments []ov.Moment
 	var userAction *UserAction
 	if userID > 0 {
-		userAction = getRedisAction(strconv.FormatUint(userID, 10), kindMoment)
+		userAction = GetRedisAction(strconv.FormatUint(userID, 10), kindMoment)
 	}
 	var count, topCount int64
 	if moments, count, topCount = getRedisMoments(key, pageNo, pageSize); moments != nil {
@@ -159,7 +159,7 @@ func GetMoments(c iris.Context) {
 	}
 
 	if userID > 0 {
-		getRedisAction(strconv.FormatUint(uint64(userID), 10), kindMoment)
+		GetRedisAction(strconv.FormatUint(uint64(userID), 10), kindMoment)
 	}
 
 	common.Res(c, iris.Map{"data": moments,
@@ -249,7 +249,7 @@ func GetMoment(c iris.Context) {
 	userID := c.Values().Get("userID").(uint64)
 	var userAction *UserAction
 	if userID > 0 {
-		userAction = getRedisAction(strconv.FormatUint(userID, 10), kindMoment)
+		userAction = GetRedisAction(strconv.FormatUint(userID, 10), kindMoment)
 	}
 	if moment := getRedisMomentV2(index); moment != nil {
 
