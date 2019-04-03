@@ -14,303 +14,287 @@ import (
 	"hoper/model/ov"
 	"hoper/utils"
 	"hoper/utils/gredis"
-	"hoper/utils/hlog"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
-type Moments struct {
-	TopMoments    []ov.Moment `json:"top_moments"`
-	NormalMoments []ov.Moment `json:"normal_moments"`
-}
+/**
+ * @author     ：lbyi
+ * @date       ：Created in 2019/3/29
+ * @description：
+ */
+//DTO
 
-//其实这里就是可插拔的，把redis操作单独放进一个函数
-func GetMoments(c iris.Context) {
-	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
-	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
-	topNum, _ := strconv.Atoi(c.URLParam("t"))
-	//l := list.New()
-	topKey := cachekey.TopMoments
-	normalKey := cachekey.Moments
+func AddMoment(c iris.Context) {
 
-	/*	var moments []Moment
+	user := c.Values().Get("user").(*User)
 
-		if gredis.Exists(key) {
-			data, err := gredis.Get(key)
+	//Limit这个函数的封装呢，费了点功夫，之前的返回值想到用err，不过在sendErr这出了点问题，决定返回值改用string，这样是不规范的
+	if limitErr := common.Limit(model.MomentMinuteLimit,
+		model.MomentMinuteLimitCount,
+		model.MomentDayLimit,
+		model.MomentMinuteLimitCount, user.ID); limitErr != nil {
+		common.Response(c, limitErr.Error(), e.TimeTooMuch)
+		return
+	}
+
+	var moment model.Moment
+
+	if err := c.ReadJSON(&moment); err != nil {
+		golog.Error(err)
+		common.Response(c, "参数无效")
+		return
+	}
+
+	if utf8.RuneCountInString(moment.Content) > 500 {
+		common.Response(c, "文章内容不能小于20个字")
+		return
+	}
+
+	nowTime := time.Now()
+	moment.CreatedAt = nowTime
+	//moment.Mood = Mood{Name: moment.MoodName}
+
+	if err := validationMoment(c, &moment); err != nil {
+		return
+	}
+	moment.UserID = user.ID
+	moment.BrowseCount = 1
+	moment.Status = model.ArticleVerifying
+	moment.ModifyTimes = 0
+	moment.ParentID = 0
+	user.Score = user.Score + model.ArticleScore
+	user.ArticleCount = user.ArticleCount + 1
+
+	if err := EditUserRedis(user); err != nil {
+		golog.Error(err)
+	}
+	moment.Content = strings.TrimSpace(moment.Content)
+
+	if mood := ExistMoodByName(moment.MoodName); mood != nil {
+		moment.Mood = *mood
+		setFlagCountToRedis(flagTag, moment.MoodName, 1)
+	}
+
+	saveErr := initialize.DB.Create(&moment).Error
+
+	for _, v := range moment.Tags {
+		if ExistTagByName(&v, user.ID) {
+			setFlagCountToRedis(flagTag, v.Name, 1)
+		}
+		momentTag := model.MomentTag{MomentID: moment.ID, TagName: v.Name}
+		initialize.DB.Create(&momentTag)
+	}
+
+	if saveErr != nil {
+		common.Response(c, "创建出错")
+		return
+	}
+
+	//var moments []model.Moment
+	moment.User = user.User
+
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	/*	if moment.DescFlag == 0 {
+			value, _ := json.Marshal(moment)
+			_, err := conn.Do("LPUSH", gredis.Moments, value)
 			if err != nil {
-				logging.Info(err)
-			} else {
-				json.Unmarshal(data, &moments)
-				common.Response(c, moments)
+				return
+			}
+		} else {
+			value, _ := json.Marshal(moment)
+			_, err := conn.Do("LPUSH", gredis.TopMoments, value)
+			if err != nil {
 				return
 			}
 		}*/
 
-	var moments Moments
-
-	if moments, count := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
-		common.Res(c, iris.Map{"data": *moments,
-			"count": count,
-			"msg":   e.GetMsg(e.SUCCESS),
-			"code":  e.SUCCESS})
+	value, _ := utils.Json.MarshalToString(moment)
+	conn.Send("SELECT", kindMoment)
+	conn.Send("LPUSH", cachekey.Moments, value)
+	_, err := conn.Do("INCR", cachekey.Moments+"_Count")
+	if err != nil {
 		return
 	}
-	//gorm 的ORM 弃用，决定手写sql
-	/*	err := initialize.DB.Preload("Tags").Preload("Mood").Order(order).Offset(pageNo).Limit(pageSize).Find(&moments).Error
-		if err != nil && err != gorm.ErrRecordNotFound {
-			return
-		}*/
-	if pageNo == 0 {
-		initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
-			return db.Select("name,moment_id")
-		}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
-			Where("sequence > ?", 0).Order("id desc").Find(&moments.TopMoments)
+
+	common.Response(c, "新建成功", e.SUCCESS)
+}
+
+func GetMoments(c iris.Context) {
+	pageNo, _ := strconv.Atoi(c.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(c.URLParam("pageSize"))
+	//l := list.New()
+	userID := c.Values().Get("userID").(uint64)
+	key := cachekey.Moments
+
+	var moments []ov.Moment
+	var userAction *UserAction
+	if userID > 0 {
+		userAction = getRedisAction(strconv.FormatUint(userID, 10), kindMoment)
+	}
+	var count, topCount int64
+	if moments, count, topCount = getRedisMoments(key, pageNo, pageSize); moments != nil {
+
+		common.Res(c, iris.Map{"data": moments,
+			"count":       count,
+			"top_count":   topCount,
+			"user_action": userAction,
+			"msg":         e.GetMsg(e.SUCCESS),
+			"code":        e.SUCCESS})
+		return
 	}
 
 	err := initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
-		Where("sequence = ?", 0).Order("id desc").Limit(pageSize - len(moments.TopMoments)).
-		Offset(pageNo*pageSize - topNum).Find(&moments.NormalMoments).Error
+	}).Preload("User").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count").
+		Order("sequence desc,id desc").Limit(pageSize).
+		Offset(pageNo * pageSize).Find(&moments).Count(&count).Error
+	err = initialize.DB.Model(ov.Moment{}).Where("sequence = ?", 9).Count(&topCount).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
-	var count int
-	initialize.DB.Find(&moments.NormalMoments).Count(&count)
-	//原来想存进链表，但不知道链表怎么序列化
-	/*	for i := 0; i < len(moments); i++ {
-			l.PushBack(moments[i])
-		}
 
-		for e := l.Front(); e != nil; e = e.Next() {
-			fmt.Println(e.Value)
-		}*/
-
-	//排序这种事是交给前端还是后端呢，给前端吧，代码多，给后端吧，怕效率不行
-	/*
-		//为了性能考虑，手写sql，联表查询的结果不组装对象，全部丢给前端，让前端去处理
-		momentSql := "SELECT id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count,permission FROM moment WHERE status=0 ORDER BY desc_flag desc, created_at desc LIMIT ? OFFSET ?"
-		initialize.DB.Raw(momentSql,pageSize,pageNo).Scan(&moments)
-		tagsSql :="SELECT name FROM tag INNER JOIN moment_tag ON moment_tag.tag_name = tag.name WHERE (moment_tag.moment_id IN ('7','6','5','4','3','2','1')) AND status=0"
-		type MomentTag struct {
-			MomentID uint64 `json:"moment_id"`
-			TagName string `json:"tag_name"`
-		}
-		var tags []MomentTag
-		//循环遍历组装对象
-		initialize.DB.Raw(momentSql,pageSize,pageNo).Scan(&tags)
-		for mi, mv := range moments {
-			for ti,tv := range tags{
-
-			}
-		}
-	*/
-
-	if len(moments.NormalMoments) == 0 && len(moments.NormalMoments) == 0 {
-		common.Res(c, iris.Map{"data": moments,
-			"count": count,
-			"msg":   e.GetMsg(e.SUCCESS),
-			"code":  e.SUCCESS})
-		return
+	if userID > 0 {
+		getRedisAction(strconv.FormatUint(uint64(userID), 10), kindMoment)
 	}
 
-	setRedisMoments(topKey, normalKey, moments, count)
+	common.Res(c, iris.Map{"data": moments,
+		"count":       count,
+		"top_count":   topCount,
+		"user_action": userAction,
+		"msg":         e.GetMsg(e.SUCCESS),
+		"code":        e.SUCCESS})
 
-	if moments, count := getRedisMoments(topKey, normalKey, pageNo, topNum); moments != nil {
-		common.Res(c, iris.Map{"data": *moments,
-			"count": count,
-			"msg":   e.GetMsg(e.SUCCESS),
-			"code":  e.SUCCESS})
-		return
-	}
+	setRedisMoments(key, moments, count, topCount)
+
 }
 
-func getRedisMoments(topKey string, normalKey string, pageNo int, topNum int) (*Moments, int) {
-	conn := initialize.RedisPool.Get()
-	defer conn.Close()
+func validationMoment(c iris.Context, moment *model.Moment) (err error) {
 
-	var moments Moments
-	/*	if exist, err := redis.Bool(conn.Do("EXISTS", topKey)); !exist || err != nil {
-		return nil
+	err = &e.ValidtionError{Msg: "参数无效"}
+
+	if moment.Content == "" || utf8.RuneCountInString(moment.Content) <= 0 {
+		common.Response(c, "文章内容不能为空")
+		return
+	}
+
+	if utf8.RuneCountInString(moment.Content) > model.MaxContentLen {
+		msg := "文章内容不能超过" + strconv.Itoa(model.MaxContentLen) + "个字符"
+		common.Response(c, msg)
+		return
+	}
+
+	/*	if moment.Tags == nil || len(moment.Tags) <= 0 {
+		SendErrJSON(c,"请选择标签")
+		return
 	}*/
-	if exist, err := redis.Bool(conn.Do("EXISTS", normalKey)); !exist || err != nil {
-		return nil, 0
-	}
 
-	if pageNo == 0 {
-		topData, _ := redis.Strings(conn.Do("LRANGE", topKey, 0, -1))
-		for mi, mv := range topData {
-			if mv != "" {
-				var moment ov.Moment
-				utils.Json.UnmarshalFromString(mv, &moment)
-				moment.BrowseCount = moment.BrowseCount + 1
-				moments.TopMoments = append(moments.TopMoments, moment)
-				data, _ := utils.Json.MarshalToString(&moment)
-				conn.Do("LSET", topKey, mi, data)
-			} else {
-				moments.TopMoments = append(moments.TopMoments, ov.Moment{})
-			}
-		}
-		topNum = len(moments.TopMoments)
-	}
-
-	start := pageNo*model.PageSize - topNum
-	if start < 0 {
-		start = 0
-	}
-
-	if pageNo > 0 {
-		topNum = 0
-	}
-
-	data, _ := redis.Strings(conn.Do("LRANGE", normalKey, start, start+model.PageSize-topNum-1))
-	for mi, mv := range data {
-		if mv != "" {
-			var moment ov.Moment
-			utils.Json.UnmarshalFromString(mv, &moment)
-			moment.BrowseCount = moment.BrowseCount + 1
-			moments.NormalMoments = append(moments.NormalMoments, moment)
-			data, _ := utils.Json.MarshalToString(&moment)
-			conn.Do("LSET", normalKey, mi+start, data)
-		} else {
-			moments.NormalMoments = append(moments.NormalMoments, ov.Moment{})
-		}
-	}
-
-	if moments.NormalMoments == nil && moments.TopMoments == nil {
-		return nil, 0
-	}
-
-	count, _ := redis.Int(conn.Do("GET", "Moment_List_Count"))
-	return &moments, count
+	return nil
 }
 
-func setRedisMoments(topKey string, normalKey string, moments Moments, count int) error {
+func getRedisMoments(key string, pageNo int, PageSize int) ([]ov.Moment, int64, int64) {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
-	conn.Send("MULTI")
-
-	if len(moments.TopMoments) > 0 {
-		for _, mv := range moments.TopMoments {
-			mv.BrowseCount = mv.BrowseCount + 1
-			//mv.Index = mi
-			value, _ := utils.Json.MarshalToString(mv)
-			conn.Send("RPUSH", topKey, value)
-
-		}
+	var moments []ov.Moment
+	conn.Send("SELECT", kindMoment)
+	if exist, err := redis.Bool(conn.Do("EXISTS", key)); !exist || err != nil {
+		return nil, 0, 0
 	}
+	start := pageNo * PageSize
 
-	for _, mv := range moments.NormalMoments {
+	data, _ := redis.Strings(conn.Do("LRANGE", key, start, start+PageSize-1))
+	for _, mv := range data {
+		var moment ov.Moment
+		utils.Json.UnmarshalFromString(mv, &moment)
+		conn.Send("HINCRBY", strings.Join([]string{IndexKind[kindMoment], strconv.FormatUint(moment.ID, 10), "Action", "Count"}, "_"), IndexAction[actionBrowse], 1)
+		actionCount := getActionCount(moment.ID, kindMoment)
+		actionCount.BrowseCount = actionCount.BrowseCount + 1
+		moment.ActionCount = *actionCount
+		moments = append(moments, moment)
+	}
+	conn.Do("")
+	conn.Send("GET", "Moment_List_Count")
+	conn.Send("GET", "Moment_List_Top_Count")
+	conn.Flush()
+	count, _ := redis.Int64(conn.Receive())
+	topCount, _ := redis.Int64(conn.Receive())
+	return moments, count, topCount
+}
+
+func setRedisMoments(key string, moments []ov.Moment, count int64, topCount int64) error {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+	conn.Send("SELECT", kindMoment)
+	for _, mv := range moments {
 		mv.BrowseCount = mv.BrowseCount + 1
 		//mv.Index = mi
 		value, _ := utils.Json.MarshalToString(mv)
-		conn.Send("RPUSH", normalKey, value)
-	}
-	_, err := conn.Do("EXEC")
-	if err != nil {
-		return err
-	}
-
-	conn.Do("SET", "Moment_List_Count", strconv.Itoa(count))
-	/*	_, err := conn.Do("EXPIRE", topKey, time)
+		err := conn.Send("RPUSH", key, value)
 		if err != nil {
 			return err
-		}*/
+		}
+	}
+	conn.Send("SET", "Moment_List_Count", strconv.FormatInt(count, 10))
+	conn.Do("SET", "Moment_List_Top_Count", strconv.FormatInt(topCount, 10))
 	return nil
 }
+
 func GetMoment(c iris.Context) {
 
-	top := c.URLParam("t")
 	index := c.URLParam("index")
-
 	userID := c.Values().Get("userID").(uint64)
+	var userAction *UserAction
+	if userID > 0 {
+		userAction = getRedisAction(strconv.FormatUint(userID, 10), kindMoment)
+	}
+	if moment := getRedisMomentV2(index); moment != nil {
 
-	if moment := getRedisMoment(top, index); moment != nil {
-		if moment.UserID == userID {
-			common.Response(c, *moment, "belong")
-		} else {
-			common.Response(c, *moment)
-		}
-
+		common.Res(c, iris.Map{"data": moment,
+			"user_action": userAction,
+			"msg":         e.GetMsg(e.SUCCESS),
+			"code":        e.SUCCESS})
 		return
 	}
 
-	var moment ov.Moment
-
 	id, err := c.Params().GetUint64("id")
-
+	var moment ov.Moment
 	err = initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count,permission").
 		Where("id = ?", id).First(&moment).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
+		golog.Error(err)
 		return
 	}
-	moment.BrowseCount = moment.BrowseCount + 1
-
-	if moment.UserID == userID {
-		common.Response(c, moment, "belong")
-	} else {
-		common.Response(c, moment)
-	}
-
-	saveErr := initialize.DB.Save(&moment).Error
-
-	if saveErr != nil {
-		hlog.Info("保存失败")
-	}
-
+	common.Res(c, iris.Map{"data": moment,
+		"user_action": userAction,
+		"msg":         e.GetMsg(e.SUCCESS),
+		"code":        e.SUCCESS})
 }
 
-func getRedisMoment(top string, index string) *ov.Moment {
-
+func getRedisMomentV2(index string) *ov.Moment {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 
-	//1代表是置顶，0代表不是
-	if top != "0" {
-		if gredis.Exists(cachekey.TopMoments) {
-			data, err := conn.Do("LINDEX", cachekey.TopMoments, index)
-			if err != nil {
-				golog.Error(err)
-			}
-			if data != "" {
-				var moment ov.Moment
-				utils.Json.Unmarshal(data.([]byte), &moment)
-				moment.BrowseCount = moment.BrowseCount + 1
-				data, err = utils.Json.MarshalToString(moment)
-				_, err = conn.Do("LSET", cachekey.TopMoments, index, data)
-				if err != nil {
-					golog.Error(err)
-				}
-				return &moment
-			} else {
-				return nil
-			}
-		}
-	} else {
-		if gredis.Exists(cachekey.Moments) {
-			data, err := conn.Do("LINDEX", cachekey.Moments, index)
-			if err != nil {
-				hlog.Info(err)
-			}
-			if data != "" {
-				var moment ov.Moment
-				utils.Json.Unmarshal(data.([]byte), &moment)
-				moment.BrowseCount = moment.BrowseCount + 1
-				data, err = utils.Json.MarshalToString(moment)
-				_, err = conn.Do("LSET", cachekey.Moments, index, data)
-				if err != nil {
-					hlog.Error(err)
-				}
-				return &moment
-			} else {
-				return nil
-			}
-		}
+	key := cachekey.Moments
+	conn.Send("SELECT", kindMoment)
+
+	data, err := redis.String(conn.Do("LINDEX", key, index))
+	var moment ov.Moment
+	err = utils.Json.UnmarshalFromString(data, &moment)
+	conn.Do("HINCRBY", strings.Join([]string{IndexKind[kindMoment], strconv.FormatUint(moment.ID, 10), "Action", "Count"}, "_"), IndexAction[actionBrowse], 1)
+	actionCount := getActionCount(moment.ID, kindMoment)
+	moment.ActionCount = *actionCount
+	if err != nil {
+		golog.Error(err)
+		return nil
 	}
-	return nil
+	return &moment
+
 }
 
 //isDel 0否 1是
@@ -347,7 +331,7 @@ func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 	}
 
 	if saveErr != nil {
-		hlog.Info("保存历史失败")
+		golog.Info("保存历史失败")
 	}
 
 	return &moment, nil
@@ -447,7 +431,7 @@ func EditMoment(c iris.Context) {
 			data, err := utils.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", cachekey.TopMoments, index, data)
 			if err != nil {
-				hlog.Error(err)
+				golog.Error(err)
 			}
 		}
 	} else {
@@ -455,7 +439,7 @@ func EditMoment(c iris.Context) {
 			data, err := utils.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", cachekey.Moments, index, data)
 			if err != nil {
-				hlog.Error(err)
+				golog.Error(err)
 			}
 		}
 	}
@@ -482,17 +466,50 @@ func DeleteMoment(c iris.Context) {
 		if gredis.Exists(cachekey.TopMoments) {
 			_, err := conn.Do("LSET", cachekey.TopMoments, index, "")
 			if err != nil {
-				hlog.Error(err)
+				golog.Error(err)
 			}
 		}
 	} else {
 		if gredis.Exists(cachekey.Moments) {
 			_, err := conn.Do("LSET", cachekey.Moments, index, "")
 			if err != nil {
-				hlog.Error(err)
+				golog.Error(err)
 			}
 		}
 	}
 	common.Response(c, "删除成功")
 
+}
+
+func redisMoments(key string, model interface{}) error {
+	conn := initialize.RedisPool.Get()
+	defer conn.Close()
+
+	if exist, err := redis.Bool(conn.Do("EXISTS", key)); exist && err == nil {
+		data, err := redis.Bytes(conn.Do("GET", key))
+		if err != nil {
+			golog.Info(err)
+			return err
+		} else {
+			utils.Json.Unmarshal(data, model)
+			/*	for _, mv := range *moments {
+						//瞬间是不需要设置缓存的，前端存储
+						mkey := strings.Join([]string{
+								e.CacheMoment,
+								strconv.FormatUint(uint64(mv.ID),10),
+							}, "_")
+
+							mv.BrowseCount = mv.BrowseCount + 1
+
+							_, err =conn.Do("SET", mkey, mv)
+							_, err =conn.Do("EXPIRE", mkey, 60)
+
+				}
+				if err != nil {
+					return err
+				}
+			*/
+		}
+	}
+	return nil
 }

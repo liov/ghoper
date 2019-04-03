@@ -11,14 +11,13 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
-	"hoper/client/controller/mail"
 	"hoper/client/controller/upload"
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
 	"hoper/model/ov"
 	"hoper/utils"
-	"hoper/utils/hlog"
+	"hoper/utils/mail"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -172,7 +171,7 @@ func ActiveAccount(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint(user.ID, 10)); err != nil {
-		hlog.Info(err)
+		golog.Info(err)
 	}
 	common.Response(c, user.Email, "激活成功", e.SUCCESS)
 }

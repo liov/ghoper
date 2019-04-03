@@ -42,6 +42,6 @@ func Service() {
 	micro.RegisterSubscriber("example.topic.pubsub.2", service.Server(), sub.SubEv, server.SubscriberQueue("queue.pubsub"))
 
 	if err := service.Run(); err != nil {
-		hlog.Error(err)
+		golog.Error(err)
 	}
 }

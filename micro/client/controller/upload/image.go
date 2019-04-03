@@ -32,7 +32,7 @@ func GetImageFullPath() string {
 
 func CheckImageExt(fileName string) bool {
 	ext := utils.GetExt(fileName)
-	for _, allowExt := range initialize.Config.Server.ImageAllowExts {
+	for _, allowExt := range initialize.Config.Server.UploadAllowExt {
 		if strings.ToUpper(allowExt) == strings.ToUpper(ext) {
 			return true
 		}
@@ -47,7 +47,7 @@ func CheckImageSize(f multipart.File) bool {
 		return false
 	}
 
-	return size <= initialize.Config.Server.FileMaxSize
+	return size <= initialize.Config.Server.UploadMaxSize
 }
 
 func CheckImage(src string) error {

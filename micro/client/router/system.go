@@ -5,7 +5,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/basicauth"
 	"hoper/client/controller"
-	"hoper/client/controller/hnsq"
+	"hoper/tools/hnsq"
 	"os"
 	"time"
 )

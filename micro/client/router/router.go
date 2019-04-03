@@ -55,8 +55,8 @@ func IrisRouter() *iris.Application {
 			Default:      "en-US",
 			URLParameter: "lang",
 			Languages: map[string]string{
-				"en-US": "../../i18n/locale_en-US.ini",
-				"zh-CN": "../../i18n/locale_zh-CN.ini"}})
+				"en-US": "../../static/i18n/locale_en-US.ini",
+				"zh-CN": "../../static/i18n/locale_zh-CN.ini"}})
 		app.Use(globalLocale)*/
 	//请求日志
 	/*	logM := logMid()

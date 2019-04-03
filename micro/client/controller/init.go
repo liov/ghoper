@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gorilla/securecookie"
 	"github.com/kataras/iris/sessions"
+	"hoper/initialize"
 	"time"
 )
 
@@ -25,7 +26,7 @@ func init() {
 		AllowReclaim: true,
 	})
 
-	//Sess.UseDatabase(initialize.BoltDB)
+	Sess.UseDatabase(initialize.BoltDB)
 
 	//Gsess = memstore.NewMemStore(hashKey, blockKey)
 }

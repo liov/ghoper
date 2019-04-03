@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
 	"hoper/initialize"
-	"hoper/utils/hlog"
 )
 
 func Set(key string, data interface{}, time int) error {
@@ -117,38 +116,5 @@ func LikeDeletes(key string) error {
 		}
 	}
 
-	return nil
-}
-
-func redisMoments(key string, model interface{}) error {
-	conn := initialize.RedisPool.Get()
-	defer conn.Close()
-
-	if exist, err := redis.Bool(conn.Do("EXISTS", key)); exist && err == nil {
-		data, err := redis.Bytes(conn.Do("GET", key))
-		if err != nil {
-			hlog.Info(err)
-			return err
-		} else {
-			json.Unmarshal(data, model)
-			/*	for _, mv := range *moments {
-						//瞬间是不需要设置缓存的，前端存储
-						mkey := strings.Join([]string{
-								e.CacheMoment,
-								strconv.FormatUint(uint64(mv.ID),10),
-							}, "_")
-
-							mv.BrowseCount = mv.BrowseCount + 1
-
-							_, err =conn.Do("SET", mkey, mv)
-							_, err =conn.Do("EXPIRE", mkey, 60)
-
-				}
-				if err != nil {
-					return err
-				}
-			*/
-		}
-	}
 	return nil
 }

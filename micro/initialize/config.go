@@ -3,6 +3,8 @@ package initialize
 import (
 	"github.com/jinzhu/configor"
 	"github.com/kataras/golog"
+	"hoper/utils"
+	"reflect"
 	"time"
 )
 
@@ -23,8 +25,8 @@ type ServerConfig struct {
 	UploadDir      string
 	UploadPath     string
 	UploadHost     string
-	FileMaxSize    int
-	ImageAllowExts []string
+	UploadMaxSize  int
+	UploadAllowExt []string
 
 	LogSavePath string
 	LogSaveName string
@@ -128,8 +130,46 @@ func initializeConfig() {
 		golog.Error("配置错误: %v", err)
 	}
 
-	Config.Server.FileMaxSize = Config.Server.FileMaxSize * 1024 * 1024
+	Config.Server.UploadMaxSize = Config.Server.UploadMaxSize * 1024 * 1024
 	Config.Server.ReadTimeout = Config.Server.ReadTimeout * time.Second
-	Config.Server.WriteTimeout = Config.Server.ReadTimeout * time.Second
+	Config.Server.WriteTimeout = Config.Server.WriteTimeout * time.Second
 	Config.Redis.IdleTimeout = Config.Redis.IdleTimeout * time.Second
+}
+
+func configToRedis() {
+	conn := RedisPool.Get()
+	defer conn.Close()
+
+	key := "config"
+	conn.Send("MULTI")
+	conn.Send("SELECT", 12)
+	tp := reflect.TypeOf(Config)
+	value := reflect.ValueOf(Config)
+	for i := 0; i < tp.NumField(); i++ {
+		// 获取每个成员的结构体字段类型
+		fieldType := tp.Field(i)
+		for j := 0; j < fieldType.Type.NumField(); j++ {
+			f := tp.FieldByIndex([]int{i, j})
+			v := value.FieldByIndex([]int{i, j}).Interface()
+			conn.Send("HSET", key, f.Name, v)
+		}
+	}
+	_, err := conn.Do("EXEC")
+	if err != nil {
+		golog.Error(err)
+	}
+}
+
+func configToRedis2() {
+	conn := RedisPool.Get()
+	defer conn.Close()
+
+	conn.Send("SELECT", 12)
+
+	config, err := utils.Json.MarshalToString(Config)
+	conn.Do("SET", "config", config)
+
+	if err != nil {
+		golog.Error(err)
+	}
 }

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/initialize"
@@ -10,7 +11,6 @@ import (
 	"hoper/model/e"
 	"hoper/model/ov"
 	"hoper/utils"
-	"hoper/utils/hlog"
 	"strconv"
 	"strings"
 	"time"
@@ -302,7 +302,7 @@ func historyArticle(c iris.Context, isDel uint8) (*crm.ArticleHistory, *model.Ar
 	saveErr := initialize.DB.Create(&articleHistory).Error
 
 	if saveErr != nil {
-		hlog.Info("保存历史失败")
+		golog.Info("保存历史失败")
 	}
 
 	return &articleHistory, &article, nil
@@ -328,7 +328,7 @@ func EditArticle(c iris.Context) {
 	saveErr := initialize.DB.Save(&article).Error
 
 	if saveErr != nil {
-		hlog.Info("修改失败")
+		golog.Info("修改失败")
 		return
 	}
 
