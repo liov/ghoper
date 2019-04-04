@@ -16,7 +16,7 @@ func Session(app *iris.Application) {
 
 	app.Get("/get", controller.SessGet)
 
-	app.Get("/test", controller.SessTest)
+	app.Get("/hoper", controller.SessTest)
 
 	app.Get("/delete", controller.SessDelete)
 

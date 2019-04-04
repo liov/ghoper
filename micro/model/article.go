@@ -22,9 +22,9 @@ type Article struct {
 	UserID      uint64              `json:"user_id"`
 	Comments    []ov.ArticleComment `gorm:"ForeignKey:ArticleID" json:"comments"` //评论
 	ActionCount
-	ApproveUsers  []ov.User  `gorm:"many2many:article_approve_user" json:"approve_users"`
-	CollectUsers  []ov.User  `gorm:"many2many:article_collect_user" json:"collect_users"`
-	LikeUsers     []ov.User  `gorm:"many2many:article_like_user" json:"like_users"`
+	ApproveUsers  []ov.User  `gorm:"many2many:article_approve" json:"approve_users"`
+	CollectUsers  []ov.User  `gorm:"many2many:article_collect" json:"collect_users"`
+	LikeUsers     []ov.User  `gorm:"many2many:article_like" json:"like_users"`
 	Permission    uint8      `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Sequence      uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	UpdatedAt     *time.Time `json:"-"`
@@ -99,4 +99,41 @@ type ArticleCategory struct {
 type ArticleSerial struct {
 	ArticleID uint64 `gorm:"primary_key" json:"article_id"`
 	SerialID  uint64 `gorm:"primary_key" json:"serial_id"`
+}
+
+type ArticleApprove struct {
+	CreatedAt time.Time  `json:"created_at"`
+	ArticleID uint64     `gorm:"primary_key" json:"article_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}
+
+type ArticleLike struct {
+	CreatedAt time.Time  `json:"created_at"`
+	ArticleID uint64     `gorm:"primary_key" json:"article_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}
+
+type ArticleCollect struct {
+	CreatedAt time.Time  `json:"created_at"`
+	ArticleID uint64     `gorm:"primary_key" json:"article_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}
+
+//gorm:"many2many:PersonAccount;association_jointable_foreignkey:account_id;jointable_foreignkey:person_id"`
+type ArticleBrowse struct {
+	CreatedAt time.Time  `json:"created_at"`
+	ArticleID uint64     `gorm:"primary_key" json:"article_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
 }

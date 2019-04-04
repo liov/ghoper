@@ -327,13 +327,15 @@ export default {
       const vm = this
       this.article.contentType = this.editorType
       if (this.editorType === 'markdown') {
-        this.article.html_content = render
+        // this.article.html_content = render
         this.article.content = value
+        this.article.content_type = 0
       } else {
         this.article.html_content = tinymce.activeEditor.getContent()
         this.article.content = tinymce.activeEditor.getContent({
           format: 'text'
         })
+        this.article.content_type = 1
       }
 
       for (const i of this.tags) {

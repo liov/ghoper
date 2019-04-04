@@ -72,7 +72,7 @@ public native int getInt(Object o, long offset);
 
 offset 通过 objectFieldOffset 方法获取的类的某一字段的偏移量，并且关联的对象 o 是该类的兼容对象（对象 o 所在的类必须是该类或该类的子类）
 offset 通过 staticFieldOffset 方法获取的类的某一字段的偏移量，o 是通过 staticFieldBase 方法获取的对象
-如果 o 引用的是数组，则 offset 的值为 test.B+N*S，其中 N 是数组的合法下标，test.B 是通过 arrayBaseOffset 方法从该数组类获取的，S 是通过 arrayIndexScale 方法从该数组类获取的
+如果 o 引用的是数组，则 offset 的值为 hoper.B+N*S，其中 N 是数组的合法下标，hoper.B 是通过 arrayBaseOffset 方法从该数组类获取的，S 是通过 arrayIndexScale 方法从该数组类获取的
 如果以上任意条件符合，则调用者能获取 Java 字段的引用，但是如果该字段的类型和该方法返回的类型不一致，则结果是不一定的，比如该字段是 short，但调用了 getInt 方法。
 
 该方法通过两个参数引用一个变量，它为 Java 变量提供 double-register 地址模型。如果引用的对象为 null，则该方法将 offset 当作内存绝对地址，就像 getInt(long)一样，它为非 Java 变量提供 single-register 地址模型，然而 Java 变量的内存布局可能和非 Java 变量的内存布局不同，不应该假设这两种地址模型是相等的。同时，应该记住 double-register 地址模型的偏移量不应该和 single-register 地址模型中的地址（long 参数）混淆。
@@ -204,7 +204,7 @@ true
 true
 获取静态字段的值，有两个方法：staticFieldBase 获取字段所在的对象，静态字段附着于 Class 本身（java.lang.Class 的实例），该方法返回的其实就是该类本身，本例中是 MyObj.class。
 
-3、如果 o 引用的是数组，则 offset 的值为 test.B+N*S，其中 N 是数组的合法的下标，test.B 是通过 arrayBaseOffset 方法从该数组类获取的，S 是通过 arrayIndexScale 方法从该数组类获取的
+3、如果 o 引用的是数组，则 offset 的值为 hoper.B+N*S，其中 N 是数组的合法的下标，hoper.B 是通过 arrayBaseOffset 方法从该数组类获取的，S 是通过 arrayIndexScale 方法从该数组类获取的
 
     static void getArrayVal(int index,int expectedVal) throws NoSuchFieldException {
         int base=U.arrayBaseOffset(int[].class);
@@ -223,7 +223,7 @@ getArrayVal(2,30);
 
 true
 true
-获取数组的值以及获取数组中某下标的值。获取数组某一下标的偏移量有一个计算公式 test.B+N*S，test.B 是数组元素在数组中的基准偏移量，S 是每个元素占用的字节数，N 是数组元素的下标。
+获取数组的值以及获取数组中某下标的值。获取数组某一下标的偏移量有一个计算公式 hoper.B+N*S，hoper.B 是数组元素在数组中的基准偏移量，S 是每个元素占用的字节数，N 是数组元素的下标。
 
 有个要注意的地方，上面例子中方法内的数组的 offset 和 base 是两个完全不同的偏移量，offset 是数组 array 在对象 obj 中的偏移量，base 是数组元素在数组中的基准偏移量，这两个值没有任何联系，不能通过 offset 推导出 base。
 

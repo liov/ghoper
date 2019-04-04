@@ -17,9 +17,9 @@ type Moment struct {
 	User      ov.User            `json:"user"`
 	UserID    uint64             `json:"user_id"`
 	ActionCount
-	ApproveUsers []ov.User  `gorm:"many2many:moment_approve_user" json:"approve_users"`
-	CollectUsers []ov.User  `gorm:"many2many:moment_collect_user" json:"collect_users"`
-	LikeUsers    []ov.User  `gorm:"many2many:moment_like_user" json:"like_users"`
+	ApproveUsers []ov.User  `gorm:"many2many:moment_approve" json:"approve_users"`
+	CollectUsers []ov.User  `gorm:"many2many:moment_collect" json:"collect_users"`
+	LikeUsers    []ov.User  `gorm:"many2many:moment_like" json:"like_users"`
 	Sequence     uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶
 	Permission   uint8      `gorm:"type:smallint;default:0" json:"permission"` //查看权限
 	Status       uint8      `gorm:"type:smallint;default:0" json:"-"`          //状态
@@ -30,6 +30,42 @@ type Moment struct {
 }
 
 type MomentTag struct {
-	MomentID uint64 `gorm:"primary_key" json:"momoent_id"`
+	MomentID uint64 `gorm:"primary_key" json:"moment_id"`
 	TagName  string `gorm:"type:varchar(10);primary_key" json:"tag_name"`
+}
+
+type MomentApprove struct {
+	CreatedAt time.Time  `json:"created_at"`
+	MomentID  uint64     `gorm:"primary_key" json:"moment_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}
+
+type MomentLike struct {
+	CreatedAt time.Time  `json:"created_at"`
+	MomentID  uint64     `gorm:"primary_key" json:"moment_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}
+
+type MomentCollect struct {
+	CreatedAt time.Time  `json:"created_at"`
+	MomentID  uint64     `gorm:"primary_key" json:"moment_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}
+
+type MomentBrowse struct {
+	CreatedAt time.Time  `json:"created_at"`
+	MomentID  uint64     `gorm:"primary_key" json:"moment_id"`
+	UserID    uint64     `gorm:"primary_key" json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
 }

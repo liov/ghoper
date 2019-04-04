@@ -7,17 +7,19 @@
 
     <parent>
         <groupId>xyz.hoper</groupId>
-        <artifactId>jhoper</artifactId>
+        <artifactId>jhoper-user</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jhoper-api</artifactId>
+    <groupId>xyz.hoper</groupId>
+    <artifactId>jhoper-user-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <dependencies>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.6</version>
         </dependency>
     </dependencies>
 

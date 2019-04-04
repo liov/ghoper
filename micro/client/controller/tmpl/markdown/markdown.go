@@ -9,7 +9,7 @@ This is a sample of Markdown contents
 Features
 --------
 All features of Sundown are supported, including:
-*   **Compatibility**. The Markdown v1.0.3 test suite passes with
+*   **Compatibility**. The Markdown v1.0.3 hoper suite passes with
     the --tidy option.  Without --tidy, the differences are
     mostly in whitespace and entity escaping, where blackfriday is
     more consistent and cleaner.
@@ -17,7 +17,7 @@ All features of Sundown are supported, including:
     blocks, autolinks, strikethroughs, non-strict emphasis, etc.
 *   **Safety**. Blackfriday is paranoid when parsing, making it safe
     to feed untrusted user input without fear of bad things
-    happening. The test suite stress tests this and there are no
+    happening. The hoper suite stress tests this and there are no
     known inputs that make it crash.  If you find one, please let me
     know and send me the input that does it.
     NOTE: "safety" in this context means *runtime safety only*. In order to

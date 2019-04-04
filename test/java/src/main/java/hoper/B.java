@@ -1,4 +1,4 @@
-package test;
+package hoper;
 
 public class B extends A {
 
@@ -9,7 +9,7 @@ public class B extends A {
 	int i = 1000;
 
 	public void method() {
-		System.out.println("test.B 的 method i = " + i);
+		System.out.println("hoper.B 的 method i = " + i);
 	}
 
 	public static void main(String[] args) {

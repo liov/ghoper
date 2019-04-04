@@ -1,10 +1,10 @@
 pub mod utils;
 
-#[cfg(test)]
+#[cfg(hoper)]
 mod tests {
     use crate::math::add;
 
-    #[test]
+    #[hoper]
     fn add_two_a(){
         assert_eq!(4,add(1,3))
     }

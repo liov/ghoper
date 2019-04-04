@@ -127,7 +127,7 @@ const (
 	DevelopmentMode = "development"
 
 	// TestMode 测试模式
-	TestMode = "test"
+	TestMode = "hoper"
 
 	// ProductionMode 产品模式
 	ProductionMode = "production"

@@ -159,7 +159,7 @@
 			name = iosAppTests;
 			productName = iosAppTests;
 			productReference = F861D7F1207FA4100085E80D /* iosAppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
+			productType = "com.apple.product-type.bundle.unit-hoper";
 		};
 		F861D804207FA4200085E80D /* app */ = {
 			isa = PBXNativeTarget;

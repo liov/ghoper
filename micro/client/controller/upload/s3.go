@@ -37,7 +37,7 @@ func upload(service *s3.S3) {
 
 	service.PutObjectWithContext(ctx, &s3.PutObjectInput{
 		Bucket: aws.String("hatlonely"),
-		Key:    aws.String("test/s3_test.go"),
+		Key:    aws.String("hoper/s3_test.go"),
 		Body:   fp,
 	})
 
@@ -49,7 +49,7 @@ func download(service *s3.S3) {
 
 	out, _ := service.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket: aws.String("hatlonely"),
-		Key:    aws.String("test/s3_test.go"),
+		Key:    aws.String("hoper/s3_test.go"),
 	})
 
 	defer out.Body.Close()
@@ -68,7 +68,7 @@ func ListObjectsPages(service *s3.S3) {
 
 	service.ListObjectsPagesWithContext(ctx, &s3.ListObjectsInput{
 		Bucket: aws.String("hatlonely"),
-		Prefix: aws.String("test/"),
+		Prefix: aws.String("hoper/"),
 	}, func(output *s3.ListObjectsOutput, b bool) bool {
 		for _, content := range output.Contents {
 			objkeys = append(objkeys, aws.StringValue(content.Key))

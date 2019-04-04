@@ -1,4 +1,4 @@
-package test;
+package hoper;
 
 public class A {
 
@@ -10,6 +10,6 @@ public class A {
 	int i = 10;
 
 	public void method() {
-		System.out.println("test.A 的 method i = " + i);
+		System.out.println("hoper.A 的 method i = " + i);
 	}
 }

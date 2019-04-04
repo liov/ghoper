@@ -10,7 +10,7 @@ func Version(app *iris.Application) {
 	examplePerParty(app)
 }
 
-// How to test:
+// How to hoper:
 // Open Postman
 // GET: localhost:8080/api/cats
 // Headers[1] = Accept-Version: "1" and repeat with
@@ -24,7 +24,7 @@ func examplePerRoute(app *iris.Application) {
 	}))
 }
 
-// How to test:
+// How to hoper:
 // Open Postman
 // GET: localhost:8080/api/users
 // Headers[1] = Accept-Version: "1.9.9" and repeat with

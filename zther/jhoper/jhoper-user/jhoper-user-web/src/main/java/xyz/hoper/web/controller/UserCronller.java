@@ -1,11 +1,10 @@
 package xyz.hoper.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import xyz.hoper.request.UserReq;
 import xyz.hoper.response.UserRes;
-import xyz.hoper.web.service.UserService;
+import xyz.hoper.service.UserService;
 
 
 @RestController

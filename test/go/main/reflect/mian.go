@@ -71,7 +71,7 @@ func main() {
 	fmt.Println("Before:", m2.Call(nil)[0])
 	params[0] = reflect.ValueOf(18)
 	mtV.MethodByName("SetI").Call(params)
-	params[0] = reflect.ValueOf("reflection test")
+	params[0] = reflect.ValueOf("reflection hoper")
 	mtV.MethodByName("SetName").Call(params)
 	fmt.Println("After:", m2.Call(nil)[0])
 }

@@ -15,7 +15,7 @@
         <lio-hint ref="lioHint"></lio-hint>
         <div class="van-hairline--top"></div>
         <div >
-            <van-button type="primary" @click="test">test</van-button>
+            <van-button type="primary" @click="test">hoper</van-button>
         </div>
         <van-cell>{{testdata}}</van-cell>
     </div>

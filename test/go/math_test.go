@@ -3,7 +3,6 @@ package _go
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/json-iterator/go"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -12,8 +11,6 @@ import (
 	"testing"
 	"unsafe"
 )
-
-var Json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func TestGo(t *testing.T) {
 	for i := 0; i < 10000; i++ {

@@ -60,7 +60,7 @@ export default {
         /*            if (isClient) {
                         config.module.rules.push({
                             enforce: 'pre',
-                            test: /\.(js|vue)$/,
+                            hoper: /\.(js|vue)$/,
                             loader: 'eslint-loader',
                             exclude: /(node_modules)/
                         })

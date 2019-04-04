@@ -1,4 +1,4 @@
-package xyz.hoper.web.service;
+package xyz.hoper.service;
 
 import xyz.hoper.request.UserReq;
 import xyz.hoper.response.UserRes;
