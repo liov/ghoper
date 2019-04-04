@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/golang/protobuf/proto"
-	"test/protobuf/example"
+	"hoper/_examples/_ex/grpc/example"
+	"log"
 )
 
 func main() {
