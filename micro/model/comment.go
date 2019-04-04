@@ -11,7 +11,7 @@ type ArticleComment struct {
 	UserID       uint64    `json:"user_id"`
 	Content      string    `gorm:"type:varchar(500)" json:"content"`
 	ApproveCount uint64    `gorm:"default:0" json:"approve_count"` //点赞
-	ApproveUsers []User    `gorm:"many2many:moment_approve_user" json:"approve_users"`
+	ApproveUsers []User    `gorm:"many2many:article_approve_user" json:"approve_users"`
 	ContentType  int       `json:"content_type"`
 	ArticleID    uint64    `json:"article_id"` //话题或投票的ID
 	ParentID     uint64    `json:"parent_id"`  //直接父评论的ID

@@ -60,3 +60,16 @@ type ArticleCollection struct {
 	ArticleID   uint64       `json:"article_id"`
 	Collections []Collection `json:"collections"`
 }
+
+//双主键里的单个主键可以重复
+type Approve struct {
+	ID        uint64     `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	RefID     uint64     `json:"ref_id"`
+	Kind      string     `gorm:"type:varchar(10)" json:"kind"`
+	User      User       `json:"user"`
+	UserID    uint64     `json:"user_id"`
+	UpdatedAt *time.Time `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
+	Status    uint8      `gorm:"type:smallint;default:0" json:"-"`
+}

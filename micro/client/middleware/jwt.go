@@ -123,7 +123,7 @@ func getUserID(ctx iris.Context) (uint64, error) {
 		if claims["id"] != nil && claims["expire"] != nil {
 			userID := uint64(claims["id"].(float64))
 			expire := int64(claims["expire"].(float64))
-			if time.Now().Unix()-expire < 0 {
+			if time.Now().Unix()-expire > 0 {
 				return 0, errors.New("登录超时")
 			}
 			controller.UserLastActiveTime(userID)
