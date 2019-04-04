@@ -169,6 +169,7 @@
 </template>
 
 <script>
+import Jsonp from '../../plugins/utils/jsonp'
 export default {
   filters: {},
   data() {
@@ -253,6 +254,7 @@ export default {
     },
     showDrawer() {
       this.visible = true
+      Jsonp.jsonp('http://hoper.xyz/api/jsonp?callback=$nuxt.$message.info')
     },
     onClose() {
       this.visible = false

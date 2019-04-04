@@ -63,6 +63,7 @@ require (
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/lni/dragonboat v2.1.0+incompatible // indirect
+	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983 // indirect
 	github.com/markbates/goth v1.49.0
 	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect
 	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6
@@ -80,6 +81,7 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/newrelic/go-agent v2.5.0+incompatible // indirect
 	github.com/nsqio/go-nsq v1.0.7
+	github.com/olivere/elastic v6.2.17+incompatible // indirect
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.1 // indirect

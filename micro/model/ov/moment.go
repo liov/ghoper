@@ -13,6 +13,7 @@ type Moment struct {
 	User      User      `json:"user"`
 	UserID    uint64    `json:"user_id"`
 	ActionCount
-	Permission uint8 `gorm:"type:smallint;default:0" json:"permission"` //查看权限
-	Status     uint8 `gorm:"type:smallint;default:0" json:"-"`
+	Permission uint8           `gorm:"type:smallint;default:0" json:"permission"` //查看权限
+	Status     uint8           `gorm:"type:smallint;default:0" json:"-"`
+	Comments   []MomentComment `json:"comments"` //评论
 }
