@@ -6,51 +6,12 @@ import (
 	"hoper/client/controller/common"
 	"hoper/initialize"
 	"hoper/model"
+	"hoper/model/e"
+	"hoper/model/ov"
+	"strconv"
 
 	"time"
 )
-
-type ArticleComment struct {
-	ID        uint64    `gorm:"primary_key"`
-	CreatedAt time.Time `json:"created_at"`
-	User      User      `json:"user"`
-	UserID    uint64    `json:"user_id"`
-	Content   string    `gorm:"type:varchar(500)" json:"content"`
-	ArticleID uint64    `json:"article_id"` //话题或投票的ID
-	ParentID  uint64    `json:"parent_id"`  //直接父评论的ID
-}
-
-type MomentComment struct {
-	ID        uint64    `gorm:"primary_key"`
-	CreatedAt time.Time `json:"created_at"`
-	User      User      `json:"user"`
-	UserID    uint64    `json:"user_id"`
-	Content   string    `gorm:"type:varchar(500)" json:"content"`
-	MomentID  uint64    `json:"moment_id"` //瞬间ID
-	ParentID  uint64    `json:"parent_id"` //直接父评论的ID
-}
-
-type DiaryComment struct {
-	ID        uint64    `gorm:"primary_key"`
-	CreatedAt time.Time `json:"created_at"`
-	User      User      `json:"user"`
-	UserID    uint64    `json:"user_id"`
-	Content   string    `gorm:"type:varchar(500)" json:"content"`
-	DiaryID   uint64    `json:"diary_id"`  //瞬间ID
-	ParentID  uint64    `json:"parent_id"` //直接父评论的ID
-}
-
-type DiaryBookComment struct {
-	ID          uint64    `gorm:"primary_key"`
-	CreatedAt   time.Time `json:"created_at"`
-	User        User      `json:"user"`
-	UserID      uint64    `json:"user_id"`
-	Content     string    `gorm:"type:varchar(500)" json:"content"`
-	HTMLContent string    `gorm:"type:varchar(500)" json:"html_content"`
-	ContentType int       `json:"content_type"`
-	DiaryBookID uint64    `json:"diary_book_id"` //瞬间ID
-	ParentID    uint64    `json:"parent_id"`     //直接父评论的ID
-}
 
 type Comment interface {
 	GetCommentType()
@@ -69,7 +30,7 @@ func AddComment(c iris.Context) {
 	nowTime := time.Now()
 	switch KindIndex[kind] {
 	case kindArticle:
-		var comment ArticleComment
+		var comment model.ArticleComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
@@ -77,7 +38,7 @@ func AddComment(c iris.Context) {
 			golog.Error(err)
 		}
 	case kindMoment:
-		var comment MomentComment
+		var comment model.MomentComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
@@ -85,7 +46,7 @@ func AddComment(c iris.Context) {
 			golog.Error(err)
 		}
 	case kindDiary:
-		var comment DiaryComment
+		var comment model.DiaryComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
@@ -93,7 +54,7 @@ func AddComment(c iris.Context) {
 			golog.Error(err)
 		}
 	case kindDiaryBook:
-		var comment DiaryBookComment
+		var comment model.DiaryBookComment
 		commentBind(&comment, c)
 		comment.CreatedAt = nowTime
 		comment.UserID = userID
@@ -115,41 +76,66 @@ func commentBind(comment interface{}, c iris.Context) {
 }
 
 func GetComment(ctx iris.Context) {
-	userID := ctx.Values().Get("userID").(uint64)
 	kind := ctx.Params().Get("kind")
 	nowTime := time.Now()
 	switch KindIndex[kind] {
 	case kindArticle:
-		var comment ArticleComment
+		var comment ov.ArticleComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
-		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			golog.Error(err)
 		}
 	case kindMoment:
-		var comment MomentComment
+		var comment ov.MomentComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
-		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			golog.Error(err)
 		}
 	case kindDiary:
-		var comment DiaryComment
+		var comment ov.DiaryComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
-		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			golog.Error(err)
 		}
 	case kindDiaryBook:
-		var comment DiaryBookComment
+		var comment ov.DiaryBookComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
-		comment.UserID = userID
 		if err := initialize.DB.Create(&comment).Error; err != nil {
 			golog.Error(err)
 		}
 	}
+}
+
+func GetComments(ctx iris.Context) {
+	kind := ctx.Params().Get("kind")
+	pageNo, _ := strconv.Atoi(ctx.URLParam("pageNo"))
+	pageSize, _ := strconv.Atoi(ctx.URLParam("pageSize"))
+	var count int64
+
+	var comments = func() interface{} {
+		switch KindIndex[kind] {
+		case kindArticle:
+			return make([]ov.ArticleComment, 0, pageSize)
+
+		case kindMoment:
+			return make([]ov.MomentComment, 0, pageSize)
+
+		case kindDiary:
+			return make([]ov.DiaryComment, 0, pageSize)
+
+		case kindDiaryBook:
+			return make([]ov.DiaryBookComment, 0, pageSize)
+		}
+		return nil
+	}()
+
+	if err := initialize.DB.Order("sequence desc,id desc").Limit(pageSize).
+		Offset(pageNo * pageSize).Find(&comments).Count(&count).Error; err != nil {
+		golog.Error(err)
+	}
+	common.Response(ctx, comments, e.SUCCESS)
 }

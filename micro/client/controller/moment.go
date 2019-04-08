@@ -251,7 +251,7 @@ func GetMoment(c iris.Context) {
 	if userID > 0 {
 		userAction = GetRedisAction(strconv.FormatUint(userID, 10), kindMoment)
 	}
-	if moment := getRedisMomentV2(index); moment != nil {
+	if moment := getRedisMoment(index); moment != nil {
 
 		common.Res(c, iris.Map{"data": moment,
 			"user_action": userAction,
@@ -264,8 +264,9 @@ func GetMoment(c iris.Context) {
 	var moment ov.Moment
 	err = initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Preload("User").Preload("Comments").Select("id,created_at,content,image_url,mood_name,user_id,browse_count,comment_count,collect_count,like_count,permission").
-		Where("id = ?", id).First(&moment).Error
+	}).Preload("User").Preload("Comments", func(db *gorm.DB) *gorm.DB {
+		return db.Order("created_at DESC").Limit(5).Offset(0)
+	}).Preload("Comments.User").Where("id = ?", id).First(&moment).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		golog.Error(err)
 		return
@@ -276,7 +277,7 @@ func GetMoment(c iris.Context) {
 		"code":        e.SUCCESS})
 }
 
-func getRedisMomentV2(index string) *ov.Moment {
+func getRedisMoment(index string) *ov.Moment {
 	conn := initialize.RedisPool.Get()
 	defer conn.Close()
 

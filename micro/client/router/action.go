@@ -20,5 +20,6 @@ func Like(app *iris.Application) {
 	app.Delete("/api/collection", middleware.GetUser(false), controller.DelCollection)
 
 	app.Post("/api/comment/{kind}/{id}", middleware.GetUser(false), controller.AddComment)
-	app.Get("/api/comment/{kind}/{id}", middleware.GetUser(false), controller.GetComment)
+	app.Get("/api/comment/{kind}", middleware.GetUser(false), controller.GetComment)
+	app.Get("/api/comments/{kind}", controller.GetComments)
 }

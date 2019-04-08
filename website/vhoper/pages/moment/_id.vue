@@ -10,18 +10,26 @@
           <a-avatar :src="moment.user.avatar_url" alt="头像" />
         </nuxt-link>
         <span slot="actions" style="margin-right: 10px" @click="star()">
-          <a-icon type="star" :theme="user_action.collect.indexOf(moment.id)>-1?'twoTone':'outlined'" two-tone-color="#eb2f96" />
+          <a-icon
+            type="star"
+            :theme="user_action.collect.indexOf(moment.id)>-1?'twoTone':'outlined'"
+            two-tone-color="#eb2f96"
+          />
           收藏：{{ moment.collect_count }}
         </span>
         <span slot="actions" style="margin-right: 10px" @click="like()">
-          <a-icon type="heart" :theme="user_action.like.indexOf(moment.id)>-1?'twoTone':'outlined'" two-tone-color="#eb2f96" />
+          <a-icon
+            type="heart"
+            :theme="user_action.like.indexOf(moment.id)>-1?'twoTone':'outlined'"
+            two-tone-color="#eb2f96"
+          />
           喜欢：{{ moment.like_count }}
         </span>
         <span slot="actions" style="margin-right: 10px" @click="approve()">
           <a-icon type="like" :theme="user_action.approve.indexOf(moment.id)>-1?'twoTone':'outlined'" />
           点赞：{{ moment.approve_count }}
         </span>
-        <span slot="actions" style="margin-right: 10px" @click="comment()">
+        <span slot="actions" style="margin-right: 10px" @click="showModal">
           <a-icon type="message" :theme="moment.id>0?'twoTone':'outlined'" />
           评论：{{ moment.comment_count }}
         </span>
@@ -117,34 +125,45 @@
         :data-source="moment.comments"
       >
         <a-list-item slot="renderItem" slot-scope="item">
-          <a-comment
-            :author="item.user.name"
-            :avatar="item.user.avavatar_url"
-          >
-            <template slot="actions">
-              <span>回复</span>
-              <span>删除</span>
-            </template>
-            <p slot="content">
-              {{ item.content }}
-            </p>
-            <a-tooltip slot="datetime" :title="item.created_at|dateFormat">
-              <span>{{ item.created_at|dateFormat }}</span>
-              <a-divider type="vertical" />
-            </a-tooltip>
-            <a-tooltip slot="datetime">
-              <span>{{ $s2date(item.created_at).fromNow() }}</span>
-            </a-tooltip>
-          </a-comment>
+          <hoper-comment :comment="item" @replay="showModal" @del="deleteComment" />
         </a-list-item>
       </a-list>
+      <a-modal
+        v-model="visible"
+        title="对评论"
+        on-ok="commentHandleOk"
+      >
+        <template slot="footer">
+          <a-button key="back" @click="handleCancel">
+            返回
+          </a-button>
+          <a-button key="submit" type="primary" :loading="submitting" @click="handleSubmit">
+            评论
+          </a-button>
+        </template>
+        <a-comment>
+          <a-avatar
+            slot="avatar"
+            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            alt="Han Solo"
+          />
+          <div slot="content">
+            <a-form-item>
+              <a-textarea :rows="4" :value="value" />
+            </a-form-item>
+          </div>
+        </a-comment>
+      </a-modal>
     </a-col>
     <a-col :span="2" />
   </a-row>
 </template>
 
 <script>
+import HoperComment from '../../components/comment'
+
 export default {
+  components: { HoperComment },
   data() {
     return {
       md: null,
@@ -153,7 +172,10 @@ export default {
       existFavorites: [],
       favorites: [],
       favorite: '',
-      loading: false
+      loading: false,
+      visible: false,
+      submitting: false,
+      value: ''
     }
   },
   async asyncData({ $axios, params, query }) {
@@ -162,7 +184,16 @@ export default {
     )
     return {
       moment: res.data,
-      user_action: res.user_action
+      user_action:
+        res.user_action != null
+          ? res.user_action
+          : {
+              collect: [],
+              like: [],
+              approve: [],
+              comment: [],
+              browse: []
+            }
     }
   },
   created: function() {
@@ -170,6 +201,8 @@ export default {
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     this.image_url =
       this.moment.image_url === '' ? [] : this.moment.image_url.split(',')
+    this.moment.comments[0].sub_comments = []
+    this.moment.comments[0].sub_comments[0] = this.moment.comments[1]
   },
   methods: {
     async star() {
@@ -255,7 +288,21 @@ export default {
       this.existFavorites.push(res.data)
       this.favorites.push(res.data.id)
       this.favorite = ''
-    }
+    },
+    showModal() {
+      this.visible = true
+    },
+    handleSubmit(e) {
+      this.submitting = true
+      setTimeout(() => {
+        this.visible = false
+        this.submitting = false
+      }, 3000)
+    },
+    handleCancel(e) {
+      this.visible = false
+    },
+    deleteComment() {}
   }
 }
 </script>
