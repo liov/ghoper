@@ -125,7 +125,7 @@
         :data-source="moment.comments"
       >
         <a-list-item slot="renderItem" slot-scope="item">
-          <hoper-comment :comment="item" @replay="showModal" @del="deleteComment" />
+          <hoper-comment :comment="item" @reply="showModal" @del="deleteComment" />
         </a-list-item>
       </a-list>
       <a-modal

@@ -1,7 +1,9 @@
+let token = "Bearer.eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIxIiwibG9naW5JcCI6IjEwLjQyLjEuMCIsImxvZ2luTmFtZSI6ImFkbWluIiwibG9naW5UaW1lTWlsbGlzIjoxNTU0Njk1MDUzNDgyLCJleHAiOjE1NTQ3ODE0NTN9.frTmzsq2GNXS0yPDJQfMOqEmQCOS35qurfxYYKFLwq0"
+
 fetch('http://localhost:8030/api/dubbo/resource/export/res_export_trademark_info', {
     method: 'post', body: JSON.stringify({}), responseType: 'blob', headers: {
         "Content-Type": "application/json",
-        "auth-token": "Bearer.eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIxIiwibG9naW5JcCI6IjEwLjQyLjEuMCIsImxvZ2luTmFtZSI6ImFkbWluIiwibG9naW5UaW1lTWlsbGlzIjoxNTUzMjE4MjQ4NzA0LCJleHAiOjE1NTMzMDQ2NDh9.y86KHYvMOUV9-dm8xVWTqqj86o5PAr0J4IdyTRYtKbw"
+        "auth-token": token
     }
 })
     .then(res => {

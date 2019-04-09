@@ -17,7 +17,7 @@
     <a-tooltip slot="datetime">
       <span>{{ $s2date(comment.created_at).fromNow() }}</span>
     </a-tooltip>
-    <hoper-comment v-for="(subComment,index) in comment.sub_comments" :key="index" :comment="subComment" @replay="$emit('reply')" @del="$emit('del')" />
+    <hoper-comment v-for="(subComment,index) in comment.sub_comments" :key="index" :comment="subComment" @reply="$emit('reply')" @del="$emit('del')" />
   </a-comment>
 </template>
 
