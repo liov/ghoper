@@ -1,6 +1,6 @@
-let token = "Bearer.eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIxIiwibG9naW5JcCI6IjEwLjQyLjEuMCIsImxvZ2luTmFtZSI6ImFkbWluIiwibG9naW5UaW1lTWlsbGlzIjoxNTU0Njk1MDUzNDgyLCJleHAiOjE1NTQ3ODE0NTN9.frTmzsq2GNXS0yPDJQfMOqEmQCOS35qurfxYYKFLwq0"
+let token = "Bearer.eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIxIiwibG9naW5JcCI6IjEwLjQyLjEuMCIsImxvZ2luTmFtZSI6ImFkbWluIiwibG9naW5UaW1lTWlsbGlzIjoxNTU0NzkyMTAyNDEwLCJleHAiOjE1NTQ4Nzg1MDJ9.-2-q2NwRryz4Y9EcMwNJ1QUINwJPUHv2wh76Taei4Nc"
 
-fetch('http://localhost:8030/api/dubbo/resource/export/res_export_trademark_info', {
+fetch('http://192.168.31.148:30002/api/dubbo/resource/export/res_export_trademark_info', {
     method: 'post', body: JSON.stringify({}), responseType: 'blob', headers: {
         "Content-Type": "application/json",
         "auth-token": token
@@ -11,11 +11,11 @@ fetch('http://localhost:8030/api/dubbo/resource/export/res_export_trademark_info
     }).then(blob => {
 
 
-    var a = document.createElement('a');
+    let a = document.createElement('a');
     a.download = "test.xlsx";
     a.style.display = 'none';
     blob.type = "application/excel";
-    var url = window.URL.createObjectURL(blob);
+    let url = window.URL.createObjectURL(blob);
     a.href = url;
     document.body.appendChild(a);
     a.click();

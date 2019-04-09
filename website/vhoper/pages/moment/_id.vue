@@ -130,7 +130,7 @@
       </a-list>
       <a-modal
         v-model="visible"
-        title="对评论"
+        :title="'Reply To: '+commentTo"
         on-ok="commentHandleOk"
       >
         <template slot="footer">
@@ -175,7 +175,8 @@ export default {
       loading: false,
       visible: false,
       submitting: false,
-      value: ''
+      value: '',
+      commentTo: ''
     }
   },
   async asyncData({ $axios, params, query }) {
@@ -201,6 +202,9 @@ export default {
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     this.image_url =
       this.moment.image_url === '' ? [] : this.moment.image_url.split(',')
+
+    this.commentTo = this.moment.user.name
+
     this.moment.comments[0].sub_comments = []
     this.moment.comments[0].sub_comments[0] = this.moment.comments[1]
   },
@@ -289,8 +293,9 @@ export default {
       this.favorites.push(res.data.id)
       this.favorite = ''
     },
-    showModal() {
+    showModal: function(comment) {
       this.visible = true
+      this.commentTo = comment.user.name
     },
     handleSubmit(e) {
       this.submitting = true
