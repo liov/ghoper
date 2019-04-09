@@ -144,7 +144,7 @@
         <a-comment>
           <a-avatar
             slot="avatar"
-            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            :src="user.avatar_url"
             alt="Han Solo"
           />
           <div slot="content">
@@ -297,12 +297,11 @@ export default {
       this.visible = true
       this.commentTo = comment.user.name
     },
-    handleSubmit(e) {
+    async handleSubmit(e) {
       this.submitting = true
-      setTimeout(() => {
-        this.visible = false
-        this.submitting = false
-      }, 3000)
+      const res = await this.$axios.$post('/api/comment', {
+        name: this.favorite
+      })
     },
     handleCancel(e) {
       this.visible = false
