@@ -130,7 +130,7 @@
       </a-list>
       <a-modal
         v-model="visible"
-        :title="'Reply To: '+commentTo"
+        :title="'Reply To: '+comment.user.name"
         on-ok="commentHandleOk"
       >
         <template slot="footer">
@@ -167,6 +167,7 @@ export default {
   data() {
     return {
       md: null,
+      user: null,
       image_url: [],
       collectVisible: false,
       existFavorites: [],
@@ -176,7 +177,7 @@ export default {
       visible: false,
       submitting: false,
       value: '',
-      commentTo: ''
+      comment: {}
     }
   },
   async asyncData({ $axios, params, query }) {
@@ -203,7 +204,9 @@ export default {
     this.image_url =
       this.moment.image_url === '' ? [] : this.moment.image_url.split(',')
 
-    this.commentTo = this.moment.user.name
+    this.comment.user = this.moment.user
+    this.comment.user_id = this.moment.user_id
+    this.comment.root_id = 0
 
     this.moment.comments[0].sub_comments = []
     this.moment.comments[0].sub_comments[0] = this.moment.comments[1]
@@ -273,7 +276,6 @@ export default {
         this.user_action.like.push(this.moment.id)
       }
     },
-    comment() {},
     async addFavorite() {
       if (this.favorite === '') {
         this.$message.error('标签为空')
@@ -295,13 +297,17 @@ export default {
     },
     showModal: function(comment) {
       this.visible = true
-      this.commentTo = comment.user.name
+      this.comment = comment
     },
     async handleSubmit(e) {
       this.submitting = true
-      const res = await this.$axios.$post('/api/comment', {
-        name: this.favorite
-      })
+      const comment = {
+        content: this.value,
+        recv_user_id: this.comment.user_id,
+        user_id: this.user.id,
+        root_id: this.comment.root_id
+      }
+      const res = await this.$axios.$post('/api/comment', comment)
     },
     handleCancel(e) {
       this.visible = false
