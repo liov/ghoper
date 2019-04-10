@@ -20,7 +20,7 @@ export default {
     const vm = this
     setTimeout(function() {
       vm.stopWorker()
-    }, 1000)
+    }, 3000)
   },
   methods: {
     startWorker: function() {

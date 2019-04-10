@@ -3,7 +3,7 @@ import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
 export default ctx => {
-  const httpLink = new HttpLink({ uri: 'http://localhost/api/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://localhost/api/graphql' })
   // const httpLink = new HttpLink({ uri: 'https://api.graph.cool/simple/v1/cj1dqiyvqqnmj0113yuqamkuu' })
 
   // auth token

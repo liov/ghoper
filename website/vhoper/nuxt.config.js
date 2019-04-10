@@ -1,8 +1,14 @@
 const pkg = require('./package')
-const {join} = require('path')
+const {resolve} = require('path')
+const {readFileSync} = require('fs')
 module.exports = {
   mode: 'universal',
-
+  server: {
+    https: {
+      key: readFileSync(resolve(__dirname, '../../config/tls/cert.key')),
+      cert: readFileSync(resolve(__dirname, '../../config/tls/cert.pem'))
+    }
+  },
   /*
   ** Headers of the page
   */
@@ -53,8 +59,8 @@ module.exports = {
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-    baseURL: 'http://hoper.xyz',
-    browserBaseURL: 'http://hoper.xyz',
+    baseURL: 'https://hoper.xyz',
+    browserBaseURL: 'https://hoper.xyz',
     proxy: false
   },
   proxy: [
@@ -73,7 +79,7 @@ module.exports = {
     clientConfigs: {
       default: {
         // required
-        httpEndpoint: 'http://hoper.xyz/api/graphql',
+        httpEndpoint: 'https://hoper.xyz/api/graphql',
         // optional
         // See https://www.apollographql.com/docs/link/links/http.html#options
         httpLinkOptions: {
@@ -91,7 +97,7 @@ module.exports = {
         websocketsOnly: false // Optional
       },
       test: {
-        httpEndpoint: 'http://hoper.xyz/api/graphql',
+        httpEndpoint: 'https://hoper.xyz/api/graphql',
         //wsEndpoint: 'ws://localhost/ws/echo',
         tokenName: 'apollo-token'
       },

@@ -3,7 +3,7 @@ package hwebsocket
 import (
 	"github.com/kataras/iris/websocket"
 	"github.com/satori/go.uuid"
-	"hoper/model/ov"
+	"hoper/client/controller"
 	"hoper/utils"
 	"time"
 )
@@ -59,13 +59,13 @@ func handleConnection(c websocket.Connection) {
 		client := &ClientI{uuid: uuid.NewV4().String(), conn: c, send: make(chan []byte)}
 
 		managerI.clients[client] = true
-		user := c.Context().Values().Get("user").(ov.User)
+		user := c.Context().Values().Get("user").(*controller.User)
 		var receiveMessage ReceiveMessage
 		utils.Json.UnmarshalFromString(msg, &receiveMessage)
 		sendMessage := SendMessage{
 			ID:        receiveMessage.ID,
 			CreatedAt: time.Now(),
-			SendUser:  user,
+			SendUser:  user.User,
 			//RecipientUser:nil,
 			Content: receiveMessage.Content,
 			Remarks: receiveMessage.Remarks,

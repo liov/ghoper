@@ -313,7 +313,7 @@ export default {
   },
   methods: {
     getStatus: function() {
-      fetch('http://hoper.xyz/user/1', {
+      fetch('https://hoper.xyz/user/1', {
         method: 'get',
         headers: {
           'Content-Type': 'application/json'

@@ -428,7 +428,7 @@ func Signup(c iris.Context) {
 	newUser.Email = registerUser.Email
 	newUser.Phone = registerUser.Phone
 	newUser.Password = encryptPassword(registerUser.Password, registerUser.Password)
-	newUser.AvatarURL = "http://hoper.xyz/static/images/6cbeb5c8-7160-4b6f-a342-d96d3c00367a.jpg"
+	newUser.AvatarURL = "https://hoper.xyz/static/images/6cbeb5c8-7160-4b6f-a342-d96d3c00367a.jpg"
 	//newUser.Role = model.UserRoleNormal
 	newUser.Status = model.UserStatusInActive
 

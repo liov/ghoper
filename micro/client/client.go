@@ -53,9 +53,9 @@ Loop:
 		case <-router.Ch:
 			break Loop
 		default:
-			// listen and serve on http://0.0.0.0:8000.
-			//if err := irisRouter.Run(iris.TLS(initialize.Config.Server.HttpPort, "../../config/tls/pem.pem", "../../config/tls/key.key"),
-			if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
+			// listen and serve on https://0.0.0.0:8000.
+			if err := irisRouter.Run(iris.TLS(initialize.Config.Server.HttpPort, "../../config/tls/cert.pem", "../../config/tls/cert.key"),
+				//if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
 				iris.WithConfiguration(iris.YAML("../../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
 				golog.Error(err)
 			}

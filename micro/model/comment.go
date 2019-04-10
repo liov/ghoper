@@ -15,6 +15,9 @@ type ArticleComment struct {
 	ContentType  int               `json:"content_type"`
 	ArticleID    uint64            `json:"article_id"` //话题或投票的ID
 	ParentID     uint64            `json:"parent_id"`  //直接父评论的ID
+	RootID       uint64            `json:"root_id"`
+	RecvUser     User              `json:"recv_user"`
+	RecvUserID   uint64            `json:"recv_user_id"`
 	SubComments  []*ArticleComment `gorm:"many2many:sub_article_comments;association_jointable_foreignkey:sub_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
@@ -41,6 +44,9 @@ type MomentComment struct {
 	ApproveUsers []User           `gorm:"many2many:moment_comment_approve_user" json:"approve_users"`
 	MomentID     uint64           `json:"moment_id"` //瞬间ID
 	ParentID     uint64           `json:"parent_id"` //直接父评论的ID
+	RootID       uint64           `json:"root_id"`
+	RecvUser     User             `json:"recv_user"`
+	RecvUserID   uint64           `json:"recv_user_id"`
 	SubComments  []*MomentComment `gorm:"many2many:sub_moment_comments;association_jointable_foreignkey:sub_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
@@ -67,6 +73,9 @@ type DiaryComment struct {
 	ApproveUsers []User           `gorm:"many2many:diary_comment_approve_user" json:"approve_users"`
 	DiaryID      uint64           `json:"diary_id"`  //瞬间ID
 	ParentID     uint64           `json:"parent_id"` //直接父评论的ID
+	RootID       uint64           `json:"root_id"`
+	RecvUser     User             `json:"recv_user"`
+	RecvUserID   uint64           `json:"recv_user_id"`
 	SubComments  []ArticleComment `gorm:"many2many:sub_diary_comment;association_jointable_foreignkey:sub_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
@@ -93,6 +102,9 @@ type DiaryBookComment struct {
 	ApproveUsers []User           `gorm:"many2many:diary_book_comment_approve_user" json:"approve_users"`
 	DiaryBookID  uint64           `json:"diary_book_id"` //瞬间ID
 	ParentID     uint64           `json:"parent_id"`     //直接父评论的ID
+	RootID       uint64           `json:"root_id"`
+	RecvUser     User             `json:"recv_user"`
+	RecvUserID   uint64           `json:"recv_user_id"`
 	SubComments  []ArticleComment `gorm:"many2many:sub_diary_book_comment;association_jointable_foreignkey:sub_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶

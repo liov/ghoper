@@ -91,3 +91,5 @@ sw.*
 upload
 
 *.db
+
+nginx-*

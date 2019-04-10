@@ -95,7 +95,7 @@ func sendJSON(ctx iris.Context, resp interface{}) (err error) {
 	// i.e [?Name == 'John Doe'].Age # to output the [age] of a user which his name is "John Doe".
 	if query := ctx.URLParam("query"); query != "" && query != "[]" {
 		//只能搜字符串?
-		//http://hoper.xyz/api/users?query=[?ID%20!=%20`1`]有结果，卧槽，什么操作？？
+		//https://hoper.xyz/api/users?query=[?ID%20!=%20`1`]有结果，卧槽，什么操作？？
 		resp, err = jmespath.Search(query, resp)
 		if err != nil {
 			return

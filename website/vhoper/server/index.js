@@ -1,5 +1,6 @@
 const Koa = require('koa')
 const consola = require('consola')
+const https = require('https');
 const { Nuxt, Builder } = require('nuxt')
 
 const app = new Koa()
@@ -30,9 +31,14 @@ async function start() {
     nuxt.render(ctx.req, ctx.res)
   })
 
-  app.listen(port, host)
+  const options = {
+    key: config.server.https.key,
+    cert: config.server.https.cert
+  }
+
+  https.createServer(options, app.callback()).listen(port)
   consola.ready({
-    message: `Server listening on http://${host}:${port}`,
+    message: `Server listening on https://${host}:${port}`,
     badge: true
   })
 }

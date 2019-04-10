@@ -254,7 +254,7 @@ export default {
     },
     showDrawer() {
       this.visible = true
-      Jsonp.jsonp('http://hoper.xyz/api/jsonp?callback=$nuxt.$message.info')
+      Jsonp.jsonp('https://hoper.xyz/api/jsonp?callback=$nuxt.$message.info')
     },
     onClose() {
       this.visible = false

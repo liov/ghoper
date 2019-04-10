@@ -5,7 +5,7 @@ export default function({ app, route, store, $axios, req }) {
     let token
     if (typeof window !== 'undefined') {
       token = localStorage.getItem('token')
-      // config.baseURL = 'http://' + window.location.host
+      config.baseURL = 'https://' + window.location.host
     } else {
       token = store.state.token
       if (!token) {
@@ -14,7 +14,7 @@ export default function({ app, route, store, $axios, req }) {
       config.headers.cookie = req.headers.cookie
       // config.baseURL = "http://"+context.req.host
       // 坑，用nginx转发，目前只能写死，或者在ng上改？
-      // config.baseURL = 'http://hoper.xyz'
+      config.baseURL = 'https://hoper.xyz'
     }
 
     if (token) {
