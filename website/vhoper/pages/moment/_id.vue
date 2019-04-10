@@ -29,7 +29,16 @@
           <a-icon type="like" :theme="user_action.approve.indexOf(moment.id)>-1?'twoTone':'outlined'" />
           点赞：{{ moment.approve_count }}
         </span>
-        <span slot="actions" style="margin-right: 10px" @click="showModal">
+        <span
+          slot="actions"
+          style="margin-right: 10px"
+          @click="showModal({
+            user: moment.user,
+            user_id: moment.user_id,
+            root_id: 0,
+            parent_id: 0
+          })"
+        >
           <a-icon type="message" :theme="moment.id>0?'twoTone':'outlined'" />
           评论：{{ moment.comment_count }}
         </span>
@@ -203,13 +212,6 @@ export default {
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     this.image_url =
       this.moment.image_url === '' ? [] : this.moment.image_url.split(',')
-
-    this.comment.user = this.moment.user
-    this.comment.user_id = this.moment.user_id
-    this.comment.root_id = 0
-
-    this.moment.comments[0].sub_comments = []
-    this.moment.comments[0].sub_comments[0] = this.moment.comments[1]
   },
   methods: {
     async star() {
@@ -304,10 +306,17 @@ export default {
       const comment = {
         content: this.value,
         recv_user_id: this.comment.user_id,
-        user_id: this.user.id,
-        root_id: this.comment.root_id
+        root_id: this.comment.root_id,
+        moment_id: this.moment.id
       }
-      const res = await this.$axios.$post('/api/comment', comment)
+      const res = await this.$axios.$post(
+        `/api/comment/moment/${this.$route.params.id}`,
+        comment
+      )
+      if (res.code === 200) {
+        this.$message.info('评论成功')
+      } else this.$message.error(res.msg)
+      this.submitting = false
     },
     handleCancel(e) {
       this.visible = false

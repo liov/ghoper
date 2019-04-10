@@ -265,7 +265,7 @@ func GetMoment(c iris.Context) {
 	err = initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Preload("User").Preload("Comments", func(db *gorm.DB) *gorm.DB {
-		return db.Order("created_at DESC").Limit(5).Offset(0)
+		return db.Where("root_id = ?", 0).Order("created_at DESC").Limit(5).Offset(0)
 	}).Preload("Comments.User").Where("id = ?", id).First(&moment).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		golog.Error(err)

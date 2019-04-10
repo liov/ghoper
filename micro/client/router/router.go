@@ -86,6 +86,7 @@ func IrisRouter() *iris.Application {
 	Upload(app)
 	Session(app)
 	Jsonp(app)
+	System(app)
 	//试验性
 	other.GraphqlRouter(app)
 	TPLRouter(app)

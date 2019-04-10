@@ -11,9 +11,8 @@ type ArticleComment struct {
 	UserID       uint64           `json:"user_id"`
 	Content      string           `gorm:"type:varchar(500)" json:"content"`
 	ApproveCount uint64           `gorm:"default:0" json:"approve_count"` //点赞
-	ContentType  int              `json:"content_type"`
-	ArticleID    uint64           `json:"article_id"` //话题或投票的ID
-	ParentID     uint64           `json:"parent_id"`  //直接父评论的ID
+	ArticleID    uint64           `json:"article_id"`                     //话题或投票的ID
+	ParentID     uint64           `json:"parent_id"`                      //直接父评论的ID
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`

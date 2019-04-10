@@ -21,5 +21,5 @@ func Like(app *iris.Application) {
 
 	app.Post("/api/comment/{kind}/{id}", middleware.GetUser(false), controller.AddComment)
 	app.Get("/api/comment/{kind}", middleware.GetUser(false), controller.GetComment)
-	app.Get("/api/comments/{kind}", controller.GetComments)
+	app.Get("/api/comments/{kind}/{id}", controller.GetComments)
 }

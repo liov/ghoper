@@ -41,7 +41,7 @@ type User struct {
 
 func sendMail(action string, title string, curTime int64, user model.User) {
 	siteName := initialize.Config.Server.SiteName
-	siteURL := "http://" + initialize.Config.Server.Host
+	siteURL := "https://" + initialize.Config.Server.Host
 	secretStr := strconv.FormatInt(curTime, 10) + user.Email + user.Password
 	secretStr = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(secretStr)))
 	actionURL := siteURL + "/user" + action + "/"

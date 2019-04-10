@@ -51,7 +51,7 @@
               <span slot="title" class="submenu-title-wrapper"><a-icon type="setting" />设置</span>
               <a-menu-item-group title="初始化">
                 <a-menu-item key="setting:1">
-                  <nuxt-link to="/tpl/init">
+                  <nuxt-link to="/api/init">
                     数据库初始化
                   </nuxt-link>
                 </a-menu-item>
