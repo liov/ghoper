@@ -1,5 +1,5 @@
 <template>
-  <div />
+  <div>Push</div>
 </template>
 
 <script>

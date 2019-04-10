@@ -101,6 +101,9 @@ export default {
       zh_CN
     }
   },
+  destroyed() {
+    sessionStorage.setItem('back_url', this.$route.path)
+  },
   methods: {
     changeTheme(checked) {
       this.theme = checked ? 'dark' : 'light'
