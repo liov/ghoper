@@ -48,7 +48,7 @@ func AddComment(c iris.Context) {
 	}()
 
 	commentBind(comment, c)
-	if err := initialize.DB.Create(&comment).Error; err != nil {
+	if err := initialize.DB.Create(comment).Error; err != nil {
 		golog.Error(err)
 	}
 
