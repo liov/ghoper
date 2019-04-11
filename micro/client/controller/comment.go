@@ -52,6 +52,7 @@ func AddComment(c iris.Context) {
 		golog.Error(err)
 	}
 
+	setCountToRedis(userID, kindId, KindIndex[kind], actionComment, 1)
 	common.Response(c, "评论成功", e.SUCCESS)
 }
 

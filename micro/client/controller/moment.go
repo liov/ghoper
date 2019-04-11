@@ -262,6 +262,7 @@ func GetMoment(c iris.Context) {
 
 	id, err := c.Params().GetUint64("id")
 	var moment ov.Moment
+
 	err = initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
 	}).Preload("User").Preload("Comments", func(db *gorm.DB) *gorm.DB {
@@ -271,10 +272,12 @@ func GetMoment(c iris.Context) {
 		golog.Error(err)
 		return
 	}
+	var commentCount int
+	err = initialize.DB.Table("moment_comment").Where("root_id = id AND moment_id =? ", moment.ID).Count(&commentCount).Error
 	common.Res(c, iris.Map{"data": moment,
-		"user_action": userAction,
-		"msg":         e.GetMsg(e.SUCCESS),
-		"code":        e.SUCCESS})
+		"user_action":   userAction,
+		"comment_count": commentCount,
+		"code":          e.SUCCESS})
 }
 
 func getRedisMoment(index string) *ov.Moment {
