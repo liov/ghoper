@@ -42,7 +42,7 @@
       <span>{{ $s2date(comment.created_at).fromNow() }}</span>
     </a-tooltip>
     <a-collapse default-active-key="1" :bordered="false">
-      <a-collapse-panel :key="comment.id" header="展开更多评论">
+      <a-collapse-panel :key="comment.id" header="展开更多评论" @change="$emit('moreComment')">
         <hoper-comment v-for="(subComment,index) in comment.sub_comments" :key="index" :comment="subComment" @reply="$emit('reply',subComment)" @del="$emit('del',comment.id)" />
       </a-collapse-panel>
     </a-collapse>
