@@ -35,7 +35,6 @@
           @click="showModal({
             user: moment.user,
             user_id: moment.user_id,
-            root_id: 0,
             parent_id: 0
           })"
         >
@@ -158,7 +157,7 @@
           />
           <div slot="content">
             <a-form-item>
-              <a-textarea :rows="4" :value="value" />
+              <a-textarea :rows="4" :value="value" @change="handleChange" />
             </a-form-item>
           </div>
         </a-comment>
@@ -186,7 +185,7 @@ export default {
       visible: false,
       submitting: false,
       value: '',
-      comment: {}
+      comment: { user: { name: '' } }
     }
   },
   async asyncData({ $axios, params, query }) {
@@ -298,15 +297,20 @@ export default {
       this.favorite = ''
     },
     showModal: function(comment) {
-      this.visible = true
       this.comment = comment
+      this.visible = true
     },
     async handleSubmit(e) {
+      if (!this.value) {
+        return
+      }
       this.submitting = true
       const comment = {
         content: this.value,
         recv_user_id: this.comment.user_id,
-        root_id: this.comment.root_id,
+        parent_id: this.comment.id,
+        root_id:
+          this.comment.parent_id === 0 ? this.comment.id : this.comment.root_id,
         moment_id: this.moment.id
       }
       const res = await this.$axios.$post(
@@ -315,11 +319,16 @@ export default {
       )
       if (res.code === 200) {
         this.$message.info('评论成功')
+        this.value = ''
       } else this.$message.error(res.msg)
       this.submitting = false
+      this.visible = false
     },
     handleCancel(e) {
       this.visible = false
+    },
+    handleChange(e) {
+      this.value = e.target.value
     },
     deleteComment() {}
   }

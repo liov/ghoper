@@ -52,7 +52,7 @@ func AddComment(c iris.Context) {
 		golog.Error(err)
 	}
 
-	common.Response(c, "评论成功")
+	common.Response(c, "评论成功", e.SUCCESS)
 }
 
 func commentBind(comment interface{}, c iris.Context) {
