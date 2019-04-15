@@ -24,7 +24,7 @@ func TPLRouter(app *iris.Application) {
 	app.RegisterView(tmplPug)
 
 	//缓存10s
-	tplRouter := app.Party("/tpl")
+	tplRouter := app.Party("/api/tpl")
 	{
 		//这里的pprof有问题，访问profile返回的是文件
 		tplRouter.Get("/hi", cache.Handler(10*time.Second), html.HtmlTest)

@@ -17,7 +17,7 @@ func Macros(app *iris.Application) {
 		}
 	})
 
-	app.Get("/limitchar/{name:string range(1,200) else 400}", func(ctx iris.Context) {
+	app.Get("/api/limitchar/{name:string range(1,200) else 400}", func(ctx iris.Context) {
 		name := ctx.Params().Get("name")
 		ctx.Writef(`Hello %s | the name should be between 1 and 200 characters length
     otherwise this handler will not be executed`, name)

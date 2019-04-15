@@ -12,21 +12,23 @@ func Session(app *iris.Application) {
 		initialize.BoltDB.Close()
 	})
 
-	app.Get("/set", controller.SessSet)
+	sessRouter := app.Party("/api/sess")
 
-	app.Get("/get", controller.SessGet)
+	sessRouter.Get("/set", controller.SessSet)
 
-	app.Get("/hoper", controller.SessTest)
+	sessRouter.Get("/get", controller.SessGet)
 
-	app.Get("/delete", controller.SessDelete)
+	sessRouter.Get("/hoper", controller.SessTest)
 
-	app.Get("/clear", controller.SessClear)
+	sessRouter.Get("/delete", controller.SessDelete)
 
-	app.Get("/destroy", controller.SessDestroy)
+	sessRouter.Get("/clear", controller.SessClear)
 
-	app.Get("/update", controller.SessUpdate)
+	sessRouter.Get("/destroy", controller.SessDestroy)
 
-	//app.Get("/gset", controller.GsessSet)
+	sessRouter.Get("/update", controller.SessUpdate)
 
-	//app.Get("/gget", controller.GsessGet)
+	//sessRouter.Get("/gset", controller.GsessSet)
+
+	//sessRouter.Get("/gget", controller.GsessGet)
 }
