@@ -25,23 +25,30 @@ if not ok then
         return
 end
 
+local IP_List = "IP_List"
+
 local headers=ngx.req.get_headers()
 local ip=headers["X-REAL-IP"] or headers["X_FORWARDED_FOR"] or ngx.var.remote_addr or "0.0.0.0"
 
-local exist, err = red:hexists("ip_list",ip)
+local exist, err = red:zrank(IP_List,ip)
 if not exist then
-	local data = {}
-	data[ip] = 1
-    red:hmset("ip_list",data)
+    red:zadd(IP_List,1,ip)
 else	
-	red:hincrby("ip_list",ip,1)
+	red:zincrby(IP_List,1,ip)
 end
-local res, err = red:hgetall("ip_list")
+ngx.say(IP_List..":<br>[IP地址:访问次数]<br>")
+local res, err = red:zrange(IP_List,0,-1,"WITHSCORES")
 if not res then
     ngx.say("failed to get ip_list: ", err)
     return
 end
-ngx.say("ip_list:[IP地址:访问次数]<br>")
-ngx.say(cjson.encode(res))
+
+for k, v in pairs(res) do
+    if k%2 == 0 then
+    	ngx.say("<span style='margin-left:10px;color:#e96900'>",v,"<br>")
+    else
+    	 ngx.say("<span style='lenght:50px;color:#b854d4'>",v,"</span>")
+    end
+end
 
 close_redis(red)
