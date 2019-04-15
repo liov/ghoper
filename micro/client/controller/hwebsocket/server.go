@@ -2,6 +2,11 @@ package hwebsocket
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/websocket"
 	"github.com/kataras/iris"
@@ -11,10 +16,6 @@ import (
 	"hoper/initialize"
 	"hoper/model/ov"
 	"hoper/utils"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"time"
 )
 
 type ClientManager struct {

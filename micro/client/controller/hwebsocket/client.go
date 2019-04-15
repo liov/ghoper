@@ -2,10 +2,11 @@ package hwebsocket
 
 import (
 	"flag"
-	"github.com/gorilla/websocket"
-	"github.com/kataras/golog"
 	"net/url"
 	"time"
+
+	"github.com/gorilla/websocket"
+	"github.com/kataras/golog"
 )
 
 var addr = flag.String("addr", "localhost:12345", "http service address")

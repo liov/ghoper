@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gorilla/securecookie"
 	"github.com/kataras/iris"
 	"hoper/initialize"
-	"net/http"
-	"time"
 )
 
 var secureCookie *securecookie.SecureCookie

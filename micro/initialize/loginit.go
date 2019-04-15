@@ -2,9 +2,10 @@ package initialize
 
 import (
 	"fmt"
+	"runtime"
+
 	"github.com/kataras/golog"
 	"github.com/kataras/pio"
-	"runtime"
 )
 
 /**

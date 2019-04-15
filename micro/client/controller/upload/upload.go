@@ -2,13 +2,6 @@ package upload
 
 import (
 	"errors"
-	"github.com/kataras/iris"
-	"github.com/satori/go.uuid"
-	"hoper/client/controller/common"
-	"hoper/initialize"
-	"hoper/model/crm"
-	"hoper/model/e"
-	"hoper/utils"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -16,6 +9,14 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"github.com/kataras/iris"
+	"github.com/satori/go.uuid"
+	"hoper/client/controller/common"
+	"hoper/initialize"
+	"hoper/model/crm"
+	"hoper/model/e"
+	"hoper/utils"
 )
 
 func GenerateUploadedInfo(ext string) crm.FileUploadInfo {

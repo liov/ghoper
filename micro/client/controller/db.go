@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/kataras/iris"
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/crm"
-	"time"
 )
 
 func DBInit(c iris.Context) {

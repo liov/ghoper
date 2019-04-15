@@ -3,6 +3,13 @@ package client
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
@@ -13,12 +20,6 @@ import (
 	"hoper/initialize"
 	"hoper/protobuf"
 	"hoper/utils/hlog"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func Client() {

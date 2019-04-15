@@ -2,13 +2,14 @@ package initialize
 
 import (
 	"fmt"
+	"reflect"
+	"time"
+
 	"github.com/jinzhu/configor"
 	"github.com/kataras/golog"
 	"hoper/client/controller/credis"
 	"hoper/model/crm"
 	"hoper/utils"
-	"reflect"
-	"time"
 )
 
 type ServerConfig struct {

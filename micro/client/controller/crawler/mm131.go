@@ -1,15 +1,15 @@
 package crawler
 
 import (
-	"github.com/gocolly/colly"
-	"github.com/kataras/golog"
-	"hoper/utils"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
-
 	"strconv"
+
+	"github.com/gocolly/colly"
+	"github.com/kataras/golog"
+	"hoper/utils"
 )
 
 //Go中，双引号是用来表示字符串string，其实质是一个byte类型的数组，

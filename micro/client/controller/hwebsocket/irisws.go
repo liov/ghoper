@@ -1,11 +1,12 @@
 package hwebsocket
 
 import (
+	"time"
+
 	"github.com/kataras/iris/websocket"
 	"github.com/satori/go.uuid"
 	"hoper/client/controller"
 	"hoper/utils"
-	"time"
 )
 
 type ClientManagerI struct {

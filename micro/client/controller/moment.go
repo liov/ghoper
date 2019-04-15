@@ -1,6 +1,11 @@
 package controller
 
 import (
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
@@ -14,10 +19,6 @@ import (
 	"hoper/model/ov"
 	"hoper/utils"
 	"hoper/utils/gredis"
-	"strconv"
-	"strings"
-	"time"
-	"unicode/utf8"
 )
 
 /**
@@ -265,19 +266,16 @@ func GetMoment(c iris.Context) {
 
 	err = initialize.DB.Preload("Tags", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name,moment_id")
-	}).Preload("User").Preload("Comments", func(db *gorm.DB) *gorm.DB {
-		return db.Where("root_id = id").Order("created_at DESC").Limit(5).Offset(0)
-	}).Preload("Comments.User").Where("id = ?", id).First(&moment).Error
+	}).Preload("User").Where("id = ?", id).First(&moment).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		golog.Error(err)
 		return
 	}
-	var commentCount int
-	err = initialize.DB.Table("moment_comment").Where("root_id = id AND moment_id =? ", moment.ID).Count(&commentCount).Error
+	actionCount := getActionCount(moment.ID, kindMoment)
+	moment.ActionCount = *actionCount
 	common.Res(c, iris.Map{"data": moment,
-		"user_action":   userAction,
-		"comment_count": commentCount,
-		"code":          e.SUCCESS})
+		"user_action": userAction,
+		"code":        e.SUCCESS})
 }
 
 func getRedisMoment(index string) *ov.Moment {

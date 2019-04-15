@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
@@ -8,9 +11,6 @@ import (
 	"hoper/model"
 	"hoper/model/e"
 	"hoper/model/ov"
-	"strconv"
-
-	"time"
 )
 
 type Comment interface {
@@ -20,7 +20,7 @@ type Comment interface {
 func AddComment(c iris.Context) {
 	userID := c.Values().Get("userID").(uint64)
 	kind := c.Params().Get("kind")
-	kindId, _ := c.Params().GetUint64("id")
+	refId, _ := c.Params().GetUint64("ref_id")
 	if limitErr := common.Limit(model.CommentMinuteLimit,
 		model.CommentMinuteLimitCount,
 		model.CommentDayLimit,
@@ -33,16 +33,16 @@ func AddComment(c iris.Context) {
 	var comment = func() interface{} {
 		switch KindIndex[kind] {
 		case kindArticle:
-			return &model.ArticleComment{CreatedAt: nowTime, UserID: userID, ArticleID: kindId, Status: 1}
+			return &model.ArticleComment{CreatedAt: nowTime, UserID: userID, ArticleID: refId, Status: 1}
 
 		case kindMoment:
-			return &model.MomentComment{CreatedAt: nowTime, UserID: userID, MomentID: kindId, Status: 1}
+			return &model.MomentComment{CreatedAt: nowTime, UserID: userID, MomentID: refId, Status: 1}
 
 		case kindDiary:
-			return &model.DiaryComment{CreatedAt: nowTime, UserID: userID, DiaryID: kindId, Status: 1}
+			return &model.DiaryComment{CreatedAt: nowTime, UserID: userID, DiaryID: refId, Status: 1}
 
 		case kindDiaryBook:
-			return &model.DiaryBookComment{CreatedAt: nowTime, UserID: userID, DiaryBookID: kindId, Status: 1}
+			return &model.DiaryBookComment{CreatedAt: nowTime, UserID: userID, DiaryBookID: refId, Status: 1}
 		}
 		return nil
 	}()
@@ -52,7 +52,7 @@ func AddComment(c iris.Context) {
 		golog.Error(err)
 	}
 
-	setCountToRedis(userID, kindId, KindIndex[kind], actionComment, 1)
+	setCountToRedis(userID, refId, KindIndex[kind], actionComment, 1)
 	common.Response(c, "评论成功", e.SUCCESS)
 }
 
@@ -102,32 +102,67 @@ func GetComment(ctx iris.Context) {
 
 func GetComments(ctx iris.Context) {
 	kind := ctx.Params().Get("kind")
-	kindId := ctx.Params().Get("id")
+	refId := ctx.Params().Get("ref_id")
 	pageNo, _ := strconv.Atoi(ctx.URLParam("pageNo"))
 	pageSize, _ := strconv.Atoi(ctx.URLParam("pageSize"))
 	rootID := ctx.URLParam("root_id")
 	var count int64
+	/*
+		var comments = func() interface{} {
+			switch KindIndex[kind] {
+			case kindArticle:
+				return make([]ov.ArticleComment, 0, pageSize)
 
-	var comments = func() interface{} {
-		switch KindIndex[kind] {
-		case kindArticle:
-			return make([]ov.ArticleComment, 0, pageSize)
+			case kindMoment:
+				return make([]ov.MomentComment, 0, pageSize)
 
-		case kindMoment:
-			return make([]ov.MomentComment, 0, pageSize)
+			case kindDiary:
+				return make([]ov.DiaryComment, 0, pageSize)
 
-		case kindDiary:
-			return make([]ov.DiaryComment, 0, pageSize)
-
-		case kindDiaryBook:
-			return make([]ov.DiaryBookComment, 0, pageSize)
-		}
-		return nil
-	}()
-
-	if err := initialize.DB.Where(kind+"_id = ? "+"root_id = ?", kindId, rootID).Order("sequence desc,id desc").Limit(pageSize).
-		Offset(pageNo * pageSize).Find(&comments).Count(&count).Error; err != nil {
-		golog.Error(err)
+			case kindDiaryBook:
+				return make([]ov.DiaryBookComment,0, pageSize)
+			}
+			return nil
+		}()*/
+	var where string
+	if rootID == "0" {
+		where = "root_id = id"
+	} else {
+		where = "root_id = '" + rootID + "'"
 	}
-	common.Response(ctx, comments, e.SUCCESS)
+
+	switch KindIndex[kind] {
+	case kindArticle:
+		var c []ov.ArticleComment
+		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
+			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
+			golog.Error(err)
+		}
+		common.Response(ctx, c)
+		return
+	case kindMoment:
+		var c []ov.MomentComment
+		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
+			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
+			golog.Error(err)
+		}
+		common.Response(ctx, c)
+		return
+	case kindDiary:
+		var c []ov.DiaryComment
+		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
+			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
+			golog.Error(err)
+		}
+		common.Response(ctx, c)
+		return
+	case kindDiaryBook:
+		var c []ov.DiaryBookComment
+		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
+			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
+			golog.Error(err)
+		}
+		common.Response(ctx, c)
+		return
+	}
 }

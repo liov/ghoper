@@ -3,6 +3,7 @@ package common
 import (
 	"errors"
 	"fmt"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/prometheus/common/log"
 	"hoper/client/controller/credis"

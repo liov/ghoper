@@ -5,6 +5,14 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"net/http"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+	"unsafe"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
@@ -19,13 +27,6 @@ import (
 	"hoper/model/ov"
 	"hoper/utils"
 	"hoper/utils/mail"
-	"net/http"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-	"unicode/utf8"
-	"unsafe"
 )
 
 const (

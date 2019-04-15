@@ -30,6 +30,7 @@
       </span>
       <span @click="$emit('reply',comment)">回复</span>
       <span v-if="$store.state.user&&$store.state.user.id === comment.user.id " @click="$emit('del',comment.id)">删除</span>
+      <span @click="$emit('more',index,comment.id)">展开更多评论</span>
     </span>
     <p slot="content">
       {{ comment.content }}
@@ -42,8 +43,15 @@
       <span>{{ $s2date(comment.created_at).fromNow() }}</span>
     </a-tooltip>
     <a-collapse default-active-key="1" :bordered="false">
-      <a-collapse-panel :key="comment.id" header="展开更多评论" @change="$emit('moreComment')">
-        <hoper-comment v-for="(subComment,index) in comment.sub_comments" :key="index" :comment="subComment" @reply="$emit('reply',subComment)" @del="$emit('del',comment.id)" />
+      <a-collapse-panel :key="comment.id" header="展开更多评论">
+        <hoper-comment
+          v-for="(subComment,subIndex) in comment.sub_comments"
+          :key="subIndex"
+          :comment="subComment"
+          @reply="$emit('reply',subComment)"
+          @del="$emit('del',comment.id)"
+          @more="$emit('more',index,comment.id)"
+        />
       </a-collapse-panel>
     </a-collapse>
   </a-comment>
@@ -53,7 +61,7 @@
 // $emit必须重启 npm run
 export default {
   name: 'HoperComment',
-  props: ['comment'],
+  props: ['comment', 'index'],
   data() {
     return {
       likes: 0,

@@ -2,6 +2,14 @@ package crawler
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+	"sync"
+
+	"github.com/PuerkitoBio/goquery"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
@@ -11,14 +19,6 @@ import (
 	"hoper/model/e"
 	"hoper/model/ov"
 	"hoper/utils"
-	"io"
-	"net/http"
-	"net/url"
-	"os"
-	"strings"
-	"sync"
-
-	"github.com/PuerkitoBio/goquery"
 )
 
 type crawlSelector struct {

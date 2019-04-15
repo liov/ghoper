@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/gorilla/securecookie"
 	"github.com/kataras/iris/sessions"
 	"hoper/initialize"
-	"time"
 )
 
 func init() {

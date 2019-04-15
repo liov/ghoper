@@ -1,6 +1,11 @@
 package controller
 
 import (
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
@@ -9,10 +14,6 @@ import (
 	"hoper/model"
 	"hoper/model/e"
 	"hoper/model/ov"
-	"reflect"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type Action interface {

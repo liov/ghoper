@@ -2,15 +2,16 @@ package crawler
 
 import (
 	"bytes"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/kataras/golog"
-	"golang.org/x/net/html/charset"
-	"hoper/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"regexp"
 	"strconv"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/kataras/golog"
+	"golang.org/x/net/html/charset"
+	"hoper/utils"
 )
 
 func M131() {

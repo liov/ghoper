@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"image/jpeg"
+
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
-	"image/jpeg"
 )
 
 type QrCode struct {

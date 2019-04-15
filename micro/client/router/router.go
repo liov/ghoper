@@ -3,15 +3,16 @@ package router
 //go:generate qtc -dir=../../template
 import (
 	"context"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
 	"github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/router/other"
 	"hoper/utils/hlog"
-	"os"
-	"strings"
-	"time"
 )
 
 var Ch = make(chan os.Signal, 1)

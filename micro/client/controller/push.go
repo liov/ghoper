@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/kataras/iris"
 	"log"
+
+	"github.com/kataras/iris"
 )
 
 //可用的，前提是页面需要

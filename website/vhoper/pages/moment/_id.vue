@@ -130,10 +130,10 @@
         class="comment-list"
         :header="`${moment.comment_count} 条评论`"
         item-layout="horizontal"
-        :data-source="moment.comments"
+        :data-source="comments"
       >
-        <a-list-item slot="renderItem" slot-scope="item">
-          <hoper-comment :comment="item" @reply="showModal" @del="deleteComment" />
+        <a-list-item slot="renderItem" slot-scope="item,index">
+          <hoper-comment :comment="item" :index="index" @reply="showModal" @del="deleteComment" @more="moreComment" />
         </a-list-item>
       </a-list>
       <a-modal
@@ -192,6 +192,9 @@ export default {
     const res = await $axios.$get(
       `/api/moment/${params.id}?index=${query.index}`
     )
+    const commentRes = await $axios.$get(
+      `/api/comments/moment/${params.id}?pageNo=0&pageSize=5&root_id=0`
+    )
     return {
       moment: res.data,
       user_action:
@@ -203,7 +206,8 @@ export default {
               approve: [],
               comment: [],
               browse: []
-            }
+            },
+      comments: commentRes.data
     }
   },
   created: function() {
@@ -330,7 +334,20 @@ export default {
     handleChange(e) {
       this.value = e.target.value
     },
-    deleteComment() {}
+    deleteComment() {},
+    async moreComment(index, rootID) {
+      console.log(index, rootID)
+      const commentRes = await this.$axios.$get(
+        `/api/comments/moment/${
+          this.$route.params.id
+        }?pageNo=0&pageSize=5&root_id=${rootID}`
+      )
+      if (commentRes.code === 200) {
+        if (this.comments[index].sub_comments === null)
+          this.comments[index].sub_comments = commentRes.data
+        else this.comments[index].sub_comments = this.comments[index].sub_comments.concat(commentRes.data)
+      }
+    }
   }
 }
 </script>

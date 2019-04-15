@@ -3,12 +3,13 @@ package upload
 import (
 	"bufio"
 	"context"
+	"os"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/kataras/golog"
-	"os"
-	"time"
 )
 
 func News3() *s3.S3 {

@@ -2,8 +2,9 @@ package utils
 
 import (
 	"errors"
-	"github.com/json-iterator/go"
 	"reflect"
+
+	"github.com/json-iterator/go"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary

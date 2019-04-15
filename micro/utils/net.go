@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"github.com/kataras/golog"
 	"net/url"
+
+	"github.com/kataras/golog"
 )
 
 // RelativeURLToAbsoluteURL 相对URL转绝对URL

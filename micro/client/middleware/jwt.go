@@ -3,6 +3,9 @@ package middleware
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris"
 	"hoper/client/controller"
@@ -11,8 +14,6 @@ import (
 	"hoper/model"
 	"hoper/model/e"
 	"hoper/utils"
-	"net/http"
-	"time"
 )
 
 //中间件的两种方式
@@ -179,18 +180,16 @@ func AdminRequired(ctx iris.Context) {
 //var jwtSecret = utils.ToBytes(initialize.Config.Server.JwtSecret))
 
 type Claims struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	UserID uint64 `json:"user_id"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(username, password string) (string, error) {
+func GenerateToken(userID uint64) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(3 * time.Hour)
 
 	claims := Claims{
-		username,
-		password,
+		userID,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "hoper",

@@ -1,6 +1,11 @@
 package controller
 
 import (
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris"
@@ -11,10 +16,6 @@ import (
 	"hoper/model/e"
 	"hoper/model/ov"
 	"hoper/utils"
-	"strconv"
-	"strings"
-	"time"
-	"unicode/utf8"
 )
 
 func GetArticle(c iris.Context) {

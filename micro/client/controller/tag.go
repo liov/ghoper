@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
@@ -9,8 +12,6 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/ov"
-	"strconv"
-	"time"
 )
 
 func GetTags(c iris.Context) {

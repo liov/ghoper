@@ -17,7 +17,7 @@ type Moment struct {
 	User      ov.User            `json:"user"`
 	UserID    uint64             `json:"user_id"`
 	ActionCount
-	ApproveUsers []ov.User  `gorm:"many2many:moment_approve" json:"approve_users"`
+	ApproveUsers []ov.User  `gorm:"many2many:moment_approve_user" json:"approve_users"`
 	CollectUsers []ov.User  `gorm:"many2many:moment_collect" json:"collect_users"`
 	LikeUsers    []ov.User  `gorm:"many2many:moment_like" json:"like_users"`
 	Sequence     uint8      `gorm:"type:smallint;default:0" json:"sequence"`   //排序，置顶

@@ -3,10 +3,11 @@ package utils
 import (
 	"encoding/json"
 	"errors"
-	"github.com/kataras/golog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/kataras/golog"
 )
 
 // LuosimaoVerify 对前端的验证码进行验证

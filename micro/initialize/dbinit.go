@@ -2,16 +2,17 @@ package initialize
 
 import (
 	"fmt"
+	"os"
+	"reflect"
+	"strings"
+	"time"
+
 	"github.com/globalsign/mgo"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/sessions/sessiondb/boltdb"
-	"os"
-	"reflect"
-	"strings"
-	"time"
 )
 
 // DB 数据库连接

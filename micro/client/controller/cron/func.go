@@ -1,14 +1,15 @@
 package cron
 
 import (
+	"strconv"
+	"sync"
+	"time"
+
 	"github.com/gomodule/redigo/redis"
 	"hoper/client/controller"
 	"hoper/client/controller/credis"
 	"hoper/initialize"
 	"hoper/model"
-	"strconv"
-	"sync"
-	"time"
 )
 
 //这样设计的话，锁的设计就多余了

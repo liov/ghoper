@@ -2,8 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"github.com/kataras/golog"
 	"reflect"
+
+	"github.com/kataras/golog"
 )
 
 func setField(obj interface{}, name string, value interface{}) error {
