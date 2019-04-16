@@ -54,3 +54,6 @@ for k, v in pairs(res) do
 end
 
 close_redis(red)
+
+
+ngx.say(cjson.encode(route))

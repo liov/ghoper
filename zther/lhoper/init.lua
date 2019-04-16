@@ -1,4 +1,3 @@
-
 local path = require "path"
 
 local info = debug.getinfo(1,"S")
@@ -8,4 +7,6 @@ local pathinfo = info.short_src
 local path = string.match(path.conversion(pathinfo),"^.*/")
 --添加搜索路径
 package.path = string.format("%s?.lua;%s?/init.lua;%s", path, path, package.path)
---加载模块(module为lua模块文件名"module.lua")
+
+
+route = require("router.router"):new("router.router_config")

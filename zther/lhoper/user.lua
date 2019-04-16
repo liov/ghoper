@@ -1,7 +1,9 @@
 local _M={}
 
 function _M.test()
-    return "测试"
+   ngx.say("测试")
 end
+
+_M.test()
 
 return _M
