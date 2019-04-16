@@ -16,6 +16,8 @@ end
 local redis = require "resty.redis"
 local red = redis:new()
 local cjson = require "cjson"
+--imoprt_path = dofile("./init.lua")
+--imoprt_path()
 
 red:set_timeout(1000)
 
