@@ -10,3 +10,6 @@ package.path = string.format("%s?.lua;%s?/init.lua;%s", path, path, package.path
 
 
 route = require("router.router"):new("router.router_config")
+
+exec_every_time = os.date("%c")
+test = ''

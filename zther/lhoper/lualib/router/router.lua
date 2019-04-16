@@ -2,7 +2,7 @@ local _M = { _VERSION = '0.1' }
 local mt = { __index = _M}
 local tinsert = table.insert
 local tconcat = table.concat
-
+local cjson = require "cjson"
 function _M.new(self,config_path)
     local tab = {}
     local routeMap = require(config_path)
@@ -35,7 +35,7 @@ function _M.route_verify(self)
             ngx.var.lua_path = "error"
         else
             local locant = ngx.re.match(next(m,#m), "^z(\\d+)z")
-            ngx.var.test = locant[1]
+            test = cjson.encode(m)
             ngx.var.lua_path = self.rewrite_urls[tonumber(locant[1])]
         end
     end

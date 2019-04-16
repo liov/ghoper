@@ -15,7 +15,7 @@ end
 
 local redis = require "resty.redis"
 local red = redis:new()
-local cjson = require "cjson"
+
 --imoprt_path = dofile("./init.lua")
 --imoprt_path()
 
@@ -54,6 +54,3 @@ for k, v in pairs(res) do
 end
 
 close_redis(red)
-
-
-ngx.say(cjson.encode(route))
