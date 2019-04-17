@@ -1,9 +1,15 @@
 --白名单列表
 local whitelist = {
-    'test',
-    'log',
-    'user/login',
-    'user/register'
+    module={
+        'user',
+        'user/login',
+        'user/register'
+    },
+    direct = {
+        'test',
+        'log',
+        'error'
+    }
 }
 --路由重写列表
 local rewritelist = {
