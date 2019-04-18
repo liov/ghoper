@@ -1,0 +1,2 @@
+mvn clean -s F:\settings.xml deploy -Dmaven.test.skip=true -Dautoconfig.skip=true -DaltDeploymentRepository=snapshots::default::http://xxxx/repositories/snapsho
+ts/
