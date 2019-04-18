@@ -1,6 +1,6 @@
-local need_moudle = router_filter:route_verify()
+local need_module = router_filter:route_verify()
 
-local function load_moudle()
+local function load_module()
     local path = require "path"
     local info = debug.getinfo(1,"S")
     --获取当前路径
@@ -10,20 +10,20 @@ local function load_moudle()
     package.loaded[ngx.var.lua_path] = dofile(path.."/lua/"..ngx.var.lua_path..".lua")
 end
 
-local function get_moudle(uri)
-    local ret =  string.match(uri,"[^/.]+") 
+local function get_module(uri)
+    local ret =  string.match(uri,"[^/.]+")
     return ret
 end
 
-if need_moudle then
+if need_module then
     if package.loaded[ngx.var.lua_path] == nil then
-        load_moudle()
+        load_module()
     else
         if ngx.var.arg_reload then
             package.loaded[ngx.var.lua_path] = nil
-            load_moudle()
+            load_module()
         end
     end
-    ngx.var.module = get_moudle(ngx.var.lua_path)
+    ngx.var.module = get_module(string.gsub(ngx.var.lua_path,"/","."))
     ngx.var.lua_path = "router"
 end

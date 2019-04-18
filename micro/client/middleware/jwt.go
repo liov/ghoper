@@ -13,7 +13,7 @@ import (
 	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
-	"hoper/utils"
+
 )
 
 //中间件的两种方式
@@ -78,27 +78,16 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 		return nil, errors.New("未登录")
 	}
 
-	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("意外的登录方法: %v", token.Header["alg"])
-		}
-		return []byte(initialize.Config.Server.TokenSecret), nil
-	})
+	claims, err := controller.ParseToken(tokenString)
 
-	if tokenErr != nil {
-		return nil, errors.New("未登录")
+	if err != nil {
+		return nil, err
 	}
+	user, err := controller.UserFromRedis(claims.UserID)
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID := uint64(claims["id"].(float64))
-		user, err := controller.UserFromRedis(userID)
-		if err != nil {
-			return nil, errors.New("登录超时")
-		}
-		controller.UserLastActiveTime(userID)
-		return user, nil
-	}
-	return nil, errors.New("未登录")
+	controller.UserLastActiveTime(claims.UserID)
+
+	return user, nil
 }
 
 func getUserID(ctx iris.Context) (uint64, error) {
@@ -179,39 +168,4 @@ func AdminRequired(ctx iris.Context) {
 //Config全局变量太大了
 //var jwtSecret = utils.ToBytes(initialize.Config.Server.JwtSecret))
 
-type Claims struct {
-	UserID uint64 `json:"user_id"`
-	jwt.StandardClaims
-}
 
-func GenerateToken(userID uint64) (string, error) {
-	nowTime := time.Now()
-	expireTime := nowTime.Add(3 * time.Hour)
-
-	claims := Claims{
-		userID,
-		jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
-			Issuer:    "hoper",
-		},
-	}
-
-	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(utils.ToBytes(initialize.Config.Server.JwtSecret))
-
-	return token, err
-}
-
-func ParseToken(token string) (*Claims, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return utils.ToBytes(initialize.Config.Server.JwtSecret), nil
-	})
-
-	if tokenClaims != nil {
-		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
-			return claims, nil
-		}
-	}
-
-	return nil, err
-}

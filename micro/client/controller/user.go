@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -13,7 +14,6 @@ import (
 	"unicode/utf8"
 	"unsafe"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
@@ -328,11 +328,7 @@ func Login(c iris.Context) {
 			return
 		}
 
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"id":     user.ID,
-			"expire": time.Now().Unix() + initialize.Config.Server.TokenMaxAge,
-		})
-		tokenString, err := token.SignedString(utils.ToBytes(initialize.Config.Server.TokenSecret))
+		tokenString, err := GenerateToken(&user)
 		if err != nil {
 			common.Response(c, "内部错误")
 			return
@@ -366,6 +362,8 @@ func Login(c iris.Context) {
 			Secure:   false,
 			HttpOnly: true,
 		})
+
+		c.ResponseWriter().Header().Add("Authorization",tokenString)
 
 		/*		session := sessions.Default(c)
 				session.Set("user", user)
@@ -475,6 +473,7 @@ func Logout(c iris.Context) {
 		Secure:   false,
 		HttpOnly: true,
 	})
+
 	common.Response(c, "已注销", e.SUCCESS)
 }
 
@@ -1085,4 +1084,46 @@ func encryptPassword(password, salt string) (hash string) {
 	hash = salt + password + initialize.Config.Server.PassSalt
 	hash = fmt.Sprintf("%x", md5.Sum(utils.ToBytes(hash)))
 	return
+}
+
+type Claims struct {
+	UserID   uint64 `json:"user_id"`
+	UserRole uint8  `json:"user_role"`
+	jwt.StandardClaims
+}
+
+func GenerateToken(user *model.User) (string, error) {
+
+	claims := Claims{
+		UserID:   user.ID,
+		UserRole: user.Role,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Unix() + initialize.Config.Server.TokenMaxAge,
+			IssuedAt:  time.Now().Unix(),
+			Issuer:    "hoper",
+		},
+	}
+
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err := tokenClaims.SignedString(utils.ToBytes(initialize.Config.Server.JwtSecret))
+
+	return token, err
+}
+
+func ParseToken(token string) (*Claims, error) {
+	tokenClaims, _ := (&jwt.Parser{SkipClaimsValidation:true}).ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return utils.ToBytes(initialize.Config.Server.JwtSecret), nil
+	})
+
+	if tokenClaims != nil {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+			now:=time.Now().Unix()
+			if claims.VerifyExpiresAt(now, false) == false {
+				return nil,errors.New("登录超时")
+			}
+			return claims, nil
+		}
+	}
+
+	return nil, errors.New("未登录")
 }

@@ -102,11 +102,11 @@ export default {
     this.user = this.$store.state.user
   },
   mounted: function() {
-    // fetch(`/tpl/iris-ws.js`)
+    // fetch(`/api/iris-ws.js`)
     const vm = this
     const script = document.createElement('script')
     script.type = 'text/javascript' // 设置Type
-    script.src = '/tpl/iris-ws.js' // 设置src
+    script.src = '/api/iris-ws.js' // 设置src
     document.head.appendChild(script) // 异步加载
     script.onload = function() {
       vm.scheme = document.location.protocol === 'https:' ? 'wss' : 'ws'

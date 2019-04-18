@@ -345,7 +345,12 @@ export default {
       if (commentRes.code === 200) {
         if (this.comments[index].sub_comments === null)
           this.comments[index].sub_comments = commentRes.data
-        else this.comments[index].sub_comments = this.comments[index].sub_comments.concat(commentRes.data)
+        else {
+          const sub_commets = this.comments[index].sub_comments.concat(
+            commentRes.data
+          )
+          this.comments[index].sub_comments = sub_commets
+        }
       }
     }
   }

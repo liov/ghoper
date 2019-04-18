@@ -5,7 +5,7 @@
         <a class="index" href="javascript:;" @click="logout">
             <van-button type="warning">注销</van-button>
         </a>
-        <a href="/tpl/index"><van-button type="default">模板首页</van-button></a>
+        <a href="/api/tpl/index"><van-button type="default">模板首页</van-button></a>
         <van-button type="primary" @click="hint('啥都没有发生')">默认按钮</van-button>
             <nuxt-link to="/user/signup"><van-button type="primary">注册</van-button></nuxt-link>
         </div>
@@ -53,7 +53,7 @@
                     mode: 'cors',
                     cache: 'default' };
 
-                fetch("http://hoper.xyz/tpl/index",Init).then((res)=>
+                fetch("http://hoper.xyz/api/tpl/index",Init).then((res)=>
                     res.text()).then((text)=>{
                         vm.testdata = text
                     }

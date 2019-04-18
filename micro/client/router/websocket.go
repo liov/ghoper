@@ -20,7 +20,7 @@ func WS(app *iris.Application) {
 
 	// serve the javascript built'n client-side library,
 	// see websockets.html script tags, this path is used.
-	app.Any("/tpl/iris-ws.js", func(ctx iris.Context) {
+	app.Any("/api/iris-ws.js", func(ctx iris.Context) {
 		ctx.Write(ws.ClientSource)
 	})
 }

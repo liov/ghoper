@@ -3,9 +3,9 @@ local function close_redis(red)
         return
     end
     -- 释放连接(连接池实现)，毫秒
-    local pool_max_idle_time = 10000 
+    local pool_max_idle_time = 10000
     -- 连接池大小
-    local pool_size = 100 
+    local pool_size = 100
     local ok, err = red:set_keepalive(pool_max_idle_time, pool_size)
     local log = ngx_log
     if not ok then
@@ -23,8 +23,8 @@ red:set_timeout(1000)
 
 local ok, err = red:connect("127.0.0.1", 6379)
 if not ok then
-        ngx.say("failed to connect: ", err,"<br>")
-        return
+    ngx.say("failed to connect: ", err,"<br>")
+    return
 end
 
 local IP_List = "IP_List"
@@ -35,7 +35,7 @@ local ip=headers["X-REAL-IP"] or headers["X_FORWARDED_FOR"] or ngx.var.remote_ad
 local exist, err = red:zrank(IP_List,ip)
 if not exist then
     red:zadd(IP_List,1,ip)
-else	
+else
 	red:zincrby(IP_List,1,ip)
 end
 ngx.say(IP_List..":<br><span style='width: 112px;display: inline-block;text-align: center'>IP地址</span><span>访问次数</span><br>")

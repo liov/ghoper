@@ -23,5 +23,12 @@
         </dependency>
     </dependencies>
 
-
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Internal repo</name>
+            <password>123456</password>
+            <url>file:///home/thara/testesb/in</url>
+        </repository>
+    </distributionManagement>
 </project>

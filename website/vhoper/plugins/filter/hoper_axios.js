@@ -11,7 +11,8 @@ export default function({ app, route, store, $axios, req }) {
       if (!token) {
         token = cookie.getCookie('token', req)
       }
-      config.headers.cookie = req.headers.cookie
+
+      if (req.headers.cookie) config.headers.cookie = req.headers.cookie
       // config.baseURL = "http://"+context.req.host
       // 坑，用nginx转发，目前只能写死，或者在ng上改？
       config.baseURL = 'https://hoper.xyz'
@@ -43,6 +44,7 @@ export default function({ app, route, store, $axios, req }) {
           }
       }
     }
+
     return Promise.reject(error.response.data)
   })
   /*  $axios.onError(error => {
