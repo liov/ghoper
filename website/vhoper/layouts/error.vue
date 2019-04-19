@@ -4,7 +4,7 @@
       页面不存在
     </h1>
     <h1 v-else>
-      应用发生错误异常
+      {{ error }}
     </h1>
     <nuxt-link to="/">
       首 页

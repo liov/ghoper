@@ -52,7 +52,7 @@
         </template>
 
         <template slot="content">
-          <div style="margin: 1rem 1rem 0 1rem" v-html="md.render(moment.content)" />
+          <div style="margin: .5rem .5rem 0 .5rem" v-html="$md.render(moment.content)" />
         </template>
         <img
           v-for="(subitem,subindex) in image_url"
@@ -133,7 +133,7 @@
         :data-source="comments"
       >
         <a-list-item slot="renderItem" slot-scope="item,index">
-          <hoper-comment :comment="item" :index="index" @reply="showModal" @del="deleteComment" @more="moreComment" />
+          <new-comment :comment="item" :index="index" @reply="showModal" @del="deleteComment" @more="moreComment" />
         </a-list-item>
       </a-list>
       <a-modal
@@ -168,13 +168,13 @@
 </template>
 
 <script>
-import HoperComment from '../../components/comment'
+import NewComment from '../../components/NewComment'
 
 export default {
-  components: { HoperComment },
+  components: { NewComment },
   data() {
     return {
-      md: null,
+      // md: null,
       user: null,
       image_url: [],
       collectVisible: false,
@@ -211,7 +211,7 @@ export default {
     }
   },
   created: function() {
-    this.md = require('markdown-it')()
+    // this.md = require('markdown-it')()
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     this.image_url =
       this.moment.image_url === '' ? [] : this.moment.image_url.split(',')

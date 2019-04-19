@@ -1,6 +1,6 @@
+const { resolve } = require('path')
+const { readFileSync } = require('fs')
 const pkg = require('./package')
-const {resolve} = require('path')
-const {readFileSync} = require('fs')
 module.exports = {
   mode: 'universal',
   server: {
@@ -15,22 +15,27 @@ module.exports = {
   head: {
     title: 'hoper',
     meta: [
-      {charset: 'utf-8'},
-      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
-      {hid: 'description', name: 'description', content: pkg.description}
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: pkg.description }
     ],
-    link: [{rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
 
   /*
   ** Customize the progress-bar color
   */
-  loading: {color: '#fff'},
+  loading: { color: '#fff' },
 
   /*
   ** Global CSS
   */
-  css: ['ant-design-vue/dist/antd.less'],
+  css: [
+    // 'ant-design-vue/dist/antd.less',
+    '@/assets/less/antd.less',
+    '@/assets/css/normalize.css',
+    '@/static/css/agent_clean.css'
+  ],
 
   /*
   ** Plugins to load before mounting the App
@@ -39,9 +44,9 @@ module.exports = {
     '@/plugins/filter/hoper_antd',
     '@/plugins/filter/hoper_utils',
     '@/plugins/filter/ctx-inject',
-    '@/plugins/filter/hoper_axios',
-    '@/plugins/markdown-it'
-    //{src:'@/plugins/filter/mavonEditor',ssr:false}
+    '@/plugins/filter/hoper_axios'
+    // '@/plugins/markdown-it'
+    // {src:'@/plugins/filter/mavonEditor',ssr:false}
   ],
 
   /*
@@ -64,7 +69,10 @@ module.exports = {
     proxy: false
   },
   proxy: [
-    ['/api', {target: 'https://hoper.xyz/', pathRewrite: {'^/api': '/api/v1'}}]
+    [
+      '/api',
+      { target: 'https://hoper.xyz/', pathRewrite: { '^/api': '/api/v1' } }
+    ]
   ],
   apollo: {
     tokenName: 'yourApolloTokenName', // optional, default: apollo-token
@@ -73,7 +81,11 @@ module.exports = {
     authenticationType: 'Basic', // optional, default: 'Bearer'
     // optional
     errorHandler(error) {
-      console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
+      console.log(
+        '%cError',
+        'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
+        error.message
+      )
     },
     // required
     clientConfigs: {
@@ -98,12 +110,17 @@ module.exports = {
       },
       test: {
         httpEndpoint: 'https://hoper.xyz/api/graphql',
-        //wsEndpoint: 'ws://localhost/ws/echo',
+        // wsEndpoint: 'ws://localhost/ws/echo',
         tokenName: 'apollo-token'
-      },
+      }
       // alternative: user path to config which returns exact same config options
-      //test2: '~/plugins/graphql.js'
+      // test2: '~/plugins/graphql.js'
     }
+  },
+  // [optional] markdownit options
+  // See https://github.com/markdown-it/markdown-it
+  markdownit: {
+    injected: true
   },
   /*
   ** Build configuration
@@ -126,28 +143,28 @@ module.exports = {
         })
       }
     },
-    loaders:{
-      less:{
-        modifyVars: {
-            'primary-color': '#1DA57A',
-            'link-color': '#1DA57A',
-            'border-radius-base': '2px',
-         },
-          javascriptEnabled: true,
+    loaders: {
+      less: {
+        /*       modifyVars: {
+          'primary-color': '#1DA57A',
+          'link-color': '#1DA57A',
+          'border-radius-base': '2px'
+        }, */
+        javascriptEnabled: true
       }
     },
     postcss: {
       plugins: {
         // https://github.com/postcss/postcss-import
-        //'postcss-import': false
-        /*{
+        // 'postcss-import': false
+        /* {
           resolve: function (id,basedir,importOptions) {
             if(id.match(/~/) && id.match(/~/).index === 0){
               console.log(join(__dirname,'node_modules',id.substr(1))+"实验")
               return join(__dirname,'node_modules',id.substr(1))
             }
           }
-        }*/
+        } */
       }
     }
   }

@@ -12,7 +12,7 @@
             @click="like"
           />
         </a-tooltip>
-        <span style="padding-left: '8px';cursor: 'auto'">
+        <span style="padding:0 8px;cursor: auto">
           {{ likes }}
         </span>
       </span>
@@ -24,17 +24,19 @@
             @click="dislike"
           />
         </a-tooltip>
-        <span style="padding-left: '8px';cursor: 'auto'">
+        <span style="padding:0 8px;cursor: auto">
           {{ dislikes }}
         </span>
       </span>
-      <span @click="$emit('reply',comment)">回复</span>
-      <span v-if="$store.state.user&&$store.state.user.id === comment.user.id " @click="$emit('del',comment.id)">删除</span>
-      <span @click="$emit('more',index,comment.id)">展开更多评论</span>
+      <span style="padding-right: 8px" @click="$emit('reply',comment)">回复</span>
+      <span v-if="$store.state.user&&$store.state.user.id === comment.user.id " style="padding:0 8px" @click="$emit('del',comment.id)">删除</span>
+      <span style="padding:0 8px" @click="$emit('more',index,comment.id)">展开更多评论</span>
     </span>
-    <p slot="content">
-      {{ comment.content }}
-    </p>
+    <template slot="content">
+      <div>
+        {{ comment.content }}
+      </div>
+    </template>
     <a-tooltip slot="datetime" :title="comment.created_at|dateFormat">
       <span>{{ comment.created_at|dateFormat }}</span>
       <a-divider type="vertical" />
@@ -42,18 +44,16 @@
     <a-tooltip slot="datetime">
       <span>{{ $s2date(comment.created_at).fromNow() }}</span>
     </a-tooltip>
-    <a-collapse default-active-key="1" :bordered="false">
-      <a-collapse-panel :key="comment.id" header="展开更多评论">
-        <hoper-comment
-          v-for="(subComment,subIndex) in comment.sub_comments"
-          :key="subIndex"
-          :comment="subComment"
-          @reply="$emit('reply',subComment)"
-          @del="$emit('del',comment.id)"
-          @more="$emit('more',index,comment.id)"
-        />
-      </a-collapse-panel>
-    </a-collapse>
+    <div class="sub_comment">
+      <hoper-comment
+        v-for="(subComment,subIndex) in comment.sub_comments"
+        :key="subIndex"
+        :comment="subComment"
+        @reply="$emit('reply',subComment)"
+        @del="$emit('del',comment.id)"
+        @more="$emit('more',index,comment.id)"
+      />
+    </div>
   </a-comment>
 </template>
 
@@ -79,6 +79,10 @@ export default {
       this.likes = 0
       this.dislikes = 1
       this.action = 'disliked'
+    },
+    more(show) {
+      if (show) document.getElementById('someOne').style.display = 'none'
+      else document.getElementById('someOne').style.display = 'inline'
     }
   }
 }

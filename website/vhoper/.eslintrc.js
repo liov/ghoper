@@ -20,6 +20,7 @@ module.exports = {
     'camelcase':'off',
     'no-console': 'off',
     'vue/no-unused-components':'off',
-    'no-undef':'off'
+    'no-undef':'off',
+    'vue/no-v-html':'off'
   }
 }

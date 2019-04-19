@@ -71,7 +71,7 @@
             </template>
 
             <template slot="content">
-              <div style="margin: 1rem 1rem 0 1rem" v-html="md.render(item.content)" />
+              <div style="margin: 1rem 1rem 0 1rem" v-html="$md.render(item.content)" />
             </template>
             <img
               v-for="(subitem,subindex) in image_url[index]"
@@ -189,8 +189,7 @@ export default {
       image_url: [],
       ref_id: 0,
       tmpIdx: 0,
-      starIds: [],
-      md: undefined
+      starIds: []
     }
   },
   computed: {},
@@ -222,7 +221,6 @@ export default {
     }
   },
   created: function() {
-    this.md = require('markdown-it')()
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     for (const i in this.momentList) {
       this.image_url.push(
