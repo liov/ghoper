@@ -4,10 +4,10 @@ const pkg = require('./package')
 module.exports = {
   mode: 'universal',
   server: {
-    https: {
+    /*    https: {
       key: readFileSync(resolve(__dirname, '../../config/tls/cert.key')),
       cert: readFileSync(resolve(__dirname, '../../config/tls/cert.pem'))
-    }
+    } */
   },
   /*
   ** Headers of the page
