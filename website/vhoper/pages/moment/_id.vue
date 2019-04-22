@@ -126,16 +126,9 @@
         </a-row>
       </a-modal>
 
-      <a-list
-        class="comment-list"
-        :header="`${moment.comment_count} 条评论`"
-        item-layout="horizontal"
-        :data-source="comments"
-      >
-        <a-list-item slot="renderItem" slot-scope="item,index">
-          <new-comment :comment="item" :index="index" @reply="showModal" @del="deleteComment" @more="moreComment" />
-        </a-list-item>
-      </a-list>
+
+      <new-comment :comments="comments" kind="moment" :count="moment.comment_count" @reply="showModal" />
+
       <a-modal
         v-model="visible"
         :title="'Reply To: '+comment.user.name"
@@ -333,25 +326,6 @@ export default {
     },
     handleChange(e) {
       this.value = e.target.value
-    },
-    deleteComment() {},
-    async moreComment(index, rootID) {
-      console.log(index, rootID)
-      const commentRes = await this.$axios.$get(
-        `/api/comments/moment/${
-          this.$route.params.id
-        }?pageNo=0&pageSize=5&root_id=${rootID}`
-      )
-      if (commentRes.code === 200) {
-        if (this.comments[index].sub_comments === null)
-          this.comments[index].sub_comments = commentRes.data
-        else {
-          const sub_commets = this.comments[index].sub_comments.concat(
-            commentRes.data
-          )
-          this.comments[index].sub_comments = sub_commets
-        }
-      }
     }
   }
 }

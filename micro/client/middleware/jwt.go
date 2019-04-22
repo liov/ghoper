@@ -2,18 +2,14 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris"
 	"hoper/client/controller"
 	"hoper/client/controller/common"
-	"hoper/initialize"
 	"hoper/model"
 	"hoper/model/e"
-
 )
 
 //中间件的两种方式
@@ -80,7 +76,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 
 	claims, err := controller.ParseToken(tokenString)
 
-	if err != nil {
+	if claims != nil {
 		return nil, err
 	}
 	user, err := controller.UserFromRedis(claims.UserID)
@@ -98,30 +94,16 @@ func getUserID(ctx iris.Context) (uint64, error) {
 	if len(tokenString) == 0 {
 		return 0, errors.New("未登录")
 	}
-	token, tokenErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return 0, fmt.Errorf("意外的登录方法: %v", token.Header["alg"])
-		}
-		return []byte(initialize.Config.Server.TokenSecret), nil
-	})
 
-	if tokenErr != nil {
-		return 0, tokenErr
+	claims, err := controller.ParseToken(tokenString)
+
+	if err != nil {
+		return 0, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		if claims["id"] != nil && claims["expire"] != nil {
-			userID := uint64(claims["id"].(float64))
-			expire := int64(claims["expire"].(float64))
-			if time.Now().Unix()-expire > 0 {
-				return 0, errors.New("登录超时")
-			}
-			controller.UserLastActiveTime(userID)
-			return userID, nil
-		}
-	}
+	controller.UserLastActiveTime(claims.UserID)
 
-	return 0, errors.New("未登录")
+	return claims.UserID, nil
 }
 
 // SigninRequired 必须是登录用户
@@ -167,5 +149,3 @@ func AdminRequired(ctx iris.Context) {
 
 //Config全局变量太大了
 //var jwtSecret = utils.ToBytes(initialize.Config.Server.JwtSecret))
-
-
