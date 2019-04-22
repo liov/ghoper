@@ -336,7 +336,6 @@ export default {
     },
     deleteComment() {},
     async moreComment(index, rootID) {
-      console.log(index, rootID)
       const commentRes = await this.$axios.$get(
         `/api/comments/moment/${
           this.$route.params.id
@@ -346,10 +345,10 @@ export default {
         if (this.comments[index].sub_comments === null)
           this.comments[index].sub_comments = commentRes.data
         else {
-          const sub_commets = this.comments[index].sub_comments.concat(
+          const sub_comments = this.comments[index].sub_comments.concat(
             commentRes.data
           )
-          this.comments[index].sub_comments = sub_commets
+          this.comments[index].sub_comments = sub_comments
         }
       }
     }

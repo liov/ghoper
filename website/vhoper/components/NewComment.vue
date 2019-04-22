@@ -43,8 +43,10 @@
     <a-tooltip slot="datetime">
       <span>{{ $s2date(comment.created_at).fromNow() }}</span>
     </a-tooltip>
-    <div v-for="(subComment,subIndex) in comment.sub_comments" :key="subIndex" class="sub_comment">
+    <div class="sub_comment">
       <a-comment
+        v-for="(subComment,subIndex) in comment.sub_comments"
+        :key="subIndex"
         :author="subComment.user.name"
         :avatar="subComment.user.avatar_url"
       >
@@ -94,8 +96,8 @@
         </a-tooltip>
       </a-comment>
     </div>
-    <span style="padding:0 8px;cursor:pointer" @click="$emit('more',index,comment.id)">展开更多评论</span>
-    <span style="padding:0 8px;cursor:pointer" @click="$emit('more',index,comment.id)">收起评论</span>
+    <span style="padding:0 8px;font-size:12px;cursor:pointer" @click="display">展开更多评论</span>
+    <span style="padding:0 8px;font-size:12px;cursor:pointer" @click="hide">收起评论</span>
   </a-comment>
 </template>
 
@@ -119,6 +121,19 @@ export default {
     dislike() {
       this.dislikes += 1
       this.action = 'disliked'
+    },
+    display(e) {
+      if (e.target.previousElementSibling.style.display === 'none') {
+        e.target.previousElementSibling.style.display = 'block'
+      } else {
+        const index = this.$props.index
+        const comment = this.$props.comment
+        this.$emit('more', index, comment.id)
+      }
+    },
+    hide(e) {
+      e.target.previousElementSibling.previousElementSibling.style.display =
+        'none'
     }
   }
 }
