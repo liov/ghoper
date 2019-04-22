@@ -337,9 +337,11 @@ export default {
     deleteComment() {},
     async moreComment(index, rootID) {
       const commentRes = await this.$axios.$get(
-        `/api/comments/moment/${
-          this.$route.params.id
-        }?pageNo=0&pageSize=5&root_id=${rootID}`
+        `/api/comments/moment/${this.$route.params.id}?pageNo=${
+          this.comments[index].sub_comments
+            ? Math.ceil(this.comments[index].sub_comments.length / 5)
+            : 0
+        }&pageSize=5&root_id=${rootID}`
       )
       if (commentRes.code === 200) {
         if (this.comments[index].sub_comments === null)

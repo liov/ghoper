@@ -107,23 +107,7 @@ func GetComments(ctx iris.Context) {
 	pageSize, _ := strconv.Atoi(ctx.URLParam("pageSize"))
 	rootID := ctx.URLParam("root_id")
 	var count int64
-	/*
-		var comments = func() interface{} {
-			switch KindIndex[kind] {
-			case kindArticle:
-				return make([]ov.ArticleComment, 0, pageSize)
 
-			case kindMoment:
-				return make([]ov.MomentComment, 0, pageSize)
-
-			case kindDiary:
-				return make([]ov.DiaryComment, 0, pageSize)
-
-			case kindDiaryBook:
-				return make([]ov.DiaryBookComment,0, pageSize)
-			}
-			return nil
-		}()*/
 	var where string
 	if rootID == "0" {
 		where = "root_id = id"
@@ -131,38 +115,31 @@ func GetComments(ctx iris.Context) {
 		where = "root_id = '" + rootID + "'"
 	}
 
-	switch KindIndex[kind] {
-	case kindArticle:
-		var c []ov.ArticleComment
+	//var comments = make([]ov.MomentComment, 0, pageSize) 是可以的
+	var db = func(c interface{}) interface{} {
 		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
-			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
+			Offset(pageNo * pageSize).Preload("User").Find(c).Count(&count).Error; err != nil {
 			golog.Error(err)
 		}
-		common.Response(ctx, c)
-		return
-	case kindMoment:
-		var c []ov.MomentComment
-		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
-			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
-			golog.Error(err)
-		}
-		common.Response(ctx, c)
-		return
-	case kindDiary:
-		var c []ov.DiaryComment
-		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
-			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
-			golog.Error(err)
-		}
-		common.Response(ctx, c)
-		return
-	case kindDiaryBook:
-		var c []ov.DiaryBookComment
-		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
-			Offset(pageNo * pageSize).Preload("User").Find(&c).Count(&count).Error; err != nil {
-			golog.Error(err)
-		}
-		common.Response(ctx, c)
-		return
+		return c
 	}
+
+	var comments = func() interface{} {
+		switch KindIndex[kind] {
+		case kindArticle:
+			c := make([]ov.ArticleComment, 0, pageSize)
+			return db(&c)
+		case kindMoment:
+			c := make([]ov.MomentComment, 0, pageSize)
+			return db(&c)
+		case kindDiary:
+			c := make([]ov.DiaryComment, 0, pageSize)
+			return db(&c)
+		case kindDiaryBook:
+			c := make([]ov.DiaryBookComment, 0, pageSize)
+			return db(&c)
+		}
+		return nil
+	}()
+	common.Response(ctx, comments)
 }
