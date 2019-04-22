@@ -16,7 +16,7 @@ type ArticleComment struct {
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`
-	SubComments  []ArticleComment `gorm:"many2many:sub_article_comment;association_jointable_foreignkey:sub_id" json:"sub_comments"`
+	SubComments  []ArticleComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
 	Sequence     uint8            `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 }
 
@@ -32,7 +32,7 @@ type MomentComment struct {
 	RootID       uint64          `json:"root_id"`
 	RecvUser     User            `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64          `json:"recv_user_id"`
-	SubComments  []MomentComment `gorm:"many2many:sub_moment_comment;association_jointable_foreignkey:sub_id" json:"sub_comments"`
+	SubComments  []MomentComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
 	Sequence     uint8           `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 }
 
@@ -48,7 +48,7 @@ type DiaryComment struct {
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`
-	SubComments  []ArticleComment `gorm:"many2many:sub_diary_comment;association_jointable_foreignkey:sub_id" json:"sub_comments"`
+	SubComments  []ArticleComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
 	Sequence     uint8            `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 }
 
@@ -64,6 +64,6 @@ type DiaryBookComment struct {
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`
-	SubComments  []ArticleComment `gorm:"many2many:sub_diary_book_comment;association_jointable_foreignkey:sub_id" json:"sub_comments"`
+	SubComments  []ArticleComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
 	Sequence     uint8            `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 }

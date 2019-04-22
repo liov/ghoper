@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/jinzhu/gorm"
 	"strconv"
 	"time"
 
@@ -118,7 +119,9 @@ func GetComments(ctx iris.Context) {
 	//var comments = make([]ov.MomentComment, 0, pageSize) 是可以的
 	var db = func(c interface{}) interface{} {
 		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
-			Offset(pageNo * pageSize).Preload("User").Find(c).Count(&count).Error; err != nil {
+			Offset(pageNo*pageSize).Preload("User").Preload("SubComments", func(db *gorm.DB) *gorm.DB {
+			return db.Order("created_at DESC").Limit(5).Offset(0)
+		}).Preload("SubComments.User").Find(c).Count(&count).Error; err != nil {
 			golog.Error(err)
 		}
 		return c
@@ -141,5 +144,9 @@ func GetComments(ctx iris.Context) {
 		}
 		return nil
 	}()
-	common.Response(ctx, comments)
+	common.Res(ctx, iris.Map{
+		"data":          comments,
+		"comment_count": count,
+		"code":          200,
+	})
 }
