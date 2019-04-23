@@ -21,7 +21,7 @@ type Comment interface {
 func AddComment(c iris.Context) {
 	userID := c.Values().Get("userID").(uint64)
 	kind := c.Params().Get("kind")
-	refId, _ := c.Params().GetUint64("ref_id")
+	refId, _ := c.Params().GetUint64("refId")
 	if limitErr := common.Limit(model.CommentMinuteLimit,
 		model.CommentMinuteLimitCount,
 		model.CommentDayLimit,
@@ -103,25 +103,21 @@ func GetComment(ctx iris.Context) {
 
 func GetComments(ctx iris.Context) {
 	kind := ctx.Params().Get("kind")
-	refId := ctx.Params().Get("ref_id")
-	pageNo, _ := strconv.Atoi(ctx.URLParam("pageNo"))
-	pageSize, _ := strconv.Atoi(ctx.URLParam("pageSize"))
-	rootID := ctx.URLParam("root_id")
+	refId := ctx.Params().Get("refId")
+	offset, _ := strconv.Atoi(ctx.URLParam("offset"))
+	limit, _ := strconv.Atoi(ctx.URLParam("limit"))
+	rootID := ctx.URLParam("rootId")
 	var count int64
 
-	var where string
-	if rootID == "0" {
-		where = "root_id = id"
-	} else {
-		where = "root_id = '" + rootID + "'"
-	}
-
-	//var comments = make([]ov.MomentComment, 0, pageSize) 是可以的
 	var db = func(c interface{}) interface{} {
-		if err := initialize.DB.Where(kind+"_id = ? AND "+where, refId).Order("sequence desc,created_at desc").Limit(pageSize).
-			Offset(pageNo*pageSize).Preload("User").Preload("SubComments", func(db *gorm.DB) *gorm.DB {
-			return db.Order("created_at DESC").Limit(5).Offset(0)
-		}).Preload("SubComments.User").Find(c).Count(&count).Error; err != nil {
+		var DB = initialize.DB.Where(kind+"_id = ? AND root_id = ?", refId, rootID).Order("sequence desc,created_at desc").Limit(limit).
+			Offset(offset).Preload("User")
+		if rootID == "0" {
+			DB = DB.Preload("SubComments", func(db *gorm.DB) *gorm.DB {
+				return db.Limit(5).Offset(0).Order("created_at DESC")
+			}).Preload("SubComments.User")
+		}
+		if err := DB.Find(c).Count(&count).Error; err != nil {
 			golog.Error(err)
 		}
 		return c
@@ -130,16 +126,16 @@ func GetComments(ctx iris.Context) {
 	var comments = func() interface{} {
 		switch KindIndex[kind] {
 		case kindArticle:
-			c := make([]ov.ArticleComment, 0, pageSize)
+			c := make([]ov.ArticleComment, 0, limit)
 			return db(&c)
 		case kindMoment:
-			c := make([]ov.MomentComment, 0, pageSize)
+			c := make([]ov.MomentComment, 0, limit)
 			return db(&c)
 		case kindDiary:
-			c := make([]ov.DiaryComment, 0, pageSize)
+			c := make([]ov.DiaryComment, 0, limit)
 			return db(&c)
 		case kindDiaryBook:
-			c := make([]ov.DiaryBookComment, 0, pageSize)
+			c := make([]ov.DiaryBookComment, 0, limit)
 			return db(&c)
 		}
 		return nil

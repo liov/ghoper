@@ -90,7 +90,7 @@
                 {{ subComment.content }}
               </div>
             </template>
-            <span v-if="subComment.parent_id !== 0" slot="datetime" :title="subComment.user.name">
+            <span v-if="subComment.parent_id !== subComment.root_id" slot="datetime" :title="subComment.user.name">
               <span>@<nuxt-link :to="'/user/'+subComment.recv_user.id">{{ subComment.user.name }}</nuxt-link></span>
               <a-divider type="vertical" />
             </span>
@@ -103,7 +103,7 @@
             </a-tooltip>
           </a-comment>
         </div>
-        <span style="padding:0 8px;font-size:12px;cursor:pointer" @click="more($event,index,item.root_id)">展开更多评论</span>
+        <span style="padding:0 8px;font-size:12px;cursor:pointer" @click="more($event,index)">展开更多评论</span>
         <span style="padding:0 8px;font-size:12px;cursor:pointer" @click="hide">收起评论</span>
       </a-comment>
     </a-list-item>
@@ -131,7 +131,7 @@ export default {
       this.dislikes += 1
       this.action = 'disliked'
     },
-    async more(e, index, rootID) {
+    async more(e, index) {
       if (e.target.previousElementSibling.style.display === 'none') {
         e.target.previousElementSibling.style.display = 'block'
       } else {
@@ -145,11 +145,11 @@ export default {
         }
 
         const commentRes = await this.$axios.$get(
-          `/api/comments/${this.$props.kind}/${this.$route.params.id}?pageNo=${
+          `/api/comments/${this.$props.kind}/${this.$route.params.id}?offset=${
             this.$props.comments[index].sub_comments
-              ? Math.ceil(this.$props.comments[index].sub_comments.length / 5)
+              ? this.$props.comments[index].sub_comments.length
               : 0
-          }&pageSize=5&root_id=${rootID}`
+          }&limit=5&rootId=${this.$props.comments[index].id}`
         )
         if (commentRes.code === 200) {
           this.$props.comments[index].sub_comments = this.$props.comments[index]

@@ -76,7 +76,7 @@ func getUser(ctx iris.Context) (*controller.User, error) {
 
 	claims, err := controller.ParseToken(tokenString)
 
-	if claims != nil {
+	if err != nil {
 		return nil, err
 	}
 	user, err := controller.UserFromRedis(claims.UserID)

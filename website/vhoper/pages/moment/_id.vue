@@ -186,7 +186,7 @@ export default {
       `/api/moment/${params.id}?index=${query.index}`
     )
     const commentRes = await $axios.$get(
-      `/api/comments/moment/${params.id}?pageNo=0&pageSize=5&root_id=0`
+      `/api/comments/moment/${params.id}?offset=0&limit=10&rootId=0`
     )
     return {
       moment: res.data,

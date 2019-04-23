@@ -17,7 +17,7 @@ type ArticleComment struct {
 	RootID       uint64            `json:"root_id"`
 	RecvUser     User              `gorm:"foreignkey:RecvUserID"json:"recv_user"`
 	RecvUserID   uint64            `json:"recv_user_id"`
-	SubComments  []*ArticleComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
+	SubComments  []*ArticleComment `gorm:"foreignkey:root_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"-"`
@@ -46,7 +46,7 @@ type MomentComment struct {
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`
-	SubComments  []*MomentComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
+	SubComments  []*MomentComment `gorm:"foreignkey:root_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"-"`
@@ -75,7 +75,7 @@ type DiaryComment struct {
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`
-	SubComments  []ArticleComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
+	SubComments  []ArticleComment `gorm:"foreignkey:root_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"-"`
@@ -104,7 +104,7 @@ type DiaryBookComment struct {
 	RootID       uint64           `json:"root_id"`
 	RecvUser     User             `gorm:"foreignkey:RecvUserID" json:"recv_user"`
 	RecvUserID   uint64           `json:"recv_user_id"`
-	SubComments  []ArticleComment `gorm:"foreignkey:parent_id" json:"sub_comments"`
+	SubComments  []ArticleComment `gorm:"foreignkey:root_id" json:"sub_comments"`
 	//UpdatedAt *time.Time	`json:"updated_at"`
 	Sequence  uint8      `gorm:"type:smallint;default:0" json:"sequence"` //排序，置顶
 	DeletedAt *time.Time `sql:"index" json:"-"`
