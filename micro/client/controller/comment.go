@@ -104,7 +104,7 @@ func GetComment(ctx iris.Context) {
 func GetComments(ctx iris.Context) {
 	kind := ctx.Params().Get("kind")
 	refId := ctx.Params().Get("refId")
-	offset, _ := strconv.Atoi(ctx.URLParam("offset"))
+	offset := ctx.URLParam("offset")
 	limit, _ := strconv.Atoi(ctx.URLParam("limit"))
 	rootID := ctx.URLParam("rootId")
 	var count int64
