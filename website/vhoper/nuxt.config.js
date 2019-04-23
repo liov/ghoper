@@ -44,9 +44,9 @@ module.exports = {
     '@/plugins/filter/hoper_antd',
     '@/plugins/filter/hoper_utils',
     '@/plugins/filter/ctx-inject',
-    '@/plugins/filter/hoper_axios'
+    '@/plugins/filter/hoper_axios',
+    //{ src: '@/plugins/filter/hoper_nossr', ssr: false }
     // '@/plugins/markdown-it'
-    // {src:'@/plugins/filter/mavonEditor',ssr:false}
   ],
 
   /*

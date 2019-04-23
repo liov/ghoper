@@ -110,16 +110,19 @@ func GetComments(ctx iris.Context) {
 	var count int64
 
 	var db = func(c interface{}) interface{} {
-		var DB = initialize.DB.Where(kind+"_id = ? AND root_id = ?", refId, rootID).Order("sequence desc,created_at desc").Limit(limit).
-			Offset(offset).Preload("User")
+		var DB = initialize.DB.Where(kind+"_id = ? AND root_id = ?", refId, rootID).
+			Order("sequence DESC,approve_count DESC,created_at ASC").Preload("User")
+
 		if rootID == "0" {
 			DB = DB.Preload("SubComments", func(db *gorm.DB) *gorm.DB {
-				return db.Limit(5).Offset(0).Order("created_at DESC")
+				return db.Limit(25).Offset(0).Order("sequence DESC,approve_count DESC,created_at ASC")
 			}).Preload("SubComments.User")
 		}
-		if err := DB.Find(c).Count(&count).Error; err != nil {
+
+		if err := DB.Limit(limit).Offset(offset).Find(c).Error; err != nil {
 			golog.Error(err)
 		}
+
 		return c
 	}
 
