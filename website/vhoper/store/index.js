@@ -31,8 +31,7 @@ const store = () => new Vuex.Store({
 });
 */
 
-// import cookie from '../plugins/utils/cookie'
-const cookieparser = process.server ? require('cookieparser') : undefined
+import cookieUtils from '../plugins/utils/cookie'
 
 export const state = () => ({
   user: null,
@@ -51,27 +50,21 @@ export const mutations = {
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
   async nuxtServerInit({ commit }, { $axios, store, req }) {
-    // let token =  cookie.getCookie("token",req);
+    const token = cookieUtils.getCookie('token', req)
     let user
-    let token = null
+
     if (req.headers.cookie) {
-      const parsed = cookieparser.parse(req.headers.cookie)
-      try {
-        token = parsed.token
-        if (token) {
-          commit('SET_TOKEN', token)
-          // axios.defaults.headers.common['Authorization'] = token;
-          $axios.defaults.headers.common.Cookie = req.headers.cookie
-          await $axios.$get(`/api/user/get`).then(res => {
-            // 跟后端的初始化配合
-            if (res.code === 200) {
-              user = res.data
-              commit('SET_USER', user)
-            }
-          })
-        }
-      } catch (err) {
-        // No valid cookie found
+      if (token) {
+        commit('SET_TOKEN', token)
+        // axios.defaults.headers.common['Authorization'] = token;
+        $axios.defaults.headers.common.Cookie = req.headers.cookie
+        await $axios.$get(`/api/user/get`).then(res => {
+          // 跟后端的初始化配合
+          if (res.code === 200) {
+            user = res.data
+            commit('SET_USER', user)
+          }
+        })
       }
     }
   }

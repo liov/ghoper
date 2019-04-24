@@ -127,7 +127,7 @@
       </a-modal>
 
 
-      <new-comment :comments="comments" kind="moment" :count="moment.comment_count" @reply="showModal" />
+      <new-comment kind="moment" :count="moment.comment_count" @reply="showModal" />
 
       <a-modal
         v-model="visible"
@@ -185,9 +185,6 @@ export default {
     const res = await $axios.$get(
       `/api/moment/${params.id}?index=${query.index}`
     )
-    const commentRes = await $axios.$get(
-      `/api/comments/moment/${params.id}?offset=0&limit=5&rootId=0`
-    )
     return {
       moment: res.data,
       user_action:
@@ -199,8 +196,7 @@ export default {
               approve: [],
               comment: [],
               browse: []
-            },
-      comments: commentRes.data
+            }
     }
   },
   created: function() {

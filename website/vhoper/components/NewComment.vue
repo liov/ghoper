@@ -5,13 +5,12 @@
     item-layout="horizontal"
     :data-source="comments"
   >
-    <div v-if="showLoading" slot="loadMore" :style="{ textAlign: 'center', marginTop: '12px', height: '32px', lineHeight: '32px' }">
-      <a-spin v-if="loading" />
-      <a-button v-else @click="onLoadMore">
-        更多评论
+    <div slot="loadMore" :style="{ textAlign: 'center', marginTop: '12px', height: '32px', lineHeight: '32px' }">
+      <a-spin v-if="loading" id="loading" />
+      <a-button v-else>
+        已经到底
       </a-button>
     </div>
-
     <a-list-item slot="renderItem" slot-scope="item,index">
       <a-comment
         :author="item.user.name"
@@ -57,66 +56,63 @@
         <a-tooltip slot="datetime">
           <span>{{ $s2date(item.created_at).fromNow() }}</span>
         </a-tooltip>
-        <div class="sub-comment">
-          <a-list v-if="item.sub_comments.length>0" :data-source="item.sub_comments" :locale="{emptyText:false}">
-            <a-list-item slot="renderItem" slot-scope="subComment,subIndex">
-              <a-comment
-                :key="subIndex"
-                :author="subComment.user.name"
-                :avatar="subComment.user.avatar_url"
-              >
-                <span slot="actions">
-                  <span>
-                    <a-tooltip title="Like">
-                      <a-icon
-                        type="like"
-                        :theme="action === 'liked' ? 'filled' : 'outlined'"
-                        @click="like"
-                      />
-                    </a-tooltip>
-                    <span style="padding:0 8px;cursor: auto">
-                      {{ likes }}
-                    </span>
-                  </span>
-                  <span>
-                    <a-tooltip title="Dislike">
-                      <a-icon
-                        type="dislike"
-                        :theme="action === 'disliked' ? 'filled' : 'outlined'"
-                        @click="dislike"
-                      />
-                    </a-tooltip>
-                    <span style="padding:0 8px;cursor: auto">
-                      {{ dislikes }}
-                    </span>
-                  </span>
-                  <span style="padding-right: 8px" @click="$emit('reply',subComment)">回复</span>
-                  <span v-if="$store.state.user&&$store.state.user.id === subComment.user.id " style="padding:0 8px" @click="delComment(subComment.id)">删除</span>
-                </span>
-                <template slot="content">
-                  <div>
-                    {{ subComment.content }}
-                  </div>
-                </template>
-                <span v-if="subComment.parent_id !== subComment.root_id" slot="datetime" :title="subComment.user.name">
-                  <span>@<nuxt-link :to="'/user/'+subComment.recv_user.id">{{ subComment.user.name }}</nuxt-link></span>
-                  <a-divider type="vertical" />
-                </span>
-                <a-tooltip slot="datetime" :title="subComment.created_at|dateFormat">
-                  <span>{{ subComment.created_at|dateFormat }}</span>
-                  <a-divider type="vertical" />
+        <div v-if="item.sub_comments.length>0" class="sub-comment">
+          <a-comment
+            v-for="(subComment,subIndex) in item.sub_comments"
+            :key="subIndex"
+            :author="subComment.user.name"
+            :avatar="subComment.user.avatar_url"
+          >
+            <span slot="actions">
+              <span>
+                <a-tooltip title="Like">
+                  <a-icon
+                    type="like"
+                    :theme="action === 'liked' ? 'filled' : 'outlined'"
+                    @click="like"
+                  />
                 </a-tooltip>
-                <a-tooltip slot="datetime">
-                  <span>{{ $s2date(subComment.created_at).fromNow() }}</span>
+                <span style="padding:0 8px;cursor: auto">
+                  {{ likes }}
+                </span>
+              </span>
+              <span>
+                <a-tooltip title="Dislike">
+                  <a-icon
+                    type="dislike"
+                    :theme="action === 'disliked' ? 'filled' : 'outlined'"
+                    @click="dislike"
+                  />
                 </a-tooltip>
-              </a-comment>
-            </a-list-item>
-          </a-list>
+                <span style="padding:0 8px;cursor: auto">
+                  {{ dislikes }}
+                </span>
+              </span>
+              <span style="padding-right: 8px" @click="$emit('reply',subComment)">回复</span>
+              <span v-if="$store.state.user&&$store.state.user.id === subComment.user.id " style="padding:0 8px" @click="delComment(subComment.id)">删除</span>
+            </span>
+            <template slot="content">
+              <div>
+                {{ subComment.content }}
+              </div>
+            </template>
+            <span v-if="subComment.parent_id !== subComment.root_id" slot="datetime" :title="subComment.user.name">
+              <span>@<nuxt-link :to="'/user/'+subComment.recv_user.id">{{ subComment.user.name }}</nuxt-link></span>
+              <a-divider type="vertical" />
+            </span>
+            <a-tooltip slot="datetime" :title="subComment.created_at|dateFormat">
+              <span>{{ subComment.created_at|dateFormat }}</span>
+              <a-divider type="vertical" />
+            </a-tooltip>
+            <a-tooltip slot="datetime">
+              <span>{{ $s2date(subComment.created_at).fromNow() }}</span>
+            </a-tooltip>
+          </a-comment>
         </div>
-        <a-button style="padding:0 8px;font-size:12px;cursor:pointer" @click="onLoadMore($event,index)">
+        <a-button @click="onLoadMore($event,index)">
           展开更多评论
         </a-button>
-        <a-button style="padding:0 8px;font-size:12px;cursor:pointer" @click="hide">
+        <a-button @click="hide">
           收起评论
         </a-button>
       </a-comment>
@@ -126,19 +122,38 @@
 
 <script>
 // $emit必须重启 npm run
+
 export default {
   name: 'NewComment',
   // directives: { infiniteScroll },
   // components: { 'virtual-scroller': VirtualScroller },
-  props: ['comments', 'kind', 'count'],
+  props: ['kind', 'count'],
   data() {
     return {
       likes: 0,
       dislikes: 0,
       action: null,
-      loading: false,
-      showLoading: true
+      loading: true,
+      showLoading: true,
+      comments: []
     }
+  },
+  mounted() {
+    const vm = this
+    const ScrollReveal = require('scrollreveal')
+    const ScrollMagic = require('scrollmagic')
+    ScrollReveal.default().reveal('.sub-comment')
+    const controller = new ScrollMagic.Controller()
+    // build scene
+    const scene = new ScrollMagic.Scene({
+      triggerElement: '#loading',
+      triggerHook: 'onEnter'
+    })
+      .addTo(controller)
+      .on('enter', function(e) {
+        // simulate ajax call to add content using the function below
+        vm.onLoadMore()
+      })
   },
   methods: {
     like() {
@@ -157,45 +172,50 @@ export default {
       console.log(id)
     },
     async onLoadMore(e, index) {
+      console.log(1)
       if (index) {
         if (e.target.previousElementSibling.style.display === 'none') {
           e.target.previousElementSibling.style.display = 'block'
           return
         }
         if (
-          this.$props.comments[index].sub_comments !== null &&
-          this.$props.comments[index].sub_comments.length ===
-            this.$props.comments[index].comment_count
+          this.comments[index].sub_comments !== null &&
+          this.comments[index].sub_comments.length ===
+            this.comments[index].comment_count
         ) {
           this.$message.info('没有更多评论')
           return
         }
-        this.loading = true
+
         const commentRes = await this.$axios.$get(
           `/api/comments/${this.$props.kind}/${this.$route.params.id}?offset=${
-            this.$props.comments[index].sub_comments
-              ? this.$props.comments[index].sub_comments.length
+            this.comments[index].sub_comments
+              ? this.comments[index].sub_comments.length
               : 0
-          }&limit=5&rootId=${this.$props.comments[index].id}`
+          }&limit=5&rootId=${this.comments[index].id}`
         )
         if (commentRes.code === 200) {
-          this.$props.comments[index].sub_comments = this.$props.comments[index]
-            .sub_comments
-            ? this.$props.comments[index].sub_comments.concat(commentRes.data)
-            : (this.$props.comments[index].sub_comments = commentRes.data)
-          this.$props.comments[index].comment_count = commentRes.comment_count
-          this.loading = false
+          if (commentRes.data.length === 0) {
+            this.loading = false
+            return
+          }
+          this.comments[index].sub_comments = this.comments[index].sub_comments
+            ? this.comments[index].sub_comments.concat(commentRes.data)
+            : (this.comments[index].sub_comments = commentRes.data)
+          this.comments[index].comment_count = commentRes.comment_count
         }
       } else {
-        this.loading = true
         const commentRes = await this.$axios.$get(
           `/api/comments/${this.$props.kind}/${this.$route.params.id}?offset=${
-            this.$props.comments.length
+            this.comments.length
           }&limit=5&rootId=0`
         )
         if (commentRes.code === 200) {
-          this.$props.comments = this.$props.comments.concat(commentRes.data)
-          this.loading = false
+          if (commentRes.data.length === 0) {
+            this.loading = false
+            return
+          }
+          this.comments = this.comments.concat(commentRes.data)
         }
       }
     }
@@ -204,4 +224,9 @@ export default {
 </script>
 
 <style scoped>
+.sub-comment {
+  overflow: auto;
+  width: 971px;
+  max-height: 300px;
+}
 </style>
