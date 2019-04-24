@@ -68,6 +68,7 @@
           <a-collapse-panel key="1" header="收起评论">
             <div class="sub-comments">
               <sub-comment
+                ref="subComment"
                 :sub-comments="item.sub_comments"
                 :index="index"
                 @more="onLoadMore"
@@ -138,14 +139,6 @@ export default {
     async onLoadMore(index) {
       console.log(1)
       if (index) {
-        if (
-          this.comments[index].sub_comments !== null &&
-          this.comments[index].sub_comments.length ===
-            this.comments[index].comment_count
-        ) {
-          this.$message.info('没有更多评论')
-        }
-
         const commentRes = await this.$axios.$get(
           `/api/comments/${this.$props.kind}/${this.$route.params.id}?offset=${
             this.comments[index].sub_comments
@@ -155,7 +148,7 @@ export default {
         )
         if (commentRes.code === 200) {
           if (commentRes.data.length === 0) {
-            this.loading = false
+            this.$refs.subComment[index].loading = false
           }
           this.comments[index].sub_comments = this.comments[index].sub_comments
             ? this.comments[index].sub_comments.concat(commentRes.data)
