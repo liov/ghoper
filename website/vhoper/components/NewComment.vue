@@ -14,84 +14,96 @@
       </span>
     </div>
     <a-list-item slot="renderItem" slot-scope="item,index">
-      <img slot="extra" width="186" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" style="margin-right: 10px">
-      <img slot="extra" width="186" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png">
-      <a-comment
-        :key="index"
-        :author="item.user.name"
-      >
-        <a-avatar slot="avatar" shape="square" size="large" :src="item.user.avatar_url" />
-        <span slot="actions">
-          <span>
-            <a-tooltip title="Like">
-              <a-icon
-                type="like"
-                :theme="action === 'liked' ? 'filled' : 'outlined'"
-                @click="like"
-              />
-            </a-tooltip>
-            <span style="padding:0 8px;cursor: auto">
-              {{ likes }}
+      <!--      <img
+        v-for="(src,sidx) in item"
+        :key="sidx"
+        slot="extra"
+        width="186"
+        :src="src.user.avatar_url"
+        style="margin-right: 10px"
+      >-->
+
+      <a-row style="width: 1000px">
+        <a-col :span="2" style="margin: 16px 0">
+          <a-avatar shape="square" :size="80" :src="item.user.avatar_url" />
+        </a-col>
+        <a-col :span="21">
+          <a-comment
+            :key="index"
+            :author="item.user.name"
+          >
+            <span slot="actions">
+              <span>
+                <a-tooltip title="Like">
+                  <a-icon
+                    type="like"
+                    :theme="action === 'liked' ? 'filled' : 'outlined'"
+                    @click="like"
+                  />
+                </a-tooltip>
+                <span style="padding:0 8px;cursor: auto">
+                  {{ likes }}
+                </span>
+              </span>
+              <span>
+                <a-tooltip title="Dislike">
+                  <a-icon
+                    type="dislike"
+                    :theme="action === 'disliked' ? 'filled' : 'outlined'"
+                    @click="dislike"
+                  />
+                </a-tooltip>
+                <span style="padding:0 8px;cursor: auto">
+                  {{ dislikes }}
+                </span>
+              </span>
+              <span style="padding-right: 8px" @click="reply(item)">回复</span>
+              <span v-if="$store.state.user&&$store.state.user.id === item.user.id " style="padding:0 8px" @click="delComment(item.id)">删除</span>
             </span>
-          </span>
-          <span>
-            <a-tooltip title="Dislike">
-              <a-icon
-                type="dislike"
-                :theme="action === 'disliked' ? 'filled' : 'outlined'"
-                @click="dislike"
-              />
-            </a-tooltip>
-            <span style="padding:0 8px;cursor: auto">
-              {{ dislikes }}
+            <template slot="content">
+              <div>
+                {{ item.content }}
+              </div>
+            </template>
+            <span v-if="item.parent_id !== 0" slot="datetime" :title="item.user.name">
+              <span>@<nuxt-link :to="'/user/'+item.recv_user.id">{{ item.user.name }}</nuxt-link></span>
+              <a-divider type="vertical" />
             </span>
-          </span>
-          <span style="padding-right: 8px" @click="reply(item)">回复</span>
-          <span v-if="$store.state.user&&$store.state.user.id === item.user.id " style="padding:0 8px" @click="delComment(item.id)">删除</span>
-        </span>
-        <template slot="content">
-          <div>
-            {{ item.content }}
-          </div>
-        </template>
-        <span v-if="item.parent_id !== 0" slot="datetime" :title="item.user.name">
-          <span>@<nuxt-link :to="'/user/'+item.recv_user.id">{{ item.user.name }}</nuxt-link></span>
-          <a-divider type="vertical" />
-        </span>
-        <a-tooltip slot="datetime" :title="item.created_at|dateFormat">
-          <span>{{ item.created_at|dateFormat }}</span>
-          <a-divider type="vertical" />
-        </a-tooltip>
-        <a-tooltip slot="datetime">
-          <span>{{ $s2date(item.created_at).fromNow() }}</span>
-        </a-tooltip>
-        <a-tooltip slot="datetime">
-          <a-divider type="vertical" />
-          <span style="color:#000">{{ index+1 }}楼</span>
-        </a-tooltip>
-        <a-collapse
-          v-if="item.sub_comments&&item.sub_comments.length>0"
-          key="1"
-          default-active-key="1"
-          :bordered="false"
-        >
-          <a-collapse-panel key="1" header="收起评论">
-            <div class="sub-comments">
-              <sub-comment
-                :ref="'subComment'+index"
-                :sub-comments="item.sub_comments"
-                :index="index"
-                :controller="controller"
-                @reply="reply"
-                @more="onLoadMore"
-                @like="like"
-                @dislike="dislike"
-                @delComment="delComment"
-              />
-            </div>
-          </a-collapse-panel>
-        </a-collapse>
-      </a-comment>
+            <a-tooltip slot="datetime" :title="item.created_at|dateFormat">
+              <span>{{ item.created_at|dateFormat }}</span>
+              <a-divider type="vertical" />
+            </a-tooltip>
+            <a-tooltip slot="datetime">
+              <span>{{ $s2date(item.created_at).fromNow() }}</span>
+            </a-tooltip>
+            <a-collapse
+              v-if="item.sub_comments&&item.sub_comments.length>0"
+              key="1"
+              default-active-key="1"
+              :bordered="false"
+            >
+              <a-collapse-panel key="1" header="收起评论">
+                <div class="sub-comments">
+                  <sub-comment
+                    :ref="'subComment'+index"
+                    :sub-comments="item.sub_comments"
+                    :index="index"
+                    :controller="controller"
+                    @reply="reply"
+                    @more="onLoadMore"
+                    @like="like"
+                    @dislike="dislike"
+                    @delComment="delComment"
+                  />
+                </div>
+              </a-collapse-panel>
+            </a-collapse>
+          </a-comment>
+        </a-col>
+        <a-col :span="1" style="margin: 16px 0">
+          {{ index+1 }}楼
+        </a-col>
+      </a-row>
     </a-list-item>
   </a-list>
 </template>
