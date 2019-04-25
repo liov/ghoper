@@ -51,6 +51,10 @@
             {{ item.content }}
           </div>
         </template>
+        <span v-if="item.parent_id !== 0" slot="datetime" :title="item.user.name">
+          <span>@<nuxt-link :to="'/user/'+item.recv_user.id">{{ item.user.name }}</nuxt-link></span>
+          <a-divider type="vertical" />
+        </span>
         <a-tooltip slot="datetime" :title="item.created_at|dateFormat">
           <span>{{ item.created_at|dateFormat }}</span>
           <a-divider type="vertical" />
@@ -60,7 +64,7 @@
         </a-tooltip>
 
         <a-collapse
-          v-if="item.sub_comments.length>0"
+          v-if="item.sub_comments&&item.sub_comments.length>0"
           key="1"
           default-active-key="1"
           :bordered="false"
@@ -171,7 +175,7 @@ export default {
         const commentRes = await this.$axios.$get(
           `/api/comments/${this.$props.kind}/${this.$route.params.id}?offset=${
             this.comments.length
-          }&limit=5&rootId=0`
+          }&limit=10`
         )
         if (commentRes.code === 200) {
           if (commentRes.data.length === 0) {

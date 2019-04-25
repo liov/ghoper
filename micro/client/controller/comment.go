@@ -107,10 +107,10 @@ func GetComments(ctx iris.Context) {
 	offset := ctx.URLParam("offset")
 	limit, _ := strconv.Atoi(ctx.URLParam("limit"))
 	rootID := ctx.URLParam("rootId")
-	var count int64
 
 	var db = func(c interface{}) interface{} {
-		var DB = initialize.DB.Where(kind+"_id = ? AND root_id = ?", refId, rootID).
+		//var DB = initialize.DB.Where(kind+"_id = ? AND root_id = ?", refId, rootID).
+		var DB = initialize.DB.Where(kind+"_id = ?", refId).
 			Order("sequence DESC,approve_count DESC,created_at DESC").Preload("User")
 
 		if rootID == "0" {
@@ -144,8 +144,8 @@ func GetComments(ctx iris.Context) {
 		return nil
 	}()
 	common.Res(ctx, iris.Map{
-		"data":          comments,
-		"comment_count": count,
-		"code":          200,
+		"data": comments,
+		//"comment_count": count,
+		"code": 200,
 	})
 }

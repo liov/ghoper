@@ -46,7 +46,7 @@
             {{ subComment.content }}
           </div>
         </template>
-        <span v-if="subComment.parent_id !== subComment.root_id" slot="datetime" :title="subComment.user.name">
+        <span v-if="subComment.parent_id !== 0" slot="datetime" :title="subComment.user.name">
           <span>@<nuxt-link :to="'/user/'+subComment.recv_user.id">{{ subComment.user.name }}</nuxt-link></span>
           <a-divider type="vertical" />
         </span>
