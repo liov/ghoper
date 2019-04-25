@@ -1,0 +1,9 @@
+[package]
+name = "cmd"
+version = "0.1.0"
+authors = ["贾一饼 <lby.i@qq.com>"]
+edition = "2018"
+
+[dependencies]
+hoper = { path = "../hoper" }
+rand = "0.6.5"
