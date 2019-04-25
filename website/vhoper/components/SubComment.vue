@@ -65,32 +65,33 @@
 <script>
 export default {
   name: 'SubComment',
-  props: ['subComments', 'index'],
+  props: ['subComments', 'index', 'controller'],
   data() {
     return {
       likes: 0,
       dislikes: 0,
       action: null,
       loading: true,
-      showLoading: true
+      showLoading: true,
+      scene: null
     }
   },
   mounted() {
     const vm = this
 
     const ScrollMagic = require('scrollmagic')
-
-    const controller = new ScrollMagic.Controller()
-    // build scene
-    const scene = new ScrollMagic.Scene({
-      triggerElement: '#loading' + vm.$props.index,
-      triggerHook: 'onEnter'
-    })
-      .addTo(controller)
-      .on('enter', function(e) {
-        // simulate ajax call to add content using the function below
-        vm.$emit('more', vm.$props.index)
+    this.$nextTick(() => {
+      // build scene
+      this.scene = new ScrollMagic.Scene({
+        triggerElement: '#loading' + vm.$props.index,
+        triggerHook: 'onEnter'
       })
+        .addTo(this.$props.controller)
+        .on('enter', function(e) {
+          // simulate ajax call to add content using the function below
+          vm.$emit('more', vm.$props.index)
+        })
+    })
   }
 }
 </script>

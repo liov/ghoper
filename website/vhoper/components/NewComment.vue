@@ -43,7 +43,7 @@
               {{ dislikes }}
             </span>
           </span>
-          <span style="padding-right: 8px" @click="$emit('reply',item)">回复</span>
+          <span style="padding-right: 8px" @click="reply(item)">回复</span>
           <span v-if="$store.state.user&&$store.state.user.id === item.user.id " style="padding:0 8px" @click="delComment(item.id)">删除</span>
         </span>
         <template slot="content">
@@ -68,9 +68,11 @@
           <a-collapse-panel key="1" header="收起评论">
             <div class="sub-comments">
               <sub-comment
-                ref="subComment"
+                :ref="'subComment'+index"
                 :sub-comments="item.sub_comments"
                 :index="index"
+                :controller="controller"
+                @reply="reply"
                 @more="onLoadMore"
                 @like="like"
                 @dislike="dislike"
@@ -101,6 +103,8 @@ export default {
       action: null,
       loading: true,
       showLoading: true,
+      scene: null,
+      controller: null,
       comments: []
     }
   },
@@ -109,17 +113,19 @@ export default {
     const ScrollReveal = require('scrollreveal')
     const ScrollMagic = require('scrollmagic')
     ScrollReveal.default().reveal('.sub-comments')
-    const controller = new ScrollMagic.Controller()
-    // build scene
-    const scene = new ScrollMagic.Scene({
-      triggerElement: '#loading',
-      triggerHook: 'onEnter'
-    })
-      .addTo(controller)
-      .on('enter', function(e) {
-        // simulate ajax call to add content using the function below
-        vm.onLoadMore()
+    this.controller = new ScrollMagic.Controller()
+    this.$nextTick(() => {
+      // build scene
+      this.scene = new ScrollMagic.Scene({
+        triggerElement: '#loading',
+        triggerHook: 'onEnter'
       })
+        .addTo(this.controller)
+        .on('enter', function(e) {
+          // simulate ajax call to add content using the function below
+          vm.onLoadMore()
+        })
+    })
   },
   methods: {
     like(id) {
@@ -136,9 +142,12 @@ export default {
     delComment(id) {
       console.log(id)
     },
-    async onLoadMore(index) {
-      console.log(1)
-      if (index) {
+    reply(comment) {
+      this.$emit('reply', comment)
+    },
+    async onLoadMore(index = -1) {
+      // js中0是false
+      if (index !== -1) {
         const commentRes = await this.$axios.$get(
           `/api/comments/${this.$props.kind}/${this.$route.params.id}?offset=${
             this.comments[index].sub_comments
@@ -148,8 +157,11 @@ export default {
         )
         if (commentRes.code === 200) {
           if (commentRes.data.length === 0) {
-            this.$refs.subComment[index].loading = false
+            this.$refs['subComment' + index].scene.destroy()
+            this.$refs['subComment' + index].loading = false
+            return
           }
+
           this.comments[index].sub_comments = this.comments[index].sub_comments
             ? this.comments[index].sub_comments.concat(commentRes.data)
             : (this.comments[index].sub_comments = commentRes.data)
@@ -163,6 +175,7 @@ export default {
         )
         if (commentRes.code === 200) {
           if (commentRes.data.length === 0) {
+            this.scene.destroy()
             this.loading = false
             return
           }
