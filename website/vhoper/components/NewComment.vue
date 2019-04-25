@@ -5,6 +5,7 @@
     item-layout="horizontal"
     :data-source="comments"
     :locale="{emptyText:'加载评论中'}"
+    style="word-break: break-all;"
   >
     <div slot="loadMore" :style="{ textAlign: 'center', marginTop: '12px', height: '32px', lineHeight: '32px' }">
       <a-spin v-if="loading" id="loading" />
@@ -13,11 +14,13 @@
       </span>
     </div>
     <a-list-item slot="renderItem" slot-scope="item,index">
+      <img slot="extra" width="186" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" style="margin-right: 10px">
+      <img slot="extra" width="186" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png">
       <a-comment
         :key="index"
         :author="item.user.name"
-        :avatar="item.user.avatar_url"
       >
+        <a-avatar slot="avatar" shape="square" size="large" :src="item.user.avatar_url" />
         <span slot="actions">
           <span>
             <a-tooltip title="Like">
@@ -62,7 +65,10 @@
         <a-tooltip slot="datetime">
           <span>{{ $s2date(item.created_at).fromNow() }}</span>
         </a-tooltip>
-
+        <a-tooltip slot="datetime">
+          <a-divider type="vertical" />
+          <span style="color:#000">{{ index+1 }}楼</span>
+        </a-tooltip>
         <a-collapse
           v-if="item.sub_comments&&item.sub_comments.length>0"
           key="1"

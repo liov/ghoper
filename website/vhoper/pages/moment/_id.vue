@@ -69,10 +69,10 @@
         <a-tooltip slot="datetime">
           <span>{{ $s2date(moment.created_at).fromNow() }}</span>
         </a-tooltip>
-        <nuxt-link slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
+        <nuxt-link v-if="moment.user.id===user.id" slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
           <a-divider type="vertical" />
           <a-icon type="edit" />
-          <span v-if="moment.user.id===user.id">编辑</span>
+          <span>编辑</span>
         </nuxt-link>
       </a-comment>
       <a-modal
