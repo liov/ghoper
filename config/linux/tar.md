@@ -1,0 +1,3 @@
+tail
+grep
+ps
