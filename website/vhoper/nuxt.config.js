@@ -57,7 +57,8 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/apollo',
-    '@nuxtjs/markdownit'
+    '@nuxtjs/markdownit',
+    'nuxt-typescript'
   ],
   /*
   ** Axios module configuration
