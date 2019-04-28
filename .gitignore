@@ -5,6 +5,7 @@ target
 *.iml
 .nuxt
 logs
+.gradle
 nohup.out
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
