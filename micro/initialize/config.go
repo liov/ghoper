@@ -28,7 +28,6 @@ type ServerConfig struct {
 	ImagePrefixUrl string
 	UploadDir      string
 	UploadPath     string
-	UploadHost     string
 	UploadMaxSize  int
 	UploadAllowExt []string
 

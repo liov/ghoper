@@ -363,7 +363,7 @@ func Login(c iris.Context) {
 			HttpOnly: true,
 		})
 
-		c.ResponseWriter().Header().Add("Authorization",tokenString)
+		c.ResponseWriter().Header().Add("Authorization", tokenString)
 
 		/*		session := sessions.Default(c)
 				session.Set("user", user)
@@ -427,7 +427,7 @@ func Signup(c iris.Context) {
 	newUser.Email = registerUser.Email
 	newUser.Phone = registerUser.Phone
 	newUser.Password = encryptPassword(registerUser.Password, registerUser.Password)
-	newUser.AvatarURL = "https://hoper.xyz/static/images/6cbeb5c8-7160-4b6f-a342-d96d3c00367a.jpg"
+	newUser.AvatarURL = "/static/images/6cbeb5c8-7160-4b6f-a342-d96d3c00367a.jpg"
 	//newUser.Role = model.UserRoleNormal
 	newUser.Status = model.UserStatusInActive
 
@@ -1111,15 +1111,15 @@ func GenerateToken(user *model.User) (string, error) {
 }
 
 func ParseToken(token string) (*Claims, error) {
-	tokenClaims, _ := (&jwt.Parser{SkipClaimsValidation:true}).ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+	tokenClaims, _ := (&jwt.Parser{SkipClaimsValidation: true}).ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return utils.ToBytes(initialize.Config.Server.JwtSecret), nil
 	})
 
 	if tokenClaims != nil {
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
-			now:=time.Now().Unix()
+			now := time.Now().Unix()
 			if claims.VerifyExpiresAt(now, false) == false {
-				return nil,errors.New("登录超时")
+				return nil, errors.New("登录超时")
 			}
 			return claims, nil
 		}

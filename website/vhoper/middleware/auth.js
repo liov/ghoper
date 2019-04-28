@@ -1,6 +1,6 @@
 export default async function({ store, $axios, error, req, route, redirect }) {
-  let login = false
   if (!store.state.user) {
+    let login = false
     if (
       process.server &&
       req.headers.cookie &&

@@ -38,7 +38,7 @@ func GenerateUploadedInfo(ext string) crm.FileUploadInfo {
 	filename := uuidName + ext
 	uploadFilePath := uploadDir + sep + filename
 	fileURL := strings.Join([]string{
-		"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+		initialize.Config.Server.UploadPath,
 		ymStr,
 		filename,
 	}, "/")
@@ -90,7 +90,7 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 			ymdStr},
 			"/")
 		prefixUrl = strings.Join([]string{
-			"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+			initialize.Config.Server.UploadPath,
 			"others",
 			classify,
 			ymdStr,
@@ -122,7 +122,7 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 	*/
 
 	prefixUrl = strings.Join([]string{
-		"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+		initialize.Config.Server.UploadPath,
 		dirType[0] + "s",
 		classify,
 		ymdStr,
