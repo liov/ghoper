@@ -10,8 +10,8 @@ module.exports = {
     } */
   },
   /*
-  ** Headers of the page
-  */
+   ** Headers of the page
+   */
   head: {
     title: 'hoper',
     meta: [
@@ -23,13 +23,13 @@ module.exports = {
   },
 
   /*
-  ** Customize the progress-bar color
-  */
+   ** Customize the progress-bar color
+   */
   loading: { color: '#fff' },
 
   /*
-  ** Global CSS
-  */
+   ** Global CSS
+   */
   css: [
     // 'ant-design-vue/dist/antd.less',
     '@/assets/less/antd.less',
@@ -38,31 +38,30 @@ module.exports = {
   ],
 
   /*
-  ** Plugins to load before mounting the App
-  */
+   ** Plugins to load before mounting the App
+   */
   plugins: [
     '@/plugins/filter/hoper_antd',
     '@/plugins/filter/hoper_utils',
     '@/plugins/filter/ctx-inject',
-    '@/plugins/filter/hoper_axios',
-    //{ src: '@/plugins/filter/hoper_nossr', ssr: false }
+    '@/plugins/filter/hoper_axios'
+    // { src: '@/plugins/filter/hoper_nossr', ssr: false }
     // '@/plugins/markdown-it'
   ],
 
   /*
-  ** Nuxt.js modules
-  */
+   ** Nuxt.js modules
+   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/apollo',
-    '@nuxtjs/markdownit',
-    'nuxt-typescript'
+    '@nuxtjs/markdownit'
   ],
   /*
-  ** Axios module configuration
-  */
+   ** Axios module configuration
+   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
     baseURL: 'https://hoper.xyz',
@@ -124,12 +123,12 @@ module.exports = {
     injected: true
   },
   /*
-  ** Build configuration
-  */
+   ** Build configuration
+   */
   build: {
     /*
-    ** You can extend webpack config here
-    */
+     ** You can extend webpack config here
+     */
     extend(config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
