@@ -63,7 +63,7 @@ export const actions = {
             commit('SET_USER', res.data)
           } else
             redirect({
-              path: '/redirect?callbackUrl=' + route.path
+              path: '/user/redirect?callbackUrl=' + route.path
             })
         })
       }
