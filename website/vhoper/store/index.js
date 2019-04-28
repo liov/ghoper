@@ -49,21 +49,22 @@ export const mutations = {
 
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
-  async nuxtServerInit({ commit }, { $axios, store, req }) {
+  async nuxtServerInit({ commit }, { $axios, store, req, route, redirect }) {
     const token = cookieUtils.getCookie('token', req)
-    let user
 
     if (req.headers.cookie) {
       if (token) {
         commit('SET_TOKEN', token)
-        // axios.defaults.headers.common.Authorization = token;
+        // $axios.defaults.headers.common.Authorization = token
         $axios.defaults.headers.common.Cookie = req.headers.cookie
         await $axios.$get(`/api/user/get`).then(res => {
           // 跟后端的初始化配合
           if (res.code === 200) {
-            user = res.data
-            commit('SET_USER', user)
-          }
+            commit('SET_USER', res.data)
+          } else
+            redirect({
+              path: '/redirect?callbackUrl=' + route.path
+            })
         })
       }
     }
