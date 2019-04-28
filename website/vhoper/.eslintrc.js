@@ -8,11 +8,10 @@ module.exports = {
     parser: 'babel-eslint'
   },
   extends: [
-    '@nuxtjs',
-    'plugin:prettier/recommended'
+    '@nuxtjs'
   ],
   plugins: [
-    'prettier'
+    'prettier',
   ],
   // add your custom rules here
   rules: {
@@ -20,7 +19,6 @@ module.exports = {
     'camelcase':'off',
     'no-console': 'off',
     'vue/no-unused-components':'off',
-    'no-undef':'off',
-    'vue/no-v-html':'off'
+    'no-undef':'off'
   }
 }

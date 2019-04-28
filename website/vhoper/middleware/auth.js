@@ -1,4 +1,4 @@
-export default async function({ store, $axios, error, req, route, redirect }) {
+export default async function ({ store, $axios, error, req, route, redirect }) {
   if (!store.state.user) {
     let login = false
     if (

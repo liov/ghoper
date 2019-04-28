@@ -9,13 +9,10 @@
       <a-form :form="user">
         <a-form-item
           label=""
-          :label-col="{span: 3,offset:6}"
-          :wrapper-col="{span: 6,offset:6}"
+          :label-col="{ span: 3, offset: 6 }"
+          :wrapper-col="{ span: 6, offset: 6 }"
         >
-          <a-radio-group
-            default-value="login"
-            @change="handleChange"
-          >
+          <a-radio-group default-value="login" @change="handleChange">
             <a-radio-button value="login">
               登录
             </a-radio-button>
@@ -26,7 +23,7 @@
         </a-form-item>
 
         <a-form-item
-          v-show="formType==='signup'"
+          v-show="formType === 'signup'"
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
           label="用户名"
@@ -34,14 +31,18 @@
           <a-input
             v-decorator="[
               'name',
-              {rules: [{ required: formType==='signup', message: '请输入用户名!' }]}
+              {
+                rules: [
+                  { required: formType === 'signup', message: '请输入用户名!' }
+                ]
+              }
             ]"
             placeholder="请输入用户名！"
           />
         </a-form-item>
 
         <a-form-item
-          v-show="formType==='login'"
+          v-show="formType === 'login'"
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
           label="邮箱或手机"
@@ -49,14 +50,21 @@
           <a-input
             v-decorator="[
               'input',
-              {rules: [{ required: formType==='login', message: '请输入邮箱或手机!' }]}
+              {
+                rules: [
+                  {
+                    required: formType === 'login',
+                    message: '请输入邮箱或手机!'
+                  }
+                ]
+              }
             ]"
             type="email"
             placeholder="输入邮箱或手机号！"
           />
         </a-form-item>
         <a-form-item
-          v-show="formType==='signup'"
+          v-show="formType === 'signup'"
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
           label="邮箱"
@@ -64,7 +72,11 @@
           <a-input
             v-decorator="[
               'email',
-              {rules: [{ required: formType==='signup', message: '请输入邮箱!' }]}
+              {
+                rules: [
+                  { required: formType === 'signup', message: '请输入邮箱!' }
+                ]
+              }
             ]"
             type="email"
             placeholder="请输入邮箱！"
@@ -78,7 +90,7 @@
           <a-input
             v-decorator="[
               'password',
-              {rules: [{ required: true, message: '请输入密码!' }]}
+              { rules: [{ required: true, message: '请输入密码!' }] }
             ]"
             type="password"
             placeholder="请输入密码！"
@@ -86,7 +98,7 @@
         </a-form-item>
 
         <a-form-item
-          v-show="formType==='signup'"
+          v-show="formType === 'signup'"
           label="性别"
           required
           :label-col="formItemLayout.labelCol"
@@ -95,7 +107,11 @@
           <a-radio-group
             v-decorator="[
               'sex',
-              {rules: [{ required: formType===true, message: '请输入手机号!' }]}
+              {
+                rules: [
+                  { required: formType === true, message: '请输入手机号!' }
+                ]
+              }
             ]"
           >
             <a-radio-button value="男">
@@ -107,7 +123,7 @@
           </a-radio-group>
         </a-form-item>
         <a-form-item
-          v-show="formType==='signup'"
+          v-show="formType === 'signup'"
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
           label="手机号"
@@ -115,7 +131,11 @@
           <a-input
             v-decorator="[
               'phone',
-              {rules: [{ required: formType==='signup', message: '请输入手机号!' }]}
+              {
+                rules: [
+                  { required: formType === 'signup', message: '请输入手机号!' }
+                ]
+              }
             ]"
             type="phone"
             placeholder="请输入手机号!"
@@ -125,11 +145,8 @@
           :label-col="formTailLayout.labelCol"
           :wrapper-col="formTailLayout.wrapperCol"
         >
-          <a-button
-            type="primary"
-            @click="check"
-          >
-            {{ formType==='login'?'登录':'注册' }}
+          <a-button type="primary" @click="check">
+            {{ formType === 'login' ? '登录' : '注册' }}
           </a-button>
         </a-form-item>
       </a-form>
@@ -178,7 +195,7 @@ export default {
   },
   methods: {
     check() {
-      this.user.validateFields(err => {
+      this.user.validateFields((err) => {
         if (!err) {
           this.commit()
         }
@@ -200,11 +217,11 @@ export default {
       }) */
     },
     // 尊重语法糖，抛弃恶心的回调
-    commit: function() {
+    commit: function () {
       const vm = this
       this.$axios
         .$post(`/api/user/` + vm.formType, vm.user.getFieldsValue())
-        .then(res => {
+        .then((res) => {
           // success
           if (res.code === 200) {
             if (res.msg === '登录成功') {
@@ -226,7 +243,7 @@ export default {
             vm.$message.error(res.msg)
           }
         })
-        .catch(function(err) {
+        .catch(function (err) {
           vm.$message.error(err)
         })
     },
@@ -255,5 +272,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

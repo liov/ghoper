@@ -27,21 +27,21 @@ export default {
         res.user_action != null
           ? res.user_action
           : {
-              collect: [],
-              like: [],
-              approve: [],
-              comment: [],
-              browse: []
-            }
+            collect: [],
+            like: [],
+            approve: [],
+            comment: [],
+            browse: []
+          }
     }
   },
   mounted() {
     this.db = openDatabase('hoper', '1.0', 'hoper DB', 2 * 1024 * 1024)
-    this.db.transaction(function(tx) {
+    this.db.transaction(function (tx) {
       tx.executeSql('CREATE TABLE IF NOT EXISTS Moments (id unique, content)')
     })
     const vm = this
-    this.db.transaction(function(tx) {
+    this.db.transaction(function (tx) {
       for (const item of vm.momentList) {
         tx.executeSql(
           `INSERT INTO Moments (id, content) VALUES (${item.id},'${
@@ -51,11 +51,11 @@ export default {
       }
     })
 
-    this.db.transaction(function(tx) {
+    this.db.transaction(function (tx) {
       tx.executeSql(
         'SELECT * FROM Moments',
         [],
-        function(tx, results) {
+        function (tx, results) {
           const len = results.rows.length
           let i
           let msg = '<p>查询记录条数: ' + len + '</p>'
@@ -74,5 +74,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

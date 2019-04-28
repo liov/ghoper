@@ -10,5 +10,6 @@
   "marked": "^0.6.1",
   "markdown-it": "latest",
   "vue-infinite-scroll": "^2.0.2",
-  "better-scroll": "^1.15.2"
+  "better-scroll": "^1.15.2",
+  "scrollmagic": "^2.0.6"
 }

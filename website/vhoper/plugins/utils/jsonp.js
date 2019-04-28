@@ -1,4 +1,4 @@
-const jsonp = function(url) {
+const jsonp = function (url) {
   // 创建script标签，设置其属性
   const script = document.createElement('script')
   script.setAttribute('src', url)

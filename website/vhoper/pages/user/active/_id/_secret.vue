@@ -11,7 +11,7 @@ export default {
       .$get(
         `/api/user/active/${this.$route.params.id}/${this.$route.params.secret}`
       )
-      .then(res => {
+      .then((res) => {
         vm.$message.info(res.msg)
         if (res.code === 200) {
           vm.$router.push({ path: '/user/login?email=' + res.data })
@@ -21,5 +21,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -12,9 +12,7 @@
     </div>
 
     <!-- Apollo watched Graphql query -->
-    <ApolloQuery
-      :query="require('../graphql/User.gql')"
-    >
+    <ApolloQuery :query="require('../graphql/User.gql')">
       <template slot-scope="{ result: { loading, error, data } }">
         <!-- Loading -->
         <div v-if="loading" class="loading apollo">
@@ -39,9 +37,7 @@
     </ApolloQuery>
 
     <!-- Tchat example -->
-    <ApolloQuery
-      :query="require('../graphql/Messages.gql')"
-    >
+    <ApolloQuery :query="require('../graphql/Messages.gql')">
       <ApolloSubscribeToMore
         :document="require('../graphql/MessageAdded.gql')"
         :update-query="onMessageAdded"
@@ -64,8 +60,8 @@
       :mutation="require('../graphql/AddMessage.gql')"
       :variables="{
         input: {
-          text: newMessage,
-        },
+          text: newMessage
+        }
       }"
       class="form"
       @done="newMessage = ''"
@@ -84,12 +80,8 @@
     </ApolloMutation>
 
     <div class="images">
-      <div
-        v-for="file of files"
-        :key="file.id"
-        class="image-item"
-      >
-        <img :src="`${$filesRoot}/${file.path}`" class="image">
+      <div v-for="file of files" :key="file.id" class="image-item">
+        <img :src="`${$filesRoot}/${file.path}`" class="image" />
       </div>
     </div>
 

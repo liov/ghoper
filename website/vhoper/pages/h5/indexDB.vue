@@ -27,12 +27,12 @@ export default {
         res.user_action != null
           ? res.user_action
           : {
-              collect: [],
-              like: [],
-              approve: [],
-              comment: [],
-              browse: []
-            }
+            collect: [],
+            like: [],
+            approve: [],
+            comment: [],
+            browse: []
+          }
     }
   },
   async mounted() {
@@ -40,16 +40,16 @@ export default {
     this.addData(this.DB.db, 'moments', this.momentList)
   },
   methods: {
-    openDB: function(name, version = 1) {
-      return new Promise(function(resolve, reject) {
+    openDB: function (name, version = 1) {
+      return new Promise(function (resolve, reject) {
         const request = window.indexedDB.open(name)
-        request.onerror = function(e) {
+        request.onerror = function (e) {
           reject(e)
         }
-        request.onsuccess = function(e) {
+        request.onsuccess = function (e) {
           resolve(e.target.result)
         }
-        request.onupgradeneeded = function(e) {
+        request.onupgradeneeded = function (e) {
           const db = e.target.result
           if (!db.objectStoreNames.contains('moments')) {
             db.createObjectStore('moments', { keyPath: 'id' })
@@ -58,13 +58,13 @@ export default {
         }
       })
     },
-    closeDB: function(db) {
+    closeDB: function (db) {
       db.close()
     },
-    deleteDB: function(name) {
+    deleteDB: function (name) {
       indexedDB.deleteDatabase(name)
     },
-    addData: function(db, storeName, data) {
+    addData: function (db, storeName, data) {
       const transaction = db.transaction(storeName, 'readwrite')
       const store = transaction.objectStore(storeName)
 
@@ -72,31 +72,31 @@ export default {
         store.add(data[i])
       }
     },
-    getDataByKey: function(db, storeName, key) {
+    getDataByKey: function (db, storeName, key) {
       const transaction = db.transaction(storeName, 'readwrite')
       const store = transaction.objectStore(storeName)
       const request = store.get(key)
-      request.onsuccess = function(e) {
+      request.onsuccess = function (e) {
         const data = e.target.result
         console.log(data.name)
       }
     },
-    updateDataByKey: function(db, storeName, key, newdata) {
+    updateDataByKey: function (db, storeName, key, newdata) {
       const transaction = db.transaction(storeName, 'readwrite')
       const store = transaction.objectStore(storeName)
       const request = store.get(key)
-      request.onsuccess = function(e) {
+      request.onsuccess = function (e) {
         let data = e.target.result
         data = newdata
         store.put(student)
       }
     },
-    deleteDataByKey: function(db, storeName, key) {
+    deleteDataByKey: function (db, storeName, key) {
       const transaction = db.transaction(storeName, 'readwrite')
       const store = transaction.objectStore(storeName)
       store.delete(key)
     },
-    clearObjectStore: function(db, storeName) {
+    clearObjectStore: function (db, storeName) {
       const transaction = db.transaction(storeName, 'readwrite')
       const store = transaction.objectStore(storeName)
       store.clear()
@@ -105,5 +105,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

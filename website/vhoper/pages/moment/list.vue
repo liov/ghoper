@@ -8,7 +8,12 @@
         Vertical
       </a-radio-button>
     </a-radio-group>
-    <a-tabs default-active-key="1" :tab-position="mode" @prevClick="callback" @nextClick="callback">
+    <a-tabs
+      default-active-key="1"
+      :tab-position="mode"
+      @prevClick="callback"
+      @nextClick="callback"
+    >
       <a-tab-pane key="1" tab="Tab 1">
         <a-table
           :data-source="momentList"
@@ -18,16 +23,8 @@
           :loading="loading"
           @change="handleTableChange"
         >
-          <a-table-column
-            key="id"
-            title="ID"
-            data-index="id"
-          />
-          <a-table-column
-            key="user.name"
-            title="作者"
-            data-index="user.name"
-          />
+          <a-table-column key="id" title="ID" data-index="id" />
+          <a-table-column key="user.name" title="作者" data-index="user.name" />
           <a-table-column
             key="user.avatar_url"
             title="头像"
@@ -35,10 +32,7 @@
           />
           <a-table-column-group>
             <span slot="title" style="color: #1890ff">喜欢</span>
-            <a-table-column
-              key="collect_count"
-              data-index="collect_count"
-            >
+            <a-table-column key="collect_count" data-index="collect_count">
               <span slot="title" style="color: #1890ff">收藏</span>
             </a-table-column>
             <a-table-column
@@ -58,21 +52,16 @@
             />
           </a-table-column-group>
 
-          <a-table-column
-            key="tags"
-            title="标签"
-            data-index="tags"
-          >
+          <a-table-column key="tags" title="标签" data-index="tags">
             <template slot-scope="tags">
               <span>
-                <a-tag v-for="tag in tags" :key="tag.name" color="blue">{{ tag.name }}</a-tag>
+                <a-tag v-for="tag in tags" :key="tag.name" color="blue">{{
+                  tag.name
+                }}</a-tag>
               </span>
             </template>
           </a-table-column>
-          <a-table-column
-            key="action"
-            title="操作"
-          >
+          <a-table-column key="action" title="操作">
             <template slot-scope="text, record">
               <span>
                 <a href="javascript:;">Action 一 {{ record.id }}</a>
@@ -178,7 +167,7 @@ export default {
       const pageNo = pagination.current - 1
       fetch('/api/moment?pageNo=' + pageNo + '&pageSize=' + pagination.pageSize)
         .then(response => response.json())
-        .then(data => {
+        .then((data) => {
           this.loading = false
           this.momentList = data.data
           this.pagination.total = data.count
@@ -200,7 +189,7 @@ export default {
     },
     shchqi() {
       let i = 0
-      return function() {
+      return function () {
         i++
         return i
       }
@@ -209,5 +198,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

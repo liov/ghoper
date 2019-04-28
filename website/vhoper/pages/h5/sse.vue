@@ -4,8 +4,8 @@
     <a-col :span="8">
       <a-form-item
         label="事件"
-        :label-col="{span: 3}"
-        :wrapper-col="{span: 6}"
+        :label-col="{ span: 3 }"
+        :wrapper-col="{ span: 6 }"
       >
         <a-input v-model="event" />
       </a-form-item>
@@ -26,7 +26,7 @@ export default {
   },
   mounted() {
     const client = new EventSource('/api/get/events')
-    client.onmessage = function(evt) {
+    client.onmessage = function (evt) {
       console.log(evt)
     }
   },
@@ -37,5 +37,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

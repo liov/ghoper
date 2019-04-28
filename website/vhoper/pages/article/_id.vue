@@ -20,12 +20,16 @@
         </span>
         <a-divider type="vertical" />
         <a-button-group>
-          <a-button v-for="(item,index) in article.categories" :key="index">
+          <a-button v-for="(item, index) in article.categories" :key="index">
             {{ item.name }}
           </a-button>
         </a-button-group>
         <a-divider type="vertical" />
-        <a-tag v-for="(item,index) in article.tags" :key="index" :color="color[index]">
+        <a-tag
+          v-for="(item, index) in article.tags"
+          :key="index"
+          :color="color[index]"
+        >
           {{ item.name }}
         </a-tag>
         <a-divider type="vertical" />
@@ -51,5 +55,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

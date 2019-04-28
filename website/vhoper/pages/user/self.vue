@@ -36,18 +36,17 @@
     </a-col>
     <a-col
       :span="16"
-      :style="{background:'url('+user.cover_url+') no-repeat',
-               backgroundSize: 'cover'}"
+      :style="{
+        background: 'url(' + user.cover_url + ') no-repeat',
+        backgroundSize: 'cover'
+      }"
     >
       <a-form-item
         label="用户名"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input
-          v-model="user.name"
-          disabled
-        >
+        <a-input v-model="user.name" disabled>
           <a-icon slot="prefix" type="user" />
         </a-input>
       </a-form-item>
@@ -58,10 +57,7 @@
             :label-col="{ span: 7 }"
             :wrapper-col="{ span: 10 }"
           >
-            <a-radio-group
-              v-model="user.sex"
-              :disabled="!edit"
-            >
+            <a-radio-group v-model="user.sex" :disabled="!edit">
               <a-radio-button value="男">
                 男
               </a-radio-button>
@@ -75,23 +71,23 @@
           <a-form-item
             label="生日"
             :label-col="{ span: 3 }"
-            :wrapper-col="{ span:10 }"
+            :wrapper-col="{ span: 10 }"
           >
-            <a-date-picker v-model="user.birthday" show-time :disabled="!edit" />
+            <a-date-picker
+              v-model="user.birthday"
+              show-time
+              :disabled="!edit"
+            />
           </a-form-item>
         </a-col>
       </a-row>
-
 
       <a-form-item
         label="邮箱"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input
-          v-model="user.email"
-          disabled
-        >
+        <a-input v-model="user.email" disabled>
           <a-icon slot="prefix" type="mail" />
         </a-input>
       </a-form-item>
@@ -100,10 +96,7 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input
-          v-model="user.phone"
-          disabled
-        >
+        <a-input v-model="user.phone" disabled>
           <a-icon slot="prefix" type="phone" />
         </a-input>
       </a-form-item>
@@ -112,10 +105,7 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input
-          v-model="user.introduction"
-          :disabled="!edit"
-        >
+        <a-input v-model="user.introduction" :disabled="!edit">
           <a-icon slot="prefix" type="profile" />
         </a-input>
       </a-form-item>
@@ -124,10 +114,7 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input
-          v-model="user.signature"
-          :disabled="!edit"
-        >
+        <a-input v-model="user.signature" :disabled="!edit">
           <a-icon slot="prefix" type="profile" />
         </a-input>
       </a-form-item>
@@ -148,53 +135,78 @@
         </a-cascader>
       </a-form-item>
       <a-form-item
-        v-show="edu_exps.length>0"
+        v-show="edu_exps.length > 0"
         label="教育经历"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input-group
-          v-for="(item,index) in edu_exps"
-          :key="index"
-        >
+        <a-input-group v-for="(item, index) in edu_exps" :key="index">
           <a-col :span="6">
-            <a-input v-model="edu_exps[index].school" :disabled="!edit" placeholder="请输入学校!" />
+            <a-input
+              v-model="edu_exps[index].school"
+              :disabled="!edit"
+              placeholder="请输入学校!"
+            />
           </a-col>
           <a-col :span="6">
-            <a-input v-model="edu_exps[index].speciality" :disabled="!edit" placeholder="请输入专业!" />
+            <a-input
+              v-model="edu_exps[index].speciality"
+              :disabled="!edit"
+              placeholder="请输入专业!"
+            />
           </a-col>
           <a-col :span="9">
-            <a-range-picker v-model="edu_exps[index].time" :disabled="!edit" @change="eduTime(index)">
+            <a-range-picker
+              v-model="edu_exps[index].time"
+              :disabled="!edit"
+              @change="eduTime(index)"
+            >
               <a-icon slot="suffixIcon" type="smile" />
             </a-range-picker>
           </a-col>
-          <a-button v-show="index===0" icon="plus" @click="changeEdu(-1)" />
-          <a-button v-show="index>0" icon="minus" @click="changeEdu(index)" />
+          <a-button v-show="index === 0" icon="plus" @click="changeEdu(-1)" />
+          <a-button v-show="index > 0" icon="minus" @click="changeEdu(index)" />
         </a-input-group>
       </a-form-item>
       <a-form-item
-        v-show="work_exps.length>0"
+        v-show="work_exps.length > 0"
         label="职业经历"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="{ span: 18 }"
       >
         <a-input-group
-          v-for="(item,index) in work_exps"
-          :key="index+edu_exps.length"
+          v-for="(item, index) in work_exps"
+          :key="index + edu_exps.length"
         >
           <a-col :span="6">
-            <a-input v-model="work_exps[index].company" :disabled="!edit" placeholder="请输入公司!" />
+            <a-input
+              v-model="work_exps[index].company"
+              :disabled="!edit"
+              placeholder="请输入公司!"
+            />
           </a-col>
           <a-col :span="6">
-            <a-input v-model="work_exps[index].title" :disabled="!edit" placeholder="请输入职务!" />
+            <a-input
+              v-model="work_exps[index].title"
+              :disabled="!edit"
+              placeholder="请输入职务!"
+            />
           </a-col>
           <a-col :span="9">
-            <a-range-picker v-model="work_exps[index].time" :disabled="!edit" @change="workTime(index)">
+            <a-range-picker
+              v-model="work_exps[index].time"
+              :disabled="!edit"
+              @change="workTime(index)"
+            >
               <a-icon slot="suffixIcon" type="smile" />
             </a-range-picker>
           </a-col>
-          <a-button v-show="index===0" icon="plus" @click="changeWork(-1)" />
-          <a-button v-show="index>0" icon="minus" @click="changeWork(index)" />
+          <a-button v-show="index === 0" icon="plus" @click="changeWork(-1)" />
+          <a-button
+            v-show="index > 0"
+            icon="minus"
+            @click="changeWork(index)"
+          />
         </a-input-group>
       </a-form-item>
       <a-row>
@@ -312,14 +324,14 @@ export default {
     }
   },
   methods: {
-    getStatus: function() {
+    getStatus: function () {
       fetch('https://hoper.xyz/user/1', {
         method: 'get',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({})
-      }).then(res => {
+      }).then((res) => {
         return res.json().status
       })
     },
@@ -429,5 +441,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

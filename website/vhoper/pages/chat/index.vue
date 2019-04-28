@@ -17,10 +17,10 @@
       >
         <a-list-item slot="renderItem" slot-scope="item">
           <a-comment>
-            <nuxt-link slot="author" :to="'/user/'+item.send_user.id">
+            <nuxt-link slot="author" :to="'/user/' + item.send_user.id">
               <span>{{ item.send_user.name }}</span>
             </nuxt-link>
-            <nuxt-link slot="avatar" :to="'/user/'+item.send_user.id">
+            <nuxt-link slot="avatar" :to="'/user/' + item.send_user.id">
               <a-avatar :src="item.send_user.avatar_url" alt="头像" />
             </nuxt-link>
             <!--   <template slot="actions">
@@ -30,7 +30,7 @@
               {{ item.content }}
             </p>
             <a-tooltip slot="datetime" :title="item.created_at">
-              <span>{{ item.created_at|dateFormat }}</span>
+              <span>{{ item.created_at | dateFormat }}</span>
             </a-tooltip>
           </a-comment>
         </a-list-item>
@@ -40,7 +40,7 @@
         <a-comment>
           <a-avatar
             slot="avatar"
-            :src="user!==null?user.avatar_url:''"
+            :src="user !== null ? user.avatar_url : ''"
             alt="头像"
           />
           <div slot="content">
@@ -82,58 +82,59 @@ export default {
   },
   async asyncData({ $axios, route, redirect }) {
     const res = await $axios.$get(`/api/chat/getChat`).catch(() => {})
-    if (res.code !== 200)
+    if (res.code !== 200) {
       redirect({ path: '/user/login?callbackUrl=' + route.path })
+    }
     return { msgs: res.data !== undefined ? res.data : [] }
   },
-  created: function() {
+  created: function () {
     // 运行在服务端
     this.user = this.$store.state.user
   },
-  mounted: function() {
+  mounted: function () {
     this.newWs()
     // 这是什么黑科技？？？，本来以为DOM没有渲染完就执行，所以没效果，
     // 加了个定时器，时间一直从500减到0，都一直有效
-    setTimeout(function() {
+    setTimeout(function () {
       document.querySelector('#bottom').scrollIntoView()
     }, 0)
     /* this.chatContent=JSON.parse(localStorage.getItem("chatContent"));
               if(this.chatContent === null) this.chatContent=[]; */
   },
-  updated: function() {},
+  updated: function () {},
   beforeDestroy() {
     this.ws.close()
   },
   methods: {
-    newWs: function() {
+    newWs: function () {
       // 不能放在created里
       const vm = this
       this.ws = new WebSocket('ws://' + window.location.host + '/ws/chat')
-      this.ws.onopen = function() {
+      this.ws.onopen = function () {
         // console.log('建立websocket连接')
         if (vm.value !== '') {
           vm.handleSubmit()
         }
       }
-      this.ws.onmessage = function(evt) {
+      this.ws.onmessage = function (evt) {
         vm.submitting = false
         vm.msgs = [...vm.msgs, JSON.parse(evt.data)]
         vm.value = ''
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           document.querySelector('#bottom').scrollIntoView()
         })
       }
-      this.ws.onerror = function() {
+      this.ws.onerror = function () {
         vm.newWs()
       }
-      this.ws.onclose = function() {
+      this.ws.onclose = function () {
         // console.log('websocket连接关闭')
       }
 
       document.scrollingElement.scrollTop =
         document.scrollingElement.scrollHeight
     },
-    delChat: function() {
+    delChat: function () {
       localStorage.removeItem('chatContent')
       this.chatContent = []
     },
@@ -166,5 +167,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

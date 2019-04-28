@@ -6,7 +6,7 @@ import 'moment/locale/zh-cn'
 import { upload } from '../utils/upload'
 moment.locale('zh-cn')
 dayjs.locale('zh-cn')
-Vue.filter('dateFormat', function(value) {
+Vue.filter('dateFormat', function (value) {
   return moment(value).format('YYYY-MM-DD HH:mm:ss')
 })
 Vue.prototype.$s2date = value => moment(value, 'YYYY-MM-DD HH:mm:ss.SSS Z')

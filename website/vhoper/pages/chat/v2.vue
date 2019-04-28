@@ -17,10 +17,10 @@
       >
         <a-list-item slot="renderItem" slot-scope="item">
           <a-comment>
-            <nuxt-link slot="author" :to="'/user/'+item.send_user.id">
+            <nuxt-link slot="author" :to="'/user/' + item.send_user.id">
               <span>{{ item.send_user.name }}</span>
             </nuxt-link>
-            <nuxt-link slot="avatar" :to="'/user/'+item.send_user.id">
+            <nuxt-link slot="avatar" :to="'/user/' + item.send_user.id">
               <a-avatar :src="item.send_user.avatar_url" alt="头像" />
             </nuxt-link>
             <!--   <template slot="actions">
@@ -30,7 +30,7 @@
               {{ item.content }}
             </span>
             <a-tooltip slot="datetime" :title="item.created_at">
-              <span>{{ item.created_at|dateFormat }}</span>
+              <span>{{ item.created_at | dateFormat }}</span>
               <a-divider type="vertical" />
               <span>{{ $s2date(item.created_at).fromNow() }}</span>
             </a-tooltip>
@@ -40,11 +40,7 @@
 
       <div id="bottom">
         <a-comment>
-          <a-avatar
-            slot="avatar"
-            :src="user.avatar_url"
-            alt="Han Solo"
-          />
+          <a-avatar slot="avatar" :src="user.avatar_url" alt="Han Solo" />
           <div slot="content">
             <a-form-item>
               <a-textarea :rows="4" :value="value" @change="handleChange" />
@@ -97,54 +93,54 @@ export default {
 
     return { msgs: res.data !== null ? res.data : [] }
   },
-  created: function() {
+  created: function () {
     // 运行在服务端
     this.user = this.$store.state.user
   },
-  mounted: function() {
+  mounted: function () {
     // fetch(`/api/iris-ws.js`)
     const vm = this
     const script = document.createElement('script')
     script.type = 'text/javascript' // 设置Type
     script.src = '/api/iris-ws.js' // 设置src
     document.head.appendChild(script) // 异步加载
-    script.onload = function() {
+    script.onload = function () {
       vm.scheme = document.location.protocol === 'https:' ? 'wss' : 'ws'
       // see app.Get("/echo", ws.Handler()) on main.go
       vm.newWs()
     }
-    setTimeout(function() {
+    setTimeout(function () {
       document.querySelector('#bottom').scrollIntoView()
     }, 0)
     /* this.chatContent=JSON.parse(localStorage.getItem("chatContent"));
               if(this.chatContent === null) this.chatContent=[]; */
   },
-  updated: function() {},
+  updated: function () {},
   beforeDestroy() {
     this.socket.Disconnect()
   },
   methods: {
-    newWs: function() {
+    newWs: function () {
       // 不能放在created里
       const vm = this
       const wsURL = this.scheme + '://' + 'hoper.xyz' + '/ws/echo'
       this.socket = new Ws(wsURL)
-      this.socket.OnConnect(function() {
+      this.socket.OnConnect(function () {
         if (vm.value !== '') {
           vm.handleSubmit()
         }
       })
 
-      this.socket.OnDisconnect(function() {
+      this.socket.OnDisconnect(function () {
         // console.log('websocket连接关闭')
       })
 
       // read events from the server
-      this.socket.On('chat', function(msg) {
+      this.socket.On('chat', function (msg) {
         vm.submitting = false
         vm.msgs = [...vm.msgs, JSON.parse(msg)]
         vm.value = ''
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           document.querySelector('#bottom').scrollIntoView()
         })
       })
@@ -152,7 +148,7 @@ export default {
       document.scrollingElement.scrollTop =
         document.scrollingElement.scrollHeight
     },
-    delChat: function() {
+    delChat: function () {
       localStorage.removeItem('chatContent')
       this.chatContent = []
     },
@@ -186,5 +182,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

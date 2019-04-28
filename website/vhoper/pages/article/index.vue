@@ -18,11 +18,7 @@
         </a-breadcrumb-item>
         <a-breadcrumb-item>列表</a-breadcrumb-item>
       </a-breadcrumb>
-      <a-list
-        item-layout="vertical"
-        size="large"
-        :data-source="articleList"
-      >
+      <a-list item-layout="vertical" size="large" :data-source="articleList">
         <div slot="footer">
           <b />
         </div>
@@ -41,63 +37,75 @@
           </span>
 
           <a-button-group slot="actions">
-            <a-button v-for="(subitem,subindex) in item.categories" :key="subindex">
+            <a-button
+              v-for="(subitem, subindex) in item.categories"
+              :key="subindex"
+            >
               {{ subitem.name }}
             </a-button>
           </a-button-group>
 
           <div slot="actions">
-            <a-tag v-for="(subitem,subindex) in item.tags" :key="subindex" :color="color[subindex]">
+            <a-tag
+              v-for="(subitem, subindex) in item.tags"
+              :key="subindex"
+              :color="color[subindex]"
+            >
               {{ subitem.name }}
             </a-tag>
           </div>
 
-          <img v-if="item.image_url!==''" slot="extra" height="120" alt="logo" :src="item.image_url">
-          <a-list-item-meta
-            :description="item.intro"
+          <img
+            v-if="item.image_url !== ''"
+            slot="extra"
+            height="120"
+            alt="logo"
+            :src="item.image_url"
           >
+          <a-list-item-meta :description="item.intro">
             <a-row slot="title">
               <a-col :span="3" style="font-size: 10px">
-                <nuxt-link :to="'/user/'+item.user.id">
+                <nuxt-link :to="'/user/' + item.user.id">
                   {{ item.user.name }}
                 </nuxt-link>
               </a-col>
-              <nuxt-link :to="'/article/'+item.id">
+              <nuxt-link :to="'/article/' + item.id">
                 <a-col :span="15" style="color:rgba(0, 0, 0, 0.85)">
                   {{ item.title }}
                 </a-col>
               </nuxt-link>
               <a-col :span="6" style="font-size: 10px">
-                <span> {{ item.created_at|dateFormat }}</span>
+                <span> {{ item.created_at | dateFormat }}</span>
                 <a-divider type="vertical" />
                 <span>{{ $s2date(item.created_at).fromNow() }}</span>
               </a-col>
             </a-row>
 
-            <nuxt-link slot="avatar" :to="'/user/'+item.user.id">
+            <nuxt-link slot="avatar" :to="'/user/' + item.user.id">
               <a-avatar :src="item.user.avatar_url" alt="头像" />
             </nuxt-link>
           </a-list-item-meta>
         </a-list-item>
       </a-list>
-      <a-modal
-        v-model="visible"
-        title="Title"
-        on-ok="handleOk"
-      >
+      <a-modal v-model="visible" title="Title" on-ok="handleOk">
         <template slot="footer">
           <a-button key="back" @click="handleCancel">
             取消
           </a-button>
-          <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+          <a-button
+            key="submit"
+            type="primary"
+            :loading="loading"
+            @click="handleOk"
+          >
             确定
           </a-button>
         </template>
         <a-form-item
           label="收藏夹"
           required
-          :label-col="{span: 4}"
-          :wrapper-col="{span: 6}"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 6 }"
         >
           <a-select
             v-model="favorites"
@@ -115,12 +123,10 @@
           <a-col :span="16">
             <a-form-item
               label="新收藏夹"
-              :label-col="{span:6}"
-              :wrapper-col="{span: 16}"
+              :label-col="{ span: 6 }"
+              :wrapper-col="{ span: 16 }"
             >
-              <a-input
-                v-model="favorite"
-              />
+              <a-input v-model="favorite" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -140,8 +146,8 @@
         @showSizeChange="onShowSizeChange"
       >
         <template slot="buildOptionText" slot-scope="props">
-          <span v-if="props.value!=='50'">{{ props.value }}条/页</span>
-          <span v-if="props.value==='50'">全部</span>
+          <span v-if="props.value !== '50'">{{ props.value }}条/页</span>
+          <span v-if="props.value === '50'">全部</span>
         </template>
       </a-pagination>
     </a-col>
@@ -168,7 +174,7 @@ export default {
     }
   },
   watch: {
-    current: async function() {
+    current: async function () {
       await this.next(this.current - 1)
     }
   },
@@ -245,5 +251,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

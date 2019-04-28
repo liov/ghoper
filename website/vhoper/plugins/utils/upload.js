@@ -1,7 +1,7 @@
 import axios from 'axios'
 import SparkMD5 from 'spark-md5'
 
-const upload = async function(classify, $file) {
+const upload = async function (classify, $file) {
   const md5 = await getMD5($file)
   const existFile = await exist(md5)
 
@@ -21,27 +21,27 @@ const upload = async function(classify, $file) {
   else return null
 }
 
-const isExist = async function(file) {
+const isExist = async function (file) {
   const md5 = await getMD5(file)
   const existUrl = await exist(md5)
   if (existUrl) return existUrl
   else return null
 }
 
-const exist = async function(md5) {
+const exist = async function (md5) {
   const res = await axios.post('/api/upload/exist/' + md5)
   if (res.data.code === 200) return res.data.data
   else return null
 }
 
-const getBase64 = function(img, callback) {
+const getBase64 = function (img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
   reader.readAsDataURL(img)
 }
 
-const getMD5 = function(file) {
-  return new Promise(function(resolve, reject) {
+const getMD5 = function (file) {
+  return new Promise(function (resolve, reject) {
     const blobSlice =
       File.prototype.slice ||
       File.prototype.mozSlice ||
@@ -53,7 +53,7 @@ const getMD5 = function(file) {
     const spark = new SparkMD5.ArrayBuffer()
     const fileReader = new FileReader()
 
-    fileReader.onload = function(e) {
+    fileReader.onload = function (e) {
       // console.log('read chunk nr', currentChunk + 1, 'of', chunks)
       spark.append(e.target.result) // Append array buffer
       currentChunk++
@@ -65,7 +65,7 @@ const getMD5 = function(file) {
         resolve(spark.end()) // Compute hash
       }
     }
-    fileReader.onerror = function() {
+    fileReader.onerror = function () {
       reject(new Error('oops, something went wrong.'))
     }
 
