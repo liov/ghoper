@@ -94,3 +94,4 @@ upload
 *.db
 
 nginx-*
+/zther/rhoper/Cargo.lock
