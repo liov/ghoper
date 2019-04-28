@@ -24,6 +24,7 @@ use actix::prelude::*;
 use chrono::Duration;
 use actix_files as fs;
 use dotenv::dotenv;
+use std::cell::Cell;
 #[macro_use]
 extern crate diesel;
 #[macro_use]
@@ -42,8 +43,11 @@ fn main() -> std::io::Result<()> {
             std::env::var("SECRET_KEY").unwrap_or_else(|_| "0123".repeat(8));
         let domain: String =
             std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
+        let state = handler::AppState{ counter: Cell::new(0usize) };
+
 
         App::new()
+            .data(state)
             .wrap(Logger::default())
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(secret.as_bytes())
@@ -57,6 +61,7 @@ fn main() -> std::io::Result<()> {
                 .service(web::resource("/index1").route(web::get().to(handler::index1)))
                 .service(web::resource("/index2").route(web::get().to(handler::index2)))
                 .service(web::resource("/index3").route(web::get().to(handler::index3)))
+                .service(web::resource("/index5").route(web::get().to(handler::index5)))
         )
             // serve static files
             //.service(fs::Files::new("/", "./static/").index_file("index.html"))
