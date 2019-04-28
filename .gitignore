@@ -15,7 +15,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+micro/mian/mian
 # Runtime data
 pids
 *.pid
