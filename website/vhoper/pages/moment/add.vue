@@ -22,7 +22,10 @@
             placeholder="请选择标签"
             style="width: 200px"
           >
-            <a-select-option v-for="item in existTags" :key="item.name">
+            <a-select-option
+              v-for="item in existTags"
+              :key="item.name"
+            >
               {{ item.name }}
             </a-select-option>
           </a-select>
@@ -39,7 +42,10 @@
               <a-input v-model="tag" />
             </a-col>
             <a-col :span="6">
-              <a-button class="formbuttion" @click="addTag">
+              <a-button
+                class="formbuttion"
+                @click="addTag"
+              >
                 添加
               </a-button>
             </a-col>
@@ -64,24 +70,37 @@
             <a-select-option :key="1">
               自己可见
             </a-select-option>
-            <a-select-option :key="2" disabled>
+            <a-select-option
+              :key="2"
+              disabled
+            >
               部分可见
             </a-select-option>
-            <a-select-option :key="3" disabled>
+            <a-select-option
+              :key="3"
+              disabled
+            >
               陌生人可见
             </a-select-option>
           </a-select>
         </a-form-item>
       </a-col>
       <a-col :span="2">
-        <a-button icon="save" style="margin-top: 3px" @click="commit">
+        <a-button
+          icon="save"
+          style="margin-top: 3px"
+          @click="commit"
+        >
           保存
         </a-button>
       </a-col>
     </a-row>
 
     <a-form-item style="width: 80%">
-      <div id="vditor" style="margin: 0 10%;height: 500px" />
+      <div
+        id="vditor"
+        style="margin: 0 10%;height: 500px"
+      />
     </a-form-item>
     <a-form-item style="margin-left: 10%;">
       <a-upload
@@ -101,8 +120,16 @@
           </div>
         </div>
       </a-upload>
-      <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-        <img alt="example" style="width: 100%" :src="previewImage">
+      <a-modal
+        :visible="previewVisible"
+        :footer="null"
+        @cancel="handleCancel"
+      >
+        <img
+          alt="example"
+          style="width: 100%"
+          :src="previewImage"
+        >
       </a-modal>
     </a-form-item>
   </div>
@@ -255,7 +282,7 @@ export default {
           if (res.code === 200) {
             vm.$router.push({ path: '/moment' })
             vditor.clearCache()
-          } else vm.$message.error(res.msg)
+          } else {vm.$message.error(res.msg)}
         })
         .catch(function (err) {
           vm.$message.error(err)
@@ -273,8 +300,8 @@ export default {
       withCredentials
     }) {
       const res = await upload('moment', file)
-      if (this.moment.image_url === '') this.moment.image_url = res.url
-      else this.moment.image_url = this.moment.image_url + ',' + res.url
+      if (this.moment.image_url === '') {this.moment.image_url = res.url}
+      else {this.moment.image_url = this.moment.image_url + ',' + res.url}
       onSuccess({ data: res, status: 200 }, file)
       file.status = 'done'
     }

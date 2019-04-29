@@ -28,7 +28,12 @@
         :key="item.toString()"
         :span="24 / colCounts[colCountKey]"
       >
-        <div><a-avatar size="large" :src="user.avatar_url" /></div>
+        <div>
+          <a-avatar
+            size="large"
+            :src="user.avatar_url"
+          />
+        </div>
         <div>{{ user.name }}</div>
         <div>{{ user.id }}</div>
         <div>{{ user.phone }}</div>

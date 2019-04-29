@@ -38,7 +38,6 @@ type ServerConfig struct {
 	MailPort     int
 	MailUser     string
 	MailPassword string
-	MailFrom     string
 
 	LuosimaoVerifyURL string
 	LuosimaoAPIKey    string

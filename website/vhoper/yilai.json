@@ -11,5 +11,5 @@
   "markdown-it": "latest",
   "vue-infinite-scroll": "^2.0.2",
   "better-scroll": "^1.15.2",
-  "scrollmagic": "^2.0.6"
+  "scrollreveal": "^4.0.5"
 }

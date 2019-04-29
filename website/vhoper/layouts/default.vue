@@ -1,7 +1,10 @@
 <template>
   <a-locale-provider :locale="zh_CN">
     <a-layout>
-      <div class="header" style="background-color: #fff">
+      <div
+        class="header"
+        style="background-color: #fff"
+      >
         <div class="menu">
           <a-menu
             v-model="current"
@@ -71,11 +74,17 @@
                 </a-menu-item>
               </a-menu-item-group>
             </a-sub-menu>
-            <a-menu-item key="app" disabled>
+            <a-menu-item
+              key="app"
+              disabled
+            >
               <a-icon type="appstore" />
               Hoper
             </a-menu-item>
-            <a-switch :default-checked="false" @change="changeTheme" />
+            <a-switch
+              :default-checked="false"
+              @change="changeTheme"
+            />
             主题
           </a-menu>
         </div>

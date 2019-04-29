@@ -1,7 +1,14 @@
 <template>
   <a-row>
-    <a-col :span="5" style="text-align: right">
-      <a-avatar shape="square" :size="100" :src="user.avatar_url" />
+    <a-col
+      :span="5"
+      style="text-align: right"
+    >
+      <a-avatar
+        shape="square"
+        :size="100"
+        :src="user.avatar_url"
+      />
       <br>
       <a-upload
         v-show="edit"
@@ -27,10 +34,18 @@
           上传背景
         </a-button>
       </a-upload>
-      <a-button v-show="!edit" icon="edit" @click="editable">
+      <a-button
+        v-show="!edit"
+        icon="edit"
+        @click="editable"
+      >
         修改资料
       </a-button>
-      <a-button v-show="edit" icon="to-top" @click="commit">
+      <a-button
+        v-show="edit"
+        icon="to-top"
+        @click="commit"
+      >
         提交修改
       </a-button>
     </a-col>
@@ -46,8 +61,14 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input v-model="user.name" disabled>
-          <a-icon slot="prefix" type="user" />
+        <a-input
+          v-model="user.name"
+          disabled
+        >
+          <a-icon
+            slot="prefix"
+            type="user"
+          />
         </a-input>
       </a-form-item>
       <a-row>
@@ -57,7 +78,10 @@
             :label-col="{ span: 7 }"
             :wrapper-col="{ span: 10 }"
           >
-            <a-radio-group v-model="user.sex" :disabled="!edit">
+            <a-radio-group
+              v-model="user.sex"
+              :disabled="!edit"
+            >
               <a-radio-button value="男">
                 男
               </a-radio-button>
@@ -87,8 +111,14 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input v-model="user.email" disabled>
-          <a-icon slot="prefix" type="mail" />
+        <a-input
+          v-model="user.email"
+          disabled
+        >
+          <a-icon
+            slot="prefix"
+            type="mail"
+          />
         </a-input>
       </a-form-item>
       <a-form-item
@@ -96,8 +126,14 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input v-model="user.phone" disabled>
-          <a-icon slot="prefix" type="phone" />
+        <a-input
+          v-model="user.phone"
+          disabled
+        >
+          <a-icon
+            slot="prefix"
+            type="phone"
+          />
         </a-input>
       </a-form-item>
       <a-form-item
@@ -105,8 +141,14 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input v-model="user.introduction" :disabled="!edit">
-          <a-icon slot="prefix" type="profile" />
+        <a-input
+          v-model="user.introduction"
+          :disabled="!edit"
+        >
+          <a-icon
+            slot="prefix"
+            type="profile"
+          />
         </a-input>
       </a-form-item>
       <a-form-item
@@ -114,8 +156,14 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input v-model="user.signature" :disabled="!edit">
-          <a-icon slot="prefix" type="profile" />
+        <a-input
+          v-model="user.signature"
+          :disabled="!edit"
+        >
+          <a-icon
+            slot="prefix"
+            type="profile"
+          />
         </a-input>
       </a-form-item>
       <a-form-item
@@ -131,7 +179,10 @@
           :disabled="!edit"
           @change="addrChange"
         >
-          <a-icon slot="prefix" type="smile" />
+          <a-icon
+            slot="prefix"
+            type="smile"
+          />
         </a-cascader>
       </a-form-item>
       <a-form-item
@@ -140,7 +191,10 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input-group v-for="(item, index) in edu_exps" :key="index">
+        <a-input-group
+          v-for="(item, index) in edu_exps"
+          :key="index"
+        >
           <a-col :span="6">
             <a-input
               v-model="edu_exps[index].school"
@@ -161,11 +215,22 @@
               :disabled="!edit"
               @change="eduTime(index)"
             >
-              <a-icon slot="suffixIcon" type="smile" />
+              <a-icon
+                slot="suffixIcon"
+                type="smile"
+              />
             </a-range-picker>
           </a-col>
-          <a-button v-show="index === 0" icon="plus" @click="changeEdu(-1)" />
-          <a-button v-show="index > 0" icon="minus" @click="changeEdu(index)" />
+          <a-button
+            v-show="index === 0"
+            icon="plus"
+            @click="changeEdu(-1)"
+          />
+          <a-button
+            v-show="index > 0"
+            icon="minus"
+            @click="changeEdu(index)"
+          />
         </a-input-group>
       </a-form-item>
       <a-form-item
@@ -198,10 +263,17 @@
               :disabled="!edit"
               @change="workTime(index)"
             >
-              <a-icon slot="suffixIcon" type="smile" />
+              <a-icon
+                slot="suffixIcon"
+                type="smile"
+              />
             </a-range-picker>
           </a-col>
-          <a-button v-show="index === 0" icon="plus" @click="changeWork(-1)" />
+          <a-button
+            v-show="index === 0"
+            icon="plus"
+            @click="changeWork(-1)"
+          />
           <a-button
             v-show="index > 0"
             icon="minus"
@@ -377,7 +449,7 @@ export default {
           time: []
         })
         return
-      } else this.$message.warning('添加过多!')
+      } else {this.$message.warning('添加过多!')}
       if (index >= 0 && this.edu_exps.length > 0) {
         this.edu_exps.splice(index, 1)
       }
@@ -393,7 +465,7 @@ export default {
           time: []
         })
         return
-      } else this.$message.warning('添加过多!')
+      } else {this.$message.warning('添加过多!')}
 
       if (index >= 0 && this.work_exps.length > 0) {
         this.work_exps.splice(index, 1)
@@ -424,7 +496,7 @@ export default {
         this.$store.commit('SET_USER', res.data)
         this.edit = false
         this.$message.info('修改成功')
-      } else this.$message.info('修改失败')
+      } else {this.$message.info('修改失败')}
     },
     eduTime(index) {
       this.edu_exps[index].start_time = this.edu_exps[index].time[0]

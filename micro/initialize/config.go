@@ -25,7 +25,6 @@ type ServerConfig struct {
 	PageSize        int8
 	RuntimeRootPath string
 
-	ImagePrefixUrl string
 	UploadDir      string
 	UploadPath     string
 	UploadMaxSize  int
@@ -43,7 +42,6 @@ type ServerConfig struct {
 	MailPort     int
 	MailUser     string
 	MailPassword string
-	MailFrom     string
 
 	LuosimaoVerifyURL string
 	LuosimaoAPIKey    string

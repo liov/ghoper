@@ -5,14 +5,20 @@
         ss
       </nuxt-link>
     </a-col>
-    <a-col v-if="!isLogin" :span="12">
+    <a-col
+      v-if="!isLogin"
+      :span="12"
+    >
       <a-form :form="user">
         <a-form-item
           label=""
           :label-col="{ span: 3, offset: 6 }"
           :wrapper-col="{ span: 6, offset: 6 }"
         >
-          <a-radio-group default-value="login" @change="handleChange">
+          <a-radio-group
+            default-value="login"
+            @change="handleChange"
+          >
             <a-radio-button value="login">
               登录
             </a-radio-button>
@@ -145,13 +151,19 @@
           :label-col="formTailLayout.labelCol"
           :wrapper-col="formTailLayout.wrapperCol"
         >
-          <a-button type="primary" @click="check">
+          <a-button
+            type="primary"
+            @click="check"
+          >
             {{ formType === 'login' ? '登录' : '注册' }}
           </a-button>
         </a-form-item>
       </a-form>
     </a-col>
-    <a-col v-if="isLogin" :span="12">
+    <a-col
+      v-if="isLogin"
+      :span="12"
+    >
       <nuxt-link to="/user/self">
         <a-button>
           个人信息
@@ -232,7 +244,7 @@ export default {
               vm.$message.info('登录成功')
               if (vm.$route.query.callbackUrl !== undefined) {
                 vm.$router.replace(vm.$route.query.callbackUrl)
-              } else vm.$router.replace('/')
+              } else {vm.$router.replace('/')}
             } else if (res.msg === '注册成功') {
               vm.$message.info('注册成功，请到邮箱激活')
             }

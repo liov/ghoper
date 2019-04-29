@@ -12,7 +12,10 @@
           </a-button>
         </nuxt-link>
         <a-affix :offset-top="top">
-          <a-button type="primary" @click="showDrawer">
+          <a-button
+            type="primary"
+            @click="showDrawer"
+          >
             固钉
           </a-button>
         </a-affix>
@@ -42,11 +45,20 @@
           style="padding-bottom:0 "
         >
           <a-comment>
-            <nuxt-link slot="author" :to="'/user/' + item.user.id">
+            <nuxt-link
+              slot="author"
+              :to="'/user/' + item.user.id"
+            >
               <span>{{ item.user.name }}</span>
             </nuxt-link>
-            <nuxt-link slot="avatar" :to="'/user/' + item.user.id">
-              <a-avatar :src="item.user.avatar_url" alt="头像" />
+            <nuxt-link
+              slot="avatar"
+              :to="'/user/' + item.user.id"
+            >
+              <a-avatar
+                :src="item.user.avatar_url"
+                alt="头像"
+              />
             </nuxt-link>
             <span
               slot="actions"
@@ -106,11 +118,17 @@
               />
               评论：{{ item.comment_count }}
             </span>
-            <span slot="actions" style="margin-right: 10px">
+            <span
+              slot="actions"
+              style="margin-right: 10px"
+            >
               浏览：{{ item.browse_count }}
             </span>
 
-            <template slot="actions" style="margin:0 10px">
+            <template
+              slot="actions"
+              style="margin:0 10px"
+            >
               <a-tag
                 v-for="(subitem, subindex) in item.tags"
                 :key="subindex"
@@ -134,14 +152,20 @@
               alt="logo"
               :src="subitem"
             >
-            <a-tooltip slot="datetime" :title="item.created_at | dateFormat">
+            <a-tooltip
+              slot="datetime"
+              :title="item.created_at | dateFormat"
+            >
               <span>{{ item.created_at | dateFormat }}</span>
               <a-divider type="vertical" />
             </a-tooltip>
             <a-tooltip slot="datetime">
               <span>{{ $s2date(item.created_at).fromNow() }}</span>
             </a-tooltip>
-            <a-tooltip v-if="item.mood.name !== ''" slot="datetime">
+            <a-tooltip
+              v-if="item.mood.name !== ''"
+              slot="datetime"
+            >
               <a-divider type="vertical" />
               <span>心情：{{ item.mood.name }}</span>
             </a-tooltip>
@@ -159,9 +183,16 @@
           </a-comment>
         </a-list-item>
       </a-list>
-      <a-modal v-model="collectVisible" title="Title" on-ok="handleOk">
+      <a-modal
+        v-model="collectVisible"
+        title="Title"
+        on-ok="handleOk"
+      >
         <template slot="footer">
-          <a-button key="back" @click="collectCancel">
+          <a-button
+            key="back"
+            @click="collectCancel"
+          >
             取消
           </a-button>
           <a-button
@@ -185,7 +216,10 @@
             placeholder="请选择收藏夹"
             style="width: 200px"
           >
-            <a-select-option v-for="item in existFavorites" :key="item.id">
+            <a-select-option
+              v-for="item in existFavorites"
+              :key="item.id"
+            >
               {{ item.name }}
             </a-select-option>
           </a-select>
@@ -202,7 +236,10 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-button style="margin-top: 5px" @click="addFavorite">
+            <a-button
+              style="margin-top: 5px"
+              @click="addFavorite"
+            >
               添加
             </a-button>
           </a-col>
@@ -217,7 +254,10 @@
         :page-size="pageSize"
         @showSizeChange="onShowSizeChange"
       >
-        <template slot="buildOptionText" slot-scope="props">
+        <template
+          slot="buildOptionText"
+          slot-scope="props"
+        >
           <span v-if="props.value !== '50'">{{ props.value }}条/页</span>
           <span v-if="props.value === '50'">全部</span>
         </template>
@@ -330,7 +370,9 @@ export default {
       if (res !== undefined) {
         this.existFavorites = res.data
         this.favorites = [this.existFavorites[0].id]
-      } else this.$message.error('无法获取收藏夹')
+      } else {
+        this.$message.error('无法获取收藏夹')
+      }
     },
     async handleOk(e) {
       this.loading = true
@@ -345,7 +387,9 @@ export default {
         this.momentList[this.tmpIdx].collect_count += 1
         this.user_action.collect.push(this.ref_id)
         // this.setLocalAction('moment', this.ref_id)
-      } else this.$message.error(res.msg)
+      } else {
+        this.$message.error(res.msg)
+      }
       this.loading = false
       this.collectVisible = false
     },
@@ -404,7 +448,9 @@ export default {
       const res = await this.$axios.$post('/api/favorites', {
         name: this.favorite
       })
-      if (res.code === 200) this.$message.info('添加收藏夹成功')
+      if (res.code === 200) {
+        this.$message.info('添加收藏夹成功')
+      }
       this.existFavorites.push(res.data)
       this.favorites.push(res.data.id)
       this.favorite = ''

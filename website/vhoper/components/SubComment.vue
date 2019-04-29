@@ -1,5 +1,8 @@
 <template>
-  <a-list item-layout="horizontal" :data-source="subComments">
+  <a-list
+    item-layout="horizontal"
+    :data-source="subComments"
+  >
     <div
       slot="loadMore"
       :style="{
@@ -9,10 +12,16 @@
         lineHeight: '32px'
       }"
     >
-      <a-spin v-if="loading" :id="'loading' + index" />
+      <a-spin
+        v-if="loading"
+        :id="'loading' + index"
+      />
       <span v-else>已经到底</span>
     </div>
-    <a-list-item slot="renderItem" slot-scope="subComment, subIndex">
+    <a-list-item
+      slot="renderItem"
+      slot-scope="subComment, subIndex"
+    >
       <a-comment
         :key="subIndex"
         :author="subComment.user.name"
@@ -65,12 +74,13 @@
           slot="datetime"
           :title="subComment.user.name"
         >
-          <span>@<nuxt-link :to="'/user/' + subComment.recv_user.id">{{
-            subComment.user.name
-          }}</nuxt-link></span>
+          <span>@<nuxt-link :to="'/user/' + subComment.recv_user.id">{{ subComment.user.name }}</nuxt-link></span>
           <a-divider type="vertical" />
         </span>
-        <a-tooltip slot="datetime" :title="subComment.created_at | dateFormat">
+        <a-tooltip
+          slot="datetime"
+          :title="subComment.created_at | dateFormat"
+        >
           <span>{{ subComment.created_at | dateFormat }}</span>
           <a-divider type="vertical" />
         </a-tooltip>
@@ -99,6 +109,7 @@ export default {
   mounted() {
     const vm = this
 
+    const ScrollMagic = require('scrollmagic')
     this.$nextTick(() => {
       // build scene
       this.scene = new ScrollMagic.Scene({

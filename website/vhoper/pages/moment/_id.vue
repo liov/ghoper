@@ -3,13 +3,26 @@
     <a-col :span="2" />
     <a-col :span="20">
       <a-comment>
-        <nuxt-link slot="author" :to="'/user/' + moment.user.id">
+        <nuxt-link
+          slot="author"
+          :to="'/user/' + moment.user.id"
+        >
           <span>{{ moment.user.name }}</span>
         </nuxt-link>
-        <nuxt-link slot="avatar" :to="'/user/' + moment.user.id">
-          <a-avatar :src="moment.user.avatar_url" alt="头像" />
+        <nuxt-link
+          slot="avatar"
+          :to="'/user/' + moment.user.id"
+        >
+          <a-avatar
+            :src="moment.user.avatar_url"
+            alt="头像"
+          />
         </nuxt-link>
-        <span slot="actions" style="margin-right: 10px" @click="star()">
+        <span
+          slot="actions"
+          style="margin-right: 10px"
+          @click="star()"
+        >
           <a-icon
             type="star"
             :theme="
@@ -21,7 +34,11 @@
           />
           收藏：{{ moment.collect_count }}
         </span>
-        <span slot="actions" style="margin-right: 10px" @click="like()">
+        <span
+          slot="actions"
+          style="margin-right: 10px"
+          @click="like()"
+        >
           <a-icon
             type="heart"
             :theme="
@@ -31,7 +48,11 @@
           />
           喜欢：{{ moment.like_count }}
         </span>
-        <span slot="actions" style="margin-right: 10px" @click="approve()">
+        <span
+          slot="actions"
+          style="margin-right: 10px"
+          @click="approve()"
+        >
           <a-icon
             type="like"
             :theme="
@@ -59,11 +80,17 @@
           />
           评论：{{ moment.comment_count }}
         </span>
-        <span slot="actions" style="margin-right: 10px">
+        <span
+          slot="actions"
+          style="margin-right: 10px"
+        >
           浏览：{{ moment.browse_count }}
         </span>
 
-        <template slot="actions" style="margin:0 10px">
+        <template
+          slot="actions"
+          style="margin:0 10px"
+        >
           <a-tag
             v-for="(subitem, subindex) in moment.tags"
             :key="subindex"
@@ -87,7 +114,10 @@
           alt="logo"
           :src="subitem"
         >
-        <a-tooltip slot="datetime" :title="moment.created_at | dateFormat">
+        <a-tooltip
+          slot="datetime"
+          :title="moment.created_at | dateFormat"
+        >
           <span>{{ moment.created_at | dateFormat }}</span>
           <a-divider type="vertical" />
         </a-tooltip>
@@ -106,9 +136,16 @@
           <span>编辑</span>
         </nuxt-link>
       </a-comment>
-      <a-modal v-model="collectVisible" title="Title" on-ok="handleOk">
+      <a-modal
+        v-model="collectVisible"
+        title="Title"
+        on-ok="handleOk"
+      >
         <template slot="footer">
-          <a-button key="back" @click="collectCancel">
+          <a-button
+            key="back"
+            @click="collectCancel"
+          >
             取消
           </a-button>
           <a-button
@@ -132,7 +169,10 @@
             placeholder="请选择收藏夹"
             style="width: 200px"
           >
-            <a-select-option v-for="item in existFavorites" :key="item.id">
+            <a-select-option
+              v-for="item in existFavorites"
+              :key="item.id"
+            >
               {{ item.name }}
             </a-select-option>
           </a-select>
@@ -149,7 +189,10 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-button style="margin-top: 5px" @click="addFavorite">
+            <a-button
+              style="margin-top: 5px"
+              @click="addFavorite"
+            >
               添加
             </a-button>
           </a-col>
@@ -168,7 +211,10 @@
         on-ok="commentHandleOk"
       >
         <template slot="footer">
-          <a-button key="back" @click="handleCancel">
+          <a-button
+            key="back"
+            @click="handleCancel"
+          >
             返回
           </a-button>
           <a-button
@@ -181,10 +227,18 @@
           </a-button>
         </template>
         <a-comment>
-          <a-avatar slot="avatar" :src="user.avatar_url" alt="Han Solo" />
+          <a-avatar
+            slot="avatar"
+            :src="user.avatar_url"
+            alt="Han Solo"
+          />
           <div slot="content">
             <a-form-item>
-              <a-textarea :rows="4" :value="value" @change="handleChange" />
+              <a-textarea
+                :rows="4"
+                :value="value"
+                @change="handleChange"
+              />
             </a-form-item>
           </div>
         </a-comment>
@@ -250,7 +304,7 @@ export default {
       if (res !== undefined) {
         this.existFavorites = res.data
         this.favorites = [this.existFavorites[0].id]
-      } else this.$message.error('无法获取收藏夹')
+      } else {this.$message.error('无法获取收藏夹')}
     },
     async handleOk(e) {
       this.loading = true
@@ -264,7 +318,7 @@ export default {
         this.$message.info('收藏成功')
         this.moment.collect_count += 1
         this.user_action.collect.push(this.moment.id)
-      } else this.$message.error(res.msg)
+      } else {this.$message.error(res.msg)}
       this.loading = false
       this.collectVisible = false
     },
@@ -318,7 +372,7 @@ export default {
       const res = await this.$axios.$post('/api/favorites', {
         name: this.favorite
       })
-      if (res.code === 200) this.$message.info('添加收藏夹成功')
+      if (res.code === 200) {this.$message.info('添加收藏夹成功')}
       this.existFavorites.push(res.data)
       this.favorites.push(res.data.id)
       this.favorite = ''
@@ -347,7 +401,7 @@ export default {
       if (res.code === 200) {
         this.$message.info('评论成功')
         this.value = ''
-      } else this.$message.error(res.msg)
+      } else {this.$message.error(res.msg)}
       this.submitting = false
       this.visible = false
     },

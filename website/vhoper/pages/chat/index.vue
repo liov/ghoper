@@ -1,6 +1,9 @@
 <template>
   <a-row>
-    <a-col :span="2" style="padding: 24px 0">
+    <a-col
+      :span="2"
+      style="padding: 24px 0"
+    >
       <div style="text-align: center">
         死<br>生<br>契<br>阔<br>，<br>与<br>子<br>成<br>说<br>。
       </div>
@@ -15,13 +18,25 @@
         item-layout="horizontal"
         :data-source="msgs"
       >
-        <a-list-item slot="renderItem" slot-scope="item">
+        <a-list-item
+          slot="renderItem"
+          slot-scope="item"
+        >
           <a-comment>
-            <nuxt-link slot="author" :to="'/user/' + item.send_user.id">
+            <nuxt-link
+              slot="author"
+              :to="'/user/' + item.send_user.id"
+            >
               <span>{{ item.send_user.name }}</span>
             </nuxt-link>
-            <nuxt-link slot="avatar" :to="'/user/' + item.send_user.id">
-              <a-avatar :src="item.send_user.avatar_url" alt="头像" />
+            <nuxt-link
+              slot="avatar"
+              :to="'/user/' + item.send_user.id"
+            >
+              <a-avatar
+                :src="item.send_user.avatar_url"
+                alt="头像"
+              />
             </nuxt-link>
             <!--   <template slot="actions">
               <span v-for="(action,index) in item.actions" :key="index">{{ action }}</span>
@@ -29,7 +44,10 @@
             <p slot="content">
               {{ item.content }}
             </p>
-            <a-tooltip slot="datetime" :title="item.created_at">
+            <a-tooltip
+              slot="datetime"
+              :title="item.created_at"
+            >
               <span>{{ item.created_at | dateFormat }}</span>
             </a-tooltip>
           </a-comment>
@@ -45,7 +63,11 @@
           />
           <div slot="content">
             <a-form-item>
-              <a-textarea :rows="4" :value="value" @change="handleChange" />
+              <a-textarea
+                :rows="4"
+                :value="value"
+                @change="handleChange"
+              />
             </a-form-item>
             <a-form-item>
               <a-button

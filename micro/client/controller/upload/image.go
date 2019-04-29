@@ -12,7 +12,7 @@ import (
 )
 
 func GetImageFullUrl(name string) string {
-	return initialize.Config.Server.ImagePrefixUrl + "/" + GetImagePath() + name
+	return "/" + GetImagePath() + name
 }
 
 func GetImageName(name string) string {

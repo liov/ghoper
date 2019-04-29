@@ -16,12 +16,18 @@
         lineHeight: '32px'
       }"
     >
-      <a-spin v-if="loading" id="loading" />
+      <a-spin
+        v-if="loading"
+        id="loading"
+      />
       <span v-else>
         已经到底
       </span>
     </div>
-    <a-list-item slot="renderItem" slot-scope="item, index">
+    <a-list-item
+      slot="renderItem"
+      slot-scope="item, index"
+    >
       <!--      <img
         v-for="(src,sidx) in item"
         :key="sidx"
@@ -32,11 +38,21 @@
       >-->
 
       <a-row style="width: 1000px">
-        <a-col :span="2" style="margin: 16px 0">
-          <a-avatar shape="square" :size="80" :src="item.user.avatar_url" />
+        <a-col
+          :span="2"
+          style="margin: 16px 0"
+        >
+          <a-avatar
+            shape="square"
+            :size="80"
+            :src="item.user.avatar_url"
+          />
         </a-col>
         <a-col :span="21">
-          <a-comment :key="index" :author="item.user.name">
+          <a-comment
+            :key="index"
+            :author="item.user.name"
+          >
             <span slot="actions">
               <span>
                 <a-tooltip title="Like">
@@ -62,7 +78,10 @@
                   {{ dislikes }}
                 </span>
               </span>
-              <span style="padding-right: 8px" @click="reply(item)">回复</span>
+              <span
+                style="padding-right: 8px"
+                @click="reply(item)"
+              >回复</span>
               <span
                 v-if="
                   $store.state.user && $store.state.user.id === item.user.id
@@ -86,7 +105,10 @@
               }}</nuxt-link></span>
               <a-divider type="vertical" />
             </span>
-            <a-tooltip slot="datetime" :title="item.created_at | dateFormat">
+            <a-tooltip
+              slot="datetime"
+              :title="item.created_at | dateFormat"
+            >
               <span>{{ item.created_at | dateFormat }}</span>
               <a-divider type="vertical" />
             </a-tooltip>
@@ -99,7 +121,10 @@
               default-active-key="1"
               :bordered="false"
             >
-              <a-collapse-panel key="1" header="收起评论">
+              <a-collapse-panel
+                key="1"
+                header="收起评论"
+              >
                 <div class="sub-comments">
                   <sub-comment
                     :ref="'subComment' + index"
@@ -117,7 +142,10 @@
             </a-collapse>
           </a-comment>
         </a-col>
-        <a-col :span="1" style="margin: 16px 0">
+        <a-col
+          :span="1"
+          style="margin: 16px 0"
+        >
           {{ index + 1 }}楼
         </a-col>
       </a-row>
@@ -149,8 +177,7 @@ export default {
   },
   mounted() {
     const vm = this
-    const ScrollReveal = require('scrollreveal')
-    ScrollReveal.default().reveal('.sub-comments')
+    const ScrollMagic = require('scrollmagic')
     this.controller = new ScrollMagic.Controller()
     this.$nextTick(() => {
       // build scene

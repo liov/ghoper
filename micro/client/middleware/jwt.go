@@ -37,7 +37,7 @@ func GetUser(fullInfo bool) iris.Handler {
 				Name:     "token",
 				Value:    "del",
 				Path:     "/",
-				Domain:   "hoper.xyz",
+				Domain:   ctx.Host(),
 				Expires:  time.Now().Add(-1),
 				MaxAge:   -1,
 				Secure:   false,

@@ -18,21 +18,47 @@
         </a-breadcrumb-item>
         <a-breadcrumb-item>列表</a-breadcrumb-item>
       </a-breadcrumb>
-      <a-list item-layout="vertical" size="large" :data-source="articleList">
+      <a-list
+        item-layout="vertical"
+        size="large"
+        :data-source="articleList"
+      >
         <div slot="footer">
           <b />
         </div>
-        <a-list-item slot="renderItem" key="item.title" slot-scope="item">
-          <span slot="actions" @click="star(item.id)">
-            <a-icon type="star-o" style="margin-right: 8px" />
+        <a-list-item
+          slot="renderItem"
+          key="item.title"
+          slot-scope="item"
+        >
+          <span
+            slot="actions"
+            @click="star(item.id)"
+          >
+            <a-icon
+              type="star-o"
+              style="margin-right: 8px"
+            />
             {{ item.collect_count }}
           </span>
-          <span slot="actions" @click="like(item.id)">
-            <a-icon type="like-o" style="margin-right: 8px" />
+          <span
+            slot="actions"
+            @click="like(item.id)"
+          >
+            <a-icon
+              type="like-o"
+              style="margin-right: 8px"
+            />
             {{ item.like_count }}
           </span>
-          <span slot="actions" @click="comment(item.id)">
-            <a-icon type="message" style="margin-right: 8px" />
+          <span
+            slot="actions"
+            @click="comment(item.id)"
+          >
+            <a-icon
+              type="message"
+              style="margin-right: 8px"
+            />
             {{ item.comment_count }}
           </span>
 
@@ -64,32 +90,54 @@
           >
           <a-list-item-meta :description="item.intro">
             <a-row slot="title">
-              <a-col :span="3" style="font-size: 10px">
+              <a-col
+                :span="3"
+                style="font-size: 10px"
+              >
                 <nuxt-link :to="'/user/' + item.user.id">
                   {{ item.user.name }}
                 </nuxt-link>
               </a-col>
               <nuxt-link :to="'/article/' + item.id">
-                <a-col :span="15" style="color:rgba(0, 0, 0, 0.85)">
+                <a-col
+                  :span="15"
+                  style="color:rgba(0, 0, 0, 0.85)"
+                >
                   {{ item.title }}
                 </a-col>
               </nuxt-link>
-              <a-col :span="6" style="font-size: 10px">
+              <a-col
+                :span="6"
+                style="font-size: 10px"
+              >
                 <span> {{ item.created_at | dateFormat }}</span>
                 <a-divider type="vertical" />
                 <span>{{ $s2date(item.created_at).fromNow() }}</span>
               </a-col>
             </a-row>
 
-            <nuxt-link slot="avatar" :to="'/user/' + item.user.id">
-              <a-avatar :src="item.user.avatar_url" alt="头像" />
+            <nuxt-link
+              slot="avatar"
+              :to="'/user/' + item.user.id"
+            >
+              <a-avatar
+                :src="item.user.avatar_url"
+                alt="头像"
+              />
             </nuxt-link>
           </a-list-item-meta>
         </a-list-item>
       </a-list>
-      <a-modal v-model="visible" title="Title" on-ok="handleOk">
+      <a-modal
+        v-model="visible"
+        title="Title"
+        on-ok="handleOk"
+      >
         <template slot="footer">
-          <a-button key="back" @click="handleCancel">
+          <a-button
+            key="back"
+            @click="handleCancel"
+          >
             取消
           </a-button>
           <a-button
@@ -113,7 +161,10 @@
             placeholder="请选择收藏夹"
             style="width: 200px"
           >
-            <a-select-option v-for="item in existFavorites" :key="item.id">
+            <a-select-option
+              v-for="item in existFavorites"
+              :key="item.id"
+            >
               {{ item.name }}
             </a-select-option>
           </a-select>
@@ -130,7 +181,10 @@
             </a-form-item>
           </a-col>
           <a-col :span="8">
-            <a-button style="margin-top: 5px" @click="addFavorite">
+            <a-button
+              style="margin-top: 5px"
+              @click="addFavorite"
+            >
               添加
             </a-button>
           </a-col>
@@ -145,7 +199,10 @@
         :page-size="pageSize"
         @showSizeChange="onShowSizeChange"
       >
-        <template slot="buildOptionText" slot-scope="props">
+        <template
+          slot="buildOptionText"
+          slot-scope="props"
+        >
           <span v-if="props.value !== '50'">{{ props.value }}条/页</span>
           <span v-if="props.value === '50'">全部</span>
         </template>
@@ -212,7 +269,7 @@ export default {
       if (res !== undefined) {
         this.existFavorites = res.data
         this.favorites.push(this.existFavorites[0].id)
-      } else this.$message.error('无法获取收藏夹')
+      } else {this.$message.error('无法获取收藏夹')}
     },
     async handleOk(e) {
       this.loading = true
@@ -222,7 +279,7 @@ export default {
         favorites_ids: this.favorites
       }
       const res = await this.$axios.$post('/api/collection', params)
-      if (res.code === 200) this.$message.info('收藏成功')
+      if (res.code === 200) {this.$message.info('收藏成功')}
       this.loading = false
       this.visible = false
     },

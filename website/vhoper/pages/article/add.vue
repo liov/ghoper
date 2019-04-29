@@ -1,13 +1,19 @@
 <template>
   <div class="article">
     <a-row>
-      <a-col :span="5" style="z-index: 0">
+      <a-col
+        :span="5"
+        style="z-index: 0"
+      >
         <a-form-item
           label=""
           :label-col="{ span: 4, offset: 2 }"
           :wrapper-col="{ span: 24, offset: 2 }"
         >
-          <a-radio-group v-model="editorType" @change="handleChange">
+          <a-radio-group
+            v-model="editorType"
+            @change="handleChange"
+          >
             <a-radio-button value="markdown">
               markdown
             </a-radio-button>
@@ -15,7 +21,10 @@
               富文本
             </a-radio-button>
           </a-radio-group>
-          <a-button v-if="editorType === 'html'" @click="save">
+          <a-button
+            v-if="editorType === 'html'"
+            @click="save"
+          >
             <a-icon type="save" />
           </a-button>
         </a-form-item>
@@ -27,7 +36,10 @@
           :label-col="{ span: 4 }"
           :wrapper-col="{ span: 18 }"
         >
-          <a-input v-model="article.title" placeholder="请输入标题！" />
+          <a-input
+            v-model="article.title"
+            placeholder="请输入标题！"
+          />
         </a-form-item>
       </a-col>
       <a-col :span="6">
@@ -52,7 +64,10 @@
               </a-upload>
             </a-col>
             <a-col :span="8">
-              <a-button class="formbuttion" @click="showImage = !showImage">
+              <a-button
+                class="formbuttion"
+                @click="showImage = !showImage"
+              >
                 <span v-if="!showImage">显示封面</span>
                 <span v-if="showImage">不显示封面</span>
               </a-button>
@@ -63,7 +78,10 @@
     </a-row>
 
     <div align="center">
-      <img v-if="showImage" :src="imageUrl">
+      <img
+        v-if="showImage"
+        :src="imageUrl"
+      >
     </div>
     <div id="tag">
       <a-row>
@@ -80,7 +98,10 @@
               placeholder="请选择分类"
               style="width: 200px"
             >
-              <a-select-option v-for="item in existCategories" :key="item.id">
+              <a-select-option
+                v-for="item in existCategories"
+                :key="item.id"
+              >
                 {{ item.name }}
               </a-select-option>
             </a-select>
@@ -99,7 +120,10 @@
               placeholder="请选择标签"
               style="width: 200px"
             >
-              <a-select-option v-for="item in existTags" :key="item.name">
+              <a-select-option
+                v-for="item in existTags"
+                :key="item.name"
+              >
                 {{ item.name }}
               </a-select-option>
             </a-select>
@@ -116,7 +140,10 @@
                 <a-input v-model="tag" />
               </a-col>
               <a-col :span="6">
-                <a-button class="formbuttion" @click="addTag">
+                <a-button
+                  class="formbuttion"
+                  @click="addTag"
+                >
                   添加
                 </a-button>
               </a-col>
@@ -141,10 +168,16 @@
               <a-select-option :key="1">
                 自己可见
               </a-select-option>
-              <a-select-option :key="2" disabled>
+              <a-select-option
+                :key="2"
+                disabled
+              >
                 部分可见
               </a-select-option>
-              <a-select-option :key="3" disabled>
+              <a-select-option
+                :key="3"
+                disabled
+              >
                 陌生人可见
               </a-select-option>
             </a-select>
@@ -340,8 +373,8 @@ export default {
         .$post(`/api/article`, this.article)
         .then(function (res) {
           // success
-          if (res.code === 200) vm.$router.push({ path: '/article' })
-          else vm.$message.error(res.msg)
+          if (res.code === 200) {vm.$router.push({ path: '/article' })}
+          else {vm.$message.error(res.msg)}
         })
         .catch(function (err) {
           vm.$message.error(err)

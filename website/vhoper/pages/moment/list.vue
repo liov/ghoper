@@ -1,6 +1,9 @@
 <template>
   <div>
-    <a-radio-group v-model="mode" :style="{ marginBottom: '8px' }">
+    <a-radio-group
+      v-model="mode"
+      :style="{ marginBottom: '8px' }"
+    >
       <a-radio-button value="top">
         Horizontal
       </a-radio-button>
@@ -14,7 +17,10 @@
       @prevClick="callback"
       @nextClick="callback"
     >
-      <a-tab-pane key="1" tab="Tab 1">
+      <a-tab-pane
+        key="1"
+        tab="Tab 1"
+      >
         <a-table
           :data-source="momentList"
           :row-key="record => record.id"
@@ -23,17 +29,34 @@
           :loading="loading"
           @change="handleTableChange"
         >
-          <a-table-column key="id" title="ID" data-index="id" />
-          <a-table-column key="user.name" title="作者" data-index="user.name" />
+          <a-table-column
+            key="id"
+            title="ID"
+            data-index="id"
+          />
+          <a-table-column
+            key="user.name"
+            title="作者"
+            data-index="user.name"
+          />
           <a-table-column
             key="user.avatar_url"
             title="头像"
             data-index="user.avatar_url"
           />
           <a-table-column-group>
-            <span slot="title" style="color: #1890ff">喜欢</span>
-            <a-table-column key="collect_count" data-index="collect_count">
-              <span slot="title" style="color: #1890ff">收藏</span>
+            <span
+              slot="title"
+              style="color: #1890ff"
+            >喜欢</span>
+            <a-table-column
+              key="collect_count"
+              data-index="collect_count"
+            >
+              <span
+                slot="title"
+                style="color: #1890ff"
+              >收藏</span>
             </a-table-column>
             <a-table-column
               key="like_count"
@@ -52,16 +75,27 @@
             />
           </a-table-column-group>
 
-          <a-table-column key="tags" title="标签" data-index="tags">
+          <a-table-column
+            key="tags"
+            title="标签"
+            data-index="tags"
+          >
             <template slot-scope="tags">
               <span>
-                <a-tag v-for="tag in tags" :key="tag.name" color="blue">{{
+                <a-tag
+                  v-for="tag in tags"
+                  :key="tag.name"
+                  color="blue"
+                >{{
                   tag.name
                 }}</a-tag>
               </span>
             </template>
           </a-table-column>
-          <a-table-column key="action" title="操作">
+          <a-table-column
+            key="action"
+            title="操作"
+          >
             <template slot-scope="text, record">
               <span>
                 <a href="javascript:;">Action 一 {{ record.id }}</a>
@@ -72,34 +106,64 @@
           </a-table-column>
         </a-table>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="Tab 2">
+      <a-tab-pane
+        key="2"
+        tab="Tab 2"
+      >
         Content of tab 2
       </a-tab-pane>
-      <a-tab-pane key="3" tab="Tab 3">
+      <a-tab-pane
+        key="3"
+        tab="Tab 3"
+      >
         Content of tab 3
       </a-tab-pane>
-      <a-tab-pane key="4" tab="Tab 4">
+      <a-tab-pane
+        key="4"
+        tab="Tab 4"
+      >
         Content of tab 4
       </a-tab-pane>
-      <a-tab-pane key="5" tab="Tab 5">
+      <a-tab-pane
+        key="5"
+        tab="Tab 5"
+      >
         Content of tab 5
       </a-tab-pane>
-      <a-tab-pane key="6" tab="Tab 6">
+      <a-tab-pane
+        key="6"
+        tab="Tab 6"
+      >
         Content of tab 6
       </a-tab-pane>
-      <a-tab-pane key="7" tab="Tab 7">
+      <a-tab-pane
+        key="7"
+        tab="Tab 7"
+      >
         Content of tab 7
       </a-tab-pane>
-      <a-tab-pane key="8" tab="Tab 8">
+      <a-tab-pane
+        key="8"
+        tab="Tab 8"
+      >
         Content of tab 8
       </a-tab-pane>
-      <a-tab-pane key="9" tab="Tab 9">
+      <a-tab-pane
+        key="9"
+        tab="Tab 9"
+      >
         Content of tab 9
       </a-tab-pane>
-      <a-tab-pane key="10" tab="Tab 10">
+      <a-tab-pane
+        key="10"
+        tab="Tab 10"
+      >
         Content of tab 10
       </a-tab-pane>
-      <a-tab-pane key="11" tab="Tab 11">
+      <a-tab-pane
+        key="11"
+        tab="Tab 11"
+      >
         Content of tab 11
       </a-tab-pane>
     </a-tabs>
