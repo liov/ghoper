@@ -3,16 +3,20 @@
     <a-col :span="2" />
     <a-col :span="20">
       <a-comment>
-        <nuxt-link slot="author" :to="'/user/'+moment.user.id">
+        <nuxt-link slot="author" :to="'/user/' + moment.user.id">
           <span>{{ moment.user.name }}</span>
         </nuxt-link>
-        <nuxt-link slot="avatar" :to="'/user/'+moment.user.id">
+        <nuxt-link slot="avatar" :to="'/user/' + moment.user.id">
           <a-avatar :src="moment.user.avatar_url" alt="头像" />
         </nuxt-link>
         <span slot="actions" style="margin-right: 10px" @click="star()">
           <a-icon
             type="star"
-            :theme="user_action.collect.indexOf(moment.id)>-1?'twoTone':'outlined'"
+            :theme="
+              user_action.collect.indexOf(moment.id) > -1
+                ? 'twoTone'
+                : 'outlined'
+            "
             two-tone-color="#eb2f96"
           />
           收藏：{{ moment.collect_count }}
@@ -20,25 +24,39 @@
         <span slot="actions" style="margin-right: 10px" @click="like()">
           <a-icon
             type="heart"
-            :theme="user_action.like.indexOf(moment.id)>-1?'twoTone':'outlined'"
+            :theme="
+              user_action.like.indexOf(moment.id) > -1 ? 'twoTone' : 'outlined'
+            "
             two-tone-color="#eb2f96"
           />
           喜欢：{{ moment.like_count }}
         </span>
         <span slot="actions" style="margin-right: 10px" @click="approve()">
-          <a-icon type="like" :theme="user_action.approve.indexOf(moment.id)>-1?'twoTone':'outlined'" />
+          <a-icon
+            type="like"
+            :theme="
+              user_action.approve.indexOf(moment.id) > -1
+                ? 'twoTone'
+                : 'outlined'
+            "
+          />
           点赞：{{ moment.approve_count }}
         </span>
         <span
           slot="actions"
           style="margin-right: 10px"
-          @click="showModal({
-            user: moment.user,
-            user_id: moment.user_id,
-            parent_id: 0
-          })"
+          @click="
+            showModal({
+              user: moment.user,
+              user_id: moment.user_id,
+              parent_id: 0
+            })
+          "
         >
-          <a-icon type="message" :theme="moment.id>0?'twoTone':'outlined'" />
+          <a-icon
+            type="message"
+            :theme="moment.id > 0 ? 'twoTone' : 'outlined'"
+          />
           评论：{{ moment.comment_count }}
         </span>
         <span slot="actions" style="margin-right: 10px">
@@ -46,53 +64,67 @@
         </span>
 
         <template slot="actions" style="margin:0 10px">
-          <a-tag v-for="(subitem,subindex) in moment.tags" :key="subindex" :color="color[subindex]">
+          <a-tag
+            v-for="(subitem, subindex) in moment.tags"
+            :key="subindex"
+            :color="color[subindex]"
+          >
             {{ subitem.name }}
           </a-tag>
         </template>
 
         <template slot="content">
-          <div style="margin: .5rem .5rem 0 .5rem" v-html="$md.render(moment.content)" />
+          <div
+            style="margin: .5rem .5rem 0 .5rem"
+            v-html="$md.render(moment.content)"
+          />
         </template>
         <img
-          v-for="(subitem,subindex) in image_url"
+          v-for="(subitem, subindex) in image_url"
           :key="subindex"
           slot="content"
           height="120"
           alt="logo"
           :src="subitem"
         >
-        <a-tooltip slot="datetime" :title="moment.created_at|dateFormat">
-          <span>{{ moment.created_at|dateFormat }}</span>
+        <a-tooltip slot="datetime" :title="moment.created_at | dateFormat">
+          <span>{{ moment.created_at | dateFormat }}</span>
           <a-divider type="vertical" />
         </a-tooltip>
         <a-tooltip slot="datetime">
           <span>{{ $s2date(moment.created_at).fromNow() }}</span>
         </a-tooltip>
-        <nuxt-link v-if="moment.user.id===user.id" slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
+        <nuxt-link
+          v-if="moment.user.id === user.id"
+          slot="datetime"
+          title="点击编辑"
+          to="/moment/edit"
+          style="color: #ccc"
+        >
           <a-divider type="vertical" />
           <a-icon type="edit" />
           <span>编辑</span>
         </nuxt-link>
       </a-comment>
-      <a-modal
-        v-model="collectVisible"
-        title="Title"
-        on-ok="handleOk"
-      >
+      <a-modal v-model="collectVisible" title="Title" on-ok="handleOk">
         <template slot="footer">
           <a-button key="back" @click="collectCancel">
             取消
           </a-button>
-          <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+          <a-button
+            key="submit"
+            type="primary"
+            :loading="loading"
+            @click="handleOk"
+          >
             确定
           </a-button>
         </template>
         <a-form-item
           label="标 签"
           required
-          :label-col="{span: 4}"
-          :wrapper-col="{span: 6}"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 6 }"
         >
           <a-select
             v-model="favorites"
@@ -110,12 +142,10 @@
           <a-col :span="16">
             <a-form-item
               label="新建收藏夹"
-              :label-col="{span:6}"
-              :wrapper-col="{span: 16}"
+              :label-col="{ span: 6 }"
+              :wrapper-col="{ span: 16 }"
             >
-              <a-input
-                v-model="favorite"
-              />
+              <a-input v-model="favorite" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -126,28 +156,32 @@
         </a-row>
       </a-modal>
 
-
-      <new-comment kind="moment" :count="moment.comment_count" @reply="showModal" />
+      <new-comment
+        kind="moment"
+        :count="moment.comment_count"
+        @reply="showModal"
+      />
 
       <a-modal
         v-model="visible"
-        :title="'Reply To: '+comment.user.name"
+        :title="'Reply To: ' + comment.user.name"
         on-ok="commentHandleOk"
       >
         <template slot="footer">
           <a-button key="back" @click="handleCancel">
             返回
           </a-button>
-          <a-button key="submit" type="primary" :loading="submitting" @click="handleSubmit">
+          <a-button
+            key="submit"
+            type="primary"
+            :loading="submitting"
+            @click="handleSubmit"
+          >
             评论
           </a-button>
         </template>
         <a-comment>
-          <a-avatar
-            slot="avatar"
-            :src="user.avatar_url"
-            alt="Han Solo"
-          />
+          <a-avatar slot="avatar" :src="user.avatar_url" alt="Han Solo" />
           <div slot="content">
             <a-form-item>
               <a-textarea :rows="4" :value="value" @change="handleChange" />
@@ -191,15 +225,15 @@ export default {
         res.user_action != null
           ? res.user_action
           : {
-              collect: [],
-              like: [],
-              approve: [],
-              comment: [],
-              browse: []
-            }
+            collect: [],
+            like: [],
+            approve: [],
+            comment: [],
+            browse: []
+          }
     }
   },
-  created: function() {
+  created: function () {
     // this.md = require('markdown-it')()
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     this.image_url =
@@ -289,7 +323,7 @@ export default {
       this.favorites.push(res.data.id)
       this.favorite = ''
     },
-    showModal: function(comment) {
+    showModal: function (comment) {
       this.comment = comment
       this.visible = true
     },
@@ -327,5 +361,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

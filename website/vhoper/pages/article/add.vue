@@ -4,13 +4,10 @@
       <a-col :span="5" style="z-index: 0">
         <a-form-item
           label=""
-          :label-col="{span: 4,offset:2}"
-          :wrapper-col="{span: 24,offset:2}"
+          :label-col="{ span: 4, offset: 2 }"
+          :wrapper-col="{ span: 24, offset: 2 }"
         >
-          <a-radio-group
-            v-model="editorType"
-            @change="handleChange"
-          >
+          <a-radio-group v-model="editorType" @change="handleChange">
             <a-radio-button value="markdown">
               markdown
             </a-radio-button>
@@ -18,7 +15,7 @@
               富文本
             </a-radio-button>
           </a-radio-group>
-          <a-button v-if="editorType==='html'" @click="save">
+          <a-button v-if="editorType === 'html'" @click="save">
             <a-icon type="save" />
           </a-button>
         </a-form-item>
@@ -27,20 +24,17 @@
         <a-form-item
           label="标题"
           required
-          :label-col="{span: 4}"
-          :wrapper-col="{span: 18}"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 18 }"
         >
-          <a-input
-            v-model="article.title"
-            placeholder="请输入标题！"
-          />
+          <a-input v-model="article.title" placeholder="请输入标题！" />
         </a-form-item>
       </a-col>
       <a-col :span="6">
         <a-form-item
           label="封面"
-          :label-col="{span: 6}"
-          :wrapper-col="{span:15}"
+          :label-col="{ span: 6 }"
+          :wrapper-col="{ span: 15 }"
         >
           <a-row>
             <a-col :span="16">
@@ -58,7 +52,7 @@
               </a-upload>
             </a-col>
             <a-col :span="8">
-              <a-button class="formbuttion" @click="showImage=!showImage">
+              <a-button class="formbuttion" @click="showImage = !showImage">
                 <span v-if="!showImage">显示封面</span>
                 <span v-if="showImage">不显示封面</span>
               </a-button>
@@ -77,8 +71,8 @@
           <a-form-item
             label="分类"
             required
-            :label-col="{span: 4}"
-            :wrapper-col="{span:6}"
+            :label-col="{ span: 4 }"
+            :wrapper-col="{ span: 6 }"
           >
             <a-select
               v-model="categories"
@@ -96,8 +90,8 @@
           <a-form-item
             label="标签"
             required
-            :label-col="{span: 4}"
-            :wrapper-col="{span: 6}"
+            :label-col="{ span: 4 }"
+            :wrapper-col="{ span: 6 }"
           >
             <a-select
               v-model="tags"
@@ -114,14 +108,12 @@
         <a-col :span="6">
           <a-form-item
             label="新标签"
-            :label-col="{span:6}"
-            :wrapper-col="{span: 12}"
+            :label-col="{ span: 6 }"
+            :wrapper-col="{ span: 12 }"
           >
             <a-row>
               <a-col :span="16">
-                <a-input
-                  v-model="tag"
-                />
+                <a-input v-model="tag" />
               </a-col>
               <a-col :span="6">
                 <a-button class="formbuttion" @click="addTag">
@@ -134,8 +126,8 @@
         <a-col :span="6">
           <a-form-item
             label="权限"
-            :label-col="{span: 4}"
-            :wrapper-col="{span:6}"
+            :label-col="{ span: 4 }"
+            :wrapper-col="{ span: 6 }"
           >
             <a-select
               v-model="article.permission"
@@ -163,14 +155,14 @@
     <div id="editor">
       <no-ssr placeholder="Loading...">
         <mavon-editor
-          v-show="editorType==='markdown'"
+          v-show="editorType === 'markdown'"
           ref="md"
           style="height: 650px"
           @imgAdd="imgAdd"
           @save="save"
         />
       </no-ssr>
-      <div v-show="editorType==='html'">
+      <div v-show="editorType === 'html'">
         <div id="editor_t" />
       </div>
     </div>
@@ -178,8 +170,8 @@
 </template>
 
 <script>
-import { mavonEditor } from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
+// import { mavonEditor } from 'mavon-editor'
+// import 'mavon-editor/dist/css/index.css'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
@@ -188,7 +180,7 @@ import { upload } from '../../plugins/utils/upload'
 export default {
   middleware: 'auth',
   components: {
-    mavonEditor
+    // mavonEditor
   },
   data() {
     return {
@@ -249,7 +241,7 @@ export default {
         require(['mavon-editor'], ({ mavonEditor }) => resolve(mavonEditor))
       }) */
     // 这个函数真是无敌
-    this.$nextTick(function() {
+    this.$nextTick(function () {
       require('../../plugins/filter/tinymce')
       tinymce.init(this.init)
     })
@@ -296,7 +288,7 @@ export default {
       }
       return isImg && isLt2M
     },
-    addTag: function() {
+    addTag: function () {
       const vm = this
       if (this.tag === '') {
         this.$message.error('标签为空')
@@ -346,12 +338,12 @@ export default {
       }
       this.$axios
         .$post(`/api/article`, this.article)
-        .then(function(res) {
+        .then(function (res) {
           // success
           if (res.code === 200) vm.$router.push({ path: '/article' })
           else vm.$message.error(res.msg)
         })
-        .catch(function(err) {
+        .catch(function (err) {
           vm.$message.error(err)
         })
     }

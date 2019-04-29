@@ -11,12 +11,12 @@ export default {
       body: "How's it hangin'?",
       icon: '/icon.png',
       timeout: 4000,
-      onClick: function() {
+      onClick: function () {
         window.focus()
         this.close()
       }
     })
-    promise.then(function(notification) {
+    promise.then(function (notification) {
       notification.close()
     })
     Push.clear()
@@ -25,5 +25,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

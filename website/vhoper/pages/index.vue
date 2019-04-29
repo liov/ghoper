@@ -8,11 +8,7 @@
       >
         <a-icon type="left-circle" />
       </div>
-      <div
-        slot="nextArrow"
-        class="custom-slick-arrow"
-        style="right: 10px"
-      >
+      <div slot="nextArrow" class="custom-slick-arrow" style="right: 10px">
         <a-icon type="right-circle" />
       </div>
       <div><h3>建设中，我觉得你看瞬间比较好</h3></div>

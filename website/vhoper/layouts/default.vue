@@ -48,7 +48,10 @@
               </nuxt-link>
             </a-menu-item>-->
             <a-sub-menu>
-              <span slot="title" class="submenu-title-wrapper"><a-icon type="setting" />设置</span>
+              <span
+                slot="title"
+                class="submenu-title-wrapper"
+              ><a-icon type="setting" />设置</span>
               <a-menu-item-group title="初始化">
                 <a-menu-item key="setting:1">
                   <nuxt-link to="/api/init">
@@ -72,10 +75,7 @@
               <a-icon type="appstore" />
               Hoper
             </a-menu-item>
-            <a-switch
-              :default-checked="false"
-              @change="changeTheme"
-            />
+            <a-switch :default-checked="false" @change="changeTheme" />
             主题
           </a-menu>
         </div>

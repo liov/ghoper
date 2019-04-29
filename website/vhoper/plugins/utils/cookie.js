@@ -1,9 +1,9 @@
-const getCookie = function(cname, req) {
+const getCookie = function (cname, req) {
   const name = cname + '='
   let decodedCookie
-  if (typeof window === 'undefined')
+  if (typeof window === 'undefined') {
     decodedCookie = decodeURIComponent(req.headers.cookie)
-  else decodedCookie = decodeURIComponent(document.cookie)
+  } else decodedCookie = decodeURIComponent(document.cookie)
   const ca = decodedCookie.split(';')
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i]

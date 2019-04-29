@@ -4,19 +4,17 @@
       <a-col :span="5">
         <a-form-item
           label="心情"
-          :label-col="{span:5,offset:6}"
-          :wrapper-col="{span: 9}"
+          :label-col="{ span: 5, offset: 6 }"
+          :wrapper-col="{ span: 9 }"
         >
-          <a-input
-            v-model="moment.mood_name"
-          />
+          <a-input v-model="moment.mood_name" />
         </a-form-item>
       </a-col>
       <a-col :span="5">
         <a-form-item
           label="标签"
-          :label-col="{span: 4}"
-          :wrapper-col="{span: 6}"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 6 }"
         >
           <a-select
             v-model="tags"
@@ -33,14 +31,12 @@
       <a-col :span="5">
         <a-form-item
           label="新标签"
-          :label-col="{span:6}"
-          :wrapper-col="{span: 12}"
+          :label-col="{ span: 6 }"
+          :wrapper-col="{ span: 12 }"
         >
           <a-row>
             <a-col :span="16">
-              <a-input
-                v-model="tag"
-              />
+              <a-input v-model="tag" />
             </a-col>
             <a-col :span="6">
               <a-button class="formbuttion" @click="addTag">
@@ -53,8 +49,8 @@
       <a-col :span="5">
         <a-form-item
           label="权限"
-          :label-col="{span: 4}"
-          :wrapper-col="{span:6}"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 6 }"
         >
           <a-select
             v-model="moment.permission"
@@ -143,8 +139,8 @@ export default {
     }
   },
   created() {},
-  mounted: function() {
-    this.$nextTick(function() {
+  mounted: function () {
+    this.$nextTick(function () {
       const Vditor = require('vditor')
       vditor = new Vditor('vditor', {
         width: '100%',
@@ -183,7 +179,7 @@ export default {
         return
       }
       // 2. read from response and show file link
-      fileList = fileList.map(file => {
+      fileList = fileList.map((file) => {
         if (file.response) {
           // Component will show file.url as link
           file.url = file.response.data.url
@@ -225,7 +221,7 @@ export default {
       }
       return isImg && isLt2M
     },
-    addTag: function() {
+    addTag: function () {
       const vm = this
       if (this.tag === '') {
         this.$message.error('标签为空')
@@ -241,30 +237,31 @@ export default {
       this.tags.push(this.tag)
       this.tag = ''
     },
-    commit: function() {
+    commit: function () {
       const vm = this
       this.moment.permission = parseInt(this.moment.permission)
       this.moment.content = vditor.getValue()
-      if (this.moment.image_url !== '')
+      if (this.moment.image_url !== '') {
         this.moment.image_url.substring(0, this.moment.image_url.length - 1)
+      }
       this.moment.tags = []
       for (const i of this.tags) {
         this.moment.tags.push({ name: i })
       }
       this.$axios
         .$post(`/api/moment`, this.moment)
-        .then(function(res) {
+        .then(function (res) {
           // success
           if (res.code === 200) {
             vm.$router.push({ path: '/moment' })
             vditor.clearCache()
           } else vm.$message.error(res.msg)
         })
-        .catch(function(err) {
+        .catch(function (err) {
           vm.$message.error(err)
         })
     },
-    customUpload: async function({
+    customUpload: async function ({
       action,
       data,
       file,
@@ -285,5 +282,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

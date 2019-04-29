@@ -18,17 +18,17 @@ export default {
   mounted() {
     this.startWorker()
     const vm = this
-    setTimeout(function() {
+    setTimeout(function () {
       vm.stopWorker()
     }, 3000)
   },
   methods: {
-    startWorker: function() {
+    startWorker: function () {
       if (typeof Worker !== 'undefined') {
         if (typeof this.w === 'undefined') {
           this.w = new Worker('../js/demo_workers.js')
         }
-        this.w.onmessage = function(event) {
+        this.w.onmessage = function (event) {
           document.getElementById('result').innerHTML = event.data
         }
       } else {
@@ -36,7 +36,7 @@ export default {
           '抱歉，你的浏览器不支持 Web Workers...'
       }
     },
-    stopWorker: function() {
+    stopWorker: function () {
       this.w.terminate()
       this.w = undefined
     }
@@ -44,5 +44,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

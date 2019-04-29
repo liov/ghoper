@@ -16,7 +16,7 @@ export default {
         .register('../js/demo_cache.js', {
           scope: '/js/'
         })
-        .then(function(registration) {
+        .then(function (registration) {
           document.querySelector(
             '#status'
           ).innerHTML += `<p>service worker是否注册成功：注册成功</p>`
@@ -44,14 +44,14 @@ export default {
             ).innerHTML += `<p>当前service worker状态：&emsp; ${
               serviceWorker.state
             }</p>`
-            serviceWorker.addEventListener('statechange', function(e) {
+            serviceWorker.addEventListener('statechange', function (e) {
               document.querySelector('#status').innerHTML += `<p>状态变化为:${
                 e.target.state
               }</p>`
             })
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error)
         })
     } else {
@@ -64,5 +64,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

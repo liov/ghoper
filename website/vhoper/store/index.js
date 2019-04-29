@@ -9,7 +9,6 @@ Vue.use(Vuex);
 
 const store = () => new Vuex.Store({
 
-
     state: {
         authUser: null,
         token:''
@@ -39,10 +38,10 @@ export const state = () => ({
 })
 
 export const mutations = {
-  SET_USER: function(state, user) {
+  SET_USER: function (state, user) {
     state.user = user
   },
-  SET_TOKEN: function(state, token) {
+  SET_TOKEN: function (state, token) {
     state.token = token
   }
 }
@@ -57,14 +56,15 @@ export const actions = {
         commit('SET_TOKEN', token)
         // $axios.defaults.headers.common.Authorization = token
         $axios.defaults.headers.common.Cookie = req.headers.cookie
-        await $axios.$get(`/api/user/get`).then(res => {
+        await $axios.$get(`/api/user/get`).then((res) => {
           // 跟后端的初始化配合
           if (res.code === 200) {
             commit('SET_USER', res.data)
-          } else
+          } else {
             redirect({
               path: '/user/redirect?callbackUrl=' + route.path
             })
+          }
         })
       }
     }

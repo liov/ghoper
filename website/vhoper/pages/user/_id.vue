@@ -23,8 +23,12 @@
       </div>
     </div>
     <a-row :gutter="gutters[gutterKey]">
-      <a-col v-for="(item) in colCounts[colCountKey]" :key="item.toString()" :span="24/colCounts[colCountKey]">
-        <div> <a-avatar size="large" :src="user.avatar_url" /></div>
+      <a-col
+        v-for="item in colCounts[colCountKey]"
+        :key="item.toString()"
+        :span="24 / colCounts[colCountKey]"
+      >
+        <div><a-avatar size="large" :src="user.avatar_url" /></div>
         <div>{{ user.name }}</div>
         <div>{{ user.id }}</div>
         <div>{{ user.phone }}</div>
@@ -65,5 +69,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

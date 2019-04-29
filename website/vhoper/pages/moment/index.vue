@@ -3,8 +3,8 @@
     <a-col :span="3">
       <a-form-item
         label=""
-        :label-col="{span: 4,offset:2}"
-        :wrapper-col="{span: 24,offset:2}"
+        :label-col="{ span: 4, offset: 2 }"
+        :wrapper-col="{ span: 24, offset: 2 }"
       >
         <nuxt-link to="/moment/add">
           <a-button icon="edit">
@@ -36,28 +36,74 @@
         item-layout="horizontal"
         :data-source="momentList"
       >
-        <a-list-item slot="renderItem" slot-scope="item,index" style="padding-bottom:0 ">
+        <a-list-item
+          slot="renderItem"
+          slot-scope="item, index"
+          style="padding-bottom:0 "
+        >
           <a-comment>
-            <nuxt-link slot="author" :to="'/user/'+item.user.id">
+            <nuxt-link slot="author" :to="'/user/' + item.user.id">
               <span>{{ item.user.name }}</span>
             </nuxt-link>
-            <nuxt-link slot="avatar" :to="'/user/'+item.user.id">
+            <nuxt-link slot="avatar" :to="'/user/' + item.user.id">
               <a-avatar :src="item.user.avatar_url" alt="头像" />
             </nuxt-link>
-            <span slot="actions" style="margin-right: 10px" @click="star(item.id,index)">
-              <a-icon type="star" :theme="user_action.collect.indexOf(item.id)>-1?'twoTone':'outlined'" two-tone-color="#eb2f96" />
+            <span
+              slot="actions"
+              style="margin-right: 10px"
+              @click="star(item.id, index)"
+            >
+              <a-icon
+                type="star"
+                :theme="
+                  user_action.collect.indexOf(item.id) > -1
+                    ? 'twoTone'
+                    : 'outlined'
+                "
+                two-tone-color="#eb2f96"
+              />
               收藏：{{ item.collect_count }}
             </span>
-            <span slot="actions" style="margin-right: 10px" @click="like(item.id,index)">
-              <a-icon type="heart" :theme="user_action.like.indexOf(item.id)>-1?'twoTone':'outlined'" two-tone-color="#eb2f96" />
+            <span
+              slot="actions"
+              style="margin-right: 10px"
+              @click="like(item.id, index)"
+            >
+              <a-icon
+                type="heart"
+                :theme="
+                  user_action.like.indexOf(item.id) > -1
+                    ? 'twoTone'
+                    : 'outlined'
+                "
+                two-tone-color="#eb2f96"
+              />
               喜欢：{{ item.like_count }}
             </span>
-            <span slot="actions" style="margin-right: 10px" @click="approve(item.id,index)">
-              <a-icon type="like" :theme="user_action.approve.indexOf(item.id)>-1?'twoTone':'outlined'" />
+            <span
+              slot="actions"
+              style="margin-right: 10px"
+              @click="approve(item.id, index)"
+            >
+              <a-icon
+                type="like"
+                :theme="
+                  user_action.approve.indexOf(item.id) > -1
+                    ? 'twoTone'
+                    : 'outlined'
+                "
+              />
               点赞：{{ item.approve_count }}
             </span>
-            <span slot="actions" style="margin-right: 10px" @click="comment(item.id,index)">
-              <a-icon type="message" :theme="item.id>0?'twoTone':'outlined'" />
+            <span
+              slot="actions"
+              style="margin-right: 10px"
+              @click="comment(item.id, index)"
+            >
+              <a-icon
+                type="message"
+                :theme="item.id > 0 ? 'twoTone' : 'outlined'"
+              />
               评论：{{ item.comment_count }}
             </span>
             <span slot="actions" style="margin-right: 10px">
@@ -65,34 +111,47 @@
             </span>
 
             <template slot="actions" style="margin:0 10px">
-              <a-tag v-for="(subitem,subindex) in item.tags" :key="subindex" :color="color[subindex]">
+              <a-tag
+                v-for="(subitem, subindex) in item.tags"
+                :key="subindex"
+                :color="color[subindex]"
+              >
                 {{ subitem.name }}
               </a-tag>
             </template>
 
             <template slot="content">
-              <div style="margin: 1rem 1rem 0 1rem" v-html="$md.render(item.content)" />
+              <div
+                style="margin: 1rem 1rem 0 1rem"
+                v-html="$md.render(item.content)"
+              />
             </template>
             <img
-              v-for="(subitem,subindex) in image_url[index]"
+              v-for="(subitem, subindex) in image_url[index]"
               :key="subindex"
               slot="content"
               height="120"
               alt="logo"
               :src="subitem"
             >
-            <a-tooltip slot="datetime" :title="item.created_at|dateFormat">
-              <span>{{ item.created_at|dateFormat }}</span>
+            <a-tooltip slot="datetime" :title="item.created_at | dateFormat">
+              <span>{{ item.created_at | dateFormat }}</span>
               <a-divider type="vertical" />
             </a-tooltip>
             <a-tooltip slot="datetime">
               <span>{{ $s2date(item.created_at).fromNow() }}</span>
             </a-tooltip>
-            <a-tooltip v-if="item.mood.name!==''" slot="datetime">
+            <a-tooltip v-if="item.mood.name !== ''" slot="datetime">
               <a-divider type="vertical" />
               <span>心情：{{ item.mood.name }}</span>
             </a-tooltip>
-            <nuxt-link v-if="item.user.id===user.id" slot="datetime" title="点击编辑" to="/moment/edit" style="color: #ccc">
+            <nuxt-link
+              v-if="item.user.id === user.id"
+              slot="datetime"
+              title="点击编辑"
+              to="/moment/edit"
+              style="color: #ccc"
+            >
               <a-divider type="vertical" />
               <a-icon type="edit" />
               <span>编辑</span>
@@ -100,24 +159,25 @@
           </a-comment>
         </a-list-item>
       </a-list>
-      <a-modal
-        v-model="collectVisible"
-        title="Title"
-        on-ok="handleOk"
-      >
+      <a-modal v-model="collectVisible" title="Title" on-ok="handleOk">
         <template slot="footer">
           <a-button key="back" @click="collectCancel">
             取消
           </a-button>
-          <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+          <a-button
+            key="submit"
+            type="primary"
+            :loading="loading"
+            @click="handleOk"
+          >
             确定
           </a-button>
         </template>
         <a-form-item
           label="标 签"
           required
-          :label-col="{span: 4}"
-          :wrapper-col="{span: 6}"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 6 }"
         >
           <a-select
             v-model="favorites"
@@ -135,12 +195,10 @@
           <a-col :span="16">
             <a-form-item
               label="新建收藏夹"
-              :label-col="{span:6}"
-              :wrapper-col="{span: 16}"
+              :label-col="{ span: 6 }"
+              :wrapper-col="{ span: 16 }"
             >
-              <a-input
-                v-model="favorite"
-              />
+              <a-input v-model="favorite" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -160,8 +218,8 @@
         @showSizeChange="onShowSizeChange"
       >
         <template slot="buildOptionText" slot-scope="props">
-          <span v-if="props.value!=='50'">{{ props.value }}条/页</span>
-          <span v-if="props.value==='50'">全部</span>
+          <span v-if="props.value !== '50'">{{ props.value }}条/页</span>
+          <span v-if="props.value === '50'">全部</span>
         </template>
       </a-pagination>
     </a-col>
@@ -194,7 +252,7 @@ export default {
   },
   computed: {},
   watch: {
-    current: async function() {
+    current: async function () {
       await this.next(this.current - 1)
     }
   },
@@ -212,15 +270,15 @@ export default {
         res.user_action != null
           ? res.user_action
           : {
-              collect: [],
-              like: [],
-              approve: [],
-              comment: [],
-              browse: []
-            }
+            collect: [],
+            like: [],
+            approve: [],
+            comment: [],
+            browse: []
+          }
     }
   },
-  created: function() {
+  created: function () {
     this.user = this.$store.state.user ? this.$store.state.user : { id: 0 }
     for (const i in this.momentList) {
       this.image_url.push(
@@ -230,16 +288,16 @@ export default {
       )
     }
   },
-  mounted: function() {},
+  mounted: function () {},
   methods: {
     async onShowSizeChange(current, pageSize) {
       this.pageSize = pageSize
       await this.next(current - 1)
     },
-    setMoment: function(moment) {
+    setMoment: function (moment) {
       localStorage.setItem('moment_' + moment.id, moment)
     },
-    next: async function(pageNo) {
+    next: async function (pageNo) {
       const params = {
         pageNo: pageNo,
         pageSize: this.pageSize
@@ -369,5 +427,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

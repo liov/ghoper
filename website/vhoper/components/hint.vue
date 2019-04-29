@@ -2,10 +2,7 @@
   <div>
     <!-- 淡入 -->
     <transition :name="transitionName">
-      <div
-        v-show="show"
-        class="lio-hint"
-      >
+      <div v-show="show" class="lio-hint">
         {{ msg }}
       </div>
     </transition>

@@ -1,7 +1,7 @@
 import cookie from '../utils/cookie'
 
-export default function({ app, route, store, $axios, req }) {
-  $axios.onRequest(config => {
+export default function ({ app, route, store, $axios, req }) {
+  $axios.onRequest((config) => {
     let token
     if (typeof window !== 'undefined') {
       token = localStorage.getItem('token')
@@ -27,7 +27,7 @@ export default function({ app, route, store, $axios, req }) {
   /*  $axios.onRequestError(error => {
     return Promise.reject(error)
   }) */
-  $axios.onResponseError(error => {
+  $axios.onResponseError((error) => {
     if (error.response) {
       switch (error.response.status) {
         case 401: // token过期，清除token并跳转到登录页面
