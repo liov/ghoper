@@ -48,7 +48,7 @@ export const mutations = {
 
 export const actions = {
   // nuxtServerInit is called by Nuxt.js before server-rendering every page
-  async nuxtServerInit({ commit }, { $axios, store, req, route, redirect }) {
+  async nuxtServerInit({ commit }, { $axios, store, req}) {
     if(store.state.user) return
 
     const token = cookieUtils.getCookie('token', req)
