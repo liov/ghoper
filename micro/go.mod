@@ -1,7 +1,6 @@
 module hoper
 
 require (
-	cloud.google.com/go v0.34.0 // indirect
 	github.com/DataDog/zstd v1.3.5 // indirect
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/Shopify/sarama v1.20.1 // indirect
@@ -99,17 +98,18 @@ require (
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/ugorji/go/codec v0.0.0-20190204201341-e444a5086c43
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
-	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
-	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
-	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890 // indirect
-	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4 // indirect
+	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09
+	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a // indirect
 	golang.org/x/tools v0.0.0-20190110015856-aa033095749b // indirect
-	google.golang.org/appengine v1.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20190108161440-ae2f86662275 // indirect
 	google.golang.org/grpc v1.17.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
-	gopkg.in/ini.v1 v1.42.0 // indirect
 	honnef.co/go/tools v0.0.0-20190109154334-5bcec433c8ea // indirect
+)
+
+replace (
+	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc => github.com/golang/image v0.0.0-20190209060608-ef4a1470e0dc
+	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 => github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1
 )

@@ -79,7 +79,8 @@ fn main() {
         println!("user的地址：{:p}", addr_user);
         pass_by_value_ref_user(&user);
         pass_by_value_user(user);
-        println!("原来的user：{:?}", *addr_user)
+        //奇怪，不同终端表现不一致
+        println!("原来的user：{:?}", *addr_user);
     }
 }
 
@@ -93,6 +94,7 @@ fn pass_by_value_user(mut user: User) {
     let addr_user = &user as *const User;
     user.phone = 2;
     println!("所有权函数参数的的地址：{:p},user的值：{:?}", addr_user, user);
+    //std::mem::forget(user);
 }
 
 #[derive(Debug)]
