@@ -32,7 +32,6 @@
       {
         "legacy": true
       }
-    ],
-    ["css-modules-transform"]
+    ]
   ]
 }
