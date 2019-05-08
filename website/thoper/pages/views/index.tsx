@@ -1,6 +1,5 @@
 import { Flex, WhiteSpace } from 'antd-mobile';
 import React from 'react';
-import styled from 'styled-components';
 import '../assets/index.module.css';
 import Layout from '../components/layout';
 

@@ -1,6 +1,6 @@
 const withTypescript = require('@zeit/next-typescript');
 const path = require('path');
-const withCSS = require('@zeit/next-css')
+const withCss = require('@zeit/next-css')
 const withLess = require('@zeit/next-less')
 const lessToJS = require('less-vars-to-js')
 const fs = require('fs')
@@ -16,59 +16,49 @@ if (typeof require !== 'undefined') {
     require.extensions['.css'] = file => {}
 }
 
-const nextConfig = (nextConfig = []) => {
-    return {
-        webpack(config, options) {
-        if (!options.defaultLoaders) {
-            throw new Error(
-                'This plugin is not compatible with Next.js versions below 5.0.0 https://err.sh/next-plugins/upgrade'
-            )
-        }
-
-        const Config = function(confNum) {
-                if(confNum===-1) return config;
-                config = nextConfig[confNum].webpack(config, options)
-                return Config(confNum-1);
-            }
-
-        return Config(nextConfig.length-1)
-    },
-        webpackDevMiddleware: config => {
-            // Perform customizations to webpack dev middleware config
-            // Important: return the modified config
-            return config;
-        }
-    }
-}
-
-module.exports =nextConfig([
-    withCSS({
-    cssModules: true,
+module.exports = withTypescript(withCss(withLess({
+    useFileSystemPublicRoutes: false,
+ /*   cssModules: true,
     cssLoaderOptions: {
         camelCase: true,
         namedExport: true
-    }}),
-    withLess({
-        lessLoaderOptions: {
-            javascriptEnabled: true,
-            modifyVars: themeVariables, // make your antd custom effective
-        },
-    }),
-    withTypescript({
-        useFileSystemPublicRoutes: false,
-        webpack: function (config, { buildId, dev }) {
-            const originalEntry = config.entry;
-            config.resolve = {
-                ...config.resolve,
-                ...{
-                    alias: {
-                        ...config.resolve.alias,
-                        '@src': path.resolve(__dirname, 'client'),
-                    }
-                },
-            };
+    },*/
+    lessLoaderOptions: {
+        javascriptEnabled: true,
+        modifyVars: themeVariables, // make your antd custom effective
+    },
+    webpack (config, options) {
+        config.resolve = {
+            ...config.resolve,
+            ...{
+                alias: {
+                    ...config.resolve.alias,
+                    '@src': path.resolve(__dirname, 'client'),
+                }
+            },
+        };
+ /*       if (!options.isServer) {
+            /!* Using next-css *!/
+            for (let entry of options.defaultLoaders.css) {
+                if (entry.loader === 'css-loader') {
+                    entry.loader = 'typings-for-css-modules-loader'
+                    break
+                }
+            }
+            for (let entry of options.defaultLoaders.less) {
+                if (entry.loader === 'css-loader') {
+                    entry.loader = 'typings-for-css-modules-loader';
+                    break
+                }
+            }
+        }*/
+        return config
+    },
+    webpackDevMiddleware: config => {
+        // Perform customizations to webpack dev middleware config
+        // Important: return the modified config
+        return config;
+    }
+})))
 
-            return config
-        }
-    })
-])
+
