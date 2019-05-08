@@ -12,8 +12,8 @@
       <a-form :form="user">
         <a-form-item
           label=""
-          :label-col="{ span: 3, offset: 6 }"
-          :wrapper-col="{ span: 6, offset: 6 }"
+          :label-col="{ span: 5, offset: 5 }"
+          :wrapper-col="{ span: 6, offset: 5 }"
         >
           <a-radio-group
             default-value="login"
@@ -148,8 +148,18 @@
           />
         </a-form-item>
         <a-form-item
-          :label-col="formTailLayout.labelCol"
-          :wrapper-col="formTailLayout.wrapperCol"
+          :label-col="{ span: 5, offset: 5 }"
+          :wrapper-col="{ span: 6, offset: 5 }"
+        >
+          <div
+            class="l-captcha"
+            data-site-key="ff3498d2c6ffa1178cbf4fb6b445a8b3"
+            data-width="200"
+          />
+        </a-form-item>
+        <a-form-item
+          :label-col="{ span: 6 }"
+          :wrapper-col="{ span: 8, offset: 5 }"
         >
           <a-button
             type="primary"
@@ -178,12 +188,12 @@
 
 <script>
 const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 8 }
+  labelCol: { span: 5 },
+  wrapperCol: { span: 7 }
 }
 const formTailLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 8, offset: 4 }
+  labelCol: { span: 5 },
+  wrapperCol: { span: 8, offset: 6 }
 }
 export default {
   data() {
@@ -204,6 +214,11 @@ export default {
     if (this.$route.query.email !== null) {
       this.user.setFieldsValue({ input: this.$route.query.email })
     }
+
+    var c = document.createElement('script');c.type = 'text/javascript';c.async = true;
+    c.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'captcha.luosimao.com/static/dist/captcha.js?v=201812141420';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(c, s);
+
   },
   methods: {
     check() {
@@ -232,7 +247,7 @@ export default {
     commit: function () {
       const vm = this
       this.$axios
-        .$post(`/api/user/` + vm.formType, vm.user.getFieldsValue())
+        .$post(`/api/user/` + vm.formType, {...vm.user.getFieldsValue(),luosimao:document.getElementsByName("luotest_response")[0].value})
         .then((res) => {
           // success
           if (res.code === 200) {
@@ -258,18 +273,6 @@ export default {
         .catch(function (err) {
           vm.$message.error(err)
         })
-    },
-    async login() {
-      try {
-        await this.$store.dispatch('login', {
-          username: this.formUsername,
-          password: this.formPassword
-        })
-        this.formUsername = ''
-        this.formPassword = ''
-      } catch (e) {
-        console.log(e)
-      }
     },
     async logout() {
       const res = await this.$axios.$get('/api/user/logout')

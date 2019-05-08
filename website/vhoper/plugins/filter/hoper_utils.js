@@ -20,12 +20,14 @@ Vue.prototype.$customUpload = async ({
   onError,
   onProgress,
   onSuccess,
-  withCredentials
+  withCredentials,
+  classify
 }) => {
-  const res = await upload('moment', file)
+  const res = await upload(classify, file)
   onSuccess({ data: res, status: 200 }, file)
   file.status = 'done'
 }
+
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
   // application specific logging, throwing an error, or other logic here
