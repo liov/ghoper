@@ -51,7 +51,7 @@
           v-show="formType === 'login'"
           :label-col="formItemLayout.labelCol"
           :wrapper-col="formItemLayout.wrapperCol"
-          label="邮箱或手机"
+          label="邮箱/手机"
         >
           <a-input
             v-decorator="[
@@ -215,10 +215,10 @@ export default {
       this.user.setFieldsValue({ input: this.$route.query.email })
     }
 
-    var c = document.createElement('script');c.type = 'text/javascript';c.async = true;
+    const c = document.createElement('script');c.type = 'text/javascript';c.async = true;
     c.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'captcha.luosimao.com/static/dist/captcha.js?v=201812141420';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(c, s);
-
+    const s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(c, s);
+    s.parentNode.removeChild(c)
   },
   methods: {
     check() {

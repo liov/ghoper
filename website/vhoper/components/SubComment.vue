@@ -65,9 +65,7 @@
           >删除</span>
         </span>
         <template slot="content">
-          <div>
-            {{ subComment.content }}
-          </div>
+          <div v-html="$md.render(subComment.content)" />
         </template>
         <span
           v-if="subComment.parent_id !== 0"

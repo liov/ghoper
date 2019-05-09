@@ -9,7 +9,7 @@ type Article struct {
 	ID          uint64              `gorm:"primary_key" json:"id"`
 	CreatedAt   time.Time           `json:"created_at"`
 	Title       string              `gorm:"type:varchar(100)" json:"title"`
-	Intro       string              `gorm:"type:varchar(100)" json:"intro"`
+	Intro       string              `gorm:"type:varchar(200)" json:"intro"`
 	Abstract    string              `gorm:"type:varchar(200)" json:"abstract"`
 	Content     string              `gorm:"type:text" json:"content"`
 	HTMLContent string              `gorm:"type:text" json:"html_content"`

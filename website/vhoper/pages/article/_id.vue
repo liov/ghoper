@@ -2,7 +2,18 @@
   <a-row>
     <a-col :span="3" />
     <a-col :span="18">
-      <div v-html="article.html_content" />
+      <div style="height: 100px;line-height: 100px;margin: 10px;text-align: center;font-size: 30px;color:  rgba(0, 0, 0, .65); ">
+        {{ article.title }}
+      </div>
+      <a-divider />
+      <div
+        v-if="article.html_content!==''"
+        v-html="article.html_content"
+      />
+      <div
+        v-else
+        v-html="$md.render(article.content)"
+      />
       <div style="margin: 0 auto">
         <span @click="star(item.id)">
           <a-icon

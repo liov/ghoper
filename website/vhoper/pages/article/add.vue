@@ -203,8 +203,8 @@
 </template>
 
 <script>
-// import { mavonEditor } from 'mavon-editor'
-// import 'mavon-editor/dist/css/index.css'
+import { mavonEditor } from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
@@ -213,7 +213,7 @@ import { upload } from '../../plugins/utils/upload'
 export default {
   middleware: 'auth',
   components: {
-    // mavonEditor
+     mavonEditor
   },
   data() {
     return {
@@ -234,7 +234,7 @@ export default {
         language: 'zh_CN',
         skin: 'oxide',
         height: 650,
-        plugins: 'link lists image code table wordcount ',
+        plugins: 'link lists image code table wordcount paste',
         toolbar:
           'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code | removeformat',
         branding: false,
@@ -245,7 +245,10 @@ export default {
           const data = await upload('article', blobInfo.blob())
           success(data.url)
         },
-        convert_urls: false
+        convert_urls: false,
+        paste_webkit_styles: 'all',
+        paste_retain_style_properties:'all',
+        paste_remove_styles_if_webkit: false
         // images_upload_url: '/api/upload/article'
       }
     }

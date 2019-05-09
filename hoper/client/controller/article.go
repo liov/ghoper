@@ -226,13 +226,15 @@ func AddArticle(c iris.Context) {
 
 	if s := []rune(article.Content); len(s) > 200 {
 
-		article.Intro = string(s[:200])
+		article.Intro = string(s[:100])
 		article.Abstract = string(s[:200])
 	} else {
 		article.Intro = article.Content
 		article.Abstract = article.Content
 	}
 
+	article.CreatedAt = time.Now()
+	article.UpdatedAt = &article.CreatedAt
 	saveErr := initialize.DB.Set("gorm:association_autocreate", false).Create(&article).Error
 
 	for _, v := range article.Tags {

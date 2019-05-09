@@ -91,9 +91,7 @@
               >删除</span>
             </span>
             <template slot="content">
-              <div>
-                {{ item.content }}
-              </div>
+              <div v-html="$md.render(item.content)" />
             </template>
             <span
               v-if="item.parent_id !== 0"
@@ -218,7 +216,7 @@ export default {
             this.comments[index].sub_comments
               ? this.comments[index].sub_comments.length
               : 0
-          }&limit=5&rootId=${this.comments[index].id}`
+          }&limit=10&rootId=${this.comments[index].id}`
         )
         if (commentRes.code === 200) {
           if (commentRes.data.length === 0) {
@@ -239,12 +237,11 @@ export default {
           }&limit=10`
         )
         if (commentRes.code === 200) {
-          if (commentRes.data.length === 0) {
+          this.comments = this.comments.concat(commentRes.data)
+          if (commentRes.data.length < 10) {
             this.scene.destroy()
             this.loading = false
-            return
           }
-          this.comments = this.comments.concat(commentRes.data)
         }
       }
     }

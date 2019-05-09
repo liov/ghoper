@@ -40,7 +40,10 @@ func MarkdownToHTML(md string) string {
 	return bluemonday.UGCPolicy().Sanitize(theHTML)
 }
 
+var p *bluemonday.Policy
+
 // AvoidXSS 避免XSS
 func AvoidXSS(theHTML string) string {
-	return bluemonday.UGCPolicy().Sanitize(theHTML)
+
+	return p.Sanitize(theHTML)
 }
