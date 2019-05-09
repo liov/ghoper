@@ -39,7 +39,7 @@ func initializeDB() {
 		url = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
 			Config.Database.Host, Config.Database.User, Config.Database.Database, Config.Database.Password)
 	} else if Config.Database.Type == "sqlite3" {
-		url = "../../static/db/hoper.db"
+		url = "../static/db/hoper.db"
 	}
 	db, err := gorm.Open(Config.Database.Type, url)
 
@@ -75,8 +75,8 @@ func initializeDB() {
 func initializeBoltDB() {
 	var err error
 
-	var getDB =func (path string, fileMode os.FileMode) (*boltdb.Database, error) {
-		if utils.CheckExist(path){
+	var getDB = func(path string, fileMode os.FileMode) (*boltdb.Database, error) {
+		if utils.CheckExist(path) {
 			service, err := bbolt.Open(path, fileMode,
 				&bbolt.Options{Timeout: 20 * time.Second},
 			)
@@ -89,10 +89,10 @@ func initializeBoltDB() {
 			return boltdb.NewFromDB(service, "sessions")
 		}
 
-		return boltdb.New(path,fileMode)
+		return boltdb.New(path, fileMode)
 	}
 
-	BoltDB, err = getDB("../../static/db/sessions.db", os.FileMode(0750))
+	BoltDB, err = getDB("../static/db/sessions.db", os.FileMode(0750))
 	if err != nil {
 		golog.Error(err)
 	}

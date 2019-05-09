@@ -23,7 +23,7 @@ func main() {
 *Python只能归为实用类语言了
  */
 
-func Gin()  {
+func Gin() {
 	gin.SetMode(initialize.Config.Server.Env)
 
 	r := gin.New()
