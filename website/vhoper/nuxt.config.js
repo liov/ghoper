@@ -44,9 +44,9 @@ module.exports = {
     '@/plugins/filter/hoper_antd',
     '@/plugins/filter/hoper_utils',
     '@/plugins/filter/ctx-inject',
-    '@/plugins/filter/hoper_axios'
-    // { src: '@/plugins/filter/hoper_nossr', ssr: false }
-    // '@/plugins/markdown-it'
+    '@/plugins/filter/hoper_axios',
+    '@/plugins/filter/hoper_ssr',
+    { src: '@/plugins/filter/hoper_nossr', ssr: false }
   ],
 
   /*
@@ -56,8 +56,7 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    '@nuxtjs/apollo',
-    '@nuxtjs/markdownit'
+    '@nuxtjs/apollo'
   ],
   /*
    ** Axios module configuration
@@ -68,12 +67,6 @@ module.exports = {
     //browserBaseURL: 'https://hoper.xyz',
     proxy: false
   },
-  proxy: [
-    [
-      '/api',
-      { target: 'https://hoper.xyz/', pathRewrite: { '^/api': '/api/v1' } }
-    ]
-  ],
   apollo: {
     tokenName: 'yourApolloTokenName', // optional, default: apollo-token
     tokenExpires: 10, // optional, default: 7 (days)
@@ -117,11 +110,7 @@ module.exports = {
       // test2: '~/plugins/graphql.js'
     }
   },
-  // [optional] markdownit options
-  // See https://github.com/markdown-it/markdown-it
-  markdownit: {
-    injected: true
-  },
+
   /*
    ** Build configuration
    */

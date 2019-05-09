@@ -203,8 +203,6 @@
 </template>
 
 <script>
-import { mavonEditor } from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
 import '../../static/css/content.css'
@@ -212,9 +210,6 @@ import { upload } from '../../plugins/utils/upload'
 
 export default {
   middleware: 'auth',
-  components: {
-     mavonEditor
-  },
   data() {
     return {
       editorType: 'html',
