@@ -33,8 +33,8 @@ module.exports = {
   css: [
     // 'ant-design-vue/dist/antd.less',
     '@/assets/less/antd.less',
-    '@/assets/css/normalize.css',
-    '@/static/css/agent_clean.css'
+    'normalize.css/normalize.css',
+    '@/assets/css/agent_clean.css'
   ],
 
   /*

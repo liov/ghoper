@@ -205,7 +205,7 @@
 <script>
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
-import '../../static/css/content.css'
+import '../../assets/css/content.css'
 import { upload } from '../../plugins/utils/upload'
 
 export default {
