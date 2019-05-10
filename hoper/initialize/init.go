@@ -1,7 +1,5 @@
 package initialize
 
-import "time"
-
 func init() {
 	initializeConfig()
 	initializeLog()
@@ -11,5 +9,3 @@ func init() {
 	initializeMongo()
 	//CacheInit()
 }
-
-var StartTime = time.Now().Unix()
