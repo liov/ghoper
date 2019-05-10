@@ -1,9 +1,11 @@
 .idea
+.vscode
 node_modules
-
+test/besides/csharp/bin
+obj
 target
 *.iml
-
+debug
 logs
 .gradle
 
@@ -96,4 +98,4 @@ upload
 nginx-*
 *.lock
 *.sum
-micro/main/main
+hoper/hoper
