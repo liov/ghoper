@@ -22,6 +22,7 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/etcd-io/bbolt v1.3.2
 	github.com/getsentry/raven-go v0.2.0
+	github.com/gin-gonic/gin v1.3.0
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-swagger/go-swagger v0.18.0 // indirect

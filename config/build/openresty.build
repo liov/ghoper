@@ -1,3 +1,5 @@
+tar -xzvf openresty-VERSION.tar.gz
+cd openresty-VERSION/
 ./configure --with-select_module\
            --with-poll_module \
             --with-threads \
@@ -39,5 +41,7 @@
             --with-stream_geoip_module=dynamic \
             --with-stream_ssl_preread_module
 
+make
+sudo make install DESTDIR=/whereto make install
 
 
