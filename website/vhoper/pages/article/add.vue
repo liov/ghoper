@@ -225,7 +225,7 @@ export default {
       tags: [],
       init: {
         selector: '#editor_t',
-        language_url: '../tinymce/lang/zh_CN.js',
+        language_url: '../js/tinymce/lang/zh_CN.js',
         language: 'zh_CN',
         skin: 'oxide',
         height: 650,
