@@ -18,3 +18,4 @@ git gc --aggressive --prune=now
  
 git push --force
 
+git fetch --all && git reset --hard origin/master && git pull
