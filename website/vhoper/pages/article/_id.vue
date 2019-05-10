@@ -2,7 +2,7 @@
   <a-row>
     <a-col :span="3" />
     <a-col :span="18">
-      <div style="height: 100px;line-height: 100px;margin: 10px;text-align: center;font-size: 30px;color:  rgba(0, 0, 0, .65); ">
+      <div style="height: 60px;line-height: 60px;margin: 10px;text-align: center;font-size: 26px;color:  rgba(0, 0, 0, .65); ">
         {{ article.title }}
       </div>
       <a-divider />
@@ -14,6 +14,7 @@
         v-else
         v-html="$md.render(article.content)"
       />
+      <a-divider />
       <div style="margin: 0 auto">
         <span @click="star(item.id)">
           <a-icon
