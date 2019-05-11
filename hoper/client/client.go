@@ -55,9 +55,9 @@ Loop:
 			break Loop
 		default:
 			// listen and serve on https://0.0.0.0:8000.
-			//if err := irisRouter.Run(iris.TLS(initialize.Config.Server.HttpPort, "../config/tls/cert.pem", "../config/tls/cert.key"),
+			//if err := irisRouter.Run(iris.TLS(initialize.Config.Server.HttpPort, "../../config/tls/cert.pem", "../../config/tls/cert.key"),
 			if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
-				iris.WithConfiguration(iris.YAML("../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
+				iris.WithConfiguration(iris.YAML("../../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
 				golog.Error(err)
 			}
 		}

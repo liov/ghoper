@@ -1,6 +1,6 @@
 package router
 
-//go:generate qtc -dir=../template
+//go:generate qtc -dir=../../template
 import (
 	"context"
 	"os"
@@ -27,7 +27,7 @@ func IrisRouter() *iris.Application {
 		//关闭所有主机
 		app.Shutdown(ctx)
 	})
-	app.StaticWeb("/api/static", "../static")
+	app.StaticWeb("/api/static", "../../static")
 	app.Use(recover.New())
 	//other.Wrap(app)
 	//api文档
@@ -56,8 +56,8 @@ func IrisRouter() *iris.Application {
 			Default:      "en-US",
 			URLParameter: "lang",
 			Languages: map[string]string{
-				"en-US": "../static/i18n/locale_en-US.ini",
-				"zh-CN": "../static/i18n/locale_zh-CN.ini"}})
+				"en-US": "../../static/i18n/locale_en-US.ini",
+				"zh-CN": "../../static/i18n/locale_zh-CN.ini"}})
 		app.Use(globalLocale)*/
 	//请求日志
 	/*	logM := logMid()

@@ -2,13 +2,13 @@ package hlog
 
 import (
 	"fmt"
-	"hoper/initialize"
-	"hoper/utils"
 	"log"
 	"os"
-	"path/filepath"
 	"runtime"
 	"time"
+
+	"hoper/initialize"
+	"hoper/utils"
 )
 
 type Level int
@@ -16,12 +16,12 @@ type Level int
 var (
 	LogFile *os.File
 
-	DefaultPrefix      = ""
+	/*DefaultPrefix      = ""
 	DefaultCallerDepth = 2
 
 	logger     *log.Logger
 	logPrefix  = ""
-	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
+	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}*/
 )
 
 const (
@@ -38,10 +38,10 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	logger = log.New(os.Stdout, DefaultPrefix, log.LstdFlags)
+	//logger = log.New(os.Stdout, DefaultPrefix, log.LstdFlags)
 }
 
-func Debug(v ...interface{}) {
+/*func Debug(v ...interface{}) {
 	setPrefix(DEBUG)
 	logger.Println(v)
 }
@@ -75,7 +75,7 @@ func setPrefix(level Level) {
 	}
 
 	logger.SetPrefix(logPrefix)
-}
+}*/
 
 func getLogFilePath() string {
 	RuntimeRootPath := initialize.Config.Server.RuntimeRootPath

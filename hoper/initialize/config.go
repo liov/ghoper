@@ -103,7 +103,7 @@ func (d *duration) UnmarshalText(text []byte) error {
 }
 
 func initializeConfig() {
-	/*Cfg, err := ini.Load("../config/config.ini")
+	/*Cfg, err := ini.Load("../../config/config.ini")
 	if err != nil {
 		log.Fatalf("找不到文件 'website/config/config.ini': %v", err)
 	}
@@ -125,7 +125,7 @@ func initializeConfig() {
 
 	err = Cfg.Section("mongodb").MapTo(MongoSettings)*/
 
-	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../config/config.toml")
+	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../../config/config.toml")
 
 	if err != nil {
 		golog.Error("配置错误: %v", err)

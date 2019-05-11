@@ -12,9 +12,9 @@ import (
 
 func TPLRouter(app *iris.Application) {
 
-	tmpl := iris.HTML("../..static/template", ".html").Reload(true)
+	tmpl := iris.HTML("../../..static/template", ".html").Reload(true)
 
-	tmplPug := iris.Pug("../..static/template", ".pug").Reload(true)
+	tmplPug := iris.Pug("../../..static/template", ".pug").Reload(true)
 
 	tmpl.AddFunc("greet", func(s string) string {
 		return "Greetings " + s + "!"
