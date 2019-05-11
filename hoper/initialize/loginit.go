@@ -1,13 +1,5 @@
 package initialize
 
-import (
-	"fmt"
-	"runtime"
-
-	"github.com/kataras/golog"
-	"github.com/kataras/pio"
-)
-
 /**
  * @author     ：lbyi
  * @date       ：Created in 2019/4/2
@@ -31,7 +23,7 @@ func initializeLog() {
 		logrus.SetFormatter(formatter)
 		// Only log the warning severity or above.
 		logrus.SetLevel(logrus.InfoLevel)*/
-	golog.SetTimeFormat("2006/01/02 15:04:05")
+/*	golog.SetTimeFormat("2006/01/02 15:04:05")
 	golog.Handle(func(l *golog.Log) bool {
 		//应该是深度，好烦，不带format是6，带是7，无法确定
 		pc, file, line, _ := runtime.Caller(6)
@@ -50,5 +42,5 @@ func initializeLog() {
 			l.Logger.Printer.Print(l)
 		}
 		return true
-	})
+	})*/
 }
