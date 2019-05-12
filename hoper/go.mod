@@ -104,9 +104,8 @@ require (
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09
 	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a // indirect
-	golang.org/x/tools v0.0.0-20190110015856-aa033095749b // indirect
 	google.golang.org/genproto v0.0.0-20190108161440-ae2f86662275 // indirect
-	google.golang.org/grpc v1.17.0
+	google.golang.org/grpc v1.20.1
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
@@ -115,5 +114,6 @@ require (
 
 replace (
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc => github.com/golang/image v0.0.0-20190209060608-ef4a1470e0dc
-	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 => github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1
+	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09 => github.com/golang/net v0.0.0-20190501004415-9ce7a6920f09
+	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a => github.com/golang/oauth2 v0.0.0-20190402181905-9f3314589c9a
 )
