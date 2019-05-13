@@ -8,7 +8,9 @@ target
 debug
 logs
 .gradle
-
+.settings
+*.classpath
+*.project
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs

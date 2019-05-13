@@ -15,7 +15,7 @@ public class IObj {
     private static Unsafe U = Unsafe.getUnsafe();
 
     //java.exe --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED IObj.java
-    //IDEA中VM options：--add-exports=java.base/jdk.internal.misc=hoper
+    //IDEA中VM options：--add-exports=java.base/jdk.internal.misc=test
     public static void main(String[] args) throws NoSuchFieldException {
         Field field = IObj.class.getDeclaredField("objField");
         long offset = U.objectFieldOffset(field);

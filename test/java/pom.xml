@@ -28,7 +28,8 @@
                 <configuration>
                     <release>12</release>
                     <compilerArgs>
-                        <arg>-J--add-opens=java.base/jdk.internal.misc=test</arg>
+                        <arg>--add-opens=java.base/jdk.internal.misc=test</arg>
+                        <arg>--add-exports=java.base/jdk.internal.misc=test</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
