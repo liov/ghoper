@@ -18,9 +18,8 @@ JNIEXPORT jstring JNICALL Java_test_jni_JNI_testHello (JNIEnv *env, jobject obj)
   return (*env)->NewStringUTF(env,p);
 }
 
-JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib (JNIEnv *env, jobject obj, jint n){
+JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib (JNIEnv *env, jclass clazz, jint n){
     return fibonacci(n);
 }
-
 
 

@@ -20,7 +20,7 @@ public class JNI {
 
     public native String testHello();
 
-    public native long fib(int n);
+    public static native long fib(int n);
 
     public static void main(String[] args){
         //执行
@@ -29,16 +29,15 @@ public class JNI {
     }
 
     private static void jnifib(){
-        JNI jni = new JNI();
         long starTime=System.currentTimeMillis();
-        System.out.println(starTime);
-        System.out.println(jni.fib(43));
+        System.out.println("jni:"+starTime);
+        System.out.println(fib(43));
         System.out.println(System.currentTimeMillis()-starTime);
     }
 
     private static void javafib(){
         long starTime=System.currentTimeMillis();
-        System.out.println(starTime);
+        System.out.println("java:"+starTime);
         System.out.println(jfib(43));
         System.out.println(System.currentTimeMillis()-starTime);
     }

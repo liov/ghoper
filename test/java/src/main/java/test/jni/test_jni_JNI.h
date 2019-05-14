@@ -29,7 +29,7 @@ JNIEXPORT jstring JNICALL Java_test_jni_JNI_testHello
  * Signature: (I)J
  */
 JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }
