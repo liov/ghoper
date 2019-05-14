@@ -31,6 +31,14 @@ JNIEXPORT jstring JNICALL Java_test_jni_JNI_testHello
 JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib
   (JNIEnv *, jclass, jint);
 
+/*
+ * Class:     test_jni_JNI
+ * Method:    jnifor
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_test_jni_JNI_jnifor
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

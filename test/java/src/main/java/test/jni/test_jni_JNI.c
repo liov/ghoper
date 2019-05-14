@@ -23,3 +23,9 @@ JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib (JNIEnv *env, jclass clazz, jint n
 }
 
 
+JNIEXPORT void JNICALL Java_test_jni_JNI_jnifor (JNIEnv *env, jclass clazz){
+       long long int j;
+       for(long long int i = 0;i<100000000;i++){
+            j++;
+       }
+}
