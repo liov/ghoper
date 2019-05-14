@@ -7,7 +7,7 @@ package test.jni;
  */
 
 //javac -h . JNI.java or javac JNI.java -h JniH
-
+//java jni的开销只会越来越大,看来java优化足够好了，不需要c了
 public class JNI {
 
     //链动态库
@@ -20,10 +20,32 @@ public class JNI {
 
     public native String testHello();
 
+    public native long fib(int n);
+
     public static void main(String[] args){
         //执行
-        JNI jni = new JNI();
-        jni.testHelloVoid();
-        System.out.println(jni.testHello());
+        jnifib();
+        javafib();
     }
+
+    private static void jnifib(){
+        JNI jni = new JNI();
+        long starTime=System.currentTimeMillis();
+        System.out.println(starTime);
+        System.out.println(jni.fib(43));
+        System.out.println(System.currentTimeMillis()-starTime);
+    }
+
+    private static void javafib(){
+        long starTime=System.currentTimeMillis();
+        System.out.println(starTime);
+        System.out.println(jfib(43));
+        System.out.println(System.currentTimeMillis()-starTime);
+    }
+
+    private static long jfib(int n){
+        if(n<2) return 1;
+        return jfib(n-1)+jfib(n-2);
+    }
+
 }

@@ -23,6 +23,14 @@ JNIEXPORT void JNICALL Java_test_jni_JNI_testHelloVoid
 JNIEXPORT jstring JNICALL Java_test_jni_JNI_testHello
   (JNIEnv *, jobject);
 
+/*
+ * Class:     test_jni_JNI
+ * Method:    fib
+ * Signature: (I)J
+ */
+JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif
