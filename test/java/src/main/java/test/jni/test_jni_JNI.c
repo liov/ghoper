@@ -1,7 +1,7 @@
 #include "test_jni_JNI.h"
 #include <time.h>
 
-//gcc test_jni_JNI.c -shared -o /f/tool/dll/hello.dll -I /e/jdk-12/include -I /e/jdk-12/include/win32
+//gcc test_jni_JNI.c -shared -o /f/tool/dll/hello.dll -I /e/jdk-12/include -I /e/jdk-12/include/win32 -O2
 
 long long int fibonacci(int n);
 
