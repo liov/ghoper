@@ -37,4 +37,11 @@ func main() {
 	fmt.Println(&aa)
 	GetFoo(aa)
 	fmt.Println(aa)
+
+	var x interface{}
+	b:=0
+	c:="?"
+	x=b
+	x=c
+	fmt.Println(x)
 }

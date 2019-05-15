@@ -15,10 +15,12 @@ fn main() {
         println!("相同字符串字面值是否一个地址：{}", a1.as_ptr() == a2.as_ptr());
 
 
-        let ptr = HELLO_WORLD.as_ptr();
+        let ptr = HELLO_WORLD.as_ptr() as *const i32;
         println!("HELLO_WORLD的地址：{:p}", ptr);
         HELLO_WORLD = "World, hello!";
-        println!("HELLO_WORLD的地址：{:p},值：{},地址值：{:?}", HELLO_WORLD.as_ptr(), HELLO_WORLD, *ptr as char);
+        /*let mut_ptr = HELLO_WORLD.as_ptr() as *mut i32;
+        *mut_ptr = 1196312906;*/
+        println!("HELLO_WORLD的地址：{:p},值：{},首字母：{:?}", HELLO_WORLD.as_ptr(), HELLO_WORLD, *ptr);
 
 
         //let mut a = "a var of a";
@@ -33,14 +35,15 @@ fn main() {
         let addr_a = &a as *const &str;
         let ua = b"c var of c";
 
-        let mut u = 72u8;
-        let u_a = &mut u as *mut u8;
+        let u = 72u8;
+        let u_a = &u as *const u8 as *mut u8;
 
 
         println!("u8a:{:?}", addr_str_a);
         //*u8a = [b'c',b' ',b'v',b'a',b'r',b' ',b'o',b'f',b' ',b'c'];
         //*u8a=b'H';
-        UBA += 1;
+        let uba_ptr = &UBA as *const u8 as*mut u8;
+        *uba_ptr += 1;
         *u_a += 1;
         println!("u_a:{:?}", *u_a);
         //*u8a_asu8+=1;
