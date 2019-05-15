@@ -1,26 +1,31 @@
 #![feature(str_as_mut_ptr)]
 
+//静态字符不可修改，静态字符应该和静态数值放的不在一个静态内存区，后定义的静态数值的地址是要更小的,强行修改系统报错
+//确确实实是存在一块不可修改的内存区的，即使是静态数值，不标mut，也不可已改
 static mut HELLO_WORLD: &str = "JING_TAI_BIAN_LIANG__Hello, world!__JING_TAI_BIAN_LIANG";
 static mut UBA: u8 = 125u8;
+static mut UBA2: u8 = 125u8;
 
 fn main() {
     unsafe {
-        /*  静态值，放在代码区，不可修改
-                let x = &12;
-                let x_addr= x as *const i32 as *mut i32;
-                *x_addr = 13;
-                println!("x的值：{}",x);*/
+        //静态值，放在代码区，不可修改
+        //let i = 12;//可寻址，可修改
+/*        let x = &12;
+        let x_addr = x as *const i32 as *mut i32; //let x = &12;不可修改
+        println!("i的指针：{:p},x的指针：{:p}",&x as *const &i32, x_addr);
+        *x_addr = 13;
+        println!("x的值：{}，i的值：{}", x,*x_addr);*/
         let a1 = "hello word";
         let a2 = "hello word";
         println!("相同字符串字面值是否一个地址：{}", a1.as_ptr() == a2.as_ptr());
 
 
-        let ptr = HELLO_WORLD.as_ptr() as *const i32;
+        let ptr = HELLO_WORLD.as_ptr();
         println!("HELLO_WORLD的地址：{:p}", ptr);
         HELLO_WORLD = "World, hello!";
-        /*let mut_ptr = HELLO_WORLD.as_ptr() as *mut i32;
-        *mut_ptr = 1196312906;*/
-        println!("HELLO_WORLD的地址：{:p},值：{},首字母：{:?}", HELLO_WORLD.as_ptr(), HELLO_WORLD, *ptr);
+        /*        let mut_ptr = HELLO_WORLD.as_ptr() as *mut i32;
+                *mut_ptr = 1196312906;*/
+        println!("HELLO_WORLD的地址：{:p},值：{},首字母：{:?}", HELLO_WORLD.as_ptr(), HELLO_WORLD, *ptr as char);
 
 
         //let mut a = "a var of a";
@@ -42,13 +47,13 @@ fn main() {
         println!("u8a:{:?}", addr_str_a);
         //*u8a = [b'c',b' ',b'v',b'a',b'r',b' ',b'o',b'f',b' ',b'c'];
         //*u8a=b'H';
-        let uba_ptr = &UBA as *const u8 as*mut u8;
+        let uba_ptr = &UBA as *const u8 as *mut u8;
         *uba_ptr += 1;
         *u_a += 1;
         println!("u_a:{:?}", *u_a);
         //*u8a_asu8+=1;
         addr_str_a.copy_from(ua.as_ptr(), 10);
-        println!("UBA:{:?},UBA的地址：{:p},a的值：{}", UBA, &UBA as *const u8, a);
+        println!("UBA:{:?},UBA的地址：{:p},UBA2的地址:{:p},a的值：{}", *uba_ptr, &UBA as *const u8, &UBA2 as *const u8, a);
 
         println!("a的地址：{:p},a的底层地址：{:p},a的值：{}", addr_a, addr_str_a, a);
 

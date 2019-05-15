@@ -1,4 +1,5 @@
 #include "test_jni_JNI.h"
+#include <time.h>
 
 //gcc test_jni_JNI.c -shared -o /f/tool/dll/hello.dll -I /e/jdk-12/include -I /e/jdk-12/include/win32
 
@@ -19,7 +20,12 @@ JNIEXPORT jstring JNICALL Java_test_jni_JNI_testHello (JNIEnv *env, jobject obj)
 }
 
 JNIEXPORT jlong JNICALL Java_test_jni_JNI_fib (JNIEnv *env, jclass clazz, jint n){
-    return fibonacci(n);
+        int begintime,endtime;
+        begintime = clock();
+        long long int i = fibonacci(n);
+        endtime = clock();
+        printf("Running Time:%f ms\n", (double)(endtime-begintime));
+        return i;
 }
 
 
