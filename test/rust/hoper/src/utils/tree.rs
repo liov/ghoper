@@ -1,4 +1,4 @@
-#![feature(nll)]
+
 use std::cmp::PartialOrd;
 use std::fmt::Debug;
 
