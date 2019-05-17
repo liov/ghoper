@@ -23,9 +23,9 @@ fn add_two_numbers_test(){
 
 #[test]
 fn multiply_test(){
-    let s1 = String::from("136");
-    let s2 = String::from("5261939");
-    assert_eq!(multiply(s1,s2),  String::from("715623704"))
+    let s1 = String::from("9");
+    let s2 = String::from("9");
+    assert_eq!(multiply(s1,s2),  String::from("81"))
 }
 
 #[test]
