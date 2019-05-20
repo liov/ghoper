@@ -137,3 +137,60 @@ pub fn multiply(num1: String, num2: String) -> String {
     if result[0] != 0 { result[0] = result[0] +con} else {result.remove(0); }
     String::from_utf8(result).unwrap()
 }
+
+///电话号码的字母组合
+
+//Y 组合子是 lambda 演算中的一个概念，是任意函数的不动点，在函数式编程中主要作用是 提供一种匿名函数的递归方式。
+//"λ" 字符可以看作 function 声明，"."字符前为参数列表，"."字符后为函数体。
+//不动点是函数的一个特征：对于函数 f(x)，如果有变量  a 使得  f(a)=a 成立，则称 a 是函数 f 上的一个不动点。
+
+pub struct Rec<'a, T, U>(&'a dyn Fn(Rec<T, U>, T) -> U);
+
+impl<'a, T: 'a, U: 'a> Rec<'a, T, U> {
+    pub fn call(&self, x: T) -> U {
+        (self.0)(Rec(self.0), x)
+    }
+}
+
+pub fn y<T, U>(f: impl Fn(Rec<T, U>, T) -> U) -> impl Fn(T) -> U {
+    move |x| f(Rec(&f), x)
+}
+use std::cell::RefCell;
+pub fn letter_combinations(digits: String) -> Vec<String> {
+    let combination = vec![
+        vec![b'a',b'b',b'c'],
+        vec![b'd',b'e',b'f'],
+        vec![b'g',b'h',b'i'],
+        vec![b'j',b'k',b'l'],
+        vec![b'm',b'n',b'o'],
+        vec![b'p',b'q',b'r',b's'],
+        vec![b't',b'u',b'v'],
+        vec![b'w',b'x',b'y',b'z'],
+    ];
+
+    let mut result =RefCell::new(Vec::new());
+
+    let cap =digits.len();
+    let mut middle =RefCell::new(Vec::with_capacity(cap));
+    unsafe  {middle.get_mut().set_len(cap);}
+
+    let digits_vec = digits.as_bytes();
+
+    let fact = y(|f, x:usize| {
+        if x < cap {
+            for i in &(combination[digits_vec[x] as usize -50]){
+                f.call(x+1);
+                middle.get_mut()[x] = *i;
+                if x == cap-1 {
+                    result.borrow_mut().push(String::from_utf8(*middle.get_mut()).unwrap())
+                }
+            }
+        }
+    });
+
+    //let Y = |y|(|x|y(x(x)))(|x|y(|n|x(x)(n)));
+
+    fact(0);
+    println!("{}",result.get_mut()[0]);
+    vec![String::from("a")]
+}

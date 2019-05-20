@@ -1,3 +1,4 @@
+wget https://openresty.org/download/openresty-1.15.8.1.tar.gz
 tar -xzvf openresty-VERSION.tar.gz
 cd openresty-VERSION/
 ./configure --with-select_module\
@@ -43,5 +44,6 @@ cd openresty-VERSION/
 
 make
 sudo make install DESTDIR=/whereto make install
+./nginx -c nginx.conf
 
 

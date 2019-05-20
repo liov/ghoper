@@ -36,3 +36,8 @@ fn multiply_test2(){
     assert_eq!(*s2,b1 )
 }
 
+#[test]
+fn letter_combinations_test(){
+    assert_eq!(letter_combinations(String::from("23")),  vec![String::from("81")])
+
+}
