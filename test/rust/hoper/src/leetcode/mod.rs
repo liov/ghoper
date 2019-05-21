@@ -1,6 +1,6 @@
 ///两数之和
 use std::collections::HashMap;
-use core::fmt::Debug;
+
 
 
 //暴力法52ms，2MB
@@ -144,18 +144,9 @@ pub fn multiply(num1: String, num2: String) -> String {
 //"λ" 字符可以看作 function 声明，"."字符前为参数列表，"."字符后为函数体。
 //不动点是函数的一个特征：对于函数 f(x)，如果有变量  a 使得  f(a)=a 成立，则称 a 是函数 f 上的一个不动点。
 
-pub struct Rec<'a, T, U>(&'a dyn Fn(Rec<T, U>, T) -> U);
+//注意结尾没有分号的那一行 x+1，与你见过的大部分代码行不同。表达式的结尾没有分号。如果在表达式的结尾加上分号，
+// 它就变成了语句，而语句不会返回值。在接下来探索具有返回值的函数和表达式时要谨记这一点。
 
-impl<'a, T: 'a, U: 'a> Rec<'a, T, U> {
-    pub fn call(&self, x: T) -> U {
-        (self.0)(Rec(self.0), x)
-    }
-}
-
-pub fn y<T, U>(f: impl Fn(Rec<T, U>, T) -> U) -> impl Fn(T) -> U {
-    move |x| f(Rec(&f), x)
-}
-use std::cell::RefCell;
 pub fn letter_combinations(digits: String) -> Vec<String> {
     let combination = vec![
         vec![b'a',b'b',b'c'],
@@ -168,29 +159,32 @@ pub fn letter_combinations(digits: String) -> Vec<String> {
         vec![b'w',b'x',b'y',b'z'],
     ];
 
-    let mut result =RefCell::new(Vec::new());
+    let mut result =Vec::new();
 
     let cap =digits.len();
-    let mut middle =RefCell::new(Vec::with_capacity(cap));
-    unsafe  {middle.get_mut().set_len(cap);}
+    let mut middle:Vec<u8> =Vec::with_capacity(cap);
+    unsafe  {middle.set_len(cap);}
 
     let digits_vec = digits.as_bytes();
-
-    let fact = y(|f, x:usize| {
-        if x < cap {
-            for i in &(combination[digits_vec[x] as usize -50]){
-                f.call(x+1);
-                middle.get_mut()[x] = *i;
-                if x == cap-1 {
-                    result.borrow_mut().push(String::from_utf8(*middle.get_mut()).unwrap())
+    //闭包递归实在不会，改成了函数递归，消耗几何未知，有个clone()难受啊
+    fn get(n:usize,  res:&mut Vec<String>,  mid: &mut Vec<u8>, com:&Vec<Vec<u8>>, dig:&[u8]){
+        if n < mid.len() {
+            for i in &(com[dig[n] as usize -50]){
+                mid[n] = *i;
+                get(n+1,res,mid,com,dig);
+                if n == mid.len()-1 {
+                    res.push(String::from_utf8(mid.clone()).unwrap());
                 }
             }
         }
-    });
+    }
+
 
     //let Y = |y|(|x|y(x(x)))(|x|y(|n|x(x)(n)));
 
-    fact(0);
-    println!("{}",result.get_mut()[0]);
+    get(0,&mut result,&mut middle,&combination,&digits_vec);
+    for i in &result{
+        println!("{}",i)
+    }
     vec![String::from("a")]
 }
