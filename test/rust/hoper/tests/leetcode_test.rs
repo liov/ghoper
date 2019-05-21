@@ -40,8 +40,8 @@ fn multiply_test2(){
 fn divide_test(){
     assert_eq!(5.div(2),-1 )
 }
+
 #[test]
 fn letter_combinations_test(){
     assert_eq!(letter_combinations(String::from("23")),  vec![String::from("81")])
-
 }
