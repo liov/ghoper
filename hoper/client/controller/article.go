@@ -212,7 +212,6 @@ func AddArticle(c iris.Context) {
 	article.BrowseCount = 1
 	article.Status = model.ArticleVerifySuccess
 	article.ModifyTimes = 0
-	article.ContentType = model.ContentTypeMarkdown
 	article.ParentID = 0
 	user.Score = user.Score + model.ArticleScore
 	user.ArticleCount = user.ArticleCount + 1
