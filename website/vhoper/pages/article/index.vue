@@ -1,11 +1,8 @@
 <template>
   <a-row>
     <a-col :span="2">
-      <nuxt-link to="/article/add">
+      <nuxt-link to="/article/edit?op=add">
         添加
-      </nuxt-link>
-      <nuxt-link to="/article/edit">
-        编辑
       </nuxt-link>
     </a-col>
     <a-col :span="20">
@@ -60,6 +57,20 @@
               style="margin-right: 8px"
             />
             {{ item.comment_count }}
+          </span>
+          <span
+            slot="actions"
+          >
+            <a-icon
+              type="edit"
+              style="margin-right: 8px"
+            />
+            <nuxt-link
+              :to="'/article/edit?id='+item.id"
+              style="color:rgba(0, 0, 0, 0.45);"
+            >
+              编辑
+            </nuxt-link>
           </span>
 
           <a-button-group slot="actions">

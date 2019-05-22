@@ -32,5 +32,5 @@ func Iris(){
 }
 
 func main(){
-Iris()
+Gin()
 }

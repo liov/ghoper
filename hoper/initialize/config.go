@@ -131,6 +131,8 @@ func initializeConfig() {
 		golog.Error("配置错误: %v", err)
 	}
 
+	if Config.Server.Env == "debug" {Config.Server.LuosimaoAPIKey=""}
+
 	Config.Server.UploadMaxSize = Config.Server.UploadMaxSize * 1024 * 1024
 	Config.Server.ReadTimeout = Config.Server.ReadTimeout * time.Second
 	Config.Server.WriteTimeout = Config.Server.WriteTimeout * time.Second

@@ -320,18 +320,38 @@ func EditArticle(c iris.Context) {
 		return
 	}
 
-	if err := c.ReadJSON(&article); err != nil {
+	if err := c.ReadJSON(article); err != nil {
 		common.Response(c, "参数无效", e.ERROR)
 		return
+	}
+
+	if err := articleValidation(c, article); err != nil {
+		return
+	}
+
+	article.Title = utils.AvoidXSS(article.Title)
+	article.Title = strings.TrimSpace(article.Title)
+
+	if article.HTMLContent != "" {
+		article.HTMLContent = utils.AvoidXSS(article.HTMLContent)
+	}
+
+	if s := []rune(article.Content); len(s) > 200 {
+
+		article.Intro = string(s[:100])
+		article.Abstract = string(s[:200])
+	} else {
+		article.Intro = article.Content
+		article.Abstract = article.Content
 	}
 
 	article.ParentID = historyArticle.ID
 	article.ModifyTimes = article.ModifyTimes + 1
 
-	saveErr := initialize.DB.Save(&article).Error
+	saveErr := initialize.DB.Set("gorm:save_associations", false).Save(article).Error
 
 	if saveErr != nil {
-		golog.Info("修改失败")
+		common.Response(c, "修改成功", e.ERROR)
 		return
 	}
 
