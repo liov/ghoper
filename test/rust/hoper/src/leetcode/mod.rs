@@ -31,6 +31,7 @@ pub fn two_sum2(nums: Vec<i32>, target: i32) -> Vec<i32> {
 
 
 ///两数相加
+
 //执行用时 : 4 ms, 在Add Two Numbers的Rust提交中击败了100.00% 的用户
 
 //内存消耗 : 2 MB, 在Add Two Numbers的Rust提交中击败了100.00% 的用户
@@ -50,6 +51,8 @@ impl ListNode {
         }
     }
 
+/*因为 Rust 是后向兼容的（backwards compatible），所以不会移除 ref 和 ref mut，同时它们在一些不明确的场景还有用，
+比如希望可变地借用结构体的部分值而可变地借用另一部分的情况。你可能会在老的 Rust 代码中看到它们，所以请记住它们仍有价值。*/
     pub fn push(&mut self, val: i32) {
         match self.next {
             Some(ref mut next) =>
@@ -216,3 +219,55 @@ pub fn letter_combinations(digits: String) -> Vec<String> {
 }
 
 
+///旋转链表
+
+
+impl ListNode {
+    pub fn len(&self) -> usize {
+        let mut len = 1;
+        fn get_len(list:&ListNode,len:usize) -> usize {
+            if let Some(ref next) = list.next {
+                get_len(next, len+1)
+            } else {
+                return len;
+            }
+        }
+        get_len(self,len)
+    }
+}
+
+pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+    if k == 0 {return head}
+    let mut l = head.unwrap();
+    let mut k2 = l.len() as i32;
+    if k > k2 {
+        k2 = k%k2;
+        if k2 == 0 { return Some(l) }
+    } else { k2 = k }
+
+    let mut len = 1;
+
+    fn get(list:&mut ListNode,len:i32,k2:i32) -> Box<ListNode> {
+        if len > k2  {
+            if let Some(ref mut start) = list.next {
+                get(start,0,k2);
+            }
+            list.next = None;
+        }
+        if let Some(ref mut next) = list.next {
+            get(next, len+1,k2);
+        }else {
+            list.next = 
+        }
+        panic!("错误")
+    }
+
+    let mut start = get(&mut l,1,k2);
+
+    fn set(start:&mut ListNode,end:&mut ListNode) {
+        if let Some(ref mut next) = start.next {
+            set(next, end);
+        }else { start.next= Some(Box::from(end.clone())) }
+    }(&start,&l);
+    Some(start)
+}

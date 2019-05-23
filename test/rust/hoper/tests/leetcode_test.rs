@@ -36,12 +36,16 @@ fn multiply_test2(){
     assert_eq!(*s2,b1 )
 }
 
-#[test]
-fn divide_test(){
-    assert_eq!(5.div(2),-1 )
-}
 
 #[test]
 fn letter_combinations_test(){
     assert_eq!(letter_combinations(String::from("23")),  vec![String::from("81")])
+}
+
+#[test]
+fn list_len(){
+    let mut l1= Box::new(ListNode::new(2));
+    l1.push(4);
+    l1.push(3);
+    assert_eq!(l1.len(),  3)
 }
