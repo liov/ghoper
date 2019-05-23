@@ -2,7 +2,9 @@ package initialize
 
 import (
 	"fmt"
+	"github.com/kataras/golog"
 	"hoper/utils/ulog"
+	"os"
 	"reflect"
 	"runtime"
 	"time"
@@ -129,7 +131,8 @@ func initializeConfig() {
 	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../../config/config.toml")
 
 	if err != nil {
-		ulog.Error("配置错误: %v", err)
+		golog.Error("配置错误: %v", err)
+		os.Exit(-1)
 	}
 
 	if runtime.GOOS == "windows" {
