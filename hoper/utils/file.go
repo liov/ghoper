@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
+	"runtime"
 )
 
 func GetSize(f multipart.File) int {
@@ -85,6 +86,39 @@ func MustOpen(fileName, filePath string) (*os.File, error) {
 	f, err := Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("Fail to OpenFile :%v", err)
+	}
+
+	return f, nil
+}
+
+func GetLogFilePath(RuntimeRootPath,LogSavePath string) string {
+	if runtime.GOOS == "windows" {
+		return RuntimeRootPath + "\\"+LogSavePath + "\\"
+	}
+	return RuntimeRootPath + "/"+LogSavePath + "/"
+}
+
+
+func OpenLogFile(fileName, filePath string) (*os.File, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("os.Getwd err: %v", err)
+	}
+
+	src := dir + filePath
+	perm := CheckPermission(src)
+	if perm == true {
+		return nil, fmt.Errorf("权限不足 src: %s", src)
+	}
+
+	err = IsNotExistMkdir(src)
+	if err != nil {
+		return nil, fmt.Errorf("文件不存在 src: %s, err: %v", src, err)
+	}
+
+	f, err := Open(src+fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return nil, fmt.Errorf("打开失败 :%v", err)
 	}
 
 	return f, nil

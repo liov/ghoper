@@ -2,10 +2,10 @@ package controller
 
 import (
 	"github.com/jinzhu/gorm"
+	"hoper/utils/ulog"
 	"strconv"
 	"time"
 
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/initialize"
@@ -50,7 +50,7 @@ func AddComment(c iris.Context) {
 
 	commentBind(comment, c)
 	if err := initialize.DB.Create(comment).Error; err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 
 	setCountToRedis(userID, refId, KindIndex[kind], actionComment, 1)
@@ -60,7 +60,7 @@ func AddComment(c iris.Context) {
 func commentBind(comment interface{}, c iris.Context) {
 	err := c.ReadJSON(comment)
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "参数无效")
 		return
 	}
@@ -75,28 +75,28 @@ func GetComment(ctx iris.Context) {
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 		}
 	case kindMoment:
 		var comment ov.MomentComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 		}
 	case kindDiary:
 		var comment ov.DiaryComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 		}
 	case kindDiaryBook:
 		var comment ov.DiaryBookComment
 		commentBind(&comment, ctx)
 		comment.CreatedAt = nowTime
 		if err := initialize.DB.Create(&comment).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 		}
 	}
 }
@@ -120,7 +120,7 @@ func GetComments(ctx iris.Context) {
 		}
 
 		if err := DB.Limit(limit).Offset(offset).Find(c).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 		}
 
 		return c

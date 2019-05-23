@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/etcd-io/bbolt"
 	"hoper/utils"
+	"hoper/utils/ulog"
 	"os"
 	"reflect"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris/sessions/sessiondb/boltdb"
 )
 
@@ -44,7 +44,7 @@ func initializeDB() {
 	db, err := gorm.Open(Config.Database.Type, url)
 
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		os.Exit(-1)
 	}
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
@@ -82,7 +82,7 @@ func initializeBoltDB() {
 			)
 
 			if err != nil {
-				golog.Errorf("unable to initialize the BoltDB-based session database: %v", err)
+				ulog.Errorf("unable to initialize the BoltDB-based session database: %v", err)
 				return nil, err
 			}
 
@@ -94,7 +94,7 @@ func initializeBoltDB() {
 
 	BoltDB, err = getDB("../../static/db/sessions.db", os.FileMode(0750))
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 }
 

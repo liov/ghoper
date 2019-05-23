@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +23,11 @@ import (
 )
 
 func Client() {
+
+	if log,ok:= ulog.Log.(*zap.SugaredLogger);ok{
+		defer log.Sync()
+	}
+
 	defer initialize.DB.Close()
 	defer initialize.BoltDB.Close()
 	//crawler.M131()

@@ -2,10 +2,10 @@ package other
 
 import (
 	"fmt"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/context"
 	"hoper/utils"
+	"hoper/utils/ulog"
 	"time"
 )
 
@@ -44,11 +44,11 @@ func (b *Broker) listen() {
 			//新客户端已连接
 			//注册他们的消息频道
 			b.clients[s] = true
-			golog.Infof("Client added. %d registered clients", len(b.clients))
+			ulog.Infof("Client added. %d registered clients", len(b.clients))
 		case s := <-b.closingClients:
 			//客户端已离线，我们希望停止向其发送消息。
 			delete(b.clients, s)
-			golog.Warnf("Removed client. %d registered clients", len(b.clients))
+			ulog.Warnf("Removed client. %d registered clients", len(b.clients))
 		case event := <-b.Notifier:
 			//我们从外面得到了一个新事件
 			//向所有连接的客户端发送事件
@@ -128,7 +128,7 @@ func Sse(app *iris.Application) {
 		}
 		evtBytes, err := utils.Json.Marshal(evt)
 		if err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 		}
 		broker.Notifier <- evtBytes
 
@@ -148,7 +148,7 @@ func Sse(app *iris.Application) {
 				}
 				evtBytes, err := utils.Json.Marshal(evt)
 				if err != nil {
-					golog.Error(err)
+					ulog.Error(err)
 					continue
 				}
 				s.Publish("messages", &sse.Event{

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"github.com/kataras/golog"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/server"
@@ -42,6 +41,6 @@ func Service() {
 	micro.RegisterSubscriber("example.topic.pubsub.2", service.Server(), sub.SubEv, server.SubscriberQueue("queue.pubsub"))
 
 	if err := service.Run(); err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 }

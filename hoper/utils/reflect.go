@@ -2,9 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"hoper/utils/ulog"
 	"reflect"
-
-	"github.com/kataras/golog"
 )
 
 func setField(obj interface{}, name string, value interface{}) error {

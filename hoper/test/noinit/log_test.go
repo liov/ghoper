@@ -2,7 +2,6 @@ package noinit
 
 import (
 	"fmt"
-	"hoper/utils/ulog"
 	"log"
 	"os"
 	"runtime"
@@ -64,9 +63,9 @@ func Benchmark_golog(b *testing.B) {
 		}
 		return true
 	})
-
-	ulog.Warnf("警告")
-
+	for i := 0; i < b.N; i++ {
+		golog.Warnf("警告")
+	}
 }
 
 func Benchmark_logrus(b *testing.B) {
@@ -110,8 +109,4 @@ func Benchmark_zap(b *testing.B) {
 			"attempt", 3,
 			"backoff", time.Second)
 	}
-}
-
-func TestUlog(t *testing.T) {
-	ulog.Error("警告")
 }

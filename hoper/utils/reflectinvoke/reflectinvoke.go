@@ -3,7 +3,7 @@ package reflectinvoke
 import (
 	"encoding/json"
 	"errors"
-	"github.com/kataras/golog"
+	"hoper/utils/ulog"
 	"reflect"
 	"unicode"
 	"unicode/utf8"

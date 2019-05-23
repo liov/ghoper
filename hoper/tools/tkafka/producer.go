@@ -2,7 +2,6 @@ package tkafka
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/kataras/golog"
 	"hoper/utils/ulog"
 	"time"
 )
@@ -31,7 +30,7 @@ func SaramaProducer() {
 	defer producer.AsyncClose()
 
 	//循环判断哪个通道发送过来数据.
-	golog.Info("start goroutine")
+	ulog.Info("start goroutine")
 	go func(p sarama.AsyncProducer) {
 		for {
 			select {

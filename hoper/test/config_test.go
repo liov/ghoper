@@ -2,10 +2,10 @@ package test
 
 import (
 	"fmt"
-	"github.com/kataras/golog"
 	"hoper/initialize"
 	"hoper/model/crm"
 	"hoper/utils"
+	"hoper/utils/ulog"
 	"reflect"
 	"testing"
 	"time"
@@ -39,7 +39,7 @@ func TestConfig(t *testing.T) {
 	}
 	_, err := conn.Do("EXEC")
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 }
 
@@ -53,7 +53,7 @@ func TestConfig2(t *testing.T) {
 	conn.Do("SET", "config", config)
 
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 }
 

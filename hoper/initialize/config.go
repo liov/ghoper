@@ -2,11 +2,12 @@ package initialize
 
 import (
 	"fmt"
+	"hoper/utils/ulog"
 	"reflect"
+	"runtime"
 	"time"
 
 	"github.com/jinzhu/configor"
-	"github.com/kataras/golog"
 	"hoper/client/controller/credis"
 	"hoper/model/crm"
 	"hoper/utils"
@@ -128,11 +129,12 @@ func initializeConfig() {
 	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../../config/config.toml")
 
 	if err != nil {
-		golog.Error("配置错误: %v", err)
+		ulog.Error("配置错误: %v", err)
 	}
 
-	if Config.Server.Env == Debug {
+	if runtime.GOOS == "windows" {
 		Config.Server.LuosimaoAPIKey = ""
+		Config.Server.Env = Debug
 	}
 
 	Config.Server.UploadMaxSize = Config.Server.UploadMaxSize * 1024 * 1024
@@ -161,7 +163,7 @@ func configToRedis() {
 	}
 	_, err := conn.Do("EXEC")
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 }
 
@@ -175,7 +177,7 @@ func configToRedis2() {
 	conn.Do("SET", "config", config)
 
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 }
 

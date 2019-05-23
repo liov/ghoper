@@ -1,7 +1,7 @@
 package crawler
 
 import (
-	"fmt"
+	"hoper/utils/ulog"
 	"io"
 	"net/http"
 	"net/url"
@@ -10,7 +10,6 @@ import (
 	"sync"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/client/controller/upload"
@@ -176,7 +175,7 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 					imgURL = tempImgURL
 					resp, err := http.Head(imgURL)
 					if err != nil {
-						golog.Error(err)
+						ulog.Error(err)
 						return
 					}
 
@@ -226,19 +225,19 @@ func crawlContent(pageURL string, crawlSelector crawlSelector, siteInfo map[stri
 
 			imgUploadedInfo := upload.GenerateUploadedInfo(ext)
 			if err := os.MkdirAll(initialize.Config.Server.UploadDir, 0777); err != nil {
-				fmt.Println(err.Error())
+				ulog.Error(err)
 				return
 			}
 			out, outErr := os.OpenFile(imgUploadedInfo.UploadFilePath, os.O_WRONLY|os.O_CREATE, 0666)
 			if outErr != nil {
-				golog.Error(err)
+				ulog.Error(err)
 				return
 			}
 
 			defer out.Close()
 
 			if _, err := io.Copy(out, resp.Body); err != nil {
-				golog.Error(err)
+				ulog.Error(err)
 				return
 			}
 			img.SetAttr("src", initialize.Config.Server.UploadDir)
@@ -283,7 +282,7 @@ func crawlList(listURL string, user model.User, category ov.Category, crawlSelec
 
 	doc, docErr := goquery.NewDocument(listURL)
 	if docErr != nil {
-		golog.Error(docErr)
+		ulog.Error(docErr)
 		return
 	}
 
@@ -343,7 +342,7 @@ func Crawl(c iris.Context) {
 
 	var category ov.Category
 	if err := initialize.DB.First(&category, jsonData.CategoryID).Error; err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "错误的categoryID")
 		return
 	}
@@ -409,7 +408,7 @@ func CustomCrawl(c iris.Context) {
 
 	var category ov.Category
 	if err := initialize.DB.First(&category, jsonData.CategoryID).Error; err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "错误的categoryID")
 		return
 	}
@@ -473,7 +472,7 @@ func CrawlAccount(c iris.Context) {
 
 	var users []model.User
 	if err := initialize.DB.Where("name = ?", initialize.Config.Server.CrawlerName).Find(&users).Error; err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "error")
 		return
 	}
@@ -489,7 +488,7 @@ func CreateAccount(c iris.Context) {
 
 	var users []model.User
 	if err := initialize.DB.Where("name = ?", initialize.Config.Server.CrawlerName).Find(&users).Error; err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "error")
 		return
 	}
@@ -500,7 +499,7 @@ func CreateAccount(c iris.Context) {
 		user.AvatarURL = "/images/avatar/spider.png"
 		user.Status = model.UserStatusActived
 		if err := initialize.DB.Save(&user).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			common.Response(c, "error")
 			return
 		}

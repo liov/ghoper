@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"hoper/utils/ulog"
 	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/initialize"
@@ -304,7 +304,7 @@ func historyArticle(c iris.Context, isDel uint8) (*crm.ArticleHistory, *model.Ar
 	saveErr := initialize.DB.Create(&articleHistory).Error
 
 	if saveErr != nil {
-		golog.Info("保存历史失败")
+		ulog.Info("保存历史失败")
 	}
 
 	return &articleHistory, &article, nil

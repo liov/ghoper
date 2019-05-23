@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"hoper/utils/ulog"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/initialize"
@@ -154,7 +154,7 @@ func setCountToRedis(userID uint64, refId uint64, kind int8, action int8, num in
 	conn.Send("ZINCRBY", strings.Join([]string{IndexKind[kind], strconv.FormatUint(refId, 10), IndexAction[action], "Sorted"}, "_"), num, refId)
 	_, err := conn.Do("EXEC")
 	if err != nil {
-		golog.Error("缓存失败:", err)
+		ulog.Error("缓存失败:", err)
 	}
 	return nil
 }
@@ -184,7 +184,7 @@ func GetRedisAction(userID string, kind int8) *UserAction {
 	browse, err := redis.Int64s(conn.Receive())
 	userAction.Browse = browse
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 	return userAction
 }
@@ -207,7 +207,7 @@ func getActionCount(refId uint64, kind int8) *ov.ActionCount {
 	actionCount.BrowseCount = action[IndexAction[actionBrowse]]
 	actionCount.CommentCount = action[IndexAction[actionComment]]
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 	return actionCount
 }
@@ -247,7 +247,7 @@ func AddLike(ctx iris.Context) {
 	like.CreatedAt = time.Now()
 	err := initialize.DB.Create(&like).Error
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(ctx, "喜欢失败", e.ERROR)
 		return
 	}
@@ -323,7 +323,7 @@ func Approve(ctx iris.Context) {
 	err := initialize.DB.Exec("INSERT INTO " + approve.Kind + "_approve_user VALUES (" +
 		strconv.FormatUint(approve.RefID, 10) + "," + strconv.FormatUint(userID, 10) + ")").Error
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(ctx, "点赞失败", e.ERROR)
 		return
 	}
@@ -365,7 +365,7 @@ func AddCollection(ctx iris.Context) {
 		err = initialize.DB.Create(&Collection{RefID: fc.RefID, Kind: fc.Kind, UserID: userID, FavoritesID: v, Status: 1, CreatedAt: time.Now()}).Error
 	}
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(ctx, "收藏失败", e.ERROR)
 		return
 	}

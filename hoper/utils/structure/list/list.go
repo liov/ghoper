@@ -2,8 +2,7 @@ package list
 
 import (
 	"fmt"
-	"github.com/kataras/golog"
-	"github.com/kataras/ulog"
+	"hoper/utils/ulog"
 )
 
 //链表结点

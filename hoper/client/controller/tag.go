@@ -1,12 +1,12 @@
 package controller
 
 import (
+	"hoper/utils/ulog"
 	"strconv"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/initialize"
@@ -145,7 +145,7 @@ func setFlagCountToRedis(flag int8, name string, num int8) error {
 	err := conn.Send("SELECT", 11)
 	_, err = conn.Do("HINCRBY", IndexFlag[flag]+"_Count", name, num)
 	if err != nil {
-		golog.Error("缓存失败:", err)
+		ulog.Error("缓存失败:", err)
 	}
 	return nil
 }
@@ -163,7 +163,7 @@ func getFlagCountToRedis(flag int8) int64 {
 	count := data[IndexFlag[flag]]
 
 	if err != nil {
-		golog.Error("缓存失败:", err)
+		ulog.Error("缓存失败:", err)
 	}
 	return count
 }

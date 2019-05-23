@@ -2,11 +2,11 @@ package hwebsocket
 
 import (
 	"flag"
+	"hoper/utils/ulog"
 	"net/url"
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/kataras/golog"
 )
 
 var addr = flag.String("addr", "localhost:12345", "http service address")
@@ -17,7 +17,7 @@ func ClientStart() {
 
 	conn, _, err := dialer.Dial(u.String(), nil)
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		return
 	}
 
@@ -26,11 +26,11 @@ func ClientStart() {
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			golog.Error("read:", err)
+			ulog.Error("read:", err)
 			return
 		}
 
-		golog.Info("received: %s\n", message)
+		ulog.Info("received: %s\n", message)
 	}
 }
 

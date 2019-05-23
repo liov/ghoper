@@ -1,4 +1,4 @@
-package ulog
+package initialize
 
 import (
 	"fmt"
@@ -6,7 +6,8 @@ import (
 	"github.com/kataras/pio"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"hoper/initialize"
+	"hoper/utils"
+	"hoper/utils/ulog"
 	"runtime"
 	"time"
 )
@@ -34,28 +35,29 @@ func initializeLog() {
 		logrus.SetFormatter(formatter)
 		// Only log the warning severity or above.
 		logrus.SetLevel(logrus.InfoLevel)*/
-	golog.SetTimeFormat("2006/01/02 15:04:05")
-	golog.Handle(func(l *golog.Log) bool {
-		//应该是深度，好烦，不带format是6，带是7，无法确定
-		pc, file, line, _ := runtime.Caller(6)
 
-		if l.Logger.Printer.IsTerminal {
-			l.Message = fmt.Sprintf("[%s] %s:%d %s",
-				pio.Red(l.Message), file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
-		} else {
-			l.Message = fmt.Sprintf("[%s] %s:%d %s",
-				l.Message, file, line, runtime.FuncForPC(pc).Name())
-		}
+	if Config.Server.Env == Debug {
+		golog.SetTimeFormat("2006/01/02 15:04:05")
+		golog.Handle(func(l *golog.Log) bool {
+			//应该是深度，好烦，不带format是6，带是7，无法确定
+			pc, file, line, _ := runtime.Caller(6)
 
-		if l.NewLine {
-			l.Logger.Printer.Println(l)
-		} else {
-			l.Logger.Printer.Print(l)
-		}
-		return true
-	})
-	if initialize.Config.Server.Env == initialize.Debug {
-		Log = golog.Default
+			if l.Logger.Printer.IsTerminal {
+				l.Message = fmt.Sprintf("[%s] %s:%d %s",
+					pio.Red(l.Message), file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
+			} else {
+				l.Message = fmt.Sprintf("[%s] %s:%d %s",
+					l.Message, file, line, runtime.FuncForPC(pc).Name())
+			}
+
+			if l.NewLine {
+				l.Logger.Printer.Println(l)
+			} else {
+				l.Logger.Printer.Print(l)
+			}
+			return true
+		})
+		ulog.Log = golog.Default
 	} else {
 		config := zap.NewProductionConfig()
 		config.EncoderConfig = zapcore.EncoderConfig{
@@ -71,15 +73,17 @@ func initializeLog() {
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			EncodeCaller:   zapcore.ShortCallerEncoder,
 		}
-		logger, _ := config.Build()
-		defer logger.Sync()
-		Log = logger.Sugar()
+		logger, _ := config.Build(zap.AddCallerSkip(1))
+		ulog.Log = logger.Sugar()
 	}
 	var err error
-	initializeLog()
-	LogFile, err = openLogFile(getLogFileName(time.Now().Format(initialize.Config.Server.TimeFormat)), getLogFilePath())
-	if err != nil {
-		Fatal(err)
-	}
 
+	ulog.LogFile, err = utils.OpenLogFile(fmt.Sprintf("%s%s.%s",
+		Config.Server.LogSaveName,
+		time.Now().Format(Config.Server.TimeFormat),
+		Config.Server.LogFileExt,
+	), utils.GetLogFilePath(Config.Server.RuntimeRootPath,Config.Server.LogSavePath))
+	if err != nil {
+		ulog.Fatal(err)
+	}
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"hoper/utils/ulog"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/client/controller/credis"
@@ -48,7 +48,7 @@ func sendMail(action string, title string, curTime int64, user model.User) {
 	actionURL := siteURL + "/user" + action + "/"
 
 	actionURL = actionURL + strconv.FormatUint(user.ID, 10) + "/" + secretStr
-	golog.Info(actionURL)
+	ulog.Info(actionURL)
 	content := "<p><b>亲爱的" + user.Name + ":</b></p>" +
 		"<p>我们收到您在 " + siteName + " 的注册信息, 请点击下面的链接, 或粘贴到浏览器地址栏来激活帐号.</p>" +
 		"<a href=\"" + actionURL + "\">" + actionURL + "</a>" +
@@ -138,7 +138,7 @@ func ActiveSendMail(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("SET", activeUser, curTime, "EX", activeDuration); err != nil {
-		golog.Error("redis set failed:", err)
+		ulog.Error("redis set failed:", err)
 	}
 	go func() {
 		sendMail("/active", "账号激活", curTime, user)
@@ -173,7 +173,7 @@ func ActiveAccount(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("DEL", model.ActiveTime+strconv.FormatUint(user.ID, 10)); err != nil {
-		golog.Info(err)
+		ulog.Info(err)
 	}
 	common.Response(c, user.Email, "激活成功", e.SUCCESS)
 }
@@ -211,7 +211,7 @@ func ResetPasswordMail(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("SET", resetUser, curTime, "EX", resetDuration); err != nil {
-		golog.Error("redis set failed:", err)
+		ulog.Error("redis set failed:", err)
 	}
 	go func() {
 		sendMail("/ac", "修改密码", curTime, user)
@@ -224,7 +224,7 @@ func ResetPasswordMail(c iris.Context) {
 func VerifyResetPasswordLink(c iris.Context) {
 
 	if _, err := verifyLink(model.ResetTime, c); err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "重置链接已失效")
 		return
 	}
@@ -266,7 +266,7 @@ func ResetPassword(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("DEL", model.ResetTime+strconv.FormatUint(user.ID, 10)); err != nil {
-		golog.Error("redis delelte failed:", err)
+		ulog.Error("redis delelte failed:", err)
 	}
 }
 
@@ -576,7 +576,7 @@ func UpdateInfo(c iris.Context) {
 			return
 		}
 		if err := initialize.DB.Model(&user).Update("signature", userReqData.Signature).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			common.Response(c, "error")
 			return
 		}
@@ -764,26 +764,26 @@ func AllList(c iris.Context) {
 	if foundRole {
 		if err := initialize.DB.Model(&model.User{}).Where("created_at >= ? AND created_at < ? AND role = ?", startTime, endTime, user.Role).
 			Count(&totalCount).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			common.Response(c, "error")
 			return
 		}
 		if err := initialize.DB.Where("created_at >= ? AND created_at < ? AND role = ?", startTime, endTime, user.Role).
 			Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&users).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			common.Response(c, "error")
 			return
 		}
 	} else {
 		if err := initialize.DB.Model(&model.User{}).Where("created_at >= ? AND created_at < ?", startTime, endTime).
 			Count(&totalCount).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			common.Response(c, "error")
 			return
 		}
 		if err := initialize.DB.Where("created_at >= ? AND created_at < ?", startTime, endTime).Order("created_at DESC").Offset(offset).
 			Limit(pageSize).Find(&users).Error; err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			common.Response(c, "error")
 			return
 		}
@@ -816,7 +816,7 @@ func topN(c iris.Context, n int) {
 
 	var users []model.User
 	if err := initialize.DB.Order("score DESC").Limit(n).Find(&users).Error; err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "error")
 	} else {
 		common.Response(c,
@@ -1006,7 +1006,7 @@ func UserFromRedis(userID uint64) (*User, error) {
 	conn.Send("SELECT", credis.UserIndex)
 	userString, err := redis.String(conn.Do("GET", loginUser))
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		return nil, err
 	}
 	var user User
@@ -1025,7 +1025,7 @@ func UserLastActiveTime(userID uint64) error {
 	_, err = conn.Do("ZADD", model.LoginUser+"ActiveTime",
 		time.Now().Unix(), strconv.FormatUint(userID, 10))
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		return err
 	}
 	return nil

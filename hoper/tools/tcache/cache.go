@@ -3,7 +3,6 @@ package tcache
 import (
 	"github.com/golang/groupcache"
 	pb "github.com/golang/groupcache/groupcachepb"
-	"github.com/kataras/golog"
 	"net/http"
 )
 
@@ -39,7 +38,7 @@ func GetFromPeer(groupName, key string, peers *groupcache.HTTPPool) (value []byt
 
 	peer, ok := peers.PickPeer(key)
 	if ok == false {
-		golog.Info("peers PickPeer failed: ", key)
+		ulog.Info("peers PickPeer failed: ", key)
 		return
 	}
 

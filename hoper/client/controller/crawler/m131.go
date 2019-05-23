@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"bytes"
+	"hoper/utils/ulog"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/kataras/golog"
 	"golang.org/x/net/html/charset"
 	"hoper/utils"
 )
@@ -38,10 +38,10 @@ func M131() {
 			pattern := regexp.MustCompile(`\d+`).FindAllString(s, -1)
 			if len(pattern) > 0 {
 				dir = dir + pattern[0] + "P"
-				golog.Info(dir)
+				ulog.Info(dir)
 				if utils.CheckNotExist(dir) == true {
 					if err := utils.Mkdir(dir); err != nil {
-						golog.Info(err)
+						ulog.Info(err)
 					}
 				} else {
 					return

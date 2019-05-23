@@ -1,9 +1,9 @@
 package test
 
 import (
-	"github.com/kataras/golog"
 	"hoper/initialize"
 	"hoper/model/ov"
+	"hoper/utils/ulog"
 	"testing"
 )
 
@@ -34,8 +34,8 @@ func TestRedis(t *testing.T) {
 	}
 	data, err := conn.Do("SET", user.ID, user)
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	} else {
-		golog.Info(data)
+		ulog.Info(data)
 	}
 }

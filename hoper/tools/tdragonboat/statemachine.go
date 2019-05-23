@@ -2,7 +2,6 @@ package tdragonboat
 
 import (
 	"encoding/binary"
-	"github.com/kataras/golog"
 	"github.com/lni/dragonboat/statemachine"
 	"io"
 	"io/ioutil"
@@ -39,7 +38,7 @@ func (s *ExampleStateMachine) Update(data []byte) uint64 {
 	// incoming update request. we also increase the counter by one to remember
 	// how many updates we have applied
 	s.Count++
-	golog.Infof("from ExampleStateMachine.Update(), msg: %s, count:%d\n",
+	ulog.Infof("from ExampleStateMachine.Update(), msg: %s, count:%d\n",
 		string(data), s.Count)
 	return uint64(len(data))
 }
