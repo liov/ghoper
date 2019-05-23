@@ -257,7 +257,7 @@ pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>
         if let Some(ref mut next) = list.next {
             get(next, len+1,k2);
         }else {
-            list.next = 
+            list.next = None
         }
         panic!("错误")
     }
