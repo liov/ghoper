@@ -37,7 +37,7 @@ func setField(obj interface{}, name string, value interface{}) error {
 func SetStructByJSON(obj interface{}, mapData map[string]interface{}) error {
 	for key, value := range mapData {
 		if err := setField(obj, key, value); err != nil {
-			golog.Error(err)
+			ulog.Error(err)
 			return err
 		}
 	}

@@ -1,4 +1,4 @@
-package gredis
+package uredis
 
 import (
 	"encoding/json"

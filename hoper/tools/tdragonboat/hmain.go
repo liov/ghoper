@@ -1,4 +1,4 @@
-package hdragonboat
+package tdragonboat
 
 import (
 	"bufio"

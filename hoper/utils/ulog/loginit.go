@@ -1,4 +1,4 @@
-package initialize
+package ulog
 
 import (
 	"fmt"
@@ -6,7 +6,9 @@ import (
 	"github.com/kataras/pio"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"hoper/initialize"
 	"runtime"
+	"time"
 )
 
 /**
@@ -14,16 +16,6 @@ import (
  * @date       ：Created in 2019/4/2
  * @description：
  */
-
-type Logger interface {
-	Debug(args ...interface{})
-	Error(args ...interface{})
-	Fatal(args ...interface{})
-	Info(args ...interface{})
-	Warn(args ...interface{})
-}
-
-var Log Logger
 
 func initializeLog() {
 	// Log as JSON instead of the default ASCII formatter.
@@ -62,9 +54,9 @@ func initializeLog() {
 		}
 		return true
 	})
-	if Config.Server.Env == "debug"{
+	if initialize.Config.Server.Env == initialize.Debug {
 		Log = golog.Default
-	}else {
+	} else {
 		config := zap.NewProductionConfig()
 		config.EncoderConfig = zapcore.EncoderConfig{
 			TimeKey:        "ts",
@@ -82,6 +74,12 @@ func initializeLog() {
 		logger, _ := config.Build()
 		defer logger.Sync()
 		Log = logger.Sugar()
+	}
+	var err error
+	initializeLog()
+	LogFile, err = openLogFile(getLogFileName(time.Now().Format(initialize.Config.Server.TimeFormat)), getLogFilePath())
+	if err != nil {
+		Fatal(err)
 	}
 
 }

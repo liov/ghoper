@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
 	"github.com/satori/go.uuid"
@@ -19,7 +18,7 @@ import (
 	"hoper/client/router"
 	"hoper/initialize"
 	"hoper/protobuf"
-	"hoper/utils/hlog"
+	"hoper/utils/ulog"
 )
 
 func Client() {
@@ -31,7 +30,7 @@ func Client() {
 	cron.New().Start()
 	defer cron.New().Stop()
 
-	defer hlog.LogFile.Close()
+	defer ulog.LogFile.Close()
 
 	go hwebsocket.Start()
 
@@ -58,7 +57,7 @@ Loop:
 			//if err := irisRouter.Run(iris.TLS(initialize.Config.Server.HttpPort, "../../config/tls/cert.pem", "../../config/tls/cert.key"),
 			if err := irisRouter.Run(iris.Addr(initialize.Config.Server.HttpPort),
 				iris.WithConfiguration(iris.YAML("../../config/iris.yml"))); err != nil && err != http.ErrServerClosed {
-				golog.Error(err)
+				ulog.Error(err)
 			}
 		}
 

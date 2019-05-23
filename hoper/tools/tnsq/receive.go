@@ -1,4 +1,4 @@
-package hnsq
+package tnsq
 
 import (
 	"encoding/json"

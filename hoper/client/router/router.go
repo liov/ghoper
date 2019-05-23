@@ -12,7 +12,7 @@ import (
 	"github.com/kataras/iris/middleware/recover"
 	"hoper/client/controller"
 	"hoper/client/router/other"
-	"hoper/utils/hlog"
+	"hoper/utils/ulog"
 )
 
 var Ch = make(chan os.Signal, 1)
@@ -132,7 +132,7 @@ func logMid() iris.Handler {
 
 	c.LogFunc = func(now time.Time, latency time.Duration, status, ip, method, path string, message interface{}, headerMessage interface{}) {
 		output := logger.Columnize(now.Format("2006/01/02 - 15:04:05"), latency, status, ip, method, path, message, headerMessage)
-		hlog.LogFile.Write([]byte(output))
+		ulog.LogFile.Write([]byte(output))
 	}
 	//我们不想使用记录器，一些静态请求等
 	c.AddSkipper(func(ctx iris.Context) bool {

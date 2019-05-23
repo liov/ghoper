@@ -1,9 +1,9 @@
 package common
 
 import (
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/model/e"
+	"hoper/utils/ulog"
 )
 
 type H map[string]interface{}
@@ -51,7 +51,7 @@ func Response(ctx iris.Context, res ...interface{}) {
 	})
 
 	if err != nil {
-		golog.Error(num, err)
+		ulog.Error(num, err)
 	}
 }
 
@@ -63,13 +63,13 @@ func Response(ctx iris.Context, res ...interface{}) {
 	})
 
 	if err != nil {
-		golog.Error(num, err)
+		ulog.Error(num, err)
 	}
 }*/
 
 func Res(c iris.Context, h iris.Map) {
 	num, err := c.JSON(h)
 	if err != nil {
-		golog.Error(num, err)
+		ulog.Error(num, err)
 	}
 }

@@ -1,7 +1,8 @@
-package test
+package noinit
 
 import (
 	"fmt"
+	"hoper/utils/ulog"
 	"log"
 	"os"
 	"runtime"
@@ -27,7 +28,6 @@ func Benchmark_Log(b *testing.B) {
 	}
 }
 
-
 func Benchmark_log(b *testing.B) {
 	logger := log.New(os.Stdout, "", log.Ltime)
 	for i := 0; i < b.N; i++ {
@@ -41,13 +41,13 @@ func Benchmark_golog(b *testing.B) {
 		//应该是深度，好烦，不带format是6(Info)，带是7(Infof)，无法确定
 		_, file, line, _ := runtime.Caller(6)
 
-/*		if l.Logger.Printer.IsTerminal {
-			l.Message = fmt.Sprintf("[%s] %s:%d %s",
-				pio.Red(l.Message), file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
-		} else {
-			l.Message = fmt.Sprintf("[%s] %s:%d %s",
-				l.Message, file, line, runtime.FuncForPC(pc).Name())
-		}*/
+		/*		if l.Logger.Printer.IsTerminal {
+					l.Message = fmt.Sprintf("[%s] %s:%d %s",
+						pio.Red(l.Message), file, line, pio.Gray(runtime.FuncForPC(pc).Name()))
+				} else {
+					l.Message = fmt.Sprintf("[%s] %s:%d %s",
+						l.Message, file, line, runtime.FuncForPC(pc).Name())
+				}*/
 
 		if l.Logger.Printer.IsTerminal {
 			l.Message = fmt.Sprintf("[%s] %s:%d",
@@ -65,11 +65,9 @@ func Benchmark_golog(b *testing.B) {
 		return true
 	})
 
-	for i := 0; i < b.N; i++ {
-		golog.Warn("警告")
-	}
-}
+	ulog.Warnf("警告")
 
+}
 
 func Benchmark_logrus(b *testing.B) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
@@ -112,4 +110,8 @@ func Benchmark_zap(b *testing.B) {
 			"attempt", 3,
 			"backoff", time.Second)
 	}
+}
+
+func TestUlog(t *testing.T) {
+	ulog.Error("警告")
 }

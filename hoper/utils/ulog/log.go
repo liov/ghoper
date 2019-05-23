@@ -1,8 +1,7 @@
-package hlog
+package ulog
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 	"time"
@@ -11,71 +10,73 @@ import (
 	"hoper/utils"
 )
 
-type Level int
+type Logger interface {
+	Debug(args ...interface{})
+	Error(args ...interface{})
+	Fatal(args ...interface{})
+	Info(args ...interface{})
+	Warn(args ...interface{})
+	Debugf(template string, args ...interface{})
+	Errorf(template string, args ...interface{})
+	Fatalf(template string, args ...interface{})
+	Infof(template string, args ...interface{})
+	Warnf(template string, args ...interface{})
+}
 
 var (
 	LogFile *os.File
-
-	/*DefaultPrefix      = ""
-	DefaultCallerDepth = 2
-
-	logger     *log.Logger
-	logPrefix  = ""
-	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}*/
-)
-
-const (
-	DEBUG Level = iota
-	INFO
-	WARNING
-	ERROR
-	FATAL
+	Log     Logger
 )
 
 func init() {
 	var err error
+	initializeLog()
 	LogFile, err = openLogFile(getLogFileName(time.Now().Format(initialize.Config.Server.TimeFormat)), getLogFilePath())
 	if err != nil {
-		log.Fatalln(err)
+		Fatal(err)
 	}
-	//logger = log.New(os.Stdout, DefaultPrefix, log.LstdFlags)
+
 }
 
-/*func Debug(v ...interface{}) {
-	setPrefix(DEBUG)
-	logger.Println(v)
+func Debug(v ...interface{}) {
+	Log.Debug(v)
 }
 
 func Info(v ...interface{}) {
-	setPrefix(INFO)
-	logger.Println(v)
+	Log.Info(v)
 }
 
 func Warn(v ...interface{}) {
-	setPrefix(WARNING)
-	logger.Println(v)
+	Log.Warn(v)
 }
 
 func Error(v ...interface{}) {
-	setPrefix(ERROR)
-	logger.Println(v)
+	Log.Error(v)
 }
 
 func Fatal(v ...interface{}) {
-	setPrefix(FATAL)
-	logger.Fatalln(v)
+	Log.Error(v)
 }
 
-func setPrefix(level Level) {
-	_, file, line, ok := runtime.Caller(DefaultCallerDepth)
-	if ok {
-		logPrefix = fmt.Sprintf("[%s][%s:%d]", levelFlags[level], filepath.Base(file), line)
-	} else {
-		logPrefix = fmt.Sprintf("[%s]", levelFlags[level])
-	}
+func Fatalf(template string, v ...interface{}) {
+	Log.Error(v)
+}
 
-	logger.SetPrefix(logPrefix)
-}*/
+func Debugf(template string, v ...interface{}) {
+	Log.Debug(v)
+}
+
+func Infof(template string, v ...interface{}) {
+	Log.Info(v)
+}
+
+func Warnf(template string, v ...interface{}) {
+	Log.Warn(v)
+}
+
+func Errorf(template string, v ...interface{}) {
+	Log.Error(v)
+}
 
 func getLogFilePath() string {
 	RuntimeRootPath := initialize.Config.Server.RuntimeRootPath

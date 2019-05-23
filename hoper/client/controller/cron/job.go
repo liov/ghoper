@@ -1,10 +1,12 @@
 package cron
 
-import "github.com/kataras/golog"
+import (
+	"hoper/utils/ulog"
+)
 
 type RedisTo struct {
 }
 
 func (RedisTo) Run() {
-	golog.Info("定时任务执行")
+	ulog.Info("定时任务执行")
 }

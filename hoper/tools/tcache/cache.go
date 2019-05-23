@@ -1,4 +1,4 @@
-package hcache
+package tcache
 
 import (
 	"github.com/golang/groupcache"

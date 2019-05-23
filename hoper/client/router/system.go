@@ -5,7 +5,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/basicauth"
 	"hoper/client/controller"
-	"hoper/tools/hnsq"
+	"hoper/tools/tnsq"
 	"os"
 	"time"
 )
@@ -29,7 +29,7 @@ func System(app *iris.Application) {
 
 	app.Get("/api/init", authentication, controller.DBInit)
 
-	app.Post("/api/nsq", hnsq.Start)
+	app.Post("/api/nsq", tnsq.Start)
 
 	app.Get("/api/restart", func(c iris.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

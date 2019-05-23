@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"hoper/utils/ulog"
 	"strconv"
 	"strings"
 	"time"
@@ -8,7 +9,6 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/golog"
 	"github.com/kataras/iris"
 	"hoper/client/controller/common"
 	"hoper/client/controller/credis"
@@ -18,7 +18,7 @@ import (
 	"hoper/model/e"
 	"hoper/model/ov"
 	"hoper/utils"
-	"hoper/utils/gredis"
+	"hoper/utils/uredis"
 )
 
 /**
@@ -44,7 +44,7 @@ func AddMoment(c iris.Context) {
 	var moment model.Moment
 
 	if err := c.ReadJSON(&moment); err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		common.Response(c, "参数无效")
 		return
 	}
@@ -70,7 +70,7 @@ func AddMoment(c iris.Context) {
 	user.ArticleCount = user.ArticleCount + 1
 
 	if err := EditUserRedis(user); err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 	}
 	moment.Content = strings.TrimSpace(moment.Content)
 
@@ -268,7 +268,7 @@ func GetMoment(c iris.Context) {
 		return db.Select("name,moment_id")
 	}).Preload("User").Where("id = ?", id).First(&moment).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		golog.Error(err)
+		ulog.Error(err)
 		return
 	}
 	actionCount := getActionCount(moment.ID, kindMoment)
@@ -292,7 +292,7 @@ func getRedisMoment(index string) *ov.Moment {
 	actionCount := getActionCount(moment.ID, kindMoment)
 	moment.ActionCount = *actionCount
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		return nil
 	}
 	return &moment
@@ -333,7 +333,7 @@ func historyMoment(c iris.Context, isDel uint8) (*model.Moment, error) {
 	}
 
 	if saveErr != nil {
-		golog.Info("保存历史失败")
+		ulog.Info("保存历史失败")
 	}
 
 	return &moment, nil
@@ -429,19 +429,19 @@ func EditMoment(c iris.Context) {
 	}
 	//topNum
 	if topNum != "0" {
-		if gredis.Exists(credis.TopMoments) {
+		if uredis.Exists(credis.TopMoments) {
 			data, err := utils.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", credis.TopMoments, index, data)
 			if err != nil {
-				golog.Error(err)
+				ulog.Error(err)
 			}
 		}
 	} else {
-		if gredis.Exists(credis.Moments) {
+		if uredis.Exists(credis.Moments) {
 			data, err := utils.Json.MarshalToString(redisMoment)
 			_, err = conn.Do("LSET", credis.Moments, index, data)
 			if err != nil {
-				golog.Error(err)
+				ulog.Error(err)
 			}
 		}
 	}
@@ -465,17 +465,17 @@ func DeleteMoment(c iris.Context) {
 	defer conn.Close()
 
 	if topNum != "0" {
-		if gredis.Exists(credis.TopMoments) {
+		if uredis.Exists(credis.TopMoments) {
 			_, err := conn.Do("LSET", credis.TopMoments, index, "")
 			if err != nil {
-				golog.Error(err)
+				ulog.Error(err)
 			}
 		}
 	} else {
-		if gredis.Exists(credis.Moments) {
+		if uredis.Exists(credis.Moments) {
 			_, err := conn.Do("LSET", credis.Moments, index, "")
 			if err != nil {
-				golog.Error(err)
+				ulog.Error(err)
 			}
 		}
 	}
@@ -490,7 +490,7 @@ func redisMoments(key string, model interface{}) error {
 	if exist, err := redis.Bool(conn.Do("EXISTS", key)); exist && err == nil {
 		data, err := redis.Bytes(conn.Do("GET", key))
 		if err != nil {
-			golog.Info(err)
+			ulog.Info(err)
 			return err
 		} else {
 			utils.Json.Unmarshal(data, model)

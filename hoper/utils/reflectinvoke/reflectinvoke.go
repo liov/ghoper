@@ -133,7 +133,7 @@ func convertParamType(v interface{}, targetType reflect.Type) (
 	defer func() {
 		if re := recover(); re != nil {
 			ok = false
-			golog.Error(re)
+			ulog.Error(re)
 		}
 	}()
 

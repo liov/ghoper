@@ -3,11 +3,10 @@ package utils
 import (
 	"encoding/json"
 	"errors"
+	"hoper/utils/ulog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-
-	"github.com/kataras/golog"
 )
 
 // LuosimaoVerify 对前端的验证码进行验证
@@ -25,7 +24,7 @@ func LuosimaoVerify(reqURL, apiKey, response string) error {
 
 	res, err := http.PostForm(reqURL, reqData)
 	if err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		return errors.New("人机识别验证失败")
 	}
 
@@ -34,7 +33,7 @@ func LuosimaoVerify(reqURL, apiKey, response string) error {
 	resBody, readErr := ioutil.ReadAll(res.Body)
 
 	if readErr != nil {
-		golog.Error(readErr)
+		ulog.Error(readErr)
 		return errors.New("人机识别验证失败")
 	}
 
@@ -45,11 +44,11 @@ func LuosimaoVerify(reqURL, apiKey, response string) error {
 	}
 	var luosimaoResult LuosimaoResult
 	if err := json.Unmarshal(resBody, &luosimaoResult); err != nil {
-		golog.Error(err)
+		ulog.Error(err)
 		return errors.New("人机识别验证失败")
 	}
 	if luosimaoResult.Res != "success" {
-		golog.Info("luosimaoResult.Res", luosimaoResult.Res)
+		ulog.Info("luosimaoResult.Res", luosimaoResult.Res)
 		return errors.New("人机识别验证失败")
 	}
 	return nil

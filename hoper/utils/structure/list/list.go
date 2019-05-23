@@ -3,6 +3,7 @@ package list
 import (
 	"fmt"
 	"github.com/kataras/golog"
+	"github.com/kataras/ulog"
 )
 
 //链表结点
@@ -107,7 +108,7 @@ func (l *LinkList) insertAfterNode(pre *Node, e interface{}) {
 		}
 		l.size++
 	} else {
-		golog.Error("链表中不存在该结点")
+		ulog.Error("链表中不存在该结点")
 	}
 }
 
@@ -124,14 +125,14 @@ func (l *LinkList) insertAfterData(preData interface{}, e interface{}) bool {
 		}
 	}
 	//没有找到该数据
-	golog.Error("链表中没有该数据，插入失败")
+	ulog.Error("链表中没有该数据，插入失败")
 	return false
 }
 
 //在指定下标处插入数据
 func (l *LinkList) insert(position int, e interface{}) bool {
 	if position < 0 {
-		golog.Error("指定下标不合法")
+		ulog.Error("指定下标不合法")
 		return false
 	} else if position == 0 {
 		//在头部插入
@@ -142,7 +143,7 @@ func (l *LinkList) insert(position int, e interface{}) bool {
 		l.append(e)
 		return true
 	} else if position > l.size {
-		golog.Error("指定下标超出链表长度")
+		ulog.Error("指定下标超出链表长度")
 		return false
 	} else {
 		//在中间插入
@@ -192,7 +193,7 @@ func (l *LinkList) deleteNode(node *Node) {
 func (l *LinkList) delete(e interface{}) {
 	p := l.getNode(e)
 	if p == nil {
-		golog.Error("链表中无该数据，删除失败")
+		ulog.Error("链表中无该数据，删除失败")
 	} else {
 		l.deleteNode(p)
 	}
@@ -202,10 +203,10 @@ func (l *LinkList) delete(e interface{}) {
 func (l *LinkList) traverse() {
 	var p *Node = l.head
 	if l.isEmpty() {
-		golog.Error("LinkList is empty")
+		ulog.Error("LinkList is empty")
 	} else {
 		for p != nil {
-			golog.Info(p.data, " ")
+			ulog.Info(p.data, " ")
 			p = p.next
 		}
 	}

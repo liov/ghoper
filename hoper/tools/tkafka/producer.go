@@ -1,8 +1,9 @@
-package kafka
+package tkafka
 
 import (
 	"github.com/Shopify/sarama"
 	"github.com/kataras/golog"
+	"hoper/utils/ulog"
 	"time"
 )
 
@@ -20,11 +21,11 @@ func SaramaProducer() {
 	//注意，版本设置不对的话，kafka会返回很奇怪的错误，并且无法成功发送消息
 	config.Version = sarama.V0_10_0_1
 
-	golog.Info("start make producer")
+	ulog.Info("start make producer")
 	//使用配置,新建一个异步生产者
 	producer, e := sarama.NewAsyncProducer([]string{"182.61.9.153:6667", "182.61.9.154:6667", "182.61.9.155:6667"}, config)
 	if e != nil {
-		golog.Error(e)
+		ulog.Error(e)
 		return
 	}
 	defer producer.AsyncClose()
@@ -37,7 +38,7 @@ func SaramaProducer() {
 			case <-p.Successes():
 				//fmt.Println("offset: ", suc.Offset, "timestamp: ", suc.Timestamp.String(), "partitions: ", suc.Partition)
 			case fail := <-p.Errors():
-				golog.Error(fail)
+				ulog.Error(fail)
 			}
 		}
 	}(producer)
