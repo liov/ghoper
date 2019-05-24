@@ -2,14 +2,13 @@
 use std::collections::HashMap;
 
 
-
 //暴力法52ms，2MB
 //一遍hash版本，0ms，2.7MB
 pub fn two_sum1(nums: Vec<i32>, target: i32) -> Vec<i32> {
-    for i in 0..nums.len(){
-        for j in i+1..nums.len(){
-            if nums[j] == target - nums[i]{
-                return vec![i as i32,j as i32]
+    for i in 0..nums.len() {
+        for j in i + 1..nums.len() {
+            if nums[j] == target - nums[i] {
+                return vec![i as i32, j as i32];
             }
         }
     }
@@ -51,13 +50,13 @@ impl ListNode {
         }
     }
 
-/*因为 Rust 是后向兼容的（backwards compatible），所以不会移除 ref 和 ref mut，同时它们在一些不明确的场景还有用，
-比如希望可变地借用结构体的部分值而可变地借用另一部分的情况。你可能会在老的 Rust 代码中看到它们，所以请记住它们仍有价值。*/
+    /*因为 Rust 是后向兼容的（backwards compatible），所以不会移除 ref 和 ref mut，同时它们在一些不明确的场景还有用，
+    比如希望可变地借用结构体的部分值而可变地借用另一部分的情况。你可能会在老的 Rust 代码中看到它们，所以请记住它们仍有价值。*/
     pub fn push(&mut self, val: i32) {
         match self.next {
             Some(ref mut next) =>
                 next.push(val),
-            None =>self.next = Some(Box::new(ListNode::new(val)))
+            None => self.next = Some(Box::new(ListNode::new(val)))
         }
     }
 }
@@ -66,32 +65,32 @@ pub fn add_two_numbers(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> 
     let mut next1 = l1;
     let mut next2 = l2;
     let mut result = Box::new(ListNode::new(0));
-    let mut first =true;
-    let mut carry= 0;
+    let mut first = true;
+    let mut carry = 0;
     let mut sum = 0;
     loop {
         let lx = next1.unwrap_or(Box::new(ListNode::new(0)));
         let ly = next2.unwrap_or(Box::new(ListNode::new(0)));
 
-        sum = lx.val+ly.val;
+        sum = lx.val + ly.val;
 
         if first {
-            result.val = sum%10;
+            result.val = sum % 10;
             first = false;
-            if sum >= 10 { carry =1}else { carry = 0 }
-        }else {
-            if sum%10+carry == 10{
+            if sum >= 10 { carry = 1 } else { carry = 0 }
+        } else {
+            if sum % 10 + carry == 10 {
                 result.push(0);
                 carry = 1;
-            }else {
-                result.push(sum%10+carry);
-                if sum >= 10 { carry =1}else { carry = 0 }
+            } else {
+                result.push(sum % 10 + carry);
+                if sum >= 10 { carry = 1 } else { carry = 0 }
             }
         }
 
         next1 = lx.next;
         next2 = ly.next;
-        if next1==None&&next2==None&&carry==0{
+        if next1 == None && next2 == None && carry == 0 {
             break;
         }
     }
@@ -108,61 +107,60 @@ pub fn add_two_numbers(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> 
 pub fn multiply(num1: String, num2: String) -> String {
     let num_vec1 = num1.as_bytes();
     let num_vec2 = num2.as_bytes();
-    let cap =num_vec1.len()+num_vec2.len();
-    let mut result =Vec::with_capacity(cap);
-    unsafe  {result.set_len(cap);}
+    let cap = num_vec1.len() + num_vec2.len();
+    let mut result = Vec::with_capacity(cap);
+    unsafe { result.set_len(cap); }
     let con = 48;
     let mut product = 0; //乘积
     let mut decade = 0; //十位
 
-    if (num_vec1.len()==1&&num_vec1[0]==con)||(num_vec2.len()==1&&num_vec2[0]==con){
-        return String::from("0")
+    if (num_vec1.len() == 1 && num_vec1[0] == con) || (num_vec2.len() == 1 && num_vec2[0] == con) {
+        return String::from("0");
     }
 
-    for i in  0..num_vec1.len(){
-        for j in 0..num_vec2.len(){
-            if i==0 {result[cap-i-j-1] = 0} else if j == 0 { result[cap-i-num_vec2.len()-1] = 0 }
-            product =(num_vec1[num_vec1.len()-i-1]-con)*(num_vec2[num_vec2.len()-j-1]-con)+decade;
-            decade = product/10+(product%10 + result[cap-i-j-1])/10;
-            result[cap-i-j-1] = (product%10 + result[cap-i-j-1])%10;
+    for i in 0..num_vec1.len() {
+        for j in 0..num_vec2.len() {
+            if i == 0 { result[cap - i - j - 1] = 0 } else if j == 0 { result[cap - i - num_vec2.len() - 1] = 0 }
+            product = (num_vec1[num_vec1.len() - i - 1] - con) * (num_vec2[num_vec2.len() - j - 1] - con) + decade;
+            decade = product / 10 + (product % 10 + result[cap - i - j - 1]) / 10;
+            result[cap - i - j - 1] = (product % 10 + result[cap - i - j - 1]) % 10;
 
-            if i==num_vec1.len()-1 {
-                result[cap-i-j-1] = result[cap-i-j-1] +con
+            if i == num_vec1.len() - 1 {
+                result[cap - i - j - 1] = result[cap - i - j - 1] + con
             } else if j == 0 {
-                result[cap-i-j-1] = result[cap-i-j-1] +con
+                result[cap - i - j - 1] = result[cap - i - j - 1] + con
             }
         }
-        result[cap-i-num_vec2.len()-1] = decade;
+        result[cap - i - num_vec2.len() - 1] = decade;
         decade = 0;
-
     }
 
-    if result[0] != 0 { result[0] = result[0] +con} else {result.remove(0); }
+    if result[0] != 0 { result[0] = result[0] + con } else { result.remove(0); }
     String::from_utf8(result).unwrap()
 }
 
 ///两数相除
 
 pub fn divide(dividend: i32, divisor: i32) -> i32 {
-    if dividend ==-0x80000000 && divisor == -1{
-        return  0x7fffffff
+    if dividend == -0x80000000 && divisor == -1 {
+        return 0x7fffffff;
     }
     if dividend == 0 {
-        return 0
+        return 0;
     }
-    if divisor == 1 {return dividend}
-    if divisor == -1 {return -dividend}
+    if divisor == 1 { return dividend; }
+    if divisor == -1 { return -dividend; }
     let mut result = 0;
     let mut dividend_copy = dividend;
     let mut divisor_copy = divisor;
-    if dividend_copy > 0 {dividend_copy = -dividend_copy}
-    if divisor_copy > 0 {divisor_copy = -divisor_copy}
-    while dividend_copy <= divisor_copy{
+    if dividend_copy > 0 { dividend_copy = -dividend_copy }
+    if divisor_copy > 0 { divisor_copy = -divisor_copy }
+    while dividend_copy <= divisor_copy {
         dividend_copy = dividend_copy - divisor_copy;
-        result+=1;
+        result += 1;
     }
-    if (dividend>0&&divisor<0)||(dividend<0&&divisor>0){
-        return  -result
+    if (dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0) {
+        return -result;
     }
     result
 }
@@ -178,30 +176,30 @@ pub fn divide(dividend: i32, divisor: i32) -> i32 {
 
 pub fn letter_combinations(digits: String) -> Vec<String> {
     let combination = vec![
-        vec![b'a',b'b',b'c'],
-        vec![b'd',b'e',b'f'],
-        vec![b'g',b'h',b'i'],
-        vec![b'j',b'k',b'l'],
-        vec![b'm',b'n',b'o'],
-        vec![b'p',b'q',b'r',b's'],
-        vec![b't',b'u',b'v'],
-        vec![b'w',b'x',b'y',b'z'],
+        vec![b'a', b'b', b'c'],
+        vec![b'd', b'e', b'f'],
+        vec![b'g', b'h', b'i'],
+        vec![b'j', b'k', b'l'],
+        vec![b'm', b'n', b'o'],
+        vec![b'p', b'q', b'r', b's'],
+        vec![b't', b'u', b'v'],
+        vec![b'w', b'x', b'y', b'z'],
     ];
 
-    let mut result =Vec::new();
+    let mut result = Vec::new();
 
-    let cap =digits.len();
-    let mut middle:Vec<u8> =Vec::with_capacity(cap);
-    unsafe  {middle.set_len(cap);}
+    let cap = digits.len();
+    let mut middle: Vec<u8> = Vec::with_capacity(cap);
+    unsafe { middle.set_len(cap); }
 
     let digits_vec = digits.as_bytes();
     //闭包递归实在不会，改成了函数递归，消耗几何未知，有个clone()难受啊
-    fn get(n:usize,  res:&mut Vec<String>,  mid: &mut Vec<u8>, com:&Vec<Vec<u8>>, dig:&[u8]){
+    fn get(n: usize, res: &mut Vec<String>, mid: &mut Vec<u8>, com: &Vec<Vec<u8>>, dig: &[u8]) {
         if n < mid.len() {
-            for i in &(com[dig[n] as usize -50]){
+            for i in &(com[dig[n] as usize - 50]) {
                 mid[n] = *i;
-                get(n+1,res,mid,com,dig);
-                if n == mid.len()-1 {
+                get(n + 1, res, mid, com, dig);
+                if n == mid.len() - 1 {
                     res.push(String::from_utf8(mid.clone()).unwrap());
                 }
             }
@@ -211,57 +209,106 @@ pub fn letter_combinations(digits: String) -> Vec<String> {
 
     //let Y = |y|(|x|y(x(x)))(|x|y(|n|x(x)(n)));
 
-    get(0,&mut result,&mut middle,&combination,&digits_vec);
-    for i in &result{
-        println!("{}",i)
+    get(0, &mut result, &mut middle, &combination, &digits_vec);
+    for i in &result {
+        println!("{}", i)
     }
     vec![String::from("a")]
 }
 
 
 ///旋转链表
-
+use std::mem;
 
 impl ListNode {
     pub fn len(&self) -> usize {
-        let mut len = 1;
-        fn get_len(list:&ListNode,len:usize) -> usize {
+        fn get_len(list: &ListNode, len: usize) -> usize {
             if let Some(ref next) = list.next {
-                get_len(next, len+1)
+                get_len(next, len + 1)
             } else {
                 return len;
             }
         }
-        get_len(self,len)
+        get_len(self, 1)
+    }
+}
+
+pub fn rotate_right2(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+    if k == 0 { return head; }
+    let mut l = head.unwrap();
+
+    fn get(list: &mut Box<ListNode>, len: i32, k: i32) -> (Option<*mut Box<ListNode>>, Option<*mut Box<ListNode>>, i32) {
+        if let Some(ref mut next) = list.next {
+            let (p2, p3, size) = get(next, len + 1, k);
+            if len == size - k + 1 {
+                return ( Some(list), p3, size);
+            } else if len == size - k {
+                let mut t =list.clone();
+                t.next.take();
+                mem::replace( list, t);
+            }
+            return (p2, p3, size);
+        } else {
+            return (None, Some(list), len);
+        }
+
+        panic!("错误")
+    }
+
+    let ( p2, p3, len) = get(&mut l, 1, k);
+
+    if k > len {
+        return rotate_right2(Some(l), k % len);
+    };
+
+    unsafe {
+        mem::replace(&mut (*p3.unwrap()).next, Some(l.clone()));
+        Some((*p2.unwrap()).clone())
     }
 }
 
 pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
-    if k == 0 {return head}
+    if k == 0 { return head; }
     let mut l = head.unwrap();
-    let mut k2 = l.len() as i32;
-    if k > k2 {
-        k2 = k%k2;
-        if k2 == 0 { return Some(l) }
-    } else { k2 = k }
 
-    let mut len = 1;
+    let len = l.len() as i32;
+    let mut k2 = k;
+    if k > len {
+        k2 = k % len;
+        if k2 == 0 {
+            return Some(l);
+        }
+    };
 
-    fn get(list:&mut ListNode,end:Option<Box<ListNode>>,len:i32,k2:i32) -> Box<ListNode> {
-        if len > k2  {
-            if let Some(ref mut start) = list.next {
-                get(start, Some(Box::from(list.to_owned())), 0, k2);
+    fn get(list: &mut Box<ListNode>, len: i32, k: i32) -> (Option<*mut Box<ListNode>>, Option<*mut Box<ListNode>>) {
+        if len == k {
+            let mut next = list.next.take();
+
+            if let Some(ref mut next) = next {
+                let (p2, p3) = get(next, len + 1, k);
+                return (p2, p3);
             }
-            list.next = None;
         }
+        if len == k + 1 {
+            let (_, p3) = get(list, len + 1, k);
+            return (Some(list), p3);
+        }
+
         if let Some(ref mut next) = list.next {
-            get(next, None,len+1,k2);
-        }else {
-            list.next = end;
-            return Box::from(list.to_owned())
+            return get(next, len + 1, k);
+        } else {
+            return (None, Some(list));
         }
+
         panic!("错误")
     }
 
-    Some(get(&mut l,None,1,k2))
+
+    let (p2, p3) = get(&mut l, 1, len - k2);
+
+    let (p2, p3) = (p2.unwrap(), p3.unwrap());
+    unsafe {
+        mem::replace(&mut ((*p3).next), Some(l));
+        Some((*p2).clone())
+    }
 }

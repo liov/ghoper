@@ -1,7 +1,7 @@
-let token = "Bearer.eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIxIiwibG9naW5JcCI6IjEwLjQyLjEuMCIsImxvZ2luTmFtZSI6ImFkbWluIiwibG9naW5UaW1lTWlsbGlzIjoxNTU0NzkyMTAyNDEwLCJleHAiOjE1NTQ4Nzg1MDJ9.-2-q2NwRryz4Y9EcMwNJ1QUINwJPUHv2wh76Taei4Nc"
+let token = "Bearer.eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIxIiwibG9naW5JcCI6IjEwLjQyLjEuMCIsImxvZ2luTmFtZSI6ImFkbWluIiwibG9naW5UaW1lTWlsbGlzIjoxNTU4NjY5NDE4MjU0LCJleHAiOjE1NTg3NTU4MTh9.uRuK4EvQ5HATumpUt9yywfay_ONxQD6DZawDv8-nDGs"
 
-fetch('http://192.168.31.148:30002/api/dubbo/resource/export/res_export_trademark_info', {
-    method: 'post', body: JSON.stringify({}), responseType: 'blob', headers: {
+fetch('http://localhost:8030/api/dubbo/resource/export/res_export_trademark_info', {
+    method: 'post', body: JSON.stringify({pageNo:1,pageSize:10}), responseType: 'blob', headers: {
         "Content-Type": "application/json",
         "auth-token": token
     }

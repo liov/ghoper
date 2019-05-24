@@ -49,3 +49,20 @@ fn list_len(){
     l1.push(3);
     assert_eq!(l1.len(),  3)
 }
+
+#[test]
+fn rotate_right_test(){
+    let mut l1= Box::new(ListNode::new(1));
+    l1.push(2);
+    l1.push(3);
+    l1.push(3);
+    l1.push(4);
+    l1.push(5);
+    let mut l2= Box::new(ListNode::new(3));
+    l2.push(4);
+    l2.push(5);
+    l2.push(1);
+    l2.push(2);
+    l2.push(3);
+    assert_eq!(rotate_right2(Some(l1),5), Some(l2))
+}
