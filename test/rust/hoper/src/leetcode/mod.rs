@@ -247,27 +247,21 @@ pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>
 
     let mut len = 1;
 
-    fn get(list:&mut ListNode,len:i32,k2:i32) -> Box<ListNode> {
+    fn get(list:&mut ListNode,end:Option<Box<ListNode>>,len:i32,k2:i32) -> Box<ListNode> {
         if len > k2  {
             if let Some(ref mut start) = list.next {
-                get(start,0,k2);
+                get(start, Some(Box::from(list.to_owned())), 0, k2);
             }
             list.next = None;
         }
         if let Some(ref mut next) = list.next {
-            get(next, len+1,k2);
+            get(next, None,len+1,k2);
         }else {
-            list.next = 
+            list.next = end;
+            return Box::from(list.to_owned())
         }
         panic!("错误")
     }
 
-    let mut start = get(&mut l,1,k2);
-
-    fn set(start:&mut ListNode,end:&mut ListNode) {
-        if let Some(ref mut next) = start.next {
-            set(next, end);
-        }else { start.next= Some(Box::from(end.clone())) }
-    }(&start,&l);
-    Some(start)
+    Some(get(&mut l,None,1,k2))
 }
