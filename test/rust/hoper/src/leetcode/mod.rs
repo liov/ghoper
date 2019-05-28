@@ -233,7 +233,7 @@ impl ListNode {
     }
 }
 
-pub fn rotate_right2(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
     if k == 0 { return head; }
     let mut l = head.unwrap();
 
@@ -241,11 +241,11 @@ pub fn rotate_right2(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode
         if let Some(ref mut next) = list.next {
             let (p2, p3, size) = get(next, len + 1, k);
             if len == size - k + 1 {
-                return ( Some(list), p3, size);
+                return (Some(list), p3, size);
             } else if len == size - k {
-                let mut t =list.clone();
+                let mut t = list.clone();
                 t.next.take();
-                mem::replace( list, t);
+                mem::replace(list, t);
             }
             return (p2, p3, size);
         } else {
@@ -255,10 +255,10 @@ pub fn rotate_right2(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode
         panic!("错误")
     }
 
-    let ( p2, p3, len) = get(&mut l, 1, k);
+    let (p2, p3, len) = get(&mut l, 1, k);
 
     if k > len {
-        return rotate_right2(Some(l), k % len);
+        return rotate_right(Some(l), k % len);
     };
 
     unsafe {
@@ -267,13 +267,14 @@ pub fn rotate_right2(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode
     }
 }
 
-pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
-    if k == 0 { return head; }
+pub fn rotate_right2(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+    if head == None || k == 0 { return head; }
     let mut l = head.unwrap();
 
     let len = l.len() as i32;
+    if len == 1 { return Some(l); };
     let mut k2 = k;
-    if k > len {
+    if k >= len {
         k2 = k % len;
         if k2 == 0 {
             return Some(l);
@@ -285,8 +286,7 @@ pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>
             let mut next = list.next.take();
 
             if let Some(ref mut next) = next {
-                let (p2, p3) = get(next, len + 1, k);
-                return (p2, p3);
+                return get(next, len + 1, k);
             }
         }
         if len == k + 1 {
@@ -311,4 +311,201 @@ pub fn rotate_right(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>
         mem::replace(&mut ((*p3).next), Some(l));
         Some((*p2).clone())
     }
+}
+
+pub fn rotate_right3(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+    if head == None || k == 0 { return head; }
+    let mut l = head.unwrap();
+
+    let len = l.len() as i32;
+    if len == 1 { return Some(l); };
+    let mut k2 = k;
+    if k >= len {
+        k2 = k % len;
+        if k2 == 0 {
+            return Some(l);
+        }
+    };
+
+    fn get(list: &mut Box<ListNode>, len: i32, k: i32) -> Box<ListNode> {
+        if len == k {
+            let mut next = list.next.take();
+
+            if let Some(ref mut next) = next {
+                return get(next, len + 1, k);
+            }
+        }
+        if len == k + 1 {
+            return list.clone();
+        }
+
+        if let Some(ref mut next) = list.next {
+            return get(next, len + 1, k);
+        }
+
+        panic!("错误")
+    }
+
+
+    let mut list = get(&mut l, 1, len - k2);
+    fn set(list: &mut Box<ListNode>, list2: Box<ListNode>) {
+        if let Some(ref mut next) = list.next {
+            set(next, list2);
+        } else {
+            list.next = Some(list2.clone());
+        }
+    }
+    set(&mut list, l);
+    Some(list)
+}
+
+///旋转数组
+
+pub fn rotate(nums: &mut Vec<i32>, k: i32) {
+    let len = nums.len();
+    if len == 0 || len == 1 || k == 0 { return; }
+    let mut k2 = k as usize;
+    if k2 >= len {
+        k2 = k2 % len;
+        if k2 == 0 {
+            return;
+        }
+    };
+
+    let mut idx = 0;
+    let mut tmp = nums[k2];
+
+    //求最大公因数
+    let mut ii = 1;
+    let mut times = len;
+    let mut kk = k2;
+    while ii != 0 {
+        ii = times % kk;
+        times = kk;
+        kk = ii;
+    }
+
+    for i in 0..times {
+        idx = i;
+        loop {
+            idx = idx + k2;
+            if idx >= len {
+                idx = idx - len
+            }
+            tmp = nums[idx];
+            nums[idx] = nums[i];
+            nums[i] = tmp;
+            if idx == i { break; }
+        }
+    }
+}
+
+///接雨水
+
+pub fn trap(height: Vec<i32>) -> i32 {
+    if height.len() < 2 {return 0}
+    let mut result = 0;
+    let mut sub = 0;
+    let mut num = 0;
+    let mut first = true;
+    let mut left = 0;
+    let mut idx = 0;
+    let mut i = 0;
+    let mut add = true;
+    loop {
+        if add && idx == height.len()-1{
+            return result;
+        }
+        if height[i] >= left && height[i] != 0 {
+            if first {
+                left = height[i];
+                first = false;
+            } else {
+                /*语义逻辑是这样，但是不好写
+                if num == 0 && height[i] == left {
+                    continue;
+                }*/
+                if !(num == 0 && height[i] == left) {
+                result = result + left * num - sub;
+                left = height[i];
+                sub = 0;
+                num = 0;
+                if add { idx = i; }
+            }
+            }
+        } else if !first {
+            num = num + 1;
+            sub = sub + height[i];
+        }
+        if add && i == height.len() - 1{
+            sub = 0;
+            num = 0;
+            first = true;
+            left = 0;
+            add = false;
+            continue;
+        }
+
+        if !add && i==idx{
+            return result;
+        }
+        if add {i=i+1;}else { i=i-1; }
+
+    }
+
+    result
+}
+
+///接雨水 II
+
+use std::collections::HashSet;
+
+#[derive(PartialEq, Eq, PartialOrd, Ord,Debug,Hash,Clone)]
+struct  Point(i32,usize,usize);
+
+pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
+    if height_map.len() < 3  || height_map[0].len()<3 {return 0}
+    let mut result = 0;
+    let mut side =Vec::with_capacity(height_map[0].len()*2+(height_map.len()-2)*2);
+    for i in 0..height_map.len(){
+        if i==0 || i==height_map.len()-1{
+            for j in 0..height_map[0].len(){
+                side.push(Point(height_map[i][j],i,j));
+            }
+        }else {
+            side.push(Point(height_map[i][0],i,0));
+            side.push(Point(height_map[i][height_map[0].len()-1],i,height_map[0].len()-1));
+        }
+    }
+    side.sort();
+    println!("{:?}",side);
+    let round:[[i32;2];4] = [[0,-1],[0,1],[-1,0],[1,0]];
+    let mut x= 0;let mut y=0;
+    let mut i=0;
+    let mut drop = HashSet::new();
+    loop {
+        for j in round.iter(){
+            x=side[i].2+j[0] as usize;
+            y=side[i].2+j[1] as usize;
+            if x < 0 || x >= height_map.len()-1 || y < 0 || y >= height_map[0].len()-1 {
+                continue;
+            }
+
+            if drop.get(&side[i]) != None{
+                continue;
+            }
+
+            if height_map[x][y]<side[i].0{
+                result =result+1;
+                side[i]=Point(side[i].0,x,y);
+                drop.insert(side[i].clone());
+                i+i-1;
+                break;
+            }
+            drop.insert(side[i].clone());
+        }
+        if i == side.len()-1{break;}
+        i=i+1;
+    }
+    result
 }

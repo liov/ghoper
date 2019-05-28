@@ -55,7 +55,6 @@ fn rotate_right_test(){
     let mut l1= Box::new(ListNode::new(1));
     l1.push(2);
     l1.push(3);
-    l1.push(3);
     l1.push(4);
     l1.push(5);
     let mut l2= Box::new(ListNode::new(3));
@@ -63,6 +62,32 @@ fn rotate_right_test(){
     l2.push(5);
     l2.push(1);
     l2.push(2);
-    l2.push(3);
-    assert_eq!(rotate_right2(Some(l1),5), Some(l2))
+    assert_eq!(rotate_right3(Some(l1),3), Some(l2))
+}
+
+//leetcode上自带测试，这里就不写了
+
+#[cfg(not(test))]
+fn clone() -> i32 {
+   5
+}
+
+#[cfg(test)]
+fn clone() -> i32 {
+    10
+}
+
+#[test]
+fn clone_test(){
+    assert_eq!(clone(), 10)
+}
+
+#[test]
+fn trap_rain_water_test(){
+    let t = vec![
+        vec![1,4,3,1,3,2],
+        vec![3,2,1,3,2,4],
+        vec![2,3,3,2,3,1],
+    ];
+    assert_eq!(trap_rain_water(t), 10)
 }
