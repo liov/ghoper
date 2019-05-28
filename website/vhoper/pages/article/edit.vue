@@ -205,7 +205,9 @@
 <script>
 import 'tinymce/skins/ui/oxide/skin.min.css'
 import 'tinymce/skins/ui/oxide/content.min.css'
+//import 'tinymce/skins/content/default/content.css'
 import '../../assets/css/content.css'
+//不要tinymce的content.css的body属性
 import { upload } from '../../plugins/utils/upload'
 
 export default {
@@ -293,6 +295,7 @@ export default {
     // 这个函数真是无敌
     this.$nextTick(function () {
       require('../../plugins/filter/tinymce')
+      require('tinymce/plugins/paste/plugin.js')
       tinymce.init(this.init)
       if (this.$route.query.id) {if (this.article.content_type === 0) this.$refs.md.value = this.article.content
       else tinymce.activeEditor.setContent(this.article.html_content)}

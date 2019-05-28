@@ -14,7 +14,6 @@ import (
 	"github.com/kataras/iris"
 	"github.com/micro/go-micro"
 	"github.com/satori/go.uuid"
-	"hoper/client/controller/cron"
 	"hoper/client/controller/hwebsocket"
 	"hoper/client/router"
 	"hoper/initialize"
@@ -30,11 +29,9 @@ func Client() {
 
 	defer initialize.DB.Close()
 	defer initialize.BoltDB.Close()
-	//crawler.M131()
-	//go crawler.MM131()
 
-	cron.New().Start()
-	defer cron.New().Stop()
+/*	cron.New().Start()
+	defer cron.New().Stop()*/
 
 	defer ulog.LogFile.Close()
 
