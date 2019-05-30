@@ -456,7 +456,7 @@ pub fn trap(height: Vec<i32>) -> i32 {
 }
 
 ///接雨水 II
-
+/*
 use std::collections::BTreeMap;
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -508,6 +508,61 @@ pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
             }
         }
 
+    }
+    result
+}*/
+
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Clone)]
+struct Point(i32, usize, usize,bool);
+
+pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
+    if height_map.len() < 3 || height_map[0].len() < 3 { return 0; };
+    let m = height_map.len();
+    let n = height_map[0].len();
+    let mut result = 0;
+    let mut side = Vec::with_capacity(m*n);
+    let mut drop = HashSet::new();
+    for x in 0..m {
+        for y in 0..n {
+            if x == 0 || x == m - 1 || y == 0 || y == n - 1 {
+                side.push(Point(height_map[x][y], x, y,false));
+                drop.insert((x,y));
+            }
+        }
+    }
+    side.sort_by(|a, b| b.cmp(a));
+    let round: [[i32; 2]; 4] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+    let mut x = 0;
+    let mut y = 0;
+    let mut i=side.len()-1;
+    loop {
+        if side[i].3 {i=i-1; continue; }
+        let mut sub_side = Vec::with_capacity(3);
+        for j in round.iter() {
+            x =side[i].1 + j[0] as usize;
+            y = side[i].2 + j[1] as usize;
+            if x < 0 || x >= m - 1 || y < 0 || y >= n - 1 {
+                continue;
+            }
+            println!("({:?},{:?}):{:?}:{:?}", x, y, side[i], height_map[x][y]);
+            if drop.get(&(x,y)) != None{
+                continue;
+            }
+
+            if  height_map[x][y] <= side[i].0 {
+                result = result + (side[i].0 -  height_map[x][y]);
+                sub_side.push(Point(side[i].0, x, y,false));
+                drop.insert((x,y));
+            }
+        }
+        if sub_side.len()>0 {
+            sub_side.sort();
+            side.append(&mut sub_side);
+            i=side.len();
+        }
+        if i==0 {break;}
+        i=i-1;
     }
     result
 }
