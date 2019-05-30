@@ -1,5 +1,5 @@
 ///两数之和
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 
 //暴力法52ms，2MB
@@ -403,7 +403,7 @@ pub fn rotate(nums: &mut Vec<i32>, k: i32) {
 ///接雨水
 
 pub fn trap(height: Vec<i32>) -> i32 {
-    if height.len() < 2 {return 0}
+    if height.len() < 2 { return 0; }
     let mut result = 0;
     let mut sub = 0;
     let mut num = 0;
@@ -413,7 +413,7 @@ pub fn trap(height: Vec<i32>) -> i32 {
     let mut i = 0;
     let mut add = true;
     loop {
-        if add && idx == height.len()-1{
+        if add && idx == height.len() - 1 {
             return result;
         }
         if height[i] >= left && height[i] != 0 {
@@ -426,18 +426,18 @@ pub fn trap(height: Vec<i32>) -> i32 {
                     continue;
                 }*/
                 if !(num == 0 && height[i] == left) {
-                result = result + left * num - sub;
-                left = height[i];
-                sub = 0;
-                num = 0;
-                if add { idx = i; }
-            }
+                    result = result + left * num - sub;
+                    left = height[i];
+                    sub = 0;
+                    num = 0;
+                    if add { idx = i; }
+                }
             }
         } else if !first {
             num = num + 1;
             sub = sub + height[i];
         }
-        if add && i == height.len() - 1{
+        if add && i == height.len() - 1 {
             sub = 0;
             num = 0;
             first = true;
@@ -446,11 +446,10 @@ pub fn trap(height: Vec<i32>) -> i32 {
             continue;
         }
 
-        if !add && i==idx{
+        if !add && i == idx {
             return result;
         }
-        if add {i=i+1;}else { i=i-1; }
-
+        if add { i = i + 1; } else { i = i - 1; }
     }
 
     result
@@ -458,54 +457,57 @@ pub fn trap(height: Vec<i32>) -> i32 {
 
 ///接雨水 II
 
-use std::collections::HashSet;
+use std::collections::BTreeMap;
+use std::rc::Rc;
+use std::cell::RefCell;
 
-#[derive(PartialEq, Eq, PartialOrd, Ord,Debug,Hash,Clone)]
-struct  Point(i32,usize,usize);
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Clone)]
+struct Point(i32, usize, usize);
+
 
 pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
-    if height_map.len() < 3  || height_map[0].len()<3 {return 0}
+    if height_map.len() < 3 || height_map[0].len() < 3 { return 0; };
+    let m = height_map.len();
+    let n = height_map[0].len();
     let mut result = 0;
-    let mut side =Vec::with_capacity(height_map[0].len()*2+(height_map.len()-2)*2);
-    for i in 0..height_map.len(){
-        if i==0 || i==height_map.len()-1{
-            for j in 0..height_map[0].len(){
-                side.push(Point(height_map[i][j],i,j));
+    let mut side = BTreeMap::new();
+    let mut drop = HashSet::new();
+    for x in 0..m {
+        for y in 0..n {
+            if x == 0 || x == m - 1 || y == 0 || y == n - 1 {
+                side.insert(Point(height_map[x][y], x, y),false);
+                drop.insert((x,y));
             }
-        }else {
-            side.push(Point(height_map[i][0],i,0));
-            side.push(Point(height_map[i][height_map[0].len()-1],i,height_map[0].len()-1));
         }
     }
-    side.sort();
-    println!("{:?}",side);
-    let round:[[i32;2];4] = [[0,-1],[0,1],[-1,0],[1,0]];
-    let mut x= 0;let mut y=0;
-    let mut i=0;
-    let mut drop = HashSet::new();
-    loop {
-        for j in round.iter(){
-            x=side[i].2+j[0] as usize;
-            y=side[i].2+j[1] as usize;
-            if x < 0 || x >= height_map.len()-1 || y < 0 || y >= height_map[0].len()-1 {
+
+    let round: [[i32; 2]; 4] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+    let mut x = 0;
+    let mut y = 0;
+
+    let mut point_iter = side.iter();
+    while let Some((point,yet)) = point_iter.next() {
+        if *yet { continue; }
+        for j in round.iter() {
+            x =point.1 + j[0] as usize;
+            y = point.2 + j[1] as usize;
+            if x < 0 || x >= m - 1 || y < 0 || y >= n - 1 {
+                continue;
+            }
+            println!("({:?},{:?}):{:?}:{:?}", x, y, point, height_map[x][y]);
+            if drop.get(&(x,y)) != None{
                 continue;
             }
 
-            if drop.get(&side[i]) != None{
-                continue;
+            if  height_map[x][y] <= point.0 {
+                side.insert(*point,true);
+                result = result + (point.0 -  height_map[x][y]);
+                side.insert(Point(point.0, x, y),false);
+                drop.insert((x,y));
+                point_iter = side.iter();
             }
-
-            if height_map[x][y]<side[i].0{
-                result =result+1;
-                side[i]=Point(side[i].0,x,y);
-                drop.insert(side[i].clone());
-                i+i-1;
-                break;
-            }
-            drop.insert(side[i].clone());
         }
-        if i == side.len()-1{break;}
-        i=i+1;
+
     }
     result
 }
