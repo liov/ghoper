@@ -1,5 +1,5 @@
 ///两数之和
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 
 //暴力法52ms，2MB
@@ -456,12 +456,9 @@ pub fn trap(height: Vec<i32>) -> i32 {
 }
 
 ///接雨水 II
-/*
-use std::collections::BTreeMap;
-use std::rc::Rc;
-use std::cell::RefCell;
+use std::collections::{HashSet,BTreeMap};
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Clone, Copy)]
 struct Point(i32, usize, usize);
 
 
@@ -487,32 +484,35 @@ pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
 
     let mut point_iter = side.iter();
     while let Some((point,yet)) = point_iter.next() {
-        if *yet { continue; }
+        if *yet { continue; };
+        let point =*point;
         for j in round.iter() {
-            x =point.1 + j[0] as usize;
-            y = point.2 + j[1] as usize;
-            if x < 0 || x >= m - 1 || y < 0 || y >= n - 1 {
+            x = (point.1 as i32 + j[0]) as usize;
+            y = (point.2 as i32 + j[1]) as usize;
+            if  x >= m - 1 || y >= n - 1 {
                 continue;
             }
-            println!("({:?},{:?}):{:?}:{:?}", x, y, point, height_map[x][y]);
             if drop.get(&(x,y)) != None{
                 continue;
             }
-
+            drop.insert((x,y));
             if  height_map[x][y] <= point.0 {
-                side.insert(*point,true);
                 result = result + (point.0 -  height_map[x][y]);
                 side.insert(Point(point.0, x, y),false);
-                drop.insert((x,y));
+                point_iter = side.iter();
+            }else {
+                side.insert(Point(height_map[x][y], x, y),false);
                 point_iter = side.iter();
             }
         }
-
+        side.insert(point,true);
+        point_iter = side.iter();
     }
     result
-}*/
+}
 
 
+/*用Vec插入排开销太大，放弃
 #[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Clone)]
 struct Point(i32, usize, usize,bool);
 
@@ -540,7 +540,7 @@ pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
         if side[i].3 {i=i-1; continue; }
         let mut sub_side = Vec::with_capacity(3);
         for j in round.iter() {
-            x =side[i].1 + j[0] as usize;
+            x = side[i].1 + j[0] as usize;
             y = side[i].2 + j[1] as usize;
             if x < 0 || x >= m - 1 || y < 0 || y >= n - 1 {
                 continue;
@@ -555,6 +555,7 @@ pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
                 sub_side.push(Point(side[i].0, x, y,false));
                 drop.insert((x,y));
             }
+            //这里应该有个else，插入排大于边的新边
         }
         if sub_side.len()>0 {
             sub_side.sort();
@@ -565,4 +566,4 @@ pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
         i=i-1;
     }
     result
-}
+}*/
