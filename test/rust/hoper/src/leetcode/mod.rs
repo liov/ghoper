@@ -499,11 +499,10 @@ pub fn trap_rain_water(height_map: Vec<Vec<i32>>) -> i32 {
             if  height_map[x][y] <= point.0 {
                 result = result + (point.0 -  height_map[x][y]);
                 side.insert(Point(point.0, x, y),false);
-                point_iter = side.iter();
             }else {
                 side.insert(Point(height_map[x][y], x, y),false);
-                point_iter = side.iter();
             }
+            point_iter = side.iter();
         }
         side.insert(point,true);
         point_iter = side.iter();
