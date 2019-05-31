@@ -89,5 +89,14 @@ fn trap_rain_water_test(){
         vec![3,2,1,3,2,4],
         vec![2,3,3,2,3,1],
     ];
-    assert_eq!(trap_rain_water(t), 10)
+    assert_eq!(trap_rain_water2(t), 10)
+}
+
+#[test]
+fn insert_sort_test(){
+    let mut t1=vec![2,6,4];
+    let mut t2 = vec![5,4,3,2,1];
+    let t3= vec![6,6,5,4,3,2,2,1];
+    insert_sort(&mut t2,t1);
+    assert_eq!(t2, t3)
 }
