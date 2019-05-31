@@ -1,10 +1,7 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"hoper/client"
-	"hoper/initialize"
-	"net/http"
 )
 
 func main() {
@@ -22,20 +19,3 @@ func main() {
 *Rust一定更好玩了
 *Python只能归为实用类语言了
  */
-
-func Gin() {
-	gin.SetMode(initialize.Config.Server.Env)
-
-	r := gin.New()
-
-	r.Use(gin.Logger())
-
-	r.Use(gin.Recovery())
-
-	v1 := r.Group("/gin")
-	v1.GET("/ping", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{
-			"message": "gin",
-		})
-	})
-}
