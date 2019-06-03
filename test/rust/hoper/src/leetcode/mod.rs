@@ -582,7 +582,7 @@ pub fn trap_rain_water2(height_map: Vec<Vec<i32>>) -> i32 {
         for j in round.iter() {
             x = (side[i].1 as i32 + j[0]) as usize;
             y = (side[i].2 as i32 + j[1]) as usize;
-            if x < 0 || x >= m - 1 || y < 0 || y >= n - 1 {
+            if  x >= m - 1  || y >= n - 1 {
                 continue;
             }
             println!("({:?},{:?}):{:?}:{:?}", x, y, side[i], height_map[x][y]);
