@@ -36,7 +36,7 @@ const (
 	MaxNameLen = 100
 
 	// MaxContentLen 最大的内容长度
-	MaxContentLen = 50000
+	MaxContentLen = 100000
 
 	// MaxCategoryCount 最多可以属于几个分类
 	MaxCategoryCount = 6

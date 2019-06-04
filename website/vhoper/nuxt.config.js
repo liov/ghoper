@@ -73,13 +73,7 @@ module.exports = {
     includeNodeModules: true, // optional, default: false (this includes graphql-tag for node_modules folder)
     authenticationType: 'Basic', // optional, default: 'Bearer'
     // optional
-    errorHandler(error) {
-      console.log(
-        '%cError',
-        'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
-        error.message
-      )
-    },
+    //errorHandler:'怕了你了,errorHandler should be a path to an exported error handler config.',
     // required
     clientConfigs: {
       default: {
