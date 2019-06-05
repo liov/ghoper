@@ -6,7 +6,6 @@ import (
 
 func main() {
 
-	//go server.Service()
 	client.Client()
 }
 

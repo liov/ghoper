@@ -41,12 +41,12 @@ func Error(v ...interface{}) {
 }
 
 func Fatal(v ...interface{}) {
-	Log.Error(v...)
+	Log.Fatal(v...)
 }
 
 func Fatalf(format string, v ...interface{}) {
 	msg := fmt.Sprintf(format, v...)
-	Log.Error(msg)
+	Log.Fatal(msg)
 }
 
 func Debugf(format string, v ...interface{}) {

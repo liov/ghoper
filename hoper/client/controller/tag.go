@@ -130,12 +130,14 @@ const (
 	flagTag = iota
 	flagMood
 	flagCategory
+	flagSerial
 )
 
 var IndexFlag = map[int8]string{
 	flagTag:      "Tag",
 	flagMood:     "Mood",
 	flagCategory: "Category",
+	flagSerial:   "Serial",
 }
 
 func setFlagCountToRedis(flag int8, name string, num int8) error {

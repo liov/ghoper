@@ -21,4 +21,7 @@ $ yarn run generate
 
 For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
 
-"vue-apollo": "3.0.0-beta.28" 依赖是为了消除30版本的bug
+为了消除30版本的bug
+VueApolloMutationOptions (in types/options.d.ts) works around the error.
+optimisticResponse?: ((this: ApolloVueThisType<V>) => any) | Object;=>
+optimisticResponse?: ((this: ApolloVueThisType<V>) => any) | any;
