@@ -101,3 +101,5 @@ nginx-*
 *.lock
 *.sum
 hoper/hoper
+hoper/client
+static/css

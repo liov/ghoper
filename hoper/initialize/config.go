@@ -137,6 +137,7 @@ func initializeConfig() {
 
 	if runtime.GOOS == "windows" {
 		Config.Server.LuosimaoAPIKey = ""
+		Config.Redis.Password = ""
 		Config.Server.Env = Debug
 	}
 

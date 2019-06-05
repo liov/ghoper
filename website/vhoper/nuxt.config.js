@@ -1,6 +1,7 @@
 const { resolve } = require('path')
 const { readFileSync } = require('fs')
 const pkg = require('./package')
+const copyRes = require('./plugins/copyRes')
 module.exports = {
   mode: 'universal',
   server: {
@@ -124,6 +125,9 @@ module.exports = {
             fix: true
           }
         })
+      }
+      if(ctx.isServer){
+        copyRes.init()
       }
     },
     loaders: {

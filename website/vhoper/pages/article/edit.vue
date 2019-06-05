@@ -203,10 +203,10 @@
 </template>
 
 <script>
-import 'tinymce/skins/ui/oxide/skin.min.css'
-import 'tinymce/skins/ui/oxide/content.min.css'
+//import 'tinymce/skins/ui/oxide/skin.min.css'
+//import 'tinymce/skins/ui/oxide/content.min.css'
 //import 'tinymce/skins/content/default/content.css'
-import '../../assets/css/content.css'
+//import '../../assets/css/content.css'
 //不要tinymce的content.css的body属性
 import { upload } from '../../plugins/utils/upload'
 
@@ -226,6 +226,13 @@ export default {
         language_url: '../js/tinymce/lang/zh_CN.js',
         language: 'zh_CN',
         skin: 'oxide',
+        skin_url:'/static/css/tinymce/skins/ui/oxide',
+        content_css : '/content.css',
+        init_instance_callback: function (editor) {
+          editor.on('SetContent', function (e) {
+            console.log(e.content);;
+          });
+        },
         height: 650,
         plugins: 'link lists image code table wordcount paste',
         toolbar:
@@ -296,9 +303,11 @@ export default {
     this.$nextTick(function () {
       require('../../plugins/filter/tinymce')
       require('tinymce/plugins/paste/plugin.js')
-      tinymce.init(this.init)
-      if (this.$route.query.id) {if (this.article.content_type === 0) this.$refs.md.value = this.article.content
-      else tinymce.activeEditor.setContent(this.article.html_content)}
+      tinymce.init(this.init).then( resolve=>{
+        if (this.$route.query.id) {if (this.article.content_type === 0) this.$refs.md.value = this.article.content
+        else tinymce.activeEditor.setContent(this.article.html_content)}
+      })
+
     })
   },
   beforeDestroy() {
