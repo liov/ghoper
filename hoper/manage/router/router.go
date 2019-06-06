@@ -2,18 +2,19 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"hoper/initialize"
+	"github.com/gobuffalo/packr"
 	"net/http"
 )
 
 func GinRouter() *gin.Engine {
-	gin.SetMode(initialize.Config.Server.Env)
+	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.New()
 
-	r.Use(gin.Logger())
+	//r.Use(gin.Logger())
 
 	r.Use(gin.Recovery())
+
 
 	v1 := r.Group("/gin")
 
@@ -22,6 +23,10 @@ func GinRouter() *gin.Engine {
 			"message": "gin",
 		})
 	})
+	//当前目录为工作目录
+	box := packr.NewBox("../../../static/template/packr")
+
+	v1.StaticFS("/packr",http.FileSystem(box))
 
 	return r
 }

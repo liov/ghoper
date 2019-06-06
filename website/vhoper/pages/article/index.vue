@@ -59,6 +59,7 @@
             {{ item.comment_count }}
           </span>
           <span
+            v-if="$store.state.user && $store.state.user.id===item.user.id"
             slot="actions"
           >
             <a-icon

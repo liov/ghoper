@@ -6,7 +6,7 @@ obj
 target
 *.iml
 debug
-logs
+
 .gradle
 .settings
 *.classpath
@@ -93,8 +93,9 @@ dist
 # Service worker
 sw.*
 
-upload
-
+static/upload
+static/db
+static/logs
 *.db
 
 nginx-*
@@ -103,3 +104,5 @@ nginx-*
 hoper/hoper
 hoper/client
 static/css
+static/datafix
+static/template/packr

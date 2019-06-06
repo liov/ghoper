@@ -31,6 +31,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-swagger/go-swagger v0.18.0 // indirect
+	github.com/gobuffalo/packr v1.25.0
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -94,7 +95,6 @@ require (
 	github.com/olivere/elastic v6.2.17+incompatible // indirect
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
-	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_golang v0.9.2 // indirect
 	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275
 	github.com/quasoft/memstore v0.0.0-20180925164028-84a050167438
@@ -107,7 +107,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.4.0
+	github.com/sirupsen/logrus v1.4.1
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/atomic v1.4.0 // indirect
