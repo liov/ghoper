@@ -1,47 +1,50 @@
 <template>
-  <div>
-    <a-carousel
-      autoplay
-      arrows
-      effect="fade"
-    >
-      <div
-        slot="prevArrow"
-        class="custom-slick-arrow"
-        style="left: 10px;zIndex: 1"
+  <no-ssr>
+    <div>
+      <a-carousel
+        autoplay
+        arrows
+        effect="fade"
       >
-        <a-icon type="left-circle" />
-      </div>
-      <div
-        slot="nextArrow"
-        class="custom-slick-arrow"
-        style="right: 10px"
-      >
-        <a-icon type="right-circle" />
-      </div>
-      <div><h3>建设中，我觉得你看瞬间比较好</h3></div>
-      <div><h3>建设中，我觉得你去聊天比较好</h3></div>
-      <div><h3>建设中，我觉得你写博客比较好</h3></div>
-      <div><h3>建设中，我觉得你比较好看</h3></div>
-    </a-carousel>
-    <a-row>
-      <a-col :span="6">
-        hoper
-      </a-col>
-      <a-col
-        :span="12"
-        style="text-align: center"
-      >
-        <div>
-          原手机版作废，全部改成电脑版<br>
-          先点上方的聊天来聊天吧
+        <div
+          slot="prevArrow"
+          class="custom-slick-arrow"
+          style="left: 10px;zIndex: 1"
+        >
+          <a-icon type="left-circle" />
         </div>
-      </a-col>
-      <a-col :span="6">
-        h
-      </a-col>
-    </a-row>
-  </div>
+        <div
+          slot="nextArrow"
+          class="custom-slick-arrow"
+          style="right: 10px"
+        >
+          <a-icon type="right-circle" />
+        </div>
+        <div><h3>建设中，我觉得你看瞬间比较好</h3></div>
+        <div><h3>建设中，我觉得你去聊天比较好</h3></div>
+        <div><h3>建设中，我觉得你写博客比较好</h3></div>
+        <div><h3>建设中，我觉得你比较好看</h3></div>
+      </a-carousel>
+    
+      <a-row>
+        <a-col :span="6">
+          hoper
+        </a-col>
+        <a-col
+          :span="12"
+          style="text-align: center"
+        >
+          <div>
+            原手机版作废，全部改成电脑版<br>
+            先点上方的聊天来聊天吧
+          </div>
+        </a-col>
+        <a-col :span="6">
+          h
+        </a-col>
+      </a-row>
+    </div>
+  </no-ssr>
 </template>
 
 <script>

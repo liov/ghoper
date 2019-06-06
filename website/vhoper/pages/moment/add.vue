@@ -99,7 +99,7 @@
     <a-form-item style="width: 80%">
       <div
         id="vditor"
-        style="margin: 0 10%;height: 500px"
+        style="margin: 0 11%;height: 500px"
       />
     </a-form-item>
     <a-form-item style="margin-left: 10%;">
