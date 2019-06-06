@@ -17,4 +17,4 @@ EXPOSE 8000
 ENV NAME World
 
 # 在容器启动时运行
-CMD ["./hoper/ghoper/hoper/bin/hoper"]
+CMD ["./ghoper/hoper/bin/hoper"]

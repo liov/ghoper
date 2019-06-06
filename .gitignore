@@ -105,4 +105,4 @@ hoper/hoper
 hoper/client
 static/css
 static/datafix
-static/template/packr
+*packr.go
