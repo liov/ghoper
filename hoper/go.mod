@@ -31,7 +31,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-swagger/go-swagger v0.18.0 // indirect
-	github.com/gobuffalo/packr v1.25.0
+	github.com/gobuffalo/packr/v2 v2.3.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -89,7 +89,6 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/miekg/dns v1.1.2 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
-	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/newrelic/go-agent v2.5.0+incompatible // indirect
 	github.com/nsqio/go-nsq v1.0.7
 	github.com/olivere/elastic v6.2.17+incompatible // indirect
@@ -107,7 +106,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.4.1
+	github.com/sirupsen/logrus v1.4.2
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.uber.org/atomic v1.4.0 // indirect
@@ -125,6 +124,7 @@ require (
 )
 
 replace (
+	github.com/ugorji/go v1.1.4 => github.com/ugorji/go/codec v0.0.0-20190204201341-e444a5086c43
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc => github.com/golang/image v0.0.0-20190209060608-ef4a1470e0dc
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09 => github.com/golang/net v0.0.0-20190501004415-9ce7a6920f09
 	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a => github.com/golang/oauth2 v0.0.0-20190402181905-9f3314589c9a

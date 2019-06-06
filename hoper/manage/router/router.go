@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"net/http"
 )
 
@@ -24,7 +24,7 @@ func GinRouter() *gin.Engine {
 		})
 	})
 	//当前目录为工作目录
-	box := packr.NewBox("../../../static/template/packr")
+	box := packr.New("packr","../../../static/template/packr")
 
 	v1.StaticFS("/packr",http.FileSystem(box))
 
