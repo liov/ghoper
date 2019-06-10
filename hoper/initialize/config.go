@@ -141,10 +141,10 @@ func initializeConfig() {
 		Config.Redis.Password = ""
 		Config.Server.Env = Debug
 	}else {
-		&Config.Database.Password  = flag.String("p", Config.Database.Password, "password")
-		&Config.Server.MailPassword = flag.String("mp", Config.Server.MailPassword, "password")
-		Config.Redis.Password = Config.Database.Password
+		flag.StringVar(&Config.Database.Password,"p", Config.Database.Password, "password")
+		flag.StringVar(&Config.Server.MailPassword,"mp", Config.Server.MailPassword, "password")
 		flag.Parse()
+		Config.Redis.Password = Config.Database.Password
 	}
 
 	Config.Server.UploadMaxSize = Config.Server.UploadMaxSize * 1024 * 1024

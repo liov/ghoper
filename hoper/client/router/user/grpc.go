@@ -3,7 +3,9 @@ package user
 import (
 	"context"
 	"github.com/kataras/iris"
+	"github.com/micro/cli"
 	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/cmd"
 	"hoper/client/controller/common"
 	"hoper/model/e"
 	"hoper/protobuf"
@@ -12,6 +14,26 @@ import (
 var Service protobuf.UserService
 
 func init() {
+	app := cmd.App()
+
+	app.Flags = append(app.Flags, cli.StringFlag{
+		Name:  "p",
+		Usage: "password",
+	},
+		cli.StringFlag{
+			Name:  "mp",
+			Usage: "mail password",
+		})
+
+	before := app.Before
+
+	app.Before = func(ctx *cli.Context) error {
+		if path := ctx.String("c"); len(path) > 0 {
+			// got config
+			// do stuff
+		}
+		return before(ctx)
+	}
 	/*	reg := etcdv3.NewRegistry(func(options *registry.Options) {
 		options.Addrs =[]string{
 			"http://192.168.3.34:2379",
@@ -20,6 +42,7 @@ func init() {
 	// Create a new service. Optionally include some options here.
 	service := micro.NewService(micro.Name("user.client"))
 	// Init will parse the command line flags.
+	//程序自定义命令行，与此冲突 https://github.com/micro/micro/issues/83
 	service.Init()
 	// Create new user client
 	Service = protobuf.NewUserService("user", service.Client())

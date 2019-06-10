@@ -76,7 +76,7 @@ require (
 	github.com/lni/dragonboat v2.1.0+incompatible // indirect
 	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983 // indirect
 	github.com/markbates/goth v1.49.0
-	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300 // indirect
+	github.com/micro/cli v0.0.0-20181223203424-1b0c9793c300
 	github.com/micro/go-log v0.0.0-20170512141327-cbfa9447f9b6
 	github.com/micro/go-micro v0.17.1-0.20190110221432-3043841cf529
 	github.com/micro/go-plugins v0.18.0 // indirect
