@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"flag"
 	"fmt"
 	"github.com/kataras/golog"
 	"hoper/utils/ulog"
@@ -139,6 +140,11 @@ func initializeConfig() {
 		Config.Server.LuosimaoAPIKey = ""
 		Config.Redis.Password = ""
 		Config.Server.Env = Debug
+	}else {
+		&Config.Database.Password  = flag.String("p", Config.Database.Password, "password")
+		&Config.Server.MailPassword = flag.String("mp", Config.Server.MailPassword, "password")
+		Config.Redis.Password = Config.Database.Password
+		flag.Parse()
 	}
 
 	Config.Server.UploadMaxSize = Config.Server.UploadMaxSize * 1024 * 1024

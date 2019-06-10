@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  session-timeout: 30
+  tomcat.max-threads: 0
+  tomcat.uri-encoding: UTF-8
+
+#公共配置与profiles选择无关 mapperLocations指的路径是src/main/resources
+mybatis:
+  typeAliasesPackage: xyz.hoper.web.entity
+  mapperLocations: classpath:mapper/*Mapper.xml
+
+
+---
+
+#开发配置
+spring:
+  #profiles: dev
+  #debug: true
+  application:
+    name: jhoper-web
+  datasource:
+    url: jdbc:mysql://localhost:3306/hoper?serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

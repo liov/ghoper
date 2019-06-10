@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/basicauth"
 	"hoper/client/controller"
+	"hoper/initialize"
 	"hoper/tools/tnsq"
 	"os"
 	"time"
@@ -20,7 +21,7 @@ func System(app *iris.Application) {
 
 	//auth
 	authConfig := basicauth.Config{
-		Users:   map[string]string{"admin": "lby604"},
+		Users:   map[string]string{"admin": initialize.Config.Database.Password},
 		Realm:   "Authorization Required", // defaults to "Authorization Required"
 		Expires: time.Duration(30) * time.Minute,
 	}

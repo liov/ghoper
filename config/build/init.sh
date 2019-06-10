@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
-#ps -aux | grep main
+zjokwzwojyfvbgef
 
-#发现并没有8080端口的Tomcat进程。
+ps -aux | grep main
 
 #使用命令：
 
@@ -11,10 +10,6 @@
 git checkout init.sh
 git checkout ../../micro/client/hoper
 git pull
-chmod 777 init.sh
-chmod 777 ../../micro/client/hoper
-nohup  ./../../micro/client/hoper &
-
 
 #git status
 #git checkout
