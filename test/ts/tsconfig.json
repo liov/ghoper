@@ -1,18 +1,23 @@
 {
   "compilerOptions": {
+    "outDir": "./dist/",
     "module": "commonjs",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true
+    "sourceMap": false,
+    "target": "es2016",
+    "experimentalDecorators": true
   },
   "include": [
-    "src/**/*"
+    "../js/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.spec.ts"
   ],
   "files": [
-    "decorators.ts"
+    "src/main.ts",
+    "tests/decorators.ts"
   ]
 }

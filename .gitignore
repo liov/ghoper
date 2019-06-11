@@ -4,6 +4,7 @@ node_modules
 test/besides/csharp/bin
 obj
 target
+out
 *.iml
 debug
 
