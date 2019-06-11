@@ -17,7 +17,8 @@
     "**/*.spec.ts"
   ],
   "files": [
-    "src/main.ts",
-    "tests/decorators.ts"
+    //"src/main.ts",
+    "tests/decorators.ts",
+    "tests/interface.ts"
   ]
 }
