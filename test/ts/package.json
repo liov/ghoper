@@ -25,6 +25,7 @@
     "watchify": "^3.11.1"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.4"
+    "@babel/polyfill": "^7.4.4",
+    "reflect-metadata": "^0.1.13"
   }
 }
