@@ -107,3 +107,8 @@ hoper/client
 static/css
 static/datafix
 *packr.go
+
+deploy_versions/
+.temp/
+.rn_temp/
+.DS_Store
