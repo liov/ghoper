@@ -1,4 +1,4 @@
-package mysqlmodel
+package _mysql
 
 import (
 	"crypto/md5"

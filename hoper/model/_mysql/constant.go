@@ -1,4 +1,4 @@
-package mysqlmodel
+package _mysql
 
 // 通用常量
 
