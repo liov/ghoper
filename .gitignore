@@ -107,6 +107,7 @@ hoper/client
 static/css
 static/datafix
 *packr.go
+test/csharp/bin
 
 deploy_versions/
 .temp/

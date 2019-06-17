@@ -1,0 +1,8 @@
+console.log(Object===Object)
+console.log(""==="")
+console.log(1.0===1)
+console.log(NaN===NaN)
+console.log(Object==Object)
+console.log(""=="")
+console.log(1.0==1)
+console.log(NaN==NaN)
