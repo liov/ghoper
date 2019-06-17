@@ -34,6 +34,7 @@ fn main() {
             },
             Err(_) => {
                 println!("错误的数字!");
+                index="".to_string();
                 continue;
             },
         };
