@@ -105,6 +105,7 @@ func (ua *UserAges) Get(name string) int {
 }
 
 //数据nil但interface不nil
+//interface 类型的变量只有在类型和值均为 nil 时才为 nil
 type HuMan interface {
 	Show()
 }
