@@ -104,7 +104,7 @@ nginx-*
 *.sum
 hoper/hoper
 hoper/client
-static/css
+static/css/tinymce
 static/datafix
 *packr.go
 test/csharp/bin

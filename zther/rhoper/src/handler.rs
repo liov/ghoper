@@ -134,5 +134,5 @@ fn index17(req: &HttpRequest) -> RegisterResult {
 fn index18() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/index.html")))
+        .body(include_str!("../static/template/rust/index.html")))
 }
