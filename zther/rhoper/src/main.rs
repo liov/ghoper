@@ -12,6 +12,7 @@ mod register_handler;
 mod register_routes;
 mod schema;
 mod utils;
+mod router;
 
 use actix_web::{App, Either, web, http, HttpRequest, HttpResponse,
                 HttpServer,
@@ -20,6 +21,7 @@ use actix_web::{App, Either, web, http, HttpRequest, HttpResponse,
                     Logger,
                 },
                 error::{self, Error}, Responder, dev::*};
+use actix_session::{CookieSession, Session};
 use actix::prelude::*;
 use chrono::Duration;
 use actix_files as fs;
@@ -37,7 +39,7 @@ fn main() -> std::io::Result<()> {
     env_logger::init();
 
 
-    let sys = actix::System::new("hoper");
+    let sys = actix_rt::System::new("hoper");
     HttpServer::new( || {
         let secret: String =
             std::env::var("SECRET_KEY").unwrap_or_else(|_| "0123".repeat(8));
@@ -45,26 +47,6 @@ fn main() -> std::io::Result<()> {
             std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
         let state = handler::AppState{ counter: Cell::new(0usize) };
 
-
-        App::new()
-            .data(state)
-            .wrap(Logger::default())
-            .wrap(IdentityService::new(
-                CookieIdentityPolicy::new(secret.as_bytes())
-                    .name("auth")
-                    .path("/")
-                    .domain(domain.as_str())
-                    .max_age_time(Duration::days(1))
-                    .secure(false), // this can only be true if you have https
-            )).service(
-            web::scope("/test")
-                .service(web::resource("/index1").route(web::get().to(handler::index1)))
-                .service(web::resource("/index2").route(web::get().to(handler::index2)))
-                .service(web::resource("/index3").route(web::get().to(handler::index3)))
-                .service(web::resource("/index5").route(web::get().to(handler::index5)))
-        )
-            // serve static files
-            //.service(fs::Files::new("/", "./static/").index_file("index.html"))
 
     })
         .bind("127.0.0.1:8000")?
