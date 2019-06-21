@@ -6,6 +6,9 @@ fn main() {
     let b = ();
     let c = println!("a:{:?},b:{:?},c:{:?}",a,b,get_result_true(5).unwrap());
     println!("c:{:?}",c);
+    let mut d = B::new();
+    d.edit(6);
+    println!("d:{:?}",d);
 }
 
 #[derive(Debug)]
@@ -28,4 +31,16 @@ fn get_result_err<T>()->Result<T,()>{
 
 fn get_result_true<T>(t:T)->Result<T,()>{
     Ok(t)
+}
+
+impl B<i32>{
+    fn new() -> Self{
+        B{t:5}
+    }
+}
+
+impl<T> B<T>{
+    fn edit(&mut self,t:T){
+        self.t= t;
+    }
 }

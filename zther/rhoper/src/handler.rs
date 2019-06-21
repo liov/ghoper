@@ -1,6 +1,5 @@
 use actix_web::{App, Either, web, http, HttpRequest, HttpResponse, Result,
                 middleware::{
-                    identity::{CookieIdentityPolicy, IdentityService},
                     Logger,
                 },
                 error::{self, Error}, Responder, dev::*};
@@ -9,10 +8,6 @@ use chrono::Duration;
 use std::cell::Cell;
 use futures::stream::once;
 use futures::future::{Future, result};
-
-pub fn index1(_req: HttpRequest) -> String {
-    "Hello world!".to_owned()
-}
 
 pub fn index2(_req: HttpRequest) -> &'static str {
     "Hello world!"
@@ -134,5 +129,5 @@ fn index17(req: &HttpRequest) -> RegisterResult {
 fn index18() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/template/rust/index.html")))
+        .body(include_str!("../../../static/template/rust/index.html")))
 }
