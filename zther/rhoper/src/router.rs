@@ -48,6 +48,7 @@ use core::borrow::Borrow;
 pub fn config(cfg: &mut ServiceConfig){
     cfg.service(
         web::scope("/test")
+            .service(web::resource("/{id}/{name}").to(handler::index))
             .service(web::resource("/index2").route(web::get().to(handler::index2)))
             .service(web::resource("/index3").route(web::get().to(handler::index3)))
             .service(web::resource("/index5").route(web::get().to(handler::index5)))

@@ -9,6 +9,11 @@ use std::cell::Cell;
 use futures::stream::once;
 use futures::future::{Future, result};
 
+
+pub fn index(info: web::Path<(u32, String)>) -> impl Responder {
+    format!("Hello {}! id:{}", info.1, info.0)
+}
+
 pub fn index2(_req: HttpRequest) -> &'static str {
     "Hello world!"
 }

@@ -17,8 +17,6 @@ use chrono::Duration;
 use std::cell::Cell;
 use core::borrow::Borrow;
 #[macro_use]
-extern crate diesel;
-#[macro_use]
 extern crate serde_derive;
 
 fn main() -> std::io::Result<()> {
@@ -28,7 +26,7 @@ fn main() -> std::io::Result<()> {
     env_logger::init();
 
 
-    let sys = actix_rt::System::new("hoper");
+    //let sys = actix_rt::System::new("hoper");
     HttpServer::new( || {
         let secret: String =
             std::env::var("SECRET_KEY").unwrap_or_else(|_| "0123".repeat(8));
@@ -37,17 +35,14 @@ fn main() -> std::io::Result<()> {
 
         App::new().data(handler::AppState { counter: Cell::new(0usize) })
             .wrap(Logger::default())
-            .wrap(CookieSession::signed(&[0; 32])
-                .path("/")
-                .domain(domain.as_str())
-                .max_age_time(Duration::days(1)).
-                secure(false))
             .configure(router::config)
         // serve static files
         //.service(fs::Files::new("/", "./static/").index_file("index.html"))
     })
         .bind("127.0.0.1:8000")?
-        .shutdown_timeout(2)
-        .start();
-        sys.run()
+        .run()
+        //.shutdown_timeout(2)
+        //.start();
+    //sys.run()
 }
+
