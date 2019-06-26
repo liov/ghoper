@@ -113,3 +113,7 @@ deploy_versions/
 .temp/
 .rn_temp/
 .DS_Store
+*.exe
+
+hoper/bin/hoper
+hoper/bin/manage
