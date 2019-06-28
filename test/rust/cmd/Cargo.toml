@@ -8,3 +8,6 @@ edition = "2018"
 hoper = { path = "../hoper" }
 rand = "0.6.5"
 libc="0.2.58"
+actix = "0.8.3"
+actix-rt = "0.2.2"
+futures = "0.1.25"
