@@ -2,7 +2,7 @@ use actix::prelude::*;
 //在 Cargo.toml 中加入 actix_rt
 // 依赖告诉了 Cargo 要从 https://crates.io 下载 actix_rt 和其依赖，
 // 并使其可在项目代码中使用。
-use actix_rt::spawn;
+
 
 
 /// Define `Ping` message
@@ -42,7 +42,7 @@ fn main() -> std::io::Result<()> {
         let res = addr.send(Ping(10));
 
         // handle() returns tokio handle
-        spawn(
+        actix_rt::spawn(
             res.map(|res| {
                 println!("RESULT: {}", res == 20);
 
