@@ -57,8 +57,10 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
+	github.com/go-openapi/spec v0.19.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/go-stomp/stomp v2.0.3+incompatible // indirect
+	github.com/go-swagger/go-swagger v0.19.0 // indirect
 	github.com/gobuffalo/packr/v2 v2.3.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
