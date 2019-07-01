@@ -1,0 +1,31 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Description",
+    "title": "Title",
+    "termsOfService": "TermsOfService",
+    "contact": {
+      "name": "Contact Name",
+      "url": "Contact URL",
+      "email": "Contact Email"
+    },
+    "license": {
+      "name": "License Name",
+      "url": "License URL"
+    },
+    "version": "0.01"
+  },
+  "host": "localhost:80",
+  "basePath": "/",
+  "paths": {}
+}
