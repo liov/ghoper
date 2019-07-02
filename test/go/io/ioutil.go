@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	fileObj, err := os.Open("../text.txt")
+	fileObj, err := os.Open("./text.txt")
 	defer fileObj.Close()
 
 	contents, _ := ioutil.ReadAll(fileObj)

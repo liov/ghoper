@@ -58,7 +58,7 @@ func read3(path string) {
 
 func main() {
 
-	file := "../text.txt" //找一个大的文件，如日志文件
+	file := "./text.txt" //找一个大的文件，如日志文件
 	start := time.Now()
 	read1(file)
 	t1 := time.Now()

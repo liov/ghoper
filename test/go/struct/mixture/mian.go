@@ -1,8 +1,8 @@
 package mixture
 
 import (
-	"test/main/struct/mixture/a"
-	"test/main/struct/mixture/b"
+	"test/struct/mixture/a"
+	"test/struct/mixture/b"
 )
 
 /**

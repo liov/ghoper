@@ -1,6 +1,6 @@
 package b
 
-import "test/main/struct/mixture/a"
+import "test/struct/mixture/a"
 
 /**
  * @author     ：lbyi

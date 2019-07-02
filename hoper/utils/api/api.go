@@ -21,33 +21,62 @@ import (
 	}
 }*/
 
-func Generate(args ...string) {
-	targetPath := "."
-	if len(args) > 0 {
-		targetPath = args[0]
-	}
-	realPath, err := filepath.Abs(targetPath)
-	if err != nil {
-		ulog.Error(err)
-	}
+var doc spec.Swagger
 
-	apiType := "json"
-	if len(args) > 1 {
-		apiType = args[1]
-	}
+func GetDoc(stop bool,args ...string) {
+	if doc.Swagger == "" {
+		targetPath := "."
+		if len(args) > 0 {
+			targetPath = args[0]
+		}
+		realPath, err := filepath.Abs(targetPath)
+		if err != nil {
+			ulog.Error(err)
+		}
 
-	realPath = filepath.Join(realPath, "swagger."+apiType)
+		apiType := "json"
+		if len(args) > 1 {
+			apiType = args[1]
+		}
 
-	if utils.CheckExist(realPath) {
-		os.Remove(realPath)
+		realPath = filepath.Join(realPath, "swagger."+apiType)
 
+		if utils.CheckNotExist(realPath) {
+			generate()
+		} else {
+			file, err := os.Open(realPath)
+			if err != nil {
+				ulog.Error(err)
+			}
+			defer file.Close()
+			data, err := ioutil.ReadAll(file)
+			/*var buf bytes.Buffer
+			err = json.Compact(&buf, data)
+			if err != nil {
+				ulog.Error(err)
+			}*/
+			if apiType == "json" {
+				err = json.Unmarshal(data, &doc)
+			} else {
+				var v map[string]interface{}
+				err = yaml.Unmarshal(data, &v)
+				b, err := json.Marshal(data)
+				if err != nil {
+					ulog.Error(err)
+				}
+				json.Unmarshal(b, &doc)
+			}
+			if err != nil {
+				ulog.Error(err)
+			}
+		}
 	}
-	_, err = os.Create(realPath)
-	if err != nil {
-		ulog.Error(err)
+	if stop {
+		defer WriteToFile(args...)
 	}
-	var b []byte
-	var doc spec.Swagger
+}
+
+func generate() {
 
 	info := new(spec.Info)
 	doc.Info = info
@@ -74,27 +103,56 @@ func Generate(args ...string) {
 
 	doc.Host = "localhost:80"
 	doc.BasePath = "/"
-	doc.Schemes = []string{"http","https"}
+	doc.Schemes = []string{"http", "https"}
 	doc.Consumes = []string{"application/json"}
 	doc.Produces = []string{"application/json"}
+}
+
+func WriteToFile(args ...string) {
+	if doc.Swagger == "" {
+		generate()
+	}
+	targetPath := "."
+	if len(args) > 0 {
+		targetPath = args[0]
+	}
+	realPath, err := filepath.Abs(targetPath)
+	if err != nil {
+		ulog.Error(err)
+	}
+
+	apiType := "json"
+	if len(args) > 1 {
+		apiType = args[1]
+	}
+
+	realPath = filepath.Join(realPath, "swagger."+apiType)
+
+	if utils.CheckExist(realPath) {
+		os.Remove(realPath)
+	}
+	var file *os.File
+	file, err = os.Create(realPath)
+	if err != nil {
+		ulog.Error(err)
+	}
+	defer file.Close()
 
 	if apiType == "json" {
-		b, err = json.MarshalIndent(doc, "", "  ")
+		enc := json.NewEncoder(file)
+		enc.SetIndent("", "  ")
+		enc.Encode(&doc)
 	} else {
-		// marshals as YAML
-		b, err = json.Marshal(doc)
-		if err == nil {
-			d, ery := swag.BytesToYAMLDoc(b)
-			if ery != nil {
-				ulog.Error(ery)
-			}
-			b, err = yaml.Marshal(d)
+		b, err := yaml.Marshal(swag.ToDynamicJSON(&doc))
+		if err != nil {
+			ulog.Error(err)
+		}
+		if _, err := file.Write(b); err != nil {
+			ulog.Error(err)
 		}
 	}
-	err = ioutil.WriteFile(realPath, b, 0644)
-
 }
 
 func main() {
-	Generate("../config")
+	GetDoc(false,".", "yml")
 }
