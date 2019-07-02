@@ -37,6 +37,6 @@ struct Bar<T> {
 
 fn main(){
     let mut a = Foo::new();
-    a.push(1);
+    //a.push(1);
     println!("{:?}",a);
 }
