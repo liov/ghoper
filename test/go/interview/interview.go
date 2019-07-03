@@ -171,7 +171,8 @@ func Private() {
 	fmt.Println("people: ", p)
 }
 
-//v%打印实际类型的值，打印过程会调用String(),stack overflow
+//%v打印值，打印过程会调用String(),stack overflow
+//占位符参数导致对“String”方法的递归调用(%v)
 type People2 struct {
 	Name string
 }

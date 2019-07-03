@@ -8,6 +8,11 @@ import (
 
 type H map[string]interface{}
 
+type ResData struct {
+	data interface{}
+	msg string
+	code int
+}
 //先信息后数据最后状态码
 //入参1. data interface{},msg string,code int
 //2.msg,code |data默认nil
@@ -16,39 +21,34 @@ type H map[string]interface{}
 //5.data |msg默认"",code默认SUCCESS
 func Response(ctx iris.Context, res ...interface{}) {
 
-	var msg string
-	var code int
-	var data interface{}
+	var resData ResData
+
 	if len(res) == 1 {
-		code = e.ERROR
+		resData.code = e.ERROR
 		if msgTmp, ok := res[0].(string); ok {
-			msg = msgTmp
-			data = nil
+			resData.msg = msgTmp
+			resData.data = nil
 		} else {
-			data = res[0]
-			code = e.SUCCESS
+			resData.data = res[0]
+			resData.code = e.SUCCESS
 		}
 	} else if len(res) == 2 {
 		if msgTmp, ok := res[0].(string); ok {
-			data = nil
-			msg = msgTmp
-			code = res[1].(int)
+			resData.data = nil
+			resData.msg = msgTmp
+			resData.code = res[1].(int)
 		} else {
-			data = res[0]
-			msg = res[1].(string)
-			code = e.SUCCESS
+			resData.data = res[0]
+			resData.msg = res[1].(string)
+			resData.code = e.SUCCESS
 		}
 	} else {
-		data = res[0]
-		msg = res[1].(string)
-		code = res[2].(int)
+		resData.data = res[0]
+		resData.msg = res[1].(string)
+		resData.code = res[2].(int)
 	}
 
-	num, err := ctx.JSON(iris.Map{
-		"code": code,
-		"msg":  msg,
-		"data": data,
-	})
+	num, err := ctx.JSON(&resData)
 
 	if err != nil {
 		ulog.Error(num, err)

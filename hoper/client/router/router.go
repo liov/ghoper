@@ -3,6 +3,7 @@ package router
 //go:generate qtc -dir=../../template
 import (
 	"context"
+	"hoper/utils/api"
 	"os"
 	"strings"
 	"time"
@@ -29,6 +30,7 @@ func IrisRouter() *iris.Application {
 	})
 	app.StaticWeb("/api/static", "../../static")
 	app.Use(recover.New())
+	app.Use(api.ApiMiddle)
 	//other.Wrap(app)
 	//api文档
 	//other.Api(app)

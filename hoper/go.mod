@@ -57,7 +57,9 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
-	github.com/go-openapi/spec v0.19.0 // indirect
+	github.com/go-openapi/loads v0.19.0 // indirect
+	github.com/go-openapi/spec v0.19.0
+	github.com/go-openapi/swag v0.17.0
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/go-stomp/stomp v2.0.3+incompatible // indirect
 	github.com/go-swagger/go-swagger v0.19.0 // indirect
@@ -148,7 +150,6 @@ require (
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/ory-am/common v0.4.0 // indirect
 	github.com/ory/dockertest v3.3.4+incompatible // indirect
-	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/peterbourgon/g2s v0.0.0-20170223122336-d4e7ad98afea // indirect
 	github.com/pquerna/otp v1.2.0 // indirect
 	github.com/prometheus/common v0.2.0
@@ -163,6 +164,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94 // indirect
+	github.com/stretchr/testify v1.3.0
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/valyala/fasthttp v1.3.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
@@ -179,6 +181,7 @@ require (
 	google.golang.org/grpc v1.20.1 // indirect
 	gopkg.in/gorethink/gorethink.v4 v4.1.0 // indirect
 	gopkg.in/ory-am/dockertest.v2 v2.2.3 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
 	gotest.tools v2.3.0+incompatible // indirect
 	layeh.com/radius v0.0.0-20190322222518-890bc1058917 // indirect
 )

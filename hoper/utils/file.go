@@ -24,7 +24,7 @@ func GetExt(fileName string) string {
 func CheckExist(src string) bool {
 	_, err := os.Stat(src)
 
-	return os.IsExist(err)
+	return err==nil
 }
 
 func CheckNotExist(src string) bool {
