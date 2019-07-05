@@ -32,3 +32,5 @@ func main() {
 		fmt.Println("结束")
 	}
 }
+
+type Foo struct {}
