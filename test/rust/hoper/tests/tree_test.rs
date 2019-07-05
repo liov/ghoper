@@ -1,4 +1,4 @@
-use hoper::utils::tree::MyTree;
+use hoper::utils::tree::{MyTree, TTree, TreeT};
 //如果项目是二进制 crate 并且只包含 src/main.rs 而没有 src/lib.rs，
 // 这样就不可能在 tests 目录创建集成测试并使用 extern crate 导入 src/main.rs 中定义的函数。
 // 只有库 crate 才会向其他 crate 暴露了可供调用和使用的函数；二进制 crate 只意在单独运行。
@@ -31,4 +31,12 @@ fn add_tree() {
         t.insert(2f64);
         println!("{:?}",t);
         t.peek();
+}
+
+#[test]
+fn t_tree(){
+        let mut a = TTree::new();
+        a.insert(5);
+        //打印--nocapture
+        println!("{:?}",a)
 }
