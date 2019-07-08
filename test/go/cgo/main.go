@@ -1,23 +1,24 @@
 //+build go1.12
 
 package main
-
-//go:generate
+//generate ${SRCDIR} 不能用,值是""
+//go:generate cmd /C echo ${SRCDIR}
+//go:generate gcc -c -o /demo/dll/hello.o hello.c
+//go:generate ar rcs /demo/dll/libhello.a ${SRCDIR}/demo/dll/hello.o
 
 //
 
 //go run test/cgo
 
 /*
-//#cgo  CFLAGS: -I../../include
-//#cgo  LDFLAGS: -L../../lib -lxxx
+#cgo  CFLAGS: -I${SRCDIR}/../../../../../tool/mingw/mingw64/include -I./include
+#cgo  LDFLAGS: -L${SRCDIR}/../../../../dll -lhello
 #include <stdio.h>
 #include <stdint.h>
-#include<string.h>
+#include <string.h>
+#include "hello.h"
 
 void SayHelloInner(_GoString_ s);
-
-void SayHelloExternal(const char* s);
 
 static void SayHello(const char* s) {
     puts(s);
@@ -109,6 +110,11 @@ func main() {
 		s1 := string((*[31]byte)(unsafe.Pointer(&C.s1[0]))[:sLen:sLen])*/
 	fmt.Println(arr1, C.add(1, 1))
 
+	CallC()
+}
+
+func CallC()  {
+	C.SayHello(C.CString("Hello, World\n"))
 }
 
 //export SayHelloInner

@@ -4,5 +4,3 @@
 void SayHelloExternal(const char* s) {
     puts(s);
 }
-
-
