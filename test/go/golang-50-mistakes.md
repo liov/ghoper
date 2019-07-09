@@ -1958,7 +1958,7 @@ func main() {
 
 Go 编译器会根据变量的大小及其 "escape analysis" 的结果来决定变量的存储位置，故能准确返回本地变量的地址，这在 C/C++ 中是不行的。
 
-在 go build 或 go run 时，加入 -m 参数，能准确分析程序的变量分配位置：
+在 go build 或 go run 时，加入 -msan 参数，能准确分析程序的变量分配位置：
 
 ### 55. GOMAXPROCS、Concurrency（并发）and Parallelism（并行）
 Go 1.4 及以下版本，程序只会使用 1 个执行上下文 / OS 线程，即任何时间都最多只有 1 个 goroutine 在执行。

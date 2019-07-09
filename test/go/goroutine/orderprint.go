@@ -1,14 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+	"unsafe"
+)
 
 func main()  {
 	var c = make(chan int)
 
 	go func() {
 		for i:=0;i<10;i++ {
-			c<-i
 			fmt.Println("send ",i)
+			c<-i
+			time.Sleep(100)
 		}
 	}()
 
@@ -28,13 +33,13 @@ func main()  {
 		fmt.Println("received ", v)
 	}
 
-	var c0  = make(chan [1][0]int)
-
 	var times [10][0]int
+	fmt.Printf("%d %p\n",unsafe.Sizeof(times),&times)
+	var c0  = make(chan [10][0]int)
 
 	go func() {
 		for range times {
-			c0 <- [1][0]int{}
+			c0 <- times
 		}
 		//添加完数据关闭
 		close(c0)
