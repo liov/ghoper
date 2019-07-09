@@ -60,16 +60,21 @@ fn main() {
     let cfps = vec!["/etc/wayslog.conf".to_string(),
                     "/etc/wayslog_sec.conf".to_string()];
     println!("{:?}",load_config(&cfps));
-
+    let foo = 1;
+    test(&foo);
 }
 
-pub trait Foo : 'static{
+fn test(v:&dyn Foo){
+    v.bar::<i32>()
+}
+
+pub trait Foo:'static {
     fn type_id(&self) -> TypeId;
 }
 
-impl<T: 'static + ?Sized > Foo for T {
+impl<T: 'static + ?Sized> Foo for T {
     fn type_id(&self) -> TypeId {
-        unimplemented!()
+        TypeId::of::<T>()
     }
 }
 
@@ -77,15 +82,8 @@ impl<T: 'static + ?Sized > Foo for T {
 //为什么Any可以这样实现
 //这样是可以实现的，研究研究
 impl dyn Foo {
-    pub fn is<T: Foo>(&self) -> bool {
-        // Get TypeId of the type this function is instantiated with
-        let t = TypeId::of::<T>();
-
-        // Get TypeId of the type in the trait object
-        let concrete = self.type_id();
-
-        // Compare both TypeIds on equality
-        t == concrete
+    pub fn bar<T: Foo>(&self){
+        println!("实现dyn Trait")
     }
 }
 
