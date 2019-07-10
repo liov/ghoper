@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["贾一饼 <lby.i@qq.com>"]
 edition = "2018"
 
+[lib]
+proc-macro = true
+
 [dependencies]
 hoper = { path = "../hoper" }
 rand = "0.6.5"
@@ -11,3 +14,5 @@ libc="0.2.58"
 actix = "0.8.3"
 actix-rt = "0.2.2"
 futures = "0.1.25"
+syn = "0.15.39"
+quote = "0.6.12"

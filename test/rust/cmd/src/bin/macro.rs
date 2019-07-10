@@ -1,14 +1,21 @@
-///block
+///block a block (i.e. a block of statements and/or an expression, surrounded by braces)
 ///expr is used for expressions
 ///ident is used for variable/function names
-///item
+///item an item, like a function, struct, module, etc.
 ///literal is used for literal constants
 ///pat (pattern)
-///path
+///path a path (e.g. foo, ::std::mem::replace, transmute::<_, int>, …)
 ///stmt (statement)
 ///tt (token tree)
 ///ty (type)
 ///vis (visibility qualifier)
+///meta: a meta item; the things that go inside #[...] and #![...] attributes
+///$ is a literal dollar token.
+///( ... ) is the paren-grouped pattern being repeated.
+///sep is an optional separator token. Common examples are ,, and ;.
+///rep is the required repeat control.
+///Currently, this can be either * (indicating zero or more repeats) or + (indicating one or more repeats).
+///You cannot write "zero or one" or any other more specific counts or ranges.
 
 macro_rules! create_function {
     // This macro takes an argument of designator `ident` and
@@ -149,6 +156,10 @@ fn main() {
         eval 3 + 4,
         eval (2 * 3) + 1
     }
+
+    Bar::foo();
+
+    println!("{}",2.1>2.0999999999999999);
 }
 #[cfg(test)]
 mod test {
@@ -174,4 +185,13 @@ mod test {
     test!(add_assign, 1u32, 2u32, 3u32);
     test!(mul_assign, 2u32, 3u32, 6u32);
     test!(sub_assign, 3u32, 2u32, 1u32);
+}
+
+use cmd::Foo;
+
+#[derive(Foo)]
+struct Bar;
+
+trait Foo{
+    fn foo();
 }
