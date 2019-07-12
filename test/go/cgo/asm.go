@@ -8,18 +8,18 @@ int64_t myadd(int64_t a, int64_t b) {
 }
 */
 import "C"
-
 import (
-	asmpkg "path/to/asm"
-	"runtime"
 	"unsafe"
+
+	asmpkg "test/cgo/asm"
 )
 
 func main() {
-	if runtime.GOOS != "windows" {
-		println(asmpkg.asmCallCAdd(
-			uintptr(unsafe.Pointer(C.myadd)),
-			123, 456,
-		))
-	}
+
+	println(asmpkg.AsmCallCAdd(
+		uintptr(unsafe.Pointer(C.myadd)),
+		123, 456,
+	))
+	asmpkg.SyscallWrite_Darwin(1, "hello syscall!\n")
+
 }
