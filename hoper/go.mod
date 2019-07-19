@@ -71,6 +71,7 @@ require (
 	github.com/gogo/googleapis v1.2.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/groupcache v0.0.0-20190129154638-5b532d6fd5ef
+	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.3.1
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/go-cmp v0.3.0 // indirect
@@ -178,7 +179,7 @@ require (
 	go.uber.org/zap v1.10.0
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
 	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
-	google.golang.org/grpc v1.20.1 // indirect
+	google.golang.org/grpc v1.20.1
 	gopkg.in/gorethink/gorethink.v4 v4.1.0 // indirect
 	gopkg.in/ory-am/dockertest.v2 v2.2.3 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
