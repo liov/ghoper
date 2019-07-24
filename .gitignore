@@ -114,6 +114,7 @@ deploy_versions/
 .rn_temp/
 .DS_Store
 *.exe
+*.wasm
 
 hoper/bin/hoper
 hoper/bin/manage
