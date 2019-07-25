@@ -267,50 +267,7 @@ func infiniteLoop() {
 	time.Sleep(time.Second * 100)
 }
 
-func shui() {
-	go func() {
-		// 1 在这里需要你写算法
-		// 2 要求每秒钟调用一次proc函数
-		// 3 要求程序不能退出
-		for {
-			ticker := time.NewTicker(time.Second)
-			select {
-			case <-ticker.C:
-				func() {
-					defer func() {
-						if err := recover(); err != nil {
-							fmt.Println("recover", err)
-						}
-					}()
-					proc()
-				}()
-			}
-		}
-	}()
 
-	select {}
-}
-
-func proc() {
-	panic("ok")
-}
-
-//0112
-const (
-	a = iota
-	b = iota
-)
-const (
-	name = "menglu"
-	c    = iota
-	d    = iota
-)
-func iota_() {
-	fmt.Println(a)
-	fmt.Println(b)
-	fmt.Println(c)
-	fmt.Println(d)
-}
 
 //在搜索重复时依旧每次都起一个 goroutine 去处理，每个 goroutine 都把它的搜索结果发送到结果 channel 中，channel 中收到的第一条数据会直接返回。
 //

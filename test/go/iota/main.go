@@ -35,4 +35,5 @@ func main() {
 	var float64Var float64 = a
 	var complex64Var complex64 = a
 	fmt.Println("intVar", intVar, "\nint32Var", int32Var, "\nfloat64Var", float64Var, "\ncomplex64Var", complex64Var)
+	fmt.Println(f) //8
 }

@@ -7,21 +7,21 @@ iota 计数一次(iota 可理解为 const 语句块中的行索引)。
 
 举例如下：
 1、iota 只能在常量的表达式中使用。
-```go
+```golang
 fmt.Println(iota)
 ```
 编译错误： undefined: iota
 2、每次 const 出现时，都会让 iota 初始化为 0.【自增长】
-```go
+```golang
 const a = iota // a=0
-    const (
+const (
     b = iota //b=0
     c //c=1
 )
 ```
 3、自定义类型
 自增长常量经常包含一个自定义枚举类型，允许你依靠编译器完成自增设置。
-```go
+```golang
 type Stereotype int
 const (
     TypicalNoob Stereotype = iota // 0
@@ -32,7 +32,7 @@ const (
 ```
 下面是来自 time 包的例子，它首先定义了一个 Weekday 命名类型，然后为一周的每天定义了一个常量，
 从周日 0 开始。在其它编程语言中，这种类型一般被称为枚举类型。
-```go
+```golang
 type Weekday int
 const (
     Sunday Weekday = iota
@@ -55,7 +55,7 @@ const (
 的是低频效果通道）。
 不管怎样，我们不想简单的增加到 3。
 我们可以使用下划线跳过不想要的值。
-```go
+```golang
 type AudioOutput int
 const (
     OutMute AudioOutput = iota // 0
@@ -69,7 +69,7 @@ const (
 5、位掩码表达式
 iota 可以做更多事情，而不仅仅是 increment。更精确地说， iota 总是用于 increment，但是它可
 以用于表达式，在常量中的存储结果值。
-```go
+```golang
 type Allergen int
 const (
     IgEggs Allergen = 1 << iota // 1 << 0 which is 00000001
@@ -83,14 +83,14 @@ const (
 的表达式并且再运用它，。在 Go 语言的 spec 中， 这就是所谓的隐性重复最后一个非空的表达式列表。
 如果你对鸡蛋，巧克力和海鲜过敏，把这些 bits 翻转到 “on” 的位置（从左到右映射 bits）。然后你
 将得到一个 bit 值 00010011，它对应十进制的 19。
-```go
+```golang
 fmt.Println(IgEggs | IgChocolate | IgShellfish)
 ```
 // output:
 // 19
 我们也可以在复杂的常量表达式中使用 iota，下面是来自 net 包的例子，用于给一个无符号整数的最低
 5bit 的每个 bit 指定一个名字：
-```go
+```golang
 type Flags uint
 const (
     FlagUp Flags = 1 << iota // is up
@@ -106,22 +106,22 @@ const (
 测试结果：
 随着 iota 的递增，每个常量对应表达式 1 << iota，是连续的 2 的幂，分别对应一个 bit 位置。使用这些
 常量可以用于测试、设置或清除对应的 bit 位的值：
-```go
+```golang
 package main
 import (
 "fmt"
 )
 type Flags uint
 const (
-FlagUp Flags = 1 << iota // is up
-FlagBroadcast // supports broadcast access
-capability
-FlagLoopback // is a loopback interface
-FlagPointToPoint // belongs to a point-to-point
-link
-
-FlagMulticast // supports multicast access
-capability
+    FlagUp Flags = 1 << iota // is up
+    FlagBroadcast // supports broadcast access
+    capability
+    FlagLoopback // is a loopback interface
+    FlagPointToPoint // belongs to a point-to-point
+    link
+    
+    FlagMulticast // supports multicast access
+    capability
 )
 func IsUp(v Flags) bool { return v&FlagUp == FlagUp }
 func TurnDown(v *Flags) { *v &^= FlagUp }
@@ -144,7 +144,7 @@ fmt.Printf("%b %t\n", v, IsCast(v)) // "10010 true"
 10010 false
 10010 true
 6、定义数量级
-```go
+```golang
 type ByteSize float64
 const (
     _ = iota // ignore first value by
@@ -160,7 +160,7 @@ const (
 )
 ```
 下面是一个更复杂的例子，每个常量都是 1024 的幂：
-```go
+```golang
 const (
     _ = 1 << (10 * iota)
     KiB // 1024
@@ -176,7 +176,7 @@ const (
 不过 iota 常量生成规则也有其局限性。例如，它并不能用于产生 1000 的幂（KB、MB 等），因为 Go
 语言并没有计算幂的运算符。
 7、定义在一行的情况
-```go
+```golang
 const (
     Apple, Banana = iota + 1, iota + 2
     Cherimoya, Durian
@@ -191,7 +191,7 @@ iota 在下一行增长，而不是立即取得它的引用。
 // Elderberry: 3
 // Fig: 4
 8、中间插队
-```go
+```golang
 const (
     i = iota
     j = 3.14
