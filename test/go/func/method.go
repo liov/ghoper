@@ -60,4 +60,5 @@ func main() {
 	//指针和值都可以直接掉值接收方法，但都是值拷贝，无法改变
 	ii.changes()
 	ii.print()
+	i.changes()
 }

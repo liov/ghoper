@@ -15,10 +15,10 @@ import "fmt"
 
 // receiver
 type TV struct{}
-func (p TV) Open() {
+func (p *TV) Open() {
 	fmt.Println("play...")
 }
-func (p TV) Close() {
+func (p *TV) Close() {
 	fmt.Println("stop...")
 }
 
