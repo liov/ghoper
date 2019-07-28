@@ -7,7 +7,7 @@ import (
 )
 //数据竞争
 var sum int64
-
+//go协程好像不做io操作不会主动让出
 func main(){
 	var wg sync.WaitGroup
 	wg.Add(10)
