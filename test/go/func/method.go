@@ -26,7 +26,7 @@ type Q *MyInt
 */
 //虽然IDEA的提示报错，但是type P = *MyInt是可以的
 type P = *MyInt
-func (p P) prints() { // invalid receiver type Q (Q is a pointer type)
+func (p P) prints() {
 	fmt.Println("P:", p)
 }
 
