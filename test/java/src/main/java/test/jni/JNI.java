@@ -8,6 +8,7 @@ package test.jni;
 
 //javac -h . JNI.java or javac JNI.java -h JniH
 //java jni的开销只会越来越大,看来java优化足够好了，不需要c了
+//上一句是错的，原因是编译出来的C库没开优化
 public class JNI {
 
     //链动态库

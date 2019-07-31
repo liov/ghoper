@@ -24,7 +24,7 @@ func main() {
 	fmt.Printf("%08b,%d\n", ^i1, ^i1)
 	var i2 int8 = 0
 	fmt.Printf("%08b,%d\n", ^i2, ^i2) //补码，第一位符号位，所有位取反加1
-
+	ViewBin(-2)
 /*	var b uint8
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -47,6 +47,7 @@ func main() {
 		}
 	}*/
 	ViewBin(^int8(-1))
+	ViewBin(^uint8(1))
 }
 
 /*Sizeof函数返回的大小只包括数据结构中固定的部分，例如字符串对应结构体中的指针和字符串长度部分，但是并不包含指针指向的字符串的内容。Go语言中非聚合类型通常有一个固定的大小，尽管在不同工具链下生成的实际大小可能会有所不同。考虑到可移植性，引用类型或包含引用类型的大小在32位平台上是4个字节，在64位平台上是8个字节。
@@ -63,8 +64,8 @@ func ViewBin(v interface{}) {
 	switch i:=v.(type) {
 	case int, int8, int16, int32, int64:
 		if vv.Int()<0 {
-			f:=fmt.Sprintf("%064b\n", uint64(vv.Int()))
-			fmt.Printf("%s %v",f[len(f)-int(vv.Type().Size())*8:],i)
+			f:=fmt.Sprintf("%064b,", uint64(vv.Int()))
+			fmt.Printf("%s %v\n",f[len(f)-int(vv.Type().Size())*8:],i)
 		}else {
 			fmt.Printf("%0"+strconv.Itoa(int(vv.Type().Size())*8)+"b %v\n", v,i)
 		}
