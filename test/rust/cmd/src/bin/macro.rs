@@ -187,7 +187,7 @@ mod test {
     test!(sub_assign, 3u32, 2u32, 1u32);
 }
 
-use cmd::Foo;
+use h_macro::Foo;
 
 #[derive(Foo)]
 struct Bar;

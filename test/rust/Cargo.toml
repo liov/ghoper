@@ -8,4 +8,6 @@ opt-level = 3
 members = [
     "hoper",
     "cmd",
+    "h_macro",
+    "ffi"
 ]
