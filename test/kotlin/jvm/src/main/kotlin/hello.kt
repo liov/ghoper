@@ -1,11 +1,7 @@
-
 fun main(args: Array<String>) {
-
-
     for(i in 1..10000){
         aaa(i.toFloat())
     }
-
 }
 
 
