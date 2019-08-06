@@ -16,4 +16,7 @@ func main() {
 	s:=[]int{1,2,3,4,5,6}
 	newS := aps(s)
 	fmt.Println(newS)//[1 1 1 1 1 1 1]
+	a:=5
+	b:=7
+	fmt.Println(a|b)
 }
