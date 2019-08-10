@@ -6,6 +6,17 @@ lazy val discoveryVersion = "1.0.2"
 lazy val akkaHttpVersion = "10.1.9"
 lazy val alpnVersion = "2.0.9"
 
+lazy val compileSettings =
+  inConfig(Compile)(Seq(
+    excludeFilter in PB.generate := "descriptor.proto",
+    PB.protoSources += baseDirectory.value / "protobuf",
+    PB.protoSources += file("protobuf")
+  ))
+
+lazy val commonSettings = Seq(
+  version := "0.1.0",
+)
+
 lazy val root = (project in file("."))
   .aggregate(httpToGrpc, grpcService)
 
@@ -13,6 +24,8 @@ lazy val root = (project in file("."))
 lazy val httpToGrpc = (project in file("http-to-grpc"))
   .enablePlugins(AkkaGrpcPlugin, DockerPlugin, JavaAppPackaging, JavaAgent)
   .settings(
+    commonSettings,
+    compileSettings,
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
       "com.typesafe.akka" %% "akka-discovery" % akkaVersion,
@@ -34,8 +47,8 @@ lazy val httpToGrpc = (project in file("http-to-grpc"))
 lazy val grpcService = (project in file("grpc-service"))
   .enablePlugins(AkkaGrpcPlugin, DockerPlugin, JavaAppPackaging, JavaAgent)
   .settings(
+    commonSettings,
+    compileSettings,
     javaAgents += "org.mortbay.jetty.alpn" % "jetty-alpn-agent" % alpnVersion % "runtime",
     dockerExposedPorts := Seq(8080),
   )
-
-
