@@ -106,6 +106,7 @@ hoper/hoper
 hoper/client
 static/css/tinymce
 static/datafix
+static/template/packr/resume.html
 *packr.go
 test/csharp/bin
 

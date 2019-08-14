@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -104,11 +103,11 @@ func sendEv(topic string, p micro.Publisher) {
 			Message:   fmt.Sprintf("Messaging you all day on %s", topic),
 		}
 
-		log.Fatalf("publishing %+v\n", ev)
+		ulog.Fatalf("publishing %+v\n", ev)
 
 		// publish an event
 		if err := p.Publish(context.Background(), ev); err != nil {
-			log.Fatalf("error publishing: %v", err)
+			ulog.Fatalf("error publishing: %v", err)
 		}
 	}
 }

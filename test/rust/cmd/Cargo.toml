@@ -3,7 +3,7 @@ name = "cmd"
 version = "0.1.0"
 authors = ["贾一饼 <lby.i@qq.com>"]
 edition = "2018"
-build = "build.rs"
+
 
 [dependencies]
 hoper = { path = "../hoper" }
