@@ -65,3 +65,9 @@ git remote add upstream 原始项目仓库的git地址 # 把原项目的远程�
 git remote -v # 可以看到原项目的远程仓库已经在配置里了
 4.git fetch upstream # 拉取最新的代码
 5. git merge upstream/master # mege
+
+git remote add origin xxx
+git remote set-url origin xxx
+git pull origin master --allow-unrelated-histories
+git remote show origin
+git push --set-upstream origin master
