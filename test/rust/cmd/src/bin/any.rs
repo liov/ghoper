@@ -1,3 +1,4 @@
+#![feature(const_string_new)]
 use std::any::{Any, TypeId};
 use std::fmt::Debug;
 
@@ -52,6 +53,8 @@ fn load_config_gen<T:Any+Debug>(value: &T) -> Vec<String>{
     cfgs
 }
 
+static PST:&Bar = &Bar{i: 0, s: String::new()};//calls in statics are limited to constant functions, tuple structs and tuple variants
+
 fn main() {
     let cfp = "/etc/wayslog.conf".to_string();
     println!("{:?}",load_config(&cfp));
@@ -60,14 +63,23 @@ fn main() {
     let cfps = vec!["/etc/wayslog.conf".to_string(),
                     "/etc/wayslog_sec.conf".to_string()];
     println!("{:?}",load_config(&cfps));
-    let foo = 1;
+    let mut foo = 1;
     test(&foo);
+    let ptr = &mut foo;
+    *ptr = 2;
+    println!("{}",foo);
+    let mut bar = Bar{ i: 0, s: "s".to_string()};
+    let ptr_b = &mut  bar;
+    //test(&ptr_b);//`bar` does not live long enough
+    (*ptr_b).i = 2;
+    println!("{:?}",bar);
+    test(&PST)
 }
 
 fn test(v:&dyn Foo){
     v.bar::<i32>()
 }
-
+//这里需要的是Foo是static而不是&Foo，&Foo有正常的生命周期
 pub trait Foo:'static {
     fn type_id(&self) -> TypeId;
 }
@@ -87,8 +99,11 @@ impl dyn Foo {
     }
 }
 
-
-struct Bar{}
+#[derive(Debug)]
+struct Bar{
+    i:i32,
+    s:String,
+}
 
 /*
 impl Trait
