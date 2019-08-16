@@ -20,7 +20,7 @@ func ViewBin(v interface{}) {
 	switch i:=v.(type) {
 	case int, int8, int16, int32, int64:
 		if vv.Int()<0 {
-			f:=fmt.Sprintf("%064b,", uint64(vv.Int()))
+			f:=fmt.Sprintf("%064b", uint64(vv.Int()))
 			fmt.Printf("%s %v\n",f[len(f)-int(vv.Type().Size())*8:],i)
 		}else {
 			fmt.Printf("%0"+strconv.Itoa(int(vv.Type().Size())*8)+"b %v\n", v,i)
