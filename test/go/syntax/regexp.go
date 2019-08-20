@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"time"
 )
 
 /**
@@ -12,6 +13,7 @@ import (
  */
 
 func main() {
+	now:=time.Now()
 	text := `Hello 世界！123 Go.`
 
 	// 查找连续的小写字母
@@ -128,6 +130,8 @@ func main() {
 	reg = regexp.MustCompile(`[\f\t\n\r\v\123\x7F\x{10FFFF}\\\^\$\.\*\+\?\{\}\(\)\[\]\|]`)
 	fmt.Printf("%q\n", reg.ReplaceAllString("\f\t\n\r\v\123\x7F\U0010FFFF\\^$.*+?{}()[]|", "-"))
 	// "----------------------"
+	end := time.Now()
+	fmt.Println(end.Sub(now))
 }
 
 /**

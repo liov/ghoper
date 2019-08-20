@@ -26,3 +26,18 @@ FROM
 	AND DATEDIFF(b.create_time,a.create_time) <=15
 	GROUP BY a.customer_id
 	) c;
+
+CREATE INDEX index_name
+ON table_name (column_name);
+
+CREATE UNIQUE INDEX index_name
+ON table_name (column_name);
+
+CREATE TABLE table_name
+(
+    id int NOT NULL AUTO_INCREMENT ,   -- PRIMARY KEY约束
+    name varchar(255) NOT NULL,
+    address varchar(255) DEFAULT 'gz',
+    city varchar(255),
+	PRIMARY KEY (`id`)
+)ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
