@@ -1,4 +1,4 @@
-package context
+package main
 
 import (
 	"context"
@@ -39,7 +39,7 @@ func doNothing(ctx context.Context) {
 }
 
 func main() {
-	logs = log.New(os.Stdout, "", log.Ltime)
+	logs = log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	// 新建一个ctx
 	ctx, cancel := context.WithCancel(context.Background())
