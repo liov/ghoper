@@ -109,7 +109,7 @@ static/datafix
 static/template/packr/resume.html
 *packr.go
 test/csharp/bin
-test/foo.txt
+test/*.txt
 deploy_versions/
 .temp/
 .rn_temp/
