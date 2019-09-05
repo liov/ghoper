@@ -1,7 +1,6 @@
 module hoper
 
 require (
-	git.apache.org/thrift.git v0.12.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/Joker/jade v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.4.12 // indirect
@@ -193,3 +192,5 @@ replace (
 	golang.org/x/net v0.0.0-20190501004415-9ce7a6920f09 => github.com/golang/net v0.0.0-20190501004415-9ce7a6920f09
 	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a => github.com/golang/oauth2 v0.0.0-20190402181905-9f3314589c9a
 )
+
+go 1.13

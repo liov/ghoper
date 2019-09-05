@@ -6,10 +6,9 @@ import (
 )
 
 func main() {
-	var err error
-	fmt.Println(errors.As(bar(),&err))
+	fmt.Println(bar())
 }
 
 func bar() error {
-	return fmt.Errorf("%w",errors.New("UnWarp")).Unwrap()
+	return errors.Unwrap(fmt.Errorf("%w",errors.New("UnWarp")))
 }
