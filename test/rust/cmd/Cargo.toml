@@ -17,6 +17,7 @@ cpp = "0.5.3"
 log = "0.4.7"
 rayon = "1.1.0"
 regex = "1.2.1"
+async-std = "0.99.5"
 
 [build-dependencies]
 cpp_build = "0.5.3"
