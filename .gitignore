@@ -119,3 +119,5 @@ deploy_versions/
 
 hoper/bin/hoper
 hoper/bin/manage
+
+cmake-build-debug
