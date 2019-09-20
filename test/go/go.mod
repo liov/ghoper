@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	bou.ke/monkey v1.0.1 // indirect
-	github.com/brahma-adshonor/gohook v0.0.0-20190908032905-8ccd311c3480 // indirect
+	github.com/brahma-adshonor/gohook v0.0.0-20190919050457-00027f26cd2e // indirect
 	github.com/lucasb-eyer/go-colorful v1.0.2
 )
 
