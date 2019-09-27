@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <float.h>
+#include <string.h>
 
 typedef union {
    int i;
@@ -15,7 +16,7 @@ void main(int argc, char *argv[]){
     Foo foo;
     foo.i = 10;
     foo.f = 220.5;
-    strcpy( foo.str, "C Programming");
+    strcpy( foo.str, "hello");
  
     printf( "data.i : %d\n", foo.i);
     printf( "data.f : %f\n", foo.f);
