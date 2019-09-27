@@ -121,3 +121,4 @@ hoper/bin/hoper
 hoper/bin/manage
 
 cmake-build-debug
+/test/go/custom/flatbuffer/MyGame
