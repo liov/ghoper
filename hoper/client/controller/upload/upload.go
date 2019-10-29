@@ -2,13 +2,6 @@ package upload
 
 import (
 	"errors"
-	"github.com/kataras/iris"
-	"github.com/satori/go.uuid"
-	"hoper/client/controller/common"
-	"hoper/client/controller/common/e"
-	"hoper/initialize"
-	"hoper/model"
-	"hoper/utils"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -16,9 +9,17 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"github.com/kataras/iris"
+	"github.com/satori/go.uuid"
+	"hoper/client/controller/common"
+	"hoper/initialize"
+	"hoper/model/crm"
+	"hoper/model/e"
+	"hoper/utils"
 )
 
-func GenerateUploadedInfo(ext string) model.FileUploadInfo {
+func GenerateUploadedInfo(ext string) crm.FileUploadInfo {
 
 	sep := string(os.PathSeparator)
 	uploadImgDir := initialize.Config.Server.UploadDir
@@ -37,18 +38,18 @@ func GenerateUploadedInfo(ext string) model.FileUploadInfo {
 	filename := uuidName + ext
 	uploadFilePath := uploadDir + sep + filename
 	fileURL := strings.Join([]string{
-		"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+		initialize.Config.Server.UploadPath,
 		ymStr,
 		filename,
 	}, "/")
-	var fileUpload model.FileUploadInfo
+	var fileUpload crm.FileUploadInfo
 
 	fileUpload.FileName = filename
 	fileUpload.File.URL = fileURL
 	fileUpload.UUID = uuidName
 	fileUpload.UploadFilePath = uploadFilePath
 
-	/*	fileUpload = model.FileUploadInfo{
+	/*	fileUpload = crm.FileUploadInfo{
 		File:       model.File{FileName:filename,},
 		FileURL:        fileURL,
 		UUIDName:       uuidName,
@@ -89,7 +90,7 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 			ymdStr},
 			"/")
 		prefixUrl = strings.Join([]string{
-			"https://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+			initialize.Config.Server.UploadPath,
 			"others",
 			classify,
 			ymdStr,
@@ -121,7 +122,7 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 	*/
 
 	prefixUrl = strings.Join([]string{
-		"http://" + initialize.Config.Server.UploadHost + initialize.Config.Server.UploadPath,
+		initialize.Config.Server.UploadPath,
 		dirType[0] + "s",
 		classify,
 		ymdStr,
@@ -134,17 +135,17 @@ func GetDirAndUrl(classify string, info *multipart.FileHeader) (string, string, 
 }
 
 // Upload 文件上传
-func Upload(ctx iris.Context) *model.FileUploadInfo {
-	userId := ctx.Values().Get("userId").(uint)
+func Upload(ctx iris.Context) *crm.FileUploadInfo {
+	userID := ctx.Values().Get("userID").(uint64)
 	classify := ctx.Params().GetString("classify")
 	file, info, err := ctx.FormFile("file")
 	md5 := ctx.FormValue("md5")
-	/*	var upI model.FileUploadInfo
+	/*	var upI crm.FileUploadInfo
 		var count int
 		initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
 		if count != 0 {
 			upI.ID = 0
-			upI.UploadUserID = userId
+			upI.UploadUserID = userID
 			upI.UUID = uuid.NewV4().String()
 			upI.UploadAt = time.Now()
 			if err := initialize.DB.Create(&upI).Error; err != nil {
@@ -159,14 +160,14 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 		MD5Str := hex.EncodeToString(md5.Sum(nil))*/
 
 	if err != nil {
-		common.Response(ctx, "参数无效")
+		common.Response(ctx, nil, "参数无效", e.ERROR)
 		return nil
 	}
 	defer file.Close()
 
 	ext, err := GetExt(info)
 	if ext == "" || err != nil {
-		common.Response(ctx, "无效的图片类型")
+		common.Response(ctx, nil, "无效的图片类型", e.ERROR)
 		return nil
 	}
 
@@ -174,23 +175,24 @@ func Upload(ctx iris.Context) *model.FileUploadInfo {
 
 	upInfo, err := SaveUploadedFile(info, dir, url)
 	if err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return nil
 	}
 
-	upInfo.File.Size = uint(info.Size)
-	upInfo.UploadUserID = userId
+	upInfo.File.Size = uint64(info.Size)
+	upInfo.UploadUserID = userID
 	upInfo.Status = 1
 	upInfo.MD5 = md5
 	if err := initialize.DB.Create(upInfo).Error; err != nil {
-		common.Response(ctx, err.Error())
+		common.Response(ctx, nil, err.Error(), e.ERROR)
 		return nil
 	}
-	common.Response(ctx, upInfo)
+	common.Response(ctx, upInfo, "", e.SUCCESS)
 	return upInfo
 }
 
 func UploadMultiple(ctx iris.Context) {
+	userID := ctx.Values().Get("userID").(uint64)
 	classify := ctx.Params().GetString("classify")
 	//获取通过iris.WithPostMaxMemory获取的最大上传值大小。
 	maxSize := ctx.Application().ConfigurationReadOnly().GetPostMaxMemory()
@@ -213,13 +215,12 @@ func UploadMultiple(ctx iris.Context) {
 		upInfo, err := SaveUploadedFile(file[0], dir, url)
 		if err != nil {
 			failures++
-			common.Response(ctx, file[0].Filename+"上传失败")
+			common.Response(ctx, nil, file[0].Filename+"上传失败", e.ERROR)
 		} else {
-			upInfo.File.Size = uint(file[0].Size)
-			userId := ctx.Values().Get("userId").(uint)
-			upInfo.UploadUserID = userId
+			upInfo.File.Size = uint64(file[0].Size)
+			upInfo.UploadUserID = userID
 			if err := initialize.DB.Create(&upInfo).Error; err != nil {
-				common.Response(ctx, err.Error())
+				common.Response(ctx, nil, err.Error(), e.ERROR)
 			}
 			urls = append(urls, upInfo.URL)
 		}
@@ -231,7 +232,7 @@ func UploadMultiple(ctx iris.Context) {
 	})
 }
 
-func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*model.FileUploadInfo, error) {
+func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*crm.FileUploadInfo, error) {
 	uuidName := uuid.NewV4().String()
 	ext, err := GetExt(file)
 	filename := uuidName + ext
@@ -247,8 +248,8 @@ func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*mode
 	}
 	defer out.Close()
 
-	fileUpload := model.FileUploadInfo{
-		File: model.File{
+	fileUpload := crm.FileUploadInfo{
+		File: crm.File{
 			FileName:     filename,
 			OriginalName: file.Filename,
 			URL:          url + filename,
@@ -263,25 +264,21 @@ func SaveUploadedFile(file *multipart.FileHeader, dir string, url string) (*mode
 }
 
 func MD5(ctx iris.Context) {
-	userId := ctx.Values().Get("userId").(uint)
+	userID := ctx.Values().Get("userID").(uint64)
 	md5 := ctx.Params().Get("md5")
-	var upI model.FileUploadInfo
+	var upI crm.FileUploadInfo
 	var count int
 	initialize.DB.Where("md5 = ?", md5).First(&upI).Count(&count)
 	if count != 0 {
 		upI.ID = 0
-		upI.UploadUserID = userId
+		upI.UploadUserID = userID
 		upI.UUID = uuid.NewV4().String()
 		upI.UploadAt = time.Now()
 		if err := initialize.DB.Create(&upI).Error; err != nil {
-			common.Response(ctx, err.Error())
+			common.Response(ctx, err, "", e.ERROR)
 		}
-		common.Response(ctx, &upI)
+		common.Response(ctx, &upI, "", e.SUCCESS)
 		return
 	}
-	common.Response(ctx, "不存在", e.ERROR)
-}
-
-func Vditor(ctx iris.Context) {
-	common.Response(ctx, "成功", e.SUCCESS)
+	common.Response(ctx, nil, "不存在", e.ERROR)
 }
