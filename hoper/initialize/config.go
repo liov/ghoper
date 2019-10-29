@@ -129,11 +129,11 @@ func initializeConfig() {
 
 	err = Cfg.Section("mongodb").MapTo(MongoSettings)*/
 
-	err := configor.New(&configor.Config{Debug: false}).Load(&Config, "../../config/config.toml")
+	err := configor.New(&configor.Config{Debug: true}).Load(&Config, "../../config/config.toml")
 
 	if err != nil {
 		golog.Error("配置错误: %v", err)
-		os.Exit(-1)
+		os.Exit(1)
 	}
 
 	if runtime.GOOS == "windows" {
