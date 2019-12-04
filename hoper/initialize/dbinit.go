@@ -45,7 +45,7 @@ func initializeDB() {
 
 	if err != nil {
 		ulog.Error(err)
-		os.Exit(-1)
+		os.Exit(1)
 	}
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return Config.Database.TablePrefix + defaultTableName

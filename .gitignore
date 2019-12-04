@@ -94,9 +94,9 @@ dist
 # Service worker
 sw.*
 
-/static/upload
-/static/db
-/static/logs
+static/upload
+static/db
+static/logs
 *.db
 
 nginx-*
@@ -121,3 +121,4 @@ hoper/bin/hoper
 hoper/bin/manage
 
 cmake-build-debug
+/test/go/custom/flatbuffer/MyGame
