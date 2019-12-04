@@ -46,7 +46,7 @@ require (
 	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
 	github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870 // indirect
 	github.com/fasthttp/router v0.3.4
-	github.com/flosch/pongo2 v0.0.0-20190505152737-8914e1cf9164 // indirect
+	github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4 // indirect
 	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/fullsailor/pkcs7 v0.0.0-20190404230743-d7302db945fa // indirect
 	github.com/garyburd/redigo v1.6.0 // indirect
