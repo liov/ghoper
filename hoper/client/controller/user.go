@@ -443,6 +443,8 @@ func Signup(c iris.Context) {
 	defer RedisConn.Close()
 
 	if _, err := RedisConn.Do("SET", activeUser, curTime, "EX", activeDuration); err != nil {
+		common.Response(c, err.Error(), e.ERROR)
+		return
 	}
 
 	go func() {

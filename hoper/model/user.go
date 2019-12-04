@@ -10,7 +10,6 @@ type User struct {
 	ActivatedAt     *time.Time      `json:"-"` //激活时间
 	Name            string          `gorm:"type:varchar(10);not null" json:"name"`
 	Password        string          `gorm:"type:varchar(100)" json:"-"`
-	Account         string          `gorm:"type:varchar(20);unique_index" json:"-"`
 	Email           string          `gorm:"type:varchar(20);unique_index;not null" json:"email"`
 	Phone           *string         `gorm:"type:varchar(20);unique_index" json:"phone"` //手机号
 	Sex             string          `gorm:"type:varchar(1);not null" json:"sex"`

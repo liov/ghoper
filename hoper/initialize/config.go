@@ -106,7 +106,7 @@ func (d *duration) UnmarshalText(text []byte) error {
 	return err
 }
 
-func initializeConfig() {
+func initializeConfig(cPath string) {
 	/*Cfg, err := ini.Load("../../config/config.ini")
 	if err != nil {
 		log.Fatalf("找不到文件 'website/config/config.ini': %v", err)
@@ -129,7 +129,7 @@ func initializeConfig() {
 
 	err = Cfg.Section("mongodb").MapTo(MongoSettings)*/
 
-	err := configor.New(&configor.Config{Debug: true}).Load(&Config, "../../config/config.toml")
+	err := configor.New(&configor.Config{Debug: true}).Load(&Config, cPath)
 
 	if err != nil {
 		golog.Error("配置错误: %v", err)
@@ -140,9 +140,9 @@ func initializeConfig() {
 		Config.Server.LuosimaoAPIKey = ""
 		Config.Redis.Password = ""
 		Config.Server.Env = Debug
-	}else {
-		flag.StringVar(&Config.Database.Password,"p", Config.Database.Password, "password")
-		flag.StringVar(&Config.Server.MailPassword,"mp", Config.Server.MailPassword, "password")
+	} else {
+		flag.StringVar(&Config.Database.Password, "p", Config.Database.Password, "password")
+		flag.StringVar(&Config.Server.MailPassword, "mp", Config.Server.MailPassword, "password")
 		flag.Parse()
 		Config.Redis.Password = Config.Database.Password
 	}
