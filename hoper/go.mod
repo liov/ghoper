@@ -182,8 +182,6 @@ require (
 	gopkg.in/gorethink/gorethink.v4 v4.1.0 // indirect
 	gopkg.in/ory-am/dockertest.v2 v2.2.3 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
-	gotest.tools v2.3.0+incompatible // indirect
-	layeh.com/radius v0.0.0-20190322222518-890bc1058917 // indirect
 )
 
 replace (
