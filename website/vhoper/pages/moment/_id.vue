@@ -266,7 +266,8 @@ export default {
       visible: false,
       submitting: false,
       value: '',
-      comment: { user: { name: '' } }
+      comment: { user: { name: '' } },
+      color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple']
     }
   },
   async asyncData({ $axios, params, query }) {
