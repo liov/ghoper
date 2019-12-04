@@ -16,13 +16,16 @@ var Service protobuf.UserService
 func init() {
 	app := cmd.App()
 
-	app.Flags = append(app.Flags, cli.StringFlag{
-		Name:  "p",
-		Usage: "password",
-	},
+	app.Flags = append(app.Flags,
+		cli.StringFlag{
+			Name:  "p",
+			Usage: "password"},
 		cli.StringFlag{
 			Name:  "mp",
 			Usage: "mail password",
+		}, cli.StringFlag{
+			Name:  "conf",
+			Usage: "配置路径",
 		})
 
 	before := app.Before
