@@ -9,57 +9,58 @@ import (
 type H map[string]interface{}
 
 type ResData struct {
-	data interface{}
-	msg string
-	code int
+	Data interface{} `json:"data"`
+	Msg  string      `json:"msg"`
+	Code int         `json:"code"`
 }
+
 //先信息后数据最后状态码
-//入参1. data interface{},msg string,code int
-//2.msg,code |data默认nil
-//3.data,msg |code默认SUCCESS
-//4.msg |data默认nil code默认ERROR
-//5.data |msg默认"",code默认SUCCESS
+//入参1. Data interface{},Msg string,Code int
+//2.Msg,Code |data默认nil
+//3.Data,Msg |code默认SUCCESS
+//4.Msg |data默认nil code默认ERROR
+//5.Data |msg默认"",code默认SUCCESS
 func Response(ctx iris.Context, res ...interface{}) {
 
 	var resData ResData
 
 	if len(res) == 1 {
-		resData.code = e.ERROR
+		resData.Code = e.ERROR
 		if msgTmp, ok := res[0].(string); ok {
-			resData.msg = msgTmp
-			resData.data = nil
+			resData.Msg = msgTmp
+			resData.Data = nil
 		} else {
-			resData.data = res[0]
-			resData.code = e.SUCCESS
+			resData.Data = res[0]
+			resData.Code = e.SUCCESS
 		}
 	} else if len(res) == 2 {
 		if msgTmp, ok := res[0].(string); ok {
-			resData.data = nil
-			resData.msg = msgTmp
-			resData.code = res[1].(int)
+			resData.Data = nil
+			resData.Msg = msgTmp
+			resData.Code = res[1].(int)
 		} else {
-			resData.data = res[0]
-			resData.msg = res[1].(string)
-			resData.code = e.SUCCESS
+			resData.Data = res[0]
+			resData.Msg = res[1].(string)
+			resData.Code = e.SUCCESS
 		}
 	} else {
-		resData.data = res[0]
-		resData.msg = res[1].(string)
-		resData.code = res[2].(int)
+		resData.Data = res[0]
+		resData.Msg = res[1].(string)
+		resData.Code = res[2].(int)
 	}
 
-	num, err := ctx.JSON(&resData)
+	num, err := ctx.JSON(resData)
 
 	if err != nil {
 		ulog.Error(num, err)
 	}
 }
 
-/*func Response(ctx iris.Context,data interface{},msg string,code int){
+/*func Response(ctx iris.Context,Data interface{},Msg string,Code int){
 	num, err := ctx.JSON(iris.Map{
-		"code": code,
-		"msg":  msg,
-		"data": data,
+		"Code": Code,
+		"Msg":  Msg,
+		"Data": Data,
 	})
 
 	if err != nil {

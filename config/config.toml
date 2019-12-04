@@ -28,7 +28,7 @@ TimeFormat = "20060102"
 
 SiteName =  "hoper"
 Host =  "hoper.xyz"
-Ip = "39.108.179.122"
+
 
 #邮件
 MailHost = "smtp.qq.com"
