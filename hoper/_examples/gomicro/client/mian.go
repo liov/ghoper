@@ -37,7 +37,7 @@ func main() {
 			// Call the greeter
 			rsp, err := greeter.SayHello(context.TODO(), &protobuf.HelloRequest{Name: msg})
 			if err != nil {
-				ulog.Error(err)
+				log.Error(err)
 			}
 
 			ctx.JSON(iris.Map{
