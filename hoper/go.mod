@@ -18,8 +18,7 @@ require (
 	github.com/araddon/gou v0.0.0-20190110011759-c797efecbb61 // indirect
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
-	github.com/aws/aws-sdk-go v1.16.31
+	github.com/aws/aws-sdk-go v1.33.0
 	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/biogo/store v0.0.0-20190426020002-884f370e325d // indirect
 	github.com/bluele/gcache v0.0.0-20190203144525-2016d595ccb0
@@ -38,7 +37,6 @@ require (
 	github.com/duosecurity/duo_api_golang v0.0.0-20190308151101-6c680f768e74 // indirect
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.0 // indirect
-	github.com/envoyproxy/go-control-plane v0.8.0 // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/etcd-io/bbolt v1.3.2
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
@@ -56,12 +54,9 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-log/log v0.1.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
-	github.com/go-openapi/loads v0.19.0 // indirect
 	github.com/go-openapi/spec v0.19.0
-	github.com/go-openapi/swag v0.17.0
-	github.com/go-sql-driver/mysql v1.4.1 // indirect
+	github.com/go-openapi/swag v0.19.5
 	github.com/go-stomp/stomp v2.0.3+incompatible // indirect
-	github.com/go-swagger/go-swagger v0.19.0 // indirect
 	github.com/gobuffalo/packr/v2 v2.3.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
@@ -70,14 +65,11 @@ require (
 	github.com/gogo/googleapis v1.2.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/golang/groupcache v0.0.0-20190129154638-5b532d6fd5ef
-	github.com/golang/mock v1.2.0
-	github.com/golang/protobuf v1.3.1
+	github.com/golang/protobuf v1.5.2
 	github.com/gomodule/redigo v2.0.0+incompatible
-	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/google/go-github v17.0.0+incompatible // indirect
-	github.com/google/gofuzz v1.0.0 // indirect
 	github.com/gorilla/securecookie v1.1.1
-	github.com/gorilla/websocket v1.4.0
+	github.com/gorilla/websocket v1.4.2
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/graph-gophers/graphql-go v0.0.0-20190214043811-70e684c13100
 	github.com/hashicorp/consul v1.4.0 // indirect
@@ -114,8 +106,8 @@ require (
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.0 // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
-	github.com/json-iterator/go v1.1.6
+	github.com/jmespath/go-jmespath v0.3.0
+	github.com/json-iterator/go v1.1.12
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/golog v0.0.0-20180321173939-03be10146386
 	github.com/kataras/iris v11.1.1+incompatible
@@ -126,7 +118,6 @@ require (
 	github.com/klauspost/cpuid v1.2.1 // indirect
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/lni/dragonboat v2.1.0+incompatible
-	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983 // indirect
 	github.com/markbates/goth v1.49.0
 	github.com/mattbaird/elastigo v0.0.0-20170123220020-2fe47fd29e4b // indirect
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
@@ -150,6 +141,7 @@ require (
 	github.com/opentracing/opentracing-go v1.0.2
 	github.com/ory-am/common v0.4.0 // indirect
 	github.com/ory/dockertest v3.3.4+incompatible // indirect
+	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/peterbourgon/g2s v0.0.0-20170223122336-d4e7ad98afea // indirect
 	github.com/pquerna/otp v1.2.0 // indirect
 	github.com/prometheus/common v0.2.0
@@ -164,7 +156,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94 // indirect
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.8.0
 	github.com/temoto/robotstxt v0.0.0-20180810133444-97ee4a9ee6ea // indirect
 	github.com/valyala/fasthttp v1.3.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
@@ -177,11 +169,14 @@ require (
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/zap v1.10.0
 	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
-	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
-	google.golang.org/grpc v1.20.1
+	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10
 	gopkg.in/gorethink/gorethink.v4 v4.1.0 // indirect
 	gopkg.in/ory-am/dockertest.v2 v2.2.3 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
+	gopkg.in/yaml.v3 v3.0.1
+	gotest.tools v2.2.0+incompatible // indirect
+	k8s.io/api v0.26.0 // indirect
+	launchpad.net/gocheck v0.0.0-20140225173054-000000000087 // indirect
+	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68 // indirect
 )
 
 replace (
