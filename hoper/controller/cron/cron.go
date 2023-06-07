@@ -3,7 +3,6 @@ package cron
 import (
 	"github.com/robfig/cron"
 	"hoper/controller"
-	"hoper/controller/crawler"
 )
 
 /*
@@ -74,7 +73,6 @@ var jobMap = map[string]cron.Job{}
 func init() {
 	funcMap["0 10 10 * * *"] = controller.MomentRedisToDB
 	jobMap["0 0 2 * * *"] = RedisTo{}
-	funcMap["0 0 0 * * *"] = crawler.MM131
 }
 
 // New 构造cron
