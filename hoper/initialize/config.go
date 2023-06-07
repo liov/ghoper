@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/configor"
-	"hoper/client/controller/credis"
+	"hoper/controller/credis"
 	"hoper/model/crm"
 	"hoper/utils"
 )

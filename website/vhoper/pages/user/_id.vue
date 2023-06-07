@@ -67,6 +67,10 @@ export default {
     const res = await $axios.$get(`/api` + route.path).catch(() => {
       redirect({ path: '/user/self' })
     })
+    if(!res.data){
+      redirect({ path: '/user' })
+      return
+    }
     return {
       user: res.data
     }

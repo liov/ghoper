@@ -3,6 +3,7 @@ package tcache
 import (
 	"github.com/golang/groupcache"
 	pb "github.com/golang/groupcache/groupcachepb"
+	"hoper/utils/ulog"
 	"net/http"
 )
 

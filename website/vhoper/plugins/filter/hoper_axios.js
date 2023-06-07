@@ -6,11 +6,12 @@ export default function ({ app, route, store, $axios, req }) {
     if (typeof window !== 'undefined') {
       token = localStorage.getItem('token')
       config.baseURL = 'https://' + window.location.host
+      config.baseURL = 'http://liov.xyz'
     } else {
       token = store.state.token
       if (req.headers.cookie) config.headers.cookie = req.headers.cookie
       config.headers.Host = req.headers.host
-      config.baseURL = 'http://127.0.0.1:8000'
+      config.baseURL = 'http://liov.xyz'
     }
 
     // 判断是否存在token，如果存在的话，则每个http header都加上token

@@ -270,10 +270,15 @@ export default {
       color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple']
     }
   },
-  async asyncData({ $axios, params, query }) {
+  async asyncData({ $axios, params, query, redirect }) {
     const res = await $axios.$get(
       `/api/moment/${params.id}?index=${query.index}`
     )
+    console.log(res);
+    if (!res.data || res.data.id == 0){
+      redirect({ path: '/moment' })
+      return
+    }
     return {
       moment: res.data,
       user_action:

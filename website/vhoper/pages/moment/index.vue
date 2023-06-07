@@ -302,6 +302,7 @@ export default {
       pageSize: 5
     }
     const res = await $axios.$get(`/api/moment`, { params })
+    console.log(res);
     return {
       momentList: res.data,
       total: res.count,

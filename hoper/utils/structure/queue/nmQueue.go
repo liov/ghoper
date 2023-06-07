@@ -23,7 +23,7 @@ type NmQueue struct {
 }
 
 func NewNmQueue() *NmQueue {
-	q := &NmQueue{nil, nil, nil}
+	q := &NmQueue{nil, nil, 0}
 	return q
 }
 

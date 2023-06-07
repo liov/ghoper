@@ -14,9 +14,9 @@ axios.interceptors.request.use(
 
       if (req.headers.cookie) config.headers.cookie = req.headers.cookie
 
-      config.baseURL = 'https://' + req.headers.host
+      config.baseURL = 'http://' + req.headers.host
       // 坑，用nginx转发，目前只能写死，或者在ng上改？
-      // config.baseURL = "https://hoper.xyz";
+       config.baseURL = "http://liov.xyz";
     }
 
     // 判断是否存在token，如果存在的话，则每个http header都加上token

@@ -230,7 +230,7 @@ export default {
         content_css : '/content.css',
         init_instance_callback: function (editor) {
           editor.on('SetContent', function (e) {
-            console.log(e.content);;
+            console.log(e.content);
           });
         },
         height: 650,

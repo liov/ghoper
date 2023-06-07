@@ -74,10 +74,13 @@ export default {
       color: ['pink', 'red', 'orange', 'orange', 'cyan', 'blue', 'purple']
     }
   },
-  async asyncData({ $axios, route }) {
+  async asyncData({ $axios, route, redirect }) {
     const res = await $axios.$get(`/api` + route.path)
-
-    return { article: res.data !== null ? res.data : null }
+    if (!res.data) {
+      redirect({ path: '/article' })
+      return
+    }
+    return { article: res.data }
   }
 }
 </script>
