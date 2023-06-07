@@ -104,9 +104,7 @@ nginx-*
 *.sum
 /hoper/hoper
 /hoper/client
-/static/css/tinymce
-/static/datafix
-/static/template/packr/resume.html
+/vhoper/static/css/tinymce
 *packr.go
 /test/csharp/bin
 /test/*.txt

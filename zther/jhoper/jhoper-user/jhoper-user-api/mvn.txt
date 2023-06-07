@@ -1,1 +1,0 @@
-mvn clean -s F:\code\ht\settings.xml deploy -Dmaven.test.skip=true -Dautoconfig.skip=true -DaltDeploymentRepository=snapshots::default::http://192.168.30.121:8099/nexus/content/repositories/snapshots/

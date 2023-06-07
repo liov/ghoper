@@ -1,4 +1,4 @@
-FROM scratch
+FROM frolvlad/alpine-glibc
 
 # 将工作目录设置为 /hoper
 WORKDIR /app

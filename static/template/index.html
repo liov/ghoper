@@ -1,3 +1,0 @@
-{{range $key,$value:=.Providers}}
-    <p><a href="/api/auth/{{$value}}">Log in with {{index $.ProvidersMap $value}}</a></p>
-{{end}}
